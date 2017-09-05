@@ -65,6 +65,8 @@ find . -name "*.pod" -exec sed -i "s/^\=item \([0-9]\)\(\ \|$\)/\=item C<\1>/g" 
 # We're also using ARM assembler optimisations - see http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=676533
 if [ $ARCH = "arm" ]; then
    xz -dc $PORTCWD/sources/debian-targets.patch.xz | sed -e 's?${debian_cflags}?'"$SLKCFLAGS"'?g' -e 's?no_asm?armv4_asm?g' | patch -p1 --verbose || exit 1
+elif [ $ARCH = "aarch64" ]; then
+   xz -dc $PORTCWD/sources/debian-targets.patch.xz | patch -p1 --verbose || exit 1
 fi
 
 # Use .so.1, not .so.1.0.0:
@@ -95,6 +97,11 @@ fi
 ln -vfs libcrypto.so libcrypto.so.0
 ln -vfs libssl.so    libssl.so.0
 
+case $ARCH in
+    arm) DEBIAN_ARCH=armhf;;
+    aarch64) DEBIAN_ARCH=arm64;;
+esac
+
 # Configure:
 perl util/perlpath.pl /usr/bin
 perl \
@@ -108,7 +115,7 @@ Configure \
    no-sse2 \
    no-ssl2 \
    no-weak-ssl-ciphers \
-   debian-armhf || exit 1
+   debian-$DEBIAN_ARCH || exit 1
 
 # Build:
 make depend || exit 1
