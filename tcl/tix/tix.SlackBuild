@@ -1,0 +1,111 @@
+#!/bin/bash
+
+# tix.SlackBuild
+# Heavily based on the original Slackware build scripts,
+# Modified by Stuart Winter for Slackware ARM.
+#
+# Copyright 2008, 2009  Patrick J. Volkerding, Sebeka, MN, USA
+# All rights reserved.
+#
+# Redistribution and use of this script, with or without modification, is
+# permitted provided that the following conditions are met:
+#
+# 1. Redistributions of this script must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+#
+#  THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED
+#  WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+#  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO
+#  EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+#  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+#  PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+#  OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+#  WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+#  OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+#  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+# Record toolchain & other info for the build log:
+slackbuildinfo
+
+# Paths to skeleton port's source & real Slackware source tree:
+export CWD=$SLACKSOURCE/$PKGSERIES/$PKGNAM
+export PORTCWD=$PWD
+
+# Temporary build locations:
+export TMPBUILD=$TMP/build-$PKGNAM
+export PKG=$TMP/package-$PKGNAM
+mkpkgdirs # Delete & re-create temporary directories then cd into $TMPBUILD
+
+# Extract source:
+tar xvvf $CWD/Tix$VERSION.tar.gz
+cd Tix* || exit 1
+slackhousekeeping
+
+# Apply patches:
+zcat $CWD/tix.tcl8.5.patch.gz | patch -p1 --backup --suffix=.orig || exit 1
+zcat $CWD/tix.soname.patch.gz | patch -p1 || exit 1
+
+# Unpack the pre-compiled tcl and tk sources:
+echo "Unpacking TCL and TK sources for private headers.."
+mkdir $TMPBUILD/tclsrc
+tar xf $PORTCWD/../tcl/sources/tcl-compiled* -C $TMPBUILD/tclsrc/ || exit 1
+tar xf $PORTCWD/../tk/sources/tk-compiled* -C $TMPBUILD/tclsrc/   || exit 1
+# Rename so that configure can find them:
+mv -fv $TMPBUILD/tclsrc/{tcl*,tcl}
+mv -fv $TMPBUILD/tclsrc/{tk*,tk}
+# Allow tcl to find the source dir from which it was built (this is our newly
+# unpacked version from the time that it *was* built):
+cp -fav /usr/lib/tclConfig.sh{,.orig}
+cp -fav /usr/lib/tkConfig.sh{,.orig}
+sed -i 's?^TCL_SRC_DIR=.*?TCL_SRC_DIR='"$TMPBUILD"'/tclsrc/tcl?g' /usr/lib/tclConfig.sh
+sed -i 's?^TK_SRC_DIR=.*?TK_SRC_DIR='"$TMPBUILD"'/tclsrc/tk?g' /usr/lib/tkConfig.sh
+egrep "^TCL_SRC_DIR" /usr/lib/tclConfig.sh
+egrep "^TK_SRC_DIR" /usr/lib/tkConfig.sh
+
+# Configure:
+LDFLAGS="-L/usr/lib" \
+CXXFLAGS="$SLKCFLAGS" \
+CFLAGS="$SLKCFLAGS" \
+CPPFLAGS="-DUSE_INTERP_RESULT" \
+./configure \
+   --prefix=/usr \
+   --libdir=/usr/lib${LIBDIRSUFFIX} \
+   --enable-shared \
+   --enable-threads \
+   --with-tcl=/usr/lib${LIBDIRSUFFIX} \
+   --with-tk=/usr/lib${LIBDIRSUFFIX} \
+   --build=$ARCH-slackware-linux-gnueabi || failconfig
+
+# Build:
+make $NUMJOBS || make || failmake
+
+# Install into package framework:
+make install DESTDIR=$PKG || failinstall
+mkdir -p $PKG/usr/man/mann
+cp -a man/*.n $PKG/usr/man/mann
+
+mkdir -p $PKG/usr/doc/tix-$VERSION
+cp -a \
+  ABOUT.* README.* license.terms \
+  docs/FAQ.txt docs/Files.* \
+  docs/Release-8.4* docs/license* docs/html \
+  $PKG/usr/doc/tix-$VERSION
+
+# Put the previous tcl & tk config files back:
+mv -fv /usr/lib/tclConfig.sh.orig /usr/lib/tclConfig.sh
+mv -fv /usr/lib/tkConfig.sh.orig /usr/lib/tkConfig.sh
+
+# If necessary, start the fakeroot server so we can set file/dir ownerships:
+start_fakeroot
+
+# Apply generic Slackware packaging policies:
+cd $PKG
+slackstripall   # strip all .a archives and all ELFs
+slackgzpages -i # compress man & info pages and delete usr/info/dir
+slackslack      # chown -R root:root, chmod -R og-w, slackchown, slack644docs
+slackdesc       # install slack-desc and doinst.sh
+slackmp         # run makepkg -l y -c n
+
+# Perform any final checks on the package:
+cd $PKG
+slackhlinks     # search for any hard links

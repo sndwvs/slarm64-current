@@ -1,0 +1,263 @@
+
+Slackware initrd mini HOWTO
+by Patrick Volkerding, volkerdi@slackware.com
+  Fri Apr 10 18:45:55 CDT 2009
+Adapted for Slackware ARM port by Stuart Winter, mozes@slackware.com
+  Sat Jun 20 11:20:14 BST 2009
+Removed legacy ARMv5 for Slackware ARM port by Stuart Winter, mozes@slackware.com
+  Mon Sep 26 21:27:38 BST 2016
+
+=================================================================================
+
+This document describes how to create and install an initrd.
+Also see "man mkinitrd".
+
+1.  What is an initrd?
+2.  Why to I need an initrd?
+3.  initrd, Kernel packages and /boot in Slackware ARM
+4.  How do I build the initrd?
+5.  Now that I've built an initrd, how do I use it?
+
+
+1.  What is an initrd?
+
+Initrd stands for "initial ramdisk".  An initial ramdisk is a very small 
+Linux filesystem that is loaded into RAM and mounted as the kernel boots, 
+and before the main root filesystem is mounted.
+
+2.  Why do I need an initrd?
+
+The usual reason to use an initrd is because you need to load kernel 
+modules before mounting the root partition.  Usually these modules are 
+required to support the filesystem used by the root partition (ext3, 
+reiserfs, xfs), or perhaps the controller that the hard drive is attached 
+to (SCSI, RAID, etc).  Essentially, there are so many different options 
+available in modern Linux kernels that it isn't practical to try to ship 
+many different kernels to try to cover everyone's needs.  It's a lot more 
+flexible to ship a generic kernel and a set of kernel modules for it.
+
+3.  initrd, Kernel packages and /boot in Slackware ARM
+
+With Slackware 14.2 and earlier, ARMv5 and ARMv7 were supported and out of
+necessity there were at least _two_ Kernels.  With Slackware 15.0 there is
+a single "armv7" Kernel that supports the officially supported devices.
+
+However, should we need additional Kernels in the future, we retain the
+original structure and naming conventions: For each platform that Slackware
+ARM supports, the following are provided:
+
+  - 1 Kernel package in slackware/a/
+    e.g.  kernel_armv7-4.7.4-arm-1.txz
+  - 1 Kernel module package in slackware/a/
+    e.g.  kernel-modules-armv7-4.7.4_armv7-arm-1.txz
+  - 1 initrd in kernels/<platform name or architecture grouping>/initrd-<platformname>
+    e.g.  kernels/armv7/initrd-armv7
+    There are two formats of the same initrd - the "uinitrd" and "initrd". 
+    The "uinitrd" is for versions of U-Boot that are not capable of loading
+    a standard "initrd".  For officially supported devices, please refer to
+    the installtion documentation to discover which version to use.
+
+The Kernel, Kernel module packages and initrd contain the name of
+the platform or architecture.  In the example above, the 'armv7' name refers to
+the ARMv7 architecture which covers most supported devices.
+
+The Kernels found in the 
+  slackwarearm-<version>/kernels/<platform>/zImage-<platform>
+  e.g. slackwarearm-15.0/kernels/armv7/zImage-armv7
+Again as with the initrd, there are also "uImage" versions of these.
+are copies of those found in the Slackware Kernel package in the a/series:
+  kernel_<platform>-<version>-arm-<build>.txz package
+
+In most other platforms, including the x86, the Kernel lives on a Linux
+filesystem inside /boot.  Slackware ARM also provides a Kernel in this location.
+For the officially supported devices, /boot is generally either an ext2 formatted
+partition (since most U-Boot versions can read ext2) or is a directory within the
+root file system.
+On some devices and using QEMU you'd need to have the Kernel and initial RAM disk
+accessible outside of Linux.  Please refer to the documentation for such systems.
+
+
+4.  How do I build the initrd?
+
+***
+** Please read all of this section before following any of the steps.
+**    
+
+The easiest way to make the initrd is to use the mkinitrd script included 
+in Slackware's mkinitrd package.  We'll walk through the process of 
+upgrading to the Linux Kernel version for the 'ARM v7' platform, using the
+packages found in Slackware's slackware/a/ directory.
+
+First, make sure the kernel, kernel modules, and mkinitrd package are 
+installed (the current version numbers might be a little different, so 
+this is just an example):
+
+  upgradepkg --install-new  kernel-modules-armv7-4.7.4_armv7-arm-1.txz
+  upgradepkg --install-new  kernel_armv7-4.7.4-arm-1.txz
+  upgradepkg --install-new  mkinitrd-1.4.8-arm-3.txz
+
+Change into the /boot directory:
+
+  cd /boot
+
+A helper script is supplied with the "mkinitrd" package.  This script 
+helps determine which modules to include in the new initrd.
+
+  /usr/share/mkinitrd/mkinitrd_command_generator.sh
+
+The script will output something like this:
+
+mkinitrd -c -k 4.7.4-armv7 -f ext4 -r /dev/sda2 
+  -m mmc_core.ko.gz:sunxi-mmc.ko.gz:scsi_mod.ko.gz:libata.ko.gz:libahci.ko.gz:
+     libahci_platform.ko.gz:ahci_sunxi.ko.gz:mbcache.ko.gz:jbd2.ko.gz:ext4.ko.gz 
+  -u -o /boot/initrd.gz
+
+[line breaks and indentation added]
+
+The important command operators above are:
+  -f ext4  
+              tell 'mount' inside the initrd to expect an 'ext4'
+              formatted root filesystem.  I am using the 'ext4' filesystem
+              on my machine.  the 'mkinitrd_command_generator.sh' script
+              will determine the correct filesystem module for your system.
+  -r /dev/sda2
+              tell the initrd that the root filesystem is on the /dev/sda2
+              device.
+ 
+The rest of the colon separated names are of the Kernel modules required
+to boot the Operating System.
+
+Now run the command as specified by the script -- adding any additional
+Kernel modules required.
+
+This should do two things.  First, it will create a directory
+/boot/initrd-tree containing the initrd's filesystem.  Then it will
+create an initrd (/boot/initrd.gz) from this tree.  If you wanted to,
+you could make some additional changes in /boot/initrd-tree/ and
+then run mkinitrd again without options to rebuild the image.  That's
+optional, though, and only advanced users will need to think about that.
+
+If you are interested in the exact commands used to create the generic
+Slackware ARM initrd images, please refer to the Kernel build script:
+  slackwarearm-<version>/source/k/kernel.SlackBuild
+
+There are a lot of useful comments in the build script.
+
+***********************************************************************
+         *****************************************************
+         ** Note: mkinitrd_command_generator.sh limitations **
+         *****************************************************
+***********************************************************************
+
+ In Slackware ARM version 15.0, the mkinitrd_command_generator.sh script doesn't
+ determine all of the necessary Kernel modules to boot the system.
+ Until this is resolved, it's best to create the initial RAM disk
+ as follows - making any necessary adjustments to the kernel
+ module list.
+ The following example is taken from the 'source/k/kernel.SlackBuild'
+ Kernel build script:
+
+ You can paste in the following into the shell verbatim, but if you are using
+ one of the supported systems for which Slackware ARM has a kernel, you should
+ look at the 'source/k/kernel.SlackBuild' script as *this* document you are 
+ now reading is not updated very often and will not keep track of the kernel
+ package build script.
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+   # Update the Kernel version
+   VERSION=4.4.7
+
+   # Update the architecture if necessary.
+   SLKARCH=armv7
+
+   # Network interface cards:
+   # Versatile Express has SMSC911
+   # Trimslice: Realtek 8169 (needs a firmware blob which is handled by the a/kernel-firmware package)
+   # Banana Pi/stmmac - ST Microelectronics
+   INITRDNETDEV="smsc911x:r8169:stmmac"
+
+   # Generic libata:
+   # The Compulab Trimslice's SATA is on an internal USB host
+   INITRDSATA="libata"
+
+   # Subsystems for System on Chip stuff:
+   # (Some of these may not be required - I can most likely whittle them down later)
+   INITRDSOC="i2c-tegra:spi-tegra:phy-tegra-usb:ehci_tegra:dwmac-sunxi:sunxi-mmc:ahci_sunxi"
+
+   # Real Time Clock:
+   # Trimslice: rtc-em3027
+   # BananaPi: rtc-sunxi
+   # Versatile Express: rtc-pl031
+   INITRDRTC="rtc-em3027:rtc-sunxi:rtc-pl031:rtc-ds1307"
+
+   # Wait 2 seconds for the media to become available:
+   mkinitrd \
+      -R \
+      -L \
+      -u \
+      -w 2 \
+      -k $VERSION-$SLKARCH \
+      -s /boot/initrd-tree \
+      -m $INITRDEXPLICITS:$INITRDSOC:$INITRDVIDEO:$INITRDSCSI:$INITRDSATA:$INITRDUSB:$INITRDFS:$INITRDNETDEV:$INITRDNETFS:$INITRDCARDS${INITRDADDITIONS}:$INITRDRTC:$INITRDNAND \
+      -o /boot/initrd-$SLKARCH
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+5.  Now that I've built an initrd, how do I use it?
+
+Now that you've got an initrd (/boot/initrd-<arch>), you'll want to load
+it along with the kernel at boot time. 
+
+5.1  ARM devices that have an initrd residing out of the reach of Linux
+
+     As already mentioned, the officially supported ARM devices enable
+     initrd to be present _within_ your Linux filesystems.  
+     If you are using such a supported system, skip to section 5.2
+
+     However if you are not then you may need to copy the initrd outside
+     of Linux.  For example, inside QEMU, if you followed the documentation in
+     slackwarearm-<version>/QEMU_INSTALL.txt, you could do this:
+
+     cd /boot
+     scp initrd.gz root@yourQEMUhostos:/export/armhost/initrd-versatile.gz
+
+     The file will then be in place ready to be booted when you next restart
+     QEMU.
+
+5.2  ARM devices that are capable of loading the initrd and Kernel from
+     a Linux filesystem
+
+     The officially supported devices can load either a standard Kernel and
+     initrd, or at least the U-Boot formatted version (hence why we supply both).
+
+     In the case of the the Trimslice, if you followed the Slackware ARM
+     installation document, 'INSTALL_TRIMSLICE.TXT' and setup an
+     ext3 formatted "/" filesystem, then all that remains is to convert
+     the standard gzipped initrd into a U-Boot formatted file.
+
+     # Create a Das U-Boot formatted uInitrd from the standard initrd:
+     cd /boot
+     mkimage \
+       -A arm \
+       -O linux \
+       -T ramdisk \
+       -C gzip \
+       -n "Slackware ARM initial RAM disk for Trimslice" \
+       -d /boot/initrd-armv7 \
+       /boot/uinitrd-armv7
+
+       In section 5.0  ('Booting the Slackware ARM OS') of 'INSTALL_TRIMSLICE.TXT'
+       you set the name of the initial RAM disk to 'uinitrd-armv7'.
+       If for any reason you chose another name during the setup process,
+       or have changed it since, you will need to rename the initial RAM disk
+       to match that configuration.
+
+
+Other boot loaders vary - but if you've already got this far, you 
+most likely know what to do with your initrd ;-)
+
+
+---------
+
+Have fun!

@@ -1,0 +1,93 @@
+#!/bin/bash
+
+# proftpd.SlackBuild
+# Heavily based on the original Slackware build script,
+# Modified by Stuart Winter <mozes@slackware.com> for the Slackware porting Project.
+# 09-Jul-2004
+
+# Record toolchain & other info for the build log:
+slackbuildinfo
+
+# Paths to skeleton port's source & real Slackware source tree:
+export CWD=$SLACKSOURCE/$PKGSERIES/$PKGNAM
+export PORTCWD=$PWD
+
+# Temporary build locations:
+export TMPBUILD=$TMP/build-$PKGNAM
+export PKG=$TMP/package-$PKGNAM
+mkpkgdirs # Delete & re-create temporary directories then cd into $TMPBUILD
+
+# Extract source:
+tar xvvf $CWD/$PKGNAM-$VERSION.tar.?z*
+cd $PKGNAM-* || exit 1
+slackhousekeeping
+
+PROFTPD_MODS="mod_radius:mod_ban:mod_readme:mod_ratio:mod_tls:mod_wrap:mod_ctrls_admin:mod_quotatab:mod_quotatab_file"
+
+# Configure:
+CFLAGS="$SLKCFLAGS" \
+CXXFLAGS="$SLKCFLAGS" \
+./configure \
+   --prefix=/usr \
+   --mandir=/usr/man \
+   --libdir=/usr/lib${LIBDIRSUFFIX} \
+   --sysconfdir=/etc \
+   --enable-ctrls \
+   --enable-autoshadow \
+   --enable-ipv6 \
+   --enable-dso \
+   --enable-nls \
+   --localstatedir=/var/run \
+   --with-modules="${PROFTPD_MODS}" \
+   --build=${SLK_ARCH_BUILDTARGET} || failconfig
+#   --no-ipv6 \
+
+# Create package framework:
+mkdir -vpm755 $PKG/{etc,usr/doc/$PKGNAM-$VERSION,home/ftp}
+# Directory used by mod_ban:
+mkdir -vpm755 $PKG/var/db/proftpd
+chown nobody:nogroup $PKG/var/db/proftpd
+
+# Build:
+# Parallel builds do not work on ARM.
+make $NUMJOBS || make || failmake
+
+# Install:
+make install DESTDIR=$PKG || failinstall
+rmdir $PKG/usr/libexec 2> /dev/null
+rm -f $PKG/etc/*
+install -vpm644 $CWD/etc/proftpd.conf $PKG/etc/proftpd.conf.new
+install -vpm644 $CWD/etc/ftpusers $PKG/etc/ftpusers.new
+
+# With no library to link against, these are useless:
+rm -rfv $PKG/usr/include
+
+# Install docs:
+cp -a COPYING* CREDITS INSTALL NEWS README* \
+      contrib/README.mod_wrap contrib/README.ratio doc sample-configurations \
+      $PKG/usr/doc/$PKGNAM-$VERSION
+cp -a contrib/README $PKG/usr/doc/proftpd-$VERSION/README.contrib
+changelogliposuction ChangeLog $PKGNAM $VERSION
+
+# Bloat removal:
+( cd $PKG/usr/doc
+  find . -name "*.sgml" -exec rm {} \;
+  find . -name "*.pdf" -exec rm {} \;
+)
+rmdir $PKG/usr/share/locale
+rmdir $PKG/usr/share
+
+# If necessary, start the fakeroot server so we can set file/dir ownerships:
+start_fakeroot
+
+# Apply generic Slackware packaging policies:
+cd $PKG
+slackstripall   # strip all .a archives and all ELFs
+slackgzpages -i # compress man & info pages and delete usr/info/dir
+slackslack      # chown -R root:root, chmod -R og-w, slackchown, slack644docs
+slackdesc       # install slack-desc and doinst.sh
+slackmp         # run makepkg -l y -c n
+
+# Perform any final checks on the package:
+cd $PKG
+slackhlinks     # search for any hard links

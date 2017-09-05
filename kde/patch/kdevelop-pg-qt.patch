@@ -1,0 +1,8 @@
+# Patch cherry picked from Debian's patches:
+# to allow it to build with a newer version of bison.
+# https://packages.debian.org/sid/python3-pykde4
+# http://http.debian.net/debian/pool/main/p/pykde4/pykde4_4.14.0-1.debian.tar.xz
+
+for kpfile in $PORTCWD/patch/${PKGNAME}/* ; do
+  auto_apply_patch $kpfile || { touch ${PORTCWD}/build-logs/${PKGNAME}.failed ; continue ; }
+done

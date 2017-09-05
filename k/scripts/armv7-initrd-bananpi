@@ -1,0 +1,75 @@
+#!/bin/bash
+
+# taken from kernel.slackbuild -- does NOT build uImage -- would need to uncomment code & adjust slightly.
+
+SLKARCH=armv7
+VERSION=4.0.0
+TMPBUILD=/tmp/armv7-initrd-outoftree
+rm -rf $TMPBUILD
+mkdir $TMPBUILD
+
+   # Generic requirements:
+   # Filesystems:
+   INITRDFS="vfat:jbd:jbd2:nls:exportfs:binfmt_misc:md:dm-mod:mbcache:ext2:ext3:ext4:reiserfs:jfs:xfs:fscache"
+   # Generic SCSI drivers & low-level drivers for discs/media:
+   INITRDSCSI="sg:scsi_mod:sd_mod:cdrom:sr_mod:scsi_tgt"
+   # Network filesystems:
+   INITRDNETFS="nfs:lockd:nfs_common"
+   # USB hubs & support mods, including interface devices (USB keyboards etc)
+   # followed by some specific device drivers.
+   INITRDUSB="ehci_orion:ehci-hcd:uhci_hcd:usbhid:ohci_hcd:hid:usbcore:usb-storage:ums-cypress:ums-usbat:ums-freecom:ums-isd200:ums-sddr09:ums-sddr55:ums-alauda:ums-jumpshot:ums-onetouch"
+   # For SDHC/MMC cards:
+   INITRDCARDS="mvsdio:mmci:mmc_block"
+
+   # Hacks.
+   # See http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=608538
+   # We need to add additional modules explicitly since modprobe won't show all dependencies
+   # for 'xfs', for example.
+   INITRDEXPLICITS="crc32c"
+
+   # Additional stuff such as Netconsole (useful for debugging on machines without a serial cable)
+   # INITRDADDITIONS=":netconsole"
+
+  #######################################################################
+  # ARMv7 and greater systems
+  #######################################################################
+
+   # Network interface cards:
+   # Versatile Express has SMSC911
+   # Trimslice: Realtek 8169 (needs a firmware blob which is handled by the a/kernel-firmware package)
+   # Banana Pi/stmmac - ST Microelectronics
+   INITRDNETDEV="smsc911x:r8169:stmmac"
+
+   # Generic libata:
+   # The Compulab Trimslice's SATA is on an internal USB host
+   INITRDSATA="libata"
+
+   # We'd also need "fbcon" if we choose not to compile it into the kernel.
+   # The Trimslice uses the Tegra module which we need to compile into the Kernel.
+   # INITRDVIDEO="xgifb" 
+
+   # Subsystems for System on Chip stuff:
+   # (Some of these may not be required - I can most likely whittle them down later)
+   INITRDSOC="i2c-tegra:spi-tegra:phy-tegra-usb:ehci_tegra:dwmac-sunxi:sunxi-mmc:ahci_sunxi"
+
+   # Real Time Clock:
+   # Trimslice: rtc-em3027
+   # BananaPi: rtc-sunxi
+   # Versatile Express: rtc-pl031
+   INITRDRTC="rtc-em3027:rtc-sunxi:rtc-pl031"
+
+   # Wait 2 seconds for the media to become available:
+   mkinitrd \
+      -R \
+      -L \
+      -u \
+      -w 2 \
+      -k $VERSION-$SLKARCH \
+      -s $TMPBUILD/initrd-tree \
+      -m $INITRDEXPLICITS:$INITRDSOC:$INITRDSCSI:$INITRDSATA:$INITRDUSB:$INITRDFS:$INITRDNETDEV:$INITRDNETFS:$INITRDCARDS${INITRDADDITIONS}:$INITRDRTC \
+      -o /initrd-$SLKARCH.gz
+   # Creating it in / avoids an ugly bit of output at boot that contains
+   # the path where it was built.  It just looks nicer this way :-)
+   mv -fv /initrd-$SLKARCH.gz $TMPBUILD/
+
+echo "The initrd is in $TMPBUILD/"

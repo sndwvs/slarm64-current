@@ -1,0 +1,11 @@
+--- netkit-rwho-0.17/rwhod/rwhod.c.fixhostname	Tue Feb 13 13:37:02 2001
++++ netkit-rwho-0.17/rwhod/rwhod.c	Tue Feb 13 13:37:35 2001
+@@ -361,7 +361,7 @@
+ 	if (mynamelen > sizeof(mywd.wd_hostname)) 
+ 		mynamelen = sizeof(mywd.wd_hostname);
+ 	strncpy(mywd.wd_hostname, myname, mynamelen);
+-	mywd.wd_hostname[sizeof(mywd.wd_hostname)-1] = 0;
++	mywd.wd_hostname[mynamelen] = '\0';
+ 
+ 	getboottime(&mywd);
+ 

@@ -1,0 +1,50 @@
+#!/bin/bash
+
+# arm/build
+# Check package dependencies, set metadata and launch
+# package build script.
+# by Stuart Winter <mozes@slackware.com>
+#
+source /usr/share/slackdev/buildkit.sh
+
+# Package metadata:
+export PKGNAM=freetype
+export VERSION=${VERSION:-2.8}
+export BUILD=${BUILD:-1}
+#export BUILD=${BUILD:-1_slack14.1}
+#export BUILD=${BUILD:-1_slack14.2}
+export PKGSERIES=${PKGSERIES:-l}
+export SLACKPACKAGE=$PKGNAM-$VERSION-$PKGARCH-$BUILD.txz
+
+## ******************************************************************* ##
+# For test packages - best to store in another location rather than
+# overwriting the working copy in the main tree:
+# export PKGSTORE=/tmp/
+# mkdir -vpm755 $PKGSTORE/$PKGSERIES
+## ******************************************************************* ##
+
+# Reset the ARM file system: restore it to the 'factory settings'
+# as it were (this has no effect when building natively):
+sboxsysrestore
+
+# Ensure base ARM packages are installed first:
+slackbasedeps
+
+# Ensure $PKGNAM isn't already installed:
+# Can't because libtool has libfreetype.la for many packages, which then breaks
+# this build since the la files goes missing!
+# If I really wanted to leave it on, I could edit all of the /usr/lib/*.la
+# sed -i 's?libfreetype.la?-lfreetype?g' /usr/lib/*.la
+#slackfailpkgdeps $PKGNAM || removepkg $PKGNAM
+
+# Having harfbuzz linking against freetype causes undefined references.
+# see l/freetype/tests for a test case.
+# Most distros have --without-harfbuzz
+slackfailpkgdeps harfbuzz || removepkg harfbuzz
+
+# Launch the package build script:
+BUILDLOG=$( basename $SLACKPACKAGE .t?z ).build.log
+( ./$PKGNAM.SlackBuild ) >& /dev/stdout | tee $BUILDLOG
+
+# Compress the build log:
+bzip2 -9fvz $BUILDLOG

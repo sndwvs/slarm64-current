@@ -1,0 +1,29 @@
+#!/bin/bash
+
+# arm/build
+# Check package dependencies, set metadata and launch
+# package build script.
+# by Stuart Winter <mozes@slackware.com>
+#
+source /usr/share/slackdev/buildkit.sh
+
+# Package metadata:
+export PKGNAM=netkit-rsh
+export VERSION=0.17
+export BUILD=1
+export PKGSERIES=n
+export SLACKPACKAGE=$PKGNAM-$VERSION-$ARCH-$BUILD.txz
+
+# Reset the ARM file system: restore it to the 'factory settings'
+# as it were (this has no effect when building natively):
+sboxsysrestore
+
+# Ensure base ARM packages are installed first:
+slackbasedeps
+
+# Launch the package build script:
+BUILDLOG=$( basename $SLACKPACKAGE .t?z ).build.log
+( ./$PKGNAM.SlackBuild ) >& /dev/stdout | tee $BUILDLOG
+
+# Compress the build log:
+bzip2 -9fvz $BUILDLOG

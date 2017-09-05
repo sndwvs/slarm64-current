@@ -1,0 +1,109 @@
+#!/bin/bash
+
+# ruby.SlackBuild
+# Heavily based on the original Slackware build scripts,
+# Modified by Stuart Winter <mozes@slackware.com>
+
+#
+# Copyright 2008, 2009, 2010, 2011, 2012, 2013, 2015  Patrick J. Volkerding, Sebeka, MN, USA
+# All rights reserved.
+#
+# Redistribution and use of this script, with or without modification, is
+# permitted provided that the following conditions are met:
+#
+# 1. Redistributions of this script must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+#
+#  THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED
+#  WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+#  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO
+#  EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+#  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+#  PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+#  OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+#  WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+#  OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+#  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+#
+#
+# A quick test for the new Ruby build:
+# ruby -e 'require "dl"'
+# If it fails, rebuild it again until it works! ;-)
+# or try this:
+# cd ext/dl ; make clean ; make ; ../../ruby -e "require '../../.ext/x86_64-linux/dl.so'"
+
+# Record toolchain & other info for the build log:
+slackbuildinfo
+
+# Paths to skeleton port's source & real Slackware source tree:
+export CWD=$SLACKSOURCE/$PKGSERIES/$PKGNAM
+export PORTCWD=$PWD
+
+# Temporary build locations:
+export TMPBUILD=$TMP/build-$PKGNAM
+export PKG=$TMP/package-$PKGNAM
+mkpkgdirs # Delete & re-create temporary directories then cd into $TMPBUILD
+
+# Determine the CFLAGS for the known architectures:
+# Use defaults:
+#case $ARCH in
+#  # -O3 produces run-time failures on ARM.
+#   arm)     export SLKCFLAGS="-O2 -march=armv5te -fno-strict-aliasing"
+#            export LIBDIRSUFFIX="" ;;
+#   *)       export SLKCFLAGS="-O2" ;;
+#esac
+
+# Extract source:
+tar xvvf $CWD/$PKGNAM-$VERSION*.tar.xz
+#tar xvvf $PORTCWD/sources/$PKGNAM-$VERSION*.tar.xz
+cd $PKGNAM* || exit 1
+slackhousekeeping
+
+#zcat $PORTCWD/sources/ruby*diff* | patch -p1
+#apply_full_debian_patches || failpatch
+
+# Configure:
+CFLAGS="$SLKCFLAGS" \
+./configure \
+   --prefix=/usr \
+   --mandir=/usr/man \
+   --datadir=/usr/share \
+   --libdir=/usr/lib${LIBDIRSUFFIX} \
+   --docdir=/usr/doc/$PKGNAM-$VERSION \
+   --enable-shared \
+   --enable-pthread \
+   --disable-install-capi \
+   --build=${SLK_ARCH_BUILDTARGET} || failconfig
+
+# Build:
+# On the ARM versatile under QEMU, this will eat all the RAM and
+# begin swapping for almost 1 day. Just leave it going and eventually it'll finish :-)
+# Or build only on the SheevaPlug.
+make $NUMJOBS || make || failmake
+
+# Install into package:
+make install DESTDIR=$PKG || failinstall
+
+# Copy docs:
+mkdir -vpm755 $PKG/usr/doc/$PKGNAM-$VERSION
+cp -fav \
+   BSDL COPYING* *GPL* ChangeLog LEGAL NEWS README* ToDo \
+   $PKG/usr/doc/$PKGNAM-$VERSION
+changelogliposuction ChangeLog $PKGNAM $VERSION
+
+# If necessary, start the fakeroot server so we can set file/dir ownerships:
+start_fakeroot
+
+# Apply generic Slackware packaging policies:
+cd $PKG
+slackstripall   # strip all .a archives and all ELFs
+slackgzpages -i # compress man & info pages and delete usr/info/dir
+slackslack      # chown -R root:root, chmod -R og-w, slackchown, slack644docs
+slackdesc       # install slack-desc and doinst.sh
+export VERSION="$( echo $VERSION | sed 's?-?_?g' )"
+export SLACKPACKAGE=$PKGNAM-$VERSION-$PKGARCH-$BUILD.txz
+slackmp         # run makepkg -l y -c n
+
+# Perform any final checks on the package:
+cd $PKG
+slackhlinks     # search for any hard links

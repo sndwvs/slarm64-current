@@ -1,0 +1,148 @@
+#!/bin/bash
+
+# sendmail.SlackBuild
+# by Stuart Winter <mozes@slackware.com> for ARMedslack.
+# Almost entirely based on the original Slackware build script by Patrick Volkerding.
+# 19-Jun-2004
+#
+# Copyright 2008, 2009, 2010, 2012, 2013, 2014, 2015  Patrick J. Volkerding, Sebeka, Minnesota, USA
+# All rights reserved.
+#
+# Redistribution and use of this script, with or without modification, is
+# permitted provided that the following conditions are met:
+#
+# 1. Redistributions of this script must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+#
+#  THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED
+#  WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+#  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO
+#  EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+#  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+#  PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+#  OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+#  WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+#  OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+#  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+# Record toolchain & other info for the build log:
+slackbuildinfo
+
+# Paths to skeleton port's source & real Slackware source tree:
+export CWD=$SLACKSOURCE/$PKGSERIES/$PKGNAM
+export PORTCWD=$PWD
+
+# Temporary build locations:
+export TMPBUILD=$TMP/build-$PKGNAM
+export PKG=$TMP/package-$PKGNAM
+mkpkgdirs # Delete & re-create temporary directories then cd into $TMPBUILD
+
+# Extract source:
+tar xvvf $CWD/$PKGNAM.$VERSION.tar.gz
+cd $PKGNAM-$VERSION || exit 1
+slackhousekeeping
+
+# Extract package framework:
+( cd $PKG && explodepkg $CWD/_sendmail.tar.gz )
+
+# Add TLS support to the sendmail binary:
+install -m644 $CWD/site.config.m4 devtools/Site
+
+# We need this later:
+OSCPU="`uname -srm | tr ' ' '.'`"
+
+# Build .cf files for Linux:
+cd $TMPBUILD/sendmail-$VERSION/cf/cf
+cp $CWD/*.mc .
+cp linux.uucp.mc config.mc
+sh Build config.cf
+mv config.cf $PKG/usr/share/sendmail/linux.uucp.cf
+cp sendmail-slackware.mc config.mc
+sh Build config.cf
+mv config.cf $PKG/usr/share/sendmail/sendmail-slackware.cf
+cp sendmail-slackware-tls.mc config.mc
+sh Build config.cf
+mv config.cf $PKG/usr/share/sendmail/sendmail-slackware-tls.cf
+cp sendmail-slackware-tls-sasl.mc config.mc
+sh Build config.cf
+mv config.cf $PKG/usr/share/sendmail/sendmail-slackware-tls-sasl.cf
+
+# Add a sample sendmail.cf:
+cat $PKG/usr/share/sendmail/sendmail-slackware.cf > $PKG/etc/mail/sendmail.cf.new
+cat submit.cf > $PKG/etc/mail/submit.cf.new
+
+cd $TMPBUILD/sendmail-$VERSION
+make O="$SLKCFLAGS" || failmake
+
+# Install man pages:
+install -m644 sendmail/newaliases.1 sendmail/mailq.1 $PKG/usr/man/man1
+
+# Install docs:
+mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
+cp -a doc/op FAQ INSTALL KNOWNBUGS LICENSE PGPKEYS README RELEASE_NOTES \
+      $PKG/usr/doc/$PKGNAM-$VERSION
+
+# For once I am not replacing these cats with 'install' because
+# I'm not going to trawl through the package framework archive to ensure
+# no permissions and ownerships have changed.
+cd obj.$OSCPU/sendmail
+cat sendmail > $PKG/usr/sbin/sendmail.new
+install -m644 aliases.5 $PKG/usr/man/man5
+install -m644 sendmail.8 $PKG/usr/man/man8
+cat statistics > $PKG/etc/mail/statistics
+cat ../../sendmail/helpfile > $PKG/etc/mail/helpfile
+cd ../makemap
+cat makemap > $PKG/usr/sbin/makemap
+install -m644 makemap.8 $PKG/usr/man/man8
+cd ../mailstats
+cat mailstats > $PKG/usr/sbin/mailstats
+install -m644 mailstats.8 $PKG/usr/man/man8
+cd ../praliases
+cat praliases > $PKG/usr/bin/praliases
+chmod 755 $PKG/usr/bin/praliases
+install -m644 praliases.8 $PKG/usr/man/man8
+cd ../rmail
+cat rmail > $PKG/usr/bin/rmail
+install -m644 rmail.8 $PKG/usr/man/man
+cd ../smrsh
+cat smrsh > $PKG/usr/sbin/smrsh
+install -m644 smrsh.8 $PKG/usr/man/man8
+cd ../mail.local
+cat mail.local > $PKG/usr/sbin/mail.local
+install -m644 mail.local.8 $PKG/usr/man/man8
+cd ../vacation
+cat vacation > $PKG/usr/bin/vacation
+install -m644 vacation.1 $PKG/usr/man/man1
+cd ../editmap
+cat editmap > $PKG/usr/sbin/editmap
+install -m644 editmap.8 $PKG/usr/man/man8
+
+# Add libmilter:
+cd $TMPBUILD/sendmail-$VERSION/libmilter
+./Build || failmisc
+cd ..
+mkdir -p $PKG/usr/include
+mkdir -p $PKG/usr/include/libmilter
+cp -a include/libmilter/mfapi.h $PKG/usr/include/libmilter
+cp -a include/libmilter/mfdef.h $PKG/usr/include/libmilter
+cp -a obj.*/libmilter/libmilter.a $PKG/usr/lib
+strip -g $PKG/usr/lib/libmilter.a
+chmod 644 $PKG/usr/lib/libmilter.a $PKG/usr/include/libmilter/*
+mkdir -p $PKG/usr/doc/sendmail-$VERSION/libmilter
+cp -a libmilter/README $PKG/usr/doc/sendmail-$VERSION/libmilter
+
+# Install package description:
+mkdir -p $PKG/install
+install -m644 $CWD/slack-desc.sendmail $PKG/install/slack-desc
+
+# Slackware policies:
+cd $PKG
+slackstripbin   # Strip binaries
+slackstripso    # Strip shared objects
+slackgzpages -i # compress man & info pages and delete usr/info/dir
+slack644docs    # Ensure /usr/doc permissions & ownerships are correct
+slackmp         # run makepkg -l y -c n
+
+# Perform any final checks on the package:
+cd $PKG
+slackhlinks     # search for any hard links

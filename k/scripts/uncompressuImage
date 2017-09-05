@@ -1,0 +1,18 @@
+cd /boot
+objcopy -O binary vmlinuz-kirkwood vmlinuz-kirkwood.bin
+
+mkimage \
+   -A arm \
+   -O linux \
+   -T kernel \
+   -n "Slackware ARM Linux Kernel" \
+   -d vmlinuz-kirkwood.bin \
+   uImage-kirkwood_uncompressed \
+   
+
+
+#mkimage -A ppc -O linux -T kernel -C gzip \
+#> -a 0x00000000 -e 0x00000000 \
+#> -n Linux-2.6.30.9-90.fc11.ppc \
+#> -d /tmp/vmlinux.bin.gz /tftpboot/uImage-2.6.30.9-90.fc11.ppc
+

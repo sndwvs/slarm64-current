@@ -1,0 +1,84 @@
+#!/bin/bash
+
+# tcsh.SlackBuild
+# by Stuart Winter <mozes@slackware.com> for the Slackware porting Project.
+# Heavily based on the original Slackware build script.
+# 30-May-2004
+
+# Record toolchain & other info for the build log:
+slackbuildinfo
+
+# Paths to skeleton port's source & real Slackware source tree:
+export CWD=$SLACKSOURCE/$PKGSERIES/$PKGNAM
+export PORTCWD=$PWD
+
+# Temporary build locations:
+export TMPBUILD=$TMP/build-$PKGNAM
+export PKG=$TMP/package-$PKGNAM
+mkpkgdirs # Delete & re-create temporary directories then cd into $TMPBUILD
+
+# Extract source:
+tar xvvf $CWD/$PKGNAM-$VERSION.tar.?z*
+cd $PKGNAM-$VERSION || exit 1
+slackhousekeeping
+
+# The LS_COLORS variable shared by tcsh has new options in recent
+# versions of coreutils that cause tcsh to exit, so disable the
+# built-in color ls:
+zcat $CWD/${PKGNAM}.nobuiltincolorls.diff.gz | patch -p1 --verbose || exit 1
+
+# Apply patches taken from Fedora:
+for pf in \
+ tcsh-6.15.00-closem.patch \
+ tcsh-6.14.00-unprintable.patch \
+ tcsh-6.15.00-hist-sub.patch \
+ tcsh-6.14.00-syntax.patch \
+ tcsh-6.13.00-memoryuse.patch \
+ tcsh-6.14.00-order.patch \
+ tcsh-6.18.01-elf-interpreter.patch \
+ tcsh-6.18.01-introduce-tcsh_posix_status.patch \
+ tcsh-6.18.01-skip-tty-tests.patch ; do
+  auto_apply_patch $PORTCWD/sources/${pf}.xz || exit 1
+done
+
+
+# Configure:
+CFLAGS="$SLKCFLAGS" \
+./configure \
+   --prefix=/usr \
+   --bindir=/bin \
+   --sysconfdir=/etc \
+   --libdir=/usr/lib${LIBDIRSUFFIX} \
+   --mandir=/usr/man \
+   --build=${SLK_ARCH_BUILDTARGET} || failconfig
+
+# Build:
+make $NUMJOBS || make || failmake
+
+# Install into package:
+make install DESTDIR=$PKG || exit 1
+( cd $PKG/bin ; ln -sf tcsh csh )
+( cd $PKG/usr/share/man/man1 ; ln -sf tcsh.1 csh.1 )
+mv -fv $PKG/usr/share/man $PKG/usr
+
+# Install docs:
+mkdir -vpm755 $PKG/usr/doc/${PKGNAM}-$VERSION
+cp -fav \
+   BUGS Copyright FAQ Fixes NewThings Ported README* WishList Y2K \
+   complete.tcsh \
+   $PKG/usr/doc/$PKGNAM-$VERSION
+
+# If necessary, start the fakeroot server so we can set file/dir ownerships:
+start_fakeroot
+
+# Apply generic Slackware packaging policies:
+cd $PKG
+slackstripall   # strip all .a archives and all ELFs
+slackgzpages -i # compress man & info pages and delete usr/info/dir
+slackslack      # chown -R root:root, chmod -R og-w, slackchown, slack644docs
+slackdesc       # install slack-desc and doinst.sh
+slackmp         # run makepkg -l y -c n
+
+# Perform any final checks on the package:
+cd $PKG
+slackhlinks     # search for any hard links

@@ -1,0 +1,11 @@
+# The ARM SoC driver set.
+# http://cgit.freedesktop.org/xorg/driver/xf86-video-armsoc
+cd /tmp
+rm -rf xf86-video-armsoc ; mkdir xf86-video-armsoc ; cd xf86-video-armsoc
+wget http://cgit.freedesktop.org/xorg/driver/xf86-video-armsoc/snapshot/xf86-video-armsoc-1.4.1.tar.gz
+gunzip *gz
+xz -ze9 *tar*
+ls -1 $PWD/*.xz
+#( cd driver
+#  links 'http://git.linaro.org/gitweb?p=arm/xorg/driver/xf86-video-armsoc.git;a=snapshot;h=dcf32bda38ad7c25fd7f04bfe31f08dc6d645fb5;sf=tgz'
+#)

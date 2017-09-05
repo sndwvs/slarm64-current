@@ -1,0 +1,97 @@
+#!/bin/bash
+
+# netkit-ntalk.SlackBuild
+# Heavily based on the original Slackware build scripts,
+# Modified by Stuart Winter <mozes@slackware.com>
+
+# Record toolchain & other info for the build log:
+slackbuildinfo
+
+# Paths to skeleton port's source & real Slackware source tree:
+export CWD=$SLACKSOURCE/$PKGSERIES/$PKGNAM
+export PORTCWD=$PWD
+
+# Temporary build locations:
+export TMPBUILD=$TMP/build-$PKGNAM
+export PKG=$TMP/package-$PKGNAM
+mkpkgdirs # Delete & re-create temporary directories then cd into $TMPBUILD
+
+# Extract source:
+tar xvvf $CWD/$PKGNAM-$VERSION.tar.gz
+cd $PKGNAM-$VERSION || exit 1
+slackhousekeeping
+zcat $CWD/netkit-ntalk-0.17.diff.gz | patch -p1 --verbose || failpatch
+zcat $CWD/ntalk-0.17-slackware-alt-talkd.patch.gz | patch -p1 --verbose || failpatch
+
+# Configure:
+./configure \
+   --prefix=/usr || failconfig
+
+# Build:
+make $NUMJOBS || make || exit
+
+# Install into package:
+cd talk
+mkdir -p $PKG/usr/bin
+cat talk > $PKG/usr/bin/talk
+chmod 755 $PKG/usr/bin/talk
+mkdir -p $PKG/usr/man/man{1,8}
+cat talk.1 | gzip -9c > $PKG/usr/man/man1/talk.1.gz
+cd ../talkd
+strip talkd
+mkdir -p $PKG/usr/sbin
+cat talkd > $PKG/usr/sbin/in.talkd
+chmod 755 $PKG/usr/sbin/in.talkd
+cat talkd.8 | gzip -9c > $PKG/usr/man/man8/in.talkd.8.gz
+cd ..
+mkdir -p $PKG/usr/doc/netkit-ntalk-0.17
+cp -a README $PKG/usr/doc/netkit-ntalk-0.17
+
+######################################################################
+# Include old version of 'talk', which works better with
+# 8-bit character sets:
+######################################################################
+
+# Extract source:
+cd $TMPBUILD
+rm -rf netkit-ntalk-0.11
+tar xvvf $CWD/netkit-ntalk-0.11.tar.gz
+cd netkit-ntalk-0.11
+slackhousekeeping
+
+# Apply patches:
+zcat $CWD/netkit-ntalk-0.11.diff.gz | patch -p0 --backup || failpatch
+zcat $PORTCWD/sources/ntalk-0.11.time.patch.gz | patch -p0 --verbose || failpatch
+
+# Configure:
+./configure \
+   --prefix=/usr || failconfig
+
+# Build:
+make $NUMJOBS || failmake
+
+# Install into the rest of the package:
+cd talk
+strip talk
+mkdir -p $PKG/usr/bin
+cat talk > $PKG/usr/bin/talk-0.11
+chmod 755 $PKG/usr/bin/talk-0.11
+( cd $PKG/usr/sbin ; rm -rf in.ntalkd )
+( cd $PKG/usr/sbin ; ln -sf in.talkd in.ntalkd )
+( cd $PKG/usr/bin ; rm -rf ntalk )
+( cd $PKG/usr/bin ; ln -sf talk ntalk )
+
+# If necessary, start the fakeroot server so we can set file/dir ownerships:
+start_fakeroot
+
+# Apply generic Slackware packaging policies:
+cd $PKG
+slackstripall   # strip all .a archives and all ELFs
+slackgzpages -i # compress man & info pages and delete usr/info/dir
+slackslack      # chown -R root:root, chmod -R og-w, slackchown, slack644docs
+slackdesc       # install slack-desc and doinst.sh
+slackmp         # run makepkg -l y -c n
+
+# Perform any final checks on the package:
+cd $PKG
+slackhlinks     # search for any hard links

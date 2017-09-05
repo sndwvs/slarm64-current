@@ -1,0 +1,95 @@
+#!/bin/bash
+
+# t1lib.SlackBuild
+# Heavily based on the original Slackware build scripts,
+# Modified by Stuart Winter <mozes@slackware.com>
+# 19-Nov-2004
+
+# Record toolchain & other info for the build log:
+slackbuildinfo
+
+# Paths to skeleton port's source & real Slackware source tree:
+export CWD=$SLACKSOURCE/$PKGSERIES/$PKGNAM
+export PORTCWD=$PWD
+
+# Temporary build locations:
+export TMPBUILD=$TMP/build-$PKGNAM
+export PKG=$TMP/package-$PKGNAM
+mkpkgdirs # Delete & re-create temporary directories then cd into $TMPBUILD
+
+# Extract source:
+tar xvvf $CWD/$PKGNAM-$VERSION.tar.?z*
+cd $PKGNAM-$VERSION || exit 1
+slackhousekeeping
+
+# Apply Debian's patch since upstream seems inactive:
+zcat $CWD/t1lib_5.1.2-3.5.diff.gz | patch -p1 --verbose || exit 1
+
+# I don't think anyone is applying this first one:
+#cat debian/patches/segfault.diff -b -z .segf | patch -p1 --verbose || exit 1
+# UUOCFTW:
+cat debian/patches/no-config.diff | patch -p1 --verbose || exit 1
+cat debian/patches/no-docs.diff | patch -p1 --verbose || exit 1
+cat debian/patches/lib-cleanup.diff | patch -p1 --verbose || exit 1
+cat debian/patches/format-security.diff | patch -p1 --verbose || exit 1
+cat debian/patches/CVE-2011-0764.diff | patch -p1 --verbose || exit 1
+cat debian/patches/CVE-2011-1552_1553_1554.patch | patch -p1 --verbose || exit 1
+cat debian/patches/CVE-2010-2642.patch | patch -p1 --verbose || exit 1
+
+# Configure:
+CFLAGS="$SLKCFLAGS" \
+./configure \
+   --prefix=/usr \
+   --enable-static=no \
+   --build=$ARCH-slackware-linux-gnueabi || failconfig
+
+# Build:
+make $NUMJOBS || make || failmake
+
+# Install:
+make install prefix=$PKG/usr libdir=$PKG/usr/lib${LIBDIRSUFFIX} || exit 1
+chmod 755 $PKG/usr/lib${LIBDIRSUFFIX}/*.so
+
+mkdir -p $PKG/usr/doc/t1lib-$VERSION
+cp -a \
+  Change* COPYING* *GPL* LICENSE* README* \
+  $PKG/usr/doc/t1lib-$VERSION
+
+mkdir -p $PKG/usr/share/t1lib
+cp -a Fonts $PKG/usr/share/t1lib
+/bin/ls $PKG/usr/share/t1lib/Fonts/afm/*.afm /usr/share/fonts/Type1/*.afm | sort | uniq | wc -l | sed -e 's/ //g' > $PKG/usr/share/t1lib/FontDataBase
+( cd $PKG/usr/share/t1lib/Fonts/afm ; /bin/ls *.afm ; cd /usr/share/fonts/Type1 ; /bin/ls *.afm ) | sort | uniq >> $PKG/usr/share/t1lib/FontDataBase
+cat << EOF > $PKG/usr/share/t1lib/t1lib.config
+This is a configuration file for t1lib
+
+FONTDATABASE=/usr/share/t1lib/FontDataBase
+ENCODING=/usr/share/t1lib/Fonts/enc
+AFM=/usr/share/t1lib/Fonts/afm:/usr/share/fonts/Type1
+TYPE1=/usr/share/t1lib/Fonts/type1:/usr/share/fonts/Type1
+EOF
+
+mkdir -p $PKG/etc/profile.d
+cat << EOF > $PKG/etc/profile.d/t1lib.sh
+T1LIB_CONFIG=/usr/share/t1lib/t1lib.config
+export T1LIB_CONFIG
+EOF
+cat << EOF > $PKG/etc/profile.d/t1lib.csh
+setenv T1LIB_CONFIG /usr/share/t1lib/t1lib.config
+EOF
+chmod 755 $PKG/etc/profile.d/*
+
+# If necessary, start the fakeroot server so we can set file/dir ownerships:
+start_fakeroot
+
+# Apply generic Slackware packaging policies:
+cd $PKG
+slackstripall   # strip all .a archives and all ELFs
+slackgzpages -i # compress man & info pages and delete usr/info/dir
+slackslack      # chown -R root:root, chmod -R og-w, slackchown, slack644docs
+slackdesc       # install slack-desc and doinst.sh
+slackmp         # run makepkg -l y -c n
+
+# Perform any final checks on the package:
+cd $PKG
+slackhlinks     # search for any hard links
+

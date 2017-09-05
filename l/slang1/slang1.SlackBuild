@@ -1,0 +1,64 @@
+#!/bin/bash
+
+# slang.SlackBuild
+# Heavily based on the original Slackware build scripts,
+# Modified by Stuart Winter <mozes@slackware.com>
+
+# Record toolchain & other info for the build log:
+slackbuildinfo
+
+# Paths to skeleton port's source & real Slackware source tree:
+export CWD=$SLACKSOURCE/$PKGSERIES/$PKGNAM
+export PORTCWD=$PWD
+
+# Temporary build locations:
+export TMPBUILD=$TMP/build-$PKGNAM
+export PKG=$TMP/package-$PKGNAM
+mkpkgdirs # Delete & re-create temporary directories then cd into $TMPBUILD
+
+# Extract source:
+tar xvvf $CWD/slang-$VERSION.tar.bz2
+cd slang-$VERSION || exit 1
+slackhousekeeping
+
+# Configure:
+CFLAGS="$SLKCFLAGS" \
+./configure \
+   --prefix=/usr \
+   --includedir=/usr/include/slang1 \
+   --disable-static \
+   --build=$ARCH-slackware-linux-gnueabi || failconfig
+
+# Build & install into package:
+make $NUMJOBS || make || failmake
+make install DESTDIR=$PKG || failinstall
+make $NUMJOBS elf || make elf || failmake
+make install-elf DESTDIR=$PKG || failinstall
+chmod 755 $PKG/usr/lib/libslang.so.$VERSION
+
+# We are letting S-Lang version 2 take over as the new default:
+mv $PKG/usr/lib/libslang.so $PKG/usr/lib/libslang1.so
+
+# --disable-static doesn't always work, but this is guaranteed:
+rm -f $PKG/usr/lib/*.a
+
+# Prepare the documentation:
+rm -r $PKG/usr/doc/slang
+mkdir -p $PKG/usr/doc/slang-$VERSION
+cp -a COPYING COPYING* COPYRIGHT INSTALL.* NEWS README UPGRADE.txt \
+      $PKG/usr/doc/slang-$VERSION
+
+# If necessary, start the fakeroot server so we can set file/dir ownerships:
+start_fakeroot
+
+# Apply generic Slackware packaging policies:
+cd $PKG
+slackstripall   # strip all .a archives and all ELFs
+slackgzpages -i # compress man & info pages and delete usr/info/dir
+slackslack      # chown -R root:root, chmod -R og-w, slackchown, slack644docs
+slackdesc       # install slack-desc and doinst.sh
+slackmp         # run makepkg
+
+# Perform any final checks on the package:
+cd $PKG
+slackhlinks     # search for any hard links

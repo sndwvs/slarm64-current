@@ -1,0 +1,6 @@
+cd /dev
+mknod sunmouse c 10 6
+ln -s sunmouse mouse
+
+gpm -m /dev/mouse -t busmouse
+

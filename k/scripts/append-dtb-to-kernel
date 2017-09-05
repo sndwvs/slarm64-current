@@ -1,0 +1,26 @@
+# Slackware ARM supplies the DTB separately, as I found that U-Boot on the trimslice
+# is capable of booting the DTB as it should.
+
+# This is a useful reference in case some U-Boots don't work:
+
+cd linux-x.x.x
+make zImage
+pushd arch/arm/boot
+dtc -I dts -O dtb -o tegra20-trimslice.dtb dts/tegra20-trimslice.dts
+cat zImage tegra20-trimslice.dtb > zImage-dts-appended
+
+# Create a U-Boot compatible zImage:
+
+mkimage \
+   -A arm \
+   -O linux \
+   -T kernel \
+   -C none \
+   -a 0x00008000 \
+   -e 0x00008000 \
+   -n "Slackware ARM: Linux 3.7.1" -d zImage-dts-appended /mnt/prisroot/tftpboot/slackwarearm-current/uImage-tegra
+popd
+
+
+#     -n "Slackware ARM: Linux 3.7.1" -d zImage-dts-appended /mnt/prisroot/tftpboot/tmp/uImage-tegra
+

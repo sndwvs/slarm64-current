@@ -1,0 +1,14 @@
+
+#tar jxvf u-boot-1.1.4.tar.bz2
+#2) mv u-boot-1.1.4 u-boot-3.4.16
+#3) unzip u-boot-3.4.16 (this will overwriting existing files)
+#4) cd u-boot-3.4.16
+#5) tar zxvf sd.tgz
+#6) Copy attatched mv_kw.h to include/configs/mv_hw.h
+#7) make rd88f6281Sheevaplug_config NBOOT=1
+#Cool make clean; make
+#And then you will get u-boot-rd88f6281Sheevaplug_400db_nand.bin
+#9) copy u-boot-rd88f6281Sheevaplug_400db_nand.bin to /tftpboot/u-boot.bin
+#(Assume that you setup tftp server)
+#
+#In the sheevaplug u-boot prompt, 'bubt' command will update u-boot.bin image on the nand flash.

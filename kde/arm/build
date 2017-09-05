@@ -1,0 +1,74 @@
+#!/bin/bash
+
+# arm/build
+# Check package dependencies, set metadata and launch
+# package build script.
+# by Stuart Winter <mozes@slackware.com>
+#
+source /usr/share/slackdev/buildkit.sh
+
+# Package metadata:
+export PKGNAM=KDE
+export VERSION=4.14.3 ## master version for KDE - also update KDE.options file
+                      ## since this will be sourced from the build scripts.
+export BUILD=${BUILD:-1} ## mostly overwritten by the file in the 'build-nums' directory.
+export PKGSERIES=${PKGSERIES:-kde}
+export SLACKPACKAGE=$PKGNAM-$VERSION-$PKGARCH-$BUILD.txz
+
+#####################################################################
+# Ensure that MySQL embedded package is installed.
+# Check the 'indibuild' script for information about this.
+#####################################################################
+#
+# Ensure that the MySQL embedded library is installed.
+# Not needed now that the embedded server is built in to the MariaDB package.
+#if [ -z "$NOCHECKMYSQLEMBEDDED" -a ! -f /var/log/packages/mysql*embedded* ]; then
+#   echo "MySQL embedded library must be installed in order to build amarok."
+#   echo "Run the script inside source/a/mysql to rectify this before building KDE."
+#   exit 1
+#fi
+
+## ******************************************************************* ##
+# For test packages - best to store in another location rather than
+# overwriting the working copy in the main tree:
+# export PKGSTORE=/tmp/
+# mkdir -vpm755 $PKGSTORE/$PKGSERIES
+## ******************************************************************* ##
+
+# Reset the ARM file system: restore it to the 'factory settings'
+# as it were (this has no effect when building natively):
+sboxsysrestore
+
+# Ensure base ARM packages are installed first:
+slackbasedeps
+
+# Remove the KDE packages first:
+# If this is commented, it's because during the initial KDE build,
+# at least one of the packages failed, so I restarted it again where it left off.
+#
+# It needs uncommenting for an upgrade/full rebuild!
+#
+#echo "Removing KDE & related packages - this may take a while if you have a full installation..."
+#
+# This needs updating to remove the modular packages - which is now easier as it's
+# just a text file.
+#
+#( # Remove Core apps:
+#  eval $( sed -n '/KDEMODS=/{:1;s/\\$//;T2;N;b1;:2;p;q}' KDE.SlackBuild )
+#  removepkg $KDEMODS
+#  # Remove extra apps:
+#  eval $( sed -n '/KDEMODS=/{:1;s/\\$//;T2;N;b1;:2;p;q}'  KDE_extra.SlackBuild )
+#  removepkg $KDEMODS ) > /dev/null 2>&1
+#
+# awk -F: '{print $1}' < ~/tgzstash/kde/tagfile | xargs removepkg
+
+
+# Ensure specific build dependencies (mainly libraries):
+# Build on a full system.
+
+# Launch the package build script:
+BUILDLOG=kde.build.log
+( ./$PKGNAM.SlackBuild $@ ) >& /dev/stdout | tee $BUILDLOG
+
+# Compress the build log:
+bzip2 -9fvz $BUILDLOG

@@ -1,0 +1,52 @@
+#!/bin/bash
+#
+# kernel-headers.SlackBuild
+# by Stuart Winter
+
+# Record toolchain & other info for the build log:
+slackbuildinfo
+
+# Paths to skeleton port's source & real Slackware source tree:
+export CWD=$SLACKSOURCE/$PKGSERIES/$PKGNAM
+export PORTCWD=$PWD
+
+# Temporary build locations:
+export TMPBUILD=$TMP/build-$PKGNAM
+export PKG=$TMP/package-$PKGNAM
+mkpkgdirs # Delete & re-create temporary directories then cd into $TMPBUILD
+
+# Create package framework:
+cd $PKG
+mkdir -vpm755 {install,usr}
+cd usr
+
+# Unpack archived headers into the package framework.
+# These headers were created by the source/k/kernel.SlackBuild
+# process and the headers archived and placed into d/kernel-headers automatically.
+# $SLKARCH is set from arm/build depending on the architecture the build is being
+# run on (arm/aarch64):
+tar xvvf $PORTCWD/sources/$SLKARCH-kernel-headers-$VERSION.tar.xz || exit 1
+
+# 04-Jan-2010
+# No longer shipped with Slackware's kernel-headers package because
+# it's included within l/glibc.
+# http://patchwork.kernel.org/patch/38102/
+rm -rfv include/scsi/scsi.h
+# and apparently include/drm Linux kernel headers rather than
+# libdrm headers causes problems building mesa/xorg.
+rm -rfv include/drm
+
+# If necessary, start the fakeroot server so we can set file/dir ownerships:
+start_fakeroot
+
+# Apply generic Slackware packaging policies:
+cd $PKG
+slackstripall   # strip all .a archives and all ELFs
+slackgzpages -i # compress man & info pages and delete usr/info/dir
+slackslack      # chown -R root:root, chmod -R og-w, slackchown, slack644docs
+slackdesc       # install slack-desc and doinst.sh
+slackmp         # run makepkg -l y -c n
+
+# Perform any final checks on the package:
+cd $PKG
+slackhlinks     # search for any hard links

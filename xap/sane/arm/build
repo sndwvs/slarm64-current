@@ -1,0 +1,54 @@
+#!/bin/bash
+
+# arm/build
+# Check package dependencies, set metadata and launch
+# package build script.
+# by Stuart Winter <mozes@slackware.com>
+#
+source /usr/share/slackdev/buildkit.sh
+
+# Package metadata:
+export PKGNAM=sane
+export VERSION=${VERSION:-1.0.27}
+export BUILD=${BUILD:-1}
+export PKGSERIES=${PKGSERIES:-xap}
+export SLACKPACKAGE=$PKGNAM-$VERSION-$PKGARCH-$BUILD.txz
+
+# Reset the ARM file system: restore it to the 'factory settings'
+# as it were (this has no effect when building natively):
+sboxsysrestore
+
+# Ensure base ARM packages are installed first:
+slackbasedeps
+
+# Ensure $PKGNAM isn't already installed:
+slackfailpkgdeps $PKGNAM || removepkg $PKGNAM
+
+# Ensure specific build dependencies (mainly libraries):
+{ slackcheckpkgdeps cups            || installpkg $PKGSTORE/a/cups-[0-9]*.t?z    || exit 99; }
+{ slackcheckpkgdeps libtool         || installpkg $PKGSTORE/d/libtool-[0-9]*.t?z || exit 99; }
+{ slackcheckpkgdeps atk             || installpkg $PKGSTORE/l/atk-[0-9]*.t?z     || exit 99; }
+{ slackcheckpkgdeps cairo           || installpkg $PKGSTORE/l/cairo-[0-9]*.t?z   || exit 99; }
+{ slackcheckpkgdeps freetype        || installpkg $PKGSTORE/l/freetype-[0-9]*.t?z || exit 99; }
+{ slackcheckpkgdeps gdk-pixbuf2     || installpkg $PKGSTORE/l/gdk-pixbuf2-[0-9]*.t?z || exit 99; }
+{ slackcheckpkgdeps glib2           || installpkg $PKGSTORE/l/glib2-[0-9]*.t?z   || exit 99; }
+{ slackcheckpkgdeps gtk+2           || installpkg $PKGSTORE/l/gtk+2-[0-9]*.t?z   || exit 99; }
+{ slackcheckpkgdeps libexif         || installpkg $PKGSTORE/l/libexif-[0-9]*.t?z || exit 99; }
+{ slackcheckpkgdeps libgphoto2      || installpkg $PKGSTORE/l/libgphoto2-[0-9]*.t?z || exit 99; }
+{ slackcheckpkgdeps libieee1284     || installpkg $PKGSTORE/l/libieee1284-[0-9]*.t?z || exit 99; }
+{ slackcheckpkgdeps libjpeg-turbo         || installpkg $PKGSTORE/l/libjpeg-turbo-[0-9]*.t?z || exit 99; }
+{ slackcheckpkgdeps libtiff         || installpkg $PKGSTORE/l/libtiff-[0-9]*.t?z || exit 99; }
+{ slackcheckpkgdeps libusb          || installpkg $PKGSTORE/l/libusb-[0-9]*.t?z  || exit 99; }
+{ slackcheckpkgdeps pango           || installpkg $PKGSTORE/l/pango-[0-9]*.t?z   || exit 99; }
+{ slackcheckpkgdeps v4l-utils       || installpkg $PKGSTORE/l/v4l-utils-[0-9]*.t?z || exit 99; }
+{ slackcheckpkgdeps net-snmp        || installpkg $PKGSTORE/n/net-snmp-[0-9]*.t?z || exit 99; }
+{ slackcheckpkgdeps openssl         || installpkg $PKGSTORE/n/openssl-[0-9]*.t?z || exit 99; }
+{ slackcheckpkgdeps fontconfig      || installpkg $PKGSTORE/x/fontconfig-[0-9]*.t?z || exit 99; }
+{ slackcheckpkgdeps gimp            || installpkg $PKGSTORE/xap/gimp-[0-9]*.t?z  || exit 99; }
+
+# Launch the package build script:
+BUILDLOG=$( basename $SLACKPACKAGE .t?z ).build.log
+( ./$PKGNAM.SlackBuild ) >& /dev/stdout | tee $BUILDLOG
+
+# Compress the build log:
+bzip2 -9fvz $BUILDLOG

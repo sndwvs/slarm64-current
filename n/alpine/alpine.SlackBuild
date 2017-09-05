@@ -1,0 +1,191 @@
+#!/bin/bash
+
+# alpine.SlackBuild
+# Heavily based on the original Slackware build scripts,
+# Modified by Stuart Winter for ARMedslack.
+#
+# Copyright 2006, 2007, 2008  Patrick J. Volkerding, Sebeka, MN, USA
+# All rights reserved.
+#
+# Redistribution and use of this script, with or without modification, is
+# permitted provided that the following conditions are met:
+#
+# 1. Redistributions of this script must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+#
+#  THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED
+#  WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+#  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO
+#  EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+#  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+#  PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+#  OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+#  WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+#  OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+#  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+
+# Record toolchain & other info for the build log:
+slackbuildinfo
+
+# Paths to skeleton port's source & real Slackware source tree:
+export CWD=$SLACKSOURCE/$PKGSERIES/$PKGNAM
+export PORTCWD=$PWD
+
+# Bundled apps, versions & build numbers:
+#IMAPDBUILD=${IMAPDBUILD:-2}
+IMAPDBUILD=$BUILD ## since these are related apps, if I rebuild one I'll always ship the rebuild of the other.
+PINEPGP=${PINEPGP:-0.18.0}
+
+# Temporary build locations:
+export TMPBUILD=$TMP/build-$PKGNAM
+export PKG=$TMP/package-$PKGNAM
+export PKG2=$TMP/package-imapd
+mkpkgdirs # Delete & re-create temporary directories then cd into $TMPBUILD
+rm -rf $PKG2 ; mkdir -p $PKG2
+
+# Determine the CFLAGS for the known architectures:
+# -fPIC is required in order to build php with alpine's c-client:
+case $ARCH in
+   arm)     export SLKCFLAGS="$SLKCFLAGS -fPIC"
+            export LIBDIRSUFFIX="" ;;
+   *)       export SLKCFLAGS="-O2" ;;
+esac
+
+################ Build ALPINE ################################################
+
+# Extract source:
+tar xvvf $CWD/$PKGNAM-$VERSION.tar.xz
+cd $PKGNAM-$VERSION || exit 1
+slackhousekeeping
+
+# Apply patches:
+zcat $CWD/alpine.manpage.diff.gz | patch -p1 --verbose || exit 1
+
+# Configure:
+CFLAGS="$SLKCFLAGS" \
+./configure \
+   --prefix=/usr \
+   --mandir=/usr/man \
+   --with-ssl-dir=/usr \
+   --with-ssl-certs-dir=/etc/ssl/certs \
+   --with-c-client-target=slx \
+   --with-system-pinerc=/etc/pine.conf \
+   --with-system-fixed-pinerc=/etc/pine.conf.fixed \
+   --with-passfile=.alpine.passfile \
+   --disable-debug \
+   --with-debug-level=0 \
+   --without-tcl \
+   --program-prefix= \
+   --program-suffix= \
+   --build=${SLK_ARCH_BUILDTARGET} || failconfig
+
+# Correct paths and programs in tech-notes.txt:
+( cd doc/tech-notes
+  sed -i "s,/usr/local/lib/pine.info,/usr/lib/pine.info,g" tech-notes.txt
+  sed -i "s,/usr/local/lib,/etc,g" tech-notes.txt
+  sed -i "s,/usr/local,/etc,g" tech-notes.txt
+)
+
+# Build:
+# Since we build non-compliant to RFC3501 we have to answer 'y' half-way:
+#echo y | make $NUMJOBS EXTRACFLAGS="-fPIC" SSLTYPE=unix.nopwd
+#echo y | make $NUMJOBS EXTRACFLAGS="-fPIC" SSLTYPE=unix.nopwd || exit 1
+#make -j1 SSLTYPE=unix.nopwd || failmake
+echo "y" | make $NUMJOBS EXTRACFLAGS="" SSLTYPE=unix || \
+echo "y" | make $NUMJOBS EXTRACFLAGS="" SSLTYPE=unix || \
+echo "y" | make EXTRACFLAGS="" SSLTYPE=unix || exit 1
+
+# Install into package:
+mkdir -vpm755 $PKG/etc
+make install SSLTYPE=unix.nopwd DESTDIR=$PKG || failinstall
+#make install SSLTYPE=unix DESTDIR=$PKG || exit 1
+
+# Add default config file:
+./alpine/alpine -conf > $PKG/etc/pine.conf.new
+
+# Add a documentation directory:
+mkdir -p $PKG/usr/doc/${PKGNAM}-$VERSION
+cp -a \
+  LICENSE NOTICE README* VERSION \
+  doc/tech-notes* doc/brochure.txt doc/mailcap.unx doc/mime.types \
+  $PKG/usr/doc/${PKGNAM}-$VERSION
+
+# Archive the alpine source so that we don't need to rebuild ALPINE
+# when building n/php -- we need the c-client library for the php
+# IMAP functions:
+( mkdir -p $TMPBUILD/alpine-headers
+  cd imap/c-client
+  cp -Lfv c-client.a $TMPBUILD/alpine-headers
+  cp -Lfv *.h $TMPBUILD/alpine-headers
+  cd $TMPBUILD
+  echo "Archiving ALPINE c-client headers for use with n/php build"
+  mkdir -vpm755  $PORTCWD/sources
+  tar -Ixz -cf $PORTCWD/sources/${ARCH}_alpine-headers.tar.xz alpine-headers )
+
+################ Build PINEGPG ################################################
+
+# Extract source:
+cd $TMPBUILD
+tar xvvf $CWD/pinepgp-$PINEPGP.tar.gz
+cd pinepgp-$PINEPGP || exit 1
+
+# Apply patches:
+zcat $CWD/pinepgp-${PINEPGP}-makefile-sed-fix.diff.gz | patch -p1 --verbose || exit 1
+zcat $CWD/pinepgp.pinegpgp.in.diff.gz | patch -p1 --verbose || exit 1
+slackhousekeeping
+
+# Configure:
+./configure \
+   --prefix=/usr || failconfig
+
+# The Makefile has some old stuff that make-3.81 isn't compatible with:
+make || failmake
+make install DESTDIR=$PKG
+
+# Copy docs:
+mkdir -p $PKG/usr/doc/pinepgp-$PINEPGP
+cp -a COPYING* README $PKG/usr/doc/pinepgp-$PINEPGP
+
+# Package descriptions:
+mkdir -vpm755 $PKG/install
+install -vpm644 $CWD/doinst.sh.alpine  $PKG/install/doinst.sh
+install -vpm644 $CWD/slack-desc.alpine $PKG/install/slack-desc
+
+################ Package IMAPD & POP3d ################################################
+
+cd $TMPBUILD/$PKGNAM-$VERSION/imap
+mkdir -vpm755 $PKG2/usr/{sbin,man/man8,doc/imapd-$VERSION}
+
+cp -fav \
+  CONTENTS LICENSE.txt NOTICE SUPPORT \
+  $PKG2/usr/doc/imapd-$VERSION
+cat << EOF > $PKG2/usr/doc/imapd-$VERSION/additional-imap-documentation
+Additional documentation for imapd may be found in the alpine
+sources in the /imap/docs directory.
+EOF
+install -vpm644 src/imapd/imapd.8 src/ipopd/ipopd.8 $PKG2/usr/man/man8/
+install -vpm755 imapd/imapd $PKG2/usr/sbin/
+install -vpm755 ipopd/ipop3d $PKG2/usr/sbin/
+
+# Add slack-desc file:
+mkdir -vpm755 $PKG2/install
+install -vpm644 $CWD/slack-desc.imapd $PKG2/install/slack-desc
+
+############## Begin packaging #######################################################
+
+# Set policies for both packages:
+for i in $PKG $PKG2 ; do
+  cd $i
+  # Slackware policies:
+  slackgzpages -i # compress man & info pages and delete usr/info/dir
+  slackslack      # set all files to root.root, chmod -R og-w, slackchown, slack644docs
+done
+
+# Build ALPINE package:
+( cd $PKG  && slackmp )
+# Build IMAP package:
+( cd $PKG2
+  PKGNAM=imapd # so that slackmp wipes the old imapd package, not the alpine one we just built!
+  # and now override the package name to be imapd:
+  SLACKPACKAGE=imapd-$VERSION-$PKGARCH-$IMAPDBUILD.txz slackmp )

@@ -1,0 +1,31 @@
+#!/bin/bash
+
+source /usr/share/slackdev/buildkit.sh
+
+OOCWD=$PWD
+
+export PKGNAM=slacktrack
+export BUILD=1
+export PKGEXT=txz
+
+# Temporary build locations:
+export TMPBUILD=$TMP/build-$PKGNAM
+export PKG=$TMP/package-$PKGNAM
+mkpkgdirs # Delete & re-create temporary directories then cd into $TMPBUILD
+
+# This package lives in the 'd' series:
+PKGSTORE=$PKGSTORE/d/
+
+# Delete old package versions?
+if [ "${DELETEOLDPKGS}" = "Yes" ]; then
+   rm -fv $PKGSTORE/slacktrack*
+fi
+
+# Copy the slacktrack stuff from the Slackware x86 dir to a local dir
+# and start the build:
+rm -rf /tmp/slacktrack*
+cp -fav $SLACKSOURCE/d/slacktrack $TMPBUILD/
+cd $TMPBUILD/slacktrack
+pwd
+ls
+./slacktrack.SlackBuild

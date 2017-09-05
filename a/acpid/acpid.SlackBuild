@@ -1,0 +1,63 @@
+#!/bin/sh
+
+# acpid.SlackBuild
+#
+# Based on the original Slackware build script.
+# Modified by Stuart Winter <mozes@slackware.com> for Slackware ARM.
+#
+# 1-May-2004
+
+# Record toolchain & other info for the build log:
+slackbuildinfo
+
+# Paths to skeleton port's source & real Slackware source tree:
+export CWD=$SLACKSOURCE/$PKGSERIES/$PKGNAM
+export PORTCWD=$PWD
+
+# Temporary build locations:
+export TMPBUILD=$TMP/build-$PKGNAM
+export PKG=$TMP/package-$PKGNAM
+mkpkgdirs # Delete and re-create temporary directories
+
+# Extract source:
+tar xvvf $CWD/acpid-$VERSION.tar.?z*
+cd $PKGNAM-$VERSION || exit 1
+slackhousekeeping
+
+# Configure:
+CFLAGS="$SLKCFLAGS" \
+CXXFLAGS="$SLKCFLAGS" \
+./configure \
+   --prefix=/usr \
+   --libdir=/usr/lib${LIBDIRSUFFIX} \
+   --sysconfdir=/etc \
+   --localstatedir=/var \
+   --mandir=/usr/man \
+   --docdir=/usr/doc/acpid-$VERSION \
+   --build=$ARCH-slackware-linux-gnueabi || exit 1
+
+# Build:
+make $NUMJOBS || make || exit 1
+
+# Install into package:
+make install DESTDIR=$PKG || exit 1
+mkdir -p $PKG/etc/acpi/events
+zcat $CWD/acpi_handler.sh.gz > $PKG/etc/acpi/acpi_handler.sh.new
+chmod 0755 $PKG/etc/acpi/acpi_handler.sh.new
+zcat $CWD/default.gz > $PKG/etc/acpi/events/default
+mkdir -p $PKG/etc/rc.d
+zcat $CWD/rc.acpid.gz > $PKG/etc/rc.d/rc.acpid
+chmod 0755 $PKG/etc/rc.d/rc.acpid
+changelogliposuction ChangeLog $PKGNAM $VERSION
+
+# Slackware policies:
+cd $PKG
+slackstripall   # strip all .a archives and all ELFs
+slackgzpages -i # compress man & info pages and delete usr/info/dir
+slackslack      # set all files to root.root, chmod -R og-w, slackchown, slack644docs
+slackdesc       # install slack-desc and doinst.sh
+slackmp         # run makepkg -l y -c n
+
+# Perform any final checks on the package:
+cd $PKG
+slackhlinks     # search for any hard links

@@ -1,0 +1,3 @@
+# pixman 0.20 doesn't need ARM patches.
+#zcat $PORTCWD/patch/lib/pixman*diff* | patch -p1 || exit 1
+#patch -p1 --verbose < debian/patches/pixman-arm-don-t-use-env-vars-to-get-hwcap-platform.patch || exit 1

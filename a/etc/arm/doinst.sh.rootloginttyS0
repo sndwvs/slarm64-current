@@ -1,0 +1,33 @@
+#!/bin/sh
+
+# For the Marvell units (and probably many other
+# embedded headless ARM devices) we want to open a serial login 
+# on ttyS0, which is done in /etc/inittab.
+# We also need to be able to login as root ;-)
+#
+# I'm aware of the possibility that not all "Marvell" units will
+# have a serial port that will appear as /dev/ttyS0 in the Linux OS
+# but I'll have to deal with those on a case by case basis.
+# For the time being let's assume that they all have serial ports.
+#
+# 14 Dec 2011:
+#
+# Let's just do this anyway - all of the ARM devices tend to be configureable
+# from u-boot and have no graphics support until the Kernel boots.
+# If anybody thinks this is a security issue, don't plug your machine into 
+# a serial cable :-)
+# egrep -q "Marvell" /proc/cpuinfo > /dev/null 2>&1 && \
+sed -i 's?^#ttyS0?ttyS0?' etc/securetty.new
+
+# Add the serial console for the ARM Versatile, Raspberry Pi, ODROID XU4
+cat << EOF >> etc/securetty.new
+ttyAMA0
+ttyAMA1
+ttyAMA2
+ttyAMA3
+ttySAC0
+ttySAC1
+ttySAC2
+ttySAC3
+EOF
+

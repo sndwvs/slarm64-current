@@ -1,0 +1,55 @@
+#!/bin/bash
+
+# sc.SlackBuild
+# Heavily based on the original Slackware build scripts,
+# Modified by Stuart Winter <mozes@slackware.com>
+# 24-Jul-2004
+
+# Paths to skeleton port's source & real Slackware source tree:
+export CWD=$SLACKSOURCE/ap/sc
+export PORTCWD=$PWD
+
+# Temporary build locations:
+export TMPBUILD=$TMP/build-$PKGNAM
+export PKG=$TMP/package-$PKGNAM
+mkpkgdirs # Delete & re-create temporary directories then cd into $TMPBUILD
+
+# Extract source:
+tar xvvf $CWD/$PKGNAM-$VERSION.tar.gz
+cd $PKGNAM-$VERSION || exit 1
+slackhousekeeping
+
+# Needed for newer compilers:
+zcat $CWD/sc-7.16-3.diff.gz | patch -p1 --verbose || exit 1
+
+# Create package framework:
+mkdir -vpm755 $PKG/usr/{lib${LIBDIRSUFFIX}/sc,doc/$PKGNAM-$VERSION,bin,man/man1}
+
+# Install docs:
+cp -a CHANGES README TODO SC.MACROS \
+      $PKG/usr/doc/$PKGNAM-$VERSION
+install -m644 tutorial.sc $PKG/usr/lib${LIBDIRSUFFIX}/sc
+
+# Build:
+make $NUMJOBS || make || failmake
+
+# Install:
+install -m755 scqref psc sc $PKG/usr/bin
+name=sc NAME=SC LIBDIR=/usr/lib${LIBDIRSUFFIX}/sc sh torev sc.doc >  sc.1
+name=sc NAME=SC LIBDIR=/usr/lib${LIBDIRSUFFIX}/sc sh torev psc.doc > psc.1
+install -m644 psc.1 sc.1 $PKG/usr/man/man1
+
+# If necessary, start the fakeroot server so we can set file/dir ownerships:
+start_fakeroot
+
+# Apply generic Slackware packaging policies:
+cd $PKG
+slackstripall   # strip all .a archives and all ELFs
+slackgzpages -i # compress man & info pages and delete usr/info/dir
+slackslack      # chown -R root:root, chmod -R og-w, slackchown, slack644docs
+slackdesc       # install slack-desc and doinst.sh
+slackmp         # run makepkg -l y -c n
+
+# Perform any final checks on the package:
+cd $PKG
+slackhlinks     # search for any hard links

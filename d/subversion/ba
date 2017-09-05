@@ -1,0 +1,6 @@
+~/armedslack/dbuild
+( cd ../../l/neon
+  ~/armedslack/dbuild )
+~/armedslack/dbuild
+( cd ../../l/neon
+  ~/armedslack/dbuild )

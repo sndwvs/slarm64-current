@@ -1,0 +1,22 @@
+--- netkit-rwho-0.17/include/protocols/rwhod.h.wd_we	2004-10-21 14:15:05.000000000 -0400
++++ netkit-rwho-0.17/include/protocols/rwhod.h	2004-10-21 14:15:14.000000000 -0400
+@@ -55,7 +55,7 @@
+ 	struct	whoent {
+ 		struct	outmp we_utmp;	/* active tty info */
+ 		int	we_idle;	/* tty idle time */
+-	} wd_we[1024 / sizeof (struct whoent)];
++	} wd_we[1024];
+ };
+ 
+ #define	WHODVERSION	1
+--- netkit-rwho-0.17/rwhod/rwhod.c.wd_we	2004-10-21 14:14:22.000000000 -0400
++++ netkit-rwho-0.17/rwhod/rwhod.c	2004-10-21 14:14:45.000000000 -0400
+@@ -420,7 +420,7 @@
+ 		}
+ 		wlast = (struct whoent *) ((caddr_t) wd->wd_we)
+ 						+ sizeof(wd->wd_we);
+-		wlast = &wd->wd_we[1024 / sizeof (struct whoent) - 1];
++		wlast = &wd->wd_we[1024-1];
+ 		setutent();
+ 		while ((uptr = getutent()) && we < wlast) {
+ 			if (uptr->ut_name[0]

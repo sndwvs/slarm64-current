@@ -1,0 +1,8 @@
+sh autogen.sh
+
+# Only try and apply patches if we find out first patch file - otherwise this
+# can cause a bailout of building all X packages (I think!)
+if [ -f $PORTCWD/patch/driver/xf86-video-omapfb-0.1.1-closescreen.patch.gz ]; then
+   auto_apply_patch $PORTCWD/patch/driver/xf86-video-omapfb-0.1.1-closescreen.patch.gz || exit 1
+fi
+

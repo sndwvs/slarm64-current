@@ -1,0 +1,61 @@
+#!/bin/bash
+
+# arm/build
+# Check package dependencies, set metadata and launch
+# package build script.
+# by Stuart Winter <mozes@slackware.com>
+#
+source /usr/share/slackdev/buildkit.sh
+
+# Package metadata:
+export PKGNAM=js185
+export VERSION=${VERSION:-1.0.0}
+export BUILD=${BUILD:-1}
+export PKGSERIES=${PKGSERIES:-l}
+export SLACKPACKAGE=$PKGNAM-$VERSION-$PKGARCH-$BUILD.txz
+
+## ******************************************************************* ##
+# For test packages - best to store in another location rather than
+# overwriting the working copy in the main tree:
+# export PKGSTORE=/tmp/
+# mkdir -vpm755 $PKGSTORE/$PKGSERIES
+## ******************************************************************* ##
+
+# Reset the ARM file system: restore it to the 'factory settings'
+# as it were (this has no effect when building natively):
+sboxsysrestore
+
+# Ensure base ARM packages are installed first:
+slackbasedeps
+
+# Ensure $PKGNAM isn't already installed:
+slackfailpkgdeps $PKGNAM || removepkg $PKGNAM
+
+# Ensure specific build dependencies (mainly libraries):
+{ slackcheckpkgdeps mozilla-nss || installpkg $PKGSTORE/l/mozilla-nss-[0-9]*.t?z || exit 99; }
+
+# We also need autoconf-2.13 from the extra series.
+# directory.  This is because the newer version of gtk+2-2.12.7
+# causes the build to explode.  So we need to regenerate the autoconf
+# stuff - which needs an older autoconf.
+removepkg autoconf
+# This isn't exactly portable outside of my own build environment
+# but honestly, is anybody else actually using ARMedslack's build system?
+# If so, send me a post card! (or plane tickets to an exotic
+# island with dancing girls and fine wines!  :-)
+# You must install the packages in this order:
+upgradepkg --install-new $PKGSTORE/../extra/autoconf213/autoconf*t?z
+
+# Launch the package build script:
+BUILDLOG=$( basename $SLACKPACKAGE .t?z ).build.log
+( ./$PKGNAM.SlackBuild ) >& /dev/stdout | tee $BUILDLOG
+
+# Compress the build log:
+bzip2 -9fvz $BUILDLOG
+
+# Switch back to the normal autoconf:
+removepkg autoconf
+#{ slackcheckpkgdeps autoconf || installpkg $PKGSTORE/d/autoconf-[0-9]*.t?z || exit 99; }
+# During bootstrap the helper functions are disabled whilst everything is built against each other
+# so we'll call installpkg directly.
+installpkg $PKGSTORE/d/autoconf-[0-9]*.t?z

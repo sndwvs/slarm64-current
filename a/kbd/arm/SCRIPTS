@@ -1,0 +1,8 @@
+I use 'ps2-to-riscpc' to convert the i386 keymaps
+to acorn format.
+This script was taken from the Debian package 'console-common-0.7.36'
+http://ftp.debian.org/debian/pool/main/c/console-common/console-common_0.7.36.tar.gz
+
+I modified the 'gen-acorn-keymaps' script from
+Debian's 'console-data' package:
+http://ftp.debian.org/debian/pool/main/c/console-data/console-data_2002.12.04dbs-31.tar.gz

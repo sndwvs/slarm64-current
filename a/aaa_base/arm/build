@@ -1,0 +1,34 @@
+#!/bin/bash
+
+# arm/build
+# Check package dependencies, set metadata and launch
+# package build script.
+# by Stuart Winter <mozes@slackware.com>
+#
+source /usr/share/slackdev/buildkit.sh
+
+# Package metadata:
+export PKGNAM=aaa_base
+export PKGSERIES=a
+export VERSION=14.2
+export BUILD=2
+# This is really "noarch", but Slackware32 & 64 now have this package
+# as i486,x86_64 - because the 64 bit package has /lib64 dirs.
+#export PKGARCH=${PKGARCH:-noarch}
+#export PKGARCH=${PKGARCH:-arm}
+export SLACKPACKAGE=$PKGNAM-$VERSION-$PKGARCH-$BUILD.txz
+
+## ******************************************************************* ##
+# For test packages - best to store in another location rather than
+# overwriting the working copy in the main tree:
+# export PKGSTORE=/tmp/
+# mkdir -vpm755 $PKGSTORE/$PKGSERIES
+## ******************************************************************* ##
+
+# Launch the package build script:
+BUILDLOG=$( basename $SLACKPACKAGE .t?z ).build.log
+( ./$PKGNAM.SlackBuild ) >& /dev/stdout | tee $BUILDLOG
+
+# Compress the build log:
+bzip2 -9fvz $BUILDLOG
+

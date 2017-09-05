@@ -1,0 +1,8 @@
+# These are old libraries that link against libraries that are no longer
+# available, or that are not included in aaa_elflibs.
+# e.g.
+# aaa_elflibs-14.2-arm-3
+#        /usr/lib/libtiff.so.3.9.7
+#                libjpeg.so.8 (not found)
+
+usr/lib/libtiff.so.3.9.7

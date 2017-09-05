@@ -1,0 +1,2 @@
+debian/tmp/usr/bin/gst-visualise-@GST_ABI@
+debian/tmp/usr/bin/gst-discoverer-@GST_ABI@

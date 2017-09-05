@@ -1,0 +1,71 @@
+#!/bin/bash
+
+# getty-ps.SlackBuild
+# by Stuart Winter <mozes@slackware.com> for the Slackware porting Project.
+# Heavily based on the original Slackware build script.
+# 01-Jun-2004
+
+# Record toolchain & other info for the build log:
+slackbuildinfo
+
+# Paths to skeleton port's source & real Slackware source tree:
+export CWD=$SLACKSOURCE/$PKGSERIES/$PKGNAM
+export PORTCWD=$PWD
+
+# Temporary build locations:
+export TMPBUILD=$TMP/build-$PKGNAM
+export PKG=$TMP/package-$PKGNAM
+mkpkgdirs # Delete & re-create temporary directories then cd into $TMPBUILD
+
+# Extract source:
+tar xvvf $CWD/getty_ps*.gz
+cd getty_ps* || exit 1
+slackhousekeeping
+
+# Apply patches:
+zcat $CWD/getty.bugfixes.diff.gz | patch -p1 --verbose || exit 1
+
+# Prevent "error: conflicting types for 'send'"
+# because send is already defined in <sys/net.h>
+sed -i -e "s/send/gettysend/g" funcs.c
+
+# Create package framework:
+mkdir -p $PKG/usr/{doc/$PKGNAM-$VERSION,man/man{5,1}} \
+         $PKG/etc/default \
+         $PKG/sbin
+
+# Build:
+make clean
+rm -f getty uugetty
+make $NUMJOBS || make || failmake
+
+# Install binaries:
+install -m755 getty uugetty $PKG/sbin
+
+# Install data files:
+install -m644 Examples/gettydefs $PKG/etc
+cp -a Examples/default/* $PKG/etc/default
+
+# Install man pages:
+install -m644 man/getty.1 $PKG/usr/man/man1
+( cd $PKG/usr/man/man1 ; ln -sf getty.1 uugetty.1 )
+install -m644 man/gettydefs.5 $PKG/usr/man/man5
+
+# Install docs:
+cp -a ANNOUNCE ChangeLog README.* Examples *.lsm  \
+      $PKG/usr/doc/$PKGNAM-$VERSION
+
+# If necessary, start the fakeroot server so we can set file/dir ownerships:
+start_fakeroot
+
+# Apply generic Slackware packaging policies:
+cd $PKG
+slackstripall   # strip all .a archives and all ELFs
+slackgzpages -i # compress man & info pages and delete usr/info/dir
+slackslack      # chown -R root:root, chmod -R og-w, slackchown, slack644docs
+slackdesc       # install slack-desc and doinst.sh
+slackmp         # run makepkg -l y -c n
+
+# Perform any final checks on the package:
+cd $PKG
+slackhlinks     # search for any hard links

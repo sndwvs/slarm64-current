@@ -1,0 +1,54 @@
+#!/bin/bash
+
+# arm/build
+# Check package dependencies, set metadata and launch
+# package build script.
+# by Stuart Winter <mozes@slackware.com>
+#
+source /usr/share/slackdev/buildkit.sh
+
+# Package metadata:
+export PKGNAM=kernel-headers
+
+# Release candidate:
+#export VERSION=${VERSION:-2.6.36rc7}
+
+# Stable kernel version:
+#export VERSION=${VERSION:-2.6.39.1}
+# With Linux 3.x, it always has a 3 digit number - e.g. 3.2.0 rather than just 3.2:
+#export VERSION=${VERSION:-4.3.5}
+export VERSION=${VERSION:-4.13.0rc3}
+export BUILD=${BUILD:-1}
+#export BUILD=${BUILD:-1_slack14.2}
+export PKGSERIES=${PKGSERIES:-d}
+export SLACKPACKAGE=$PKGNAM-$VERSION-$PKGARCH-$BUILD.txz
+
+## ******************************************************************* ##
+# For test packages - best to store in another location rather than
+# overwriting the working copy in the main tree:
+# export PKGSTORE=/tmp/
+# mkdir -vpm755 $PKGSTORE/$PKGSERIES
+## ******************************************************************* ##
+
+# Ensure base ARM packages are installed first:
+slackbasedeps
+
+# Ensure $PKGNAM isn't already installed:
+# You'll need to reinstall this immediately afterwards to compile more packages:
+slackfailpkgdeps $PKGNAM || removepkg $PKGNAM
+
+# Check the architecture we're running on - arm or aarch64.
+# This is incompatible with the old soft float port way of doing things and does not
+# cater for >1 kernel per tree; but I don't think this is an issue.
+# It could easily be updated to look for multiple kernels.
+case $ARCH in
+   arm)     export SLKARCH=armv7   ;;
+   aarch64) export SLKARCH=aarch64 ;;
+esac
+
+# Launch the package build script:
+BUILDLOG=$( basename $SLACKPACKAGE .t?z ).build.log
+( ./$PKGNAM.SlackBuild ) >& /dev/stdout | tee $BUILDLOG
+
+# Compress the build log:
+bzip2 -9fvz $BUILDLOG

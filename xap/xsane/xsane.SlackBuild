@@ -1,0 +1,98 @@
+#!/bin/bash
+
+# xsane.SlackBuild
+# Heavily based on the original Slackware build scripts,
+# Modified by Stuart Winter <mozes@slackware.com>
+# 13-March-2005
+#
+# Copyright 2008, 2009, 2011, 2015  Patrick J. Volkerding, Sebeka, MN, USA
+# All rights reserved.
+#
+# Redistribution and use of this script, with or without modification, is
+# permitted provided that the following conditions are met:
+#
+# 1. Redistributions of this script must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+#
+#  THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED
+#  WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+#  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO
+#  EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+#  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+#  PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+#  OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+#  WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+#  OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+#  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+# Record toolchain & other info for the build log:
+slackbuildinfo
+
+# Paths to skeleton port's source & real Slackware source tree:
+export CWD=$SLACKSOURCE/$PKGSERIES/$PKGNAM
+export PORTCWD=$PWD
+
+# Temporary build locations:
+export TMPBUILD=$TMP/build-$PKGNAM
+export PKG=$TMP/package-$PKGNAM
+mkpkgdirs # Delete & re-create temporary directories then cd into $TMPBUILD
+
+# Extract source:
+tar xvvf $CWD/$PKGNAM-$VERSION.tar.?z*
+cd $PKGNAM-$VERSION || exit 1
+slackhousekeeping
+
+# Apply patches:
+zcat $CWD/xsane-0.995-xdg-open.patch.gz | patch -p1 --verbose || exit 1
+zcat $CWD/xsane-0.995-close-fds.patch.gz | patch -p1 --verbose || exit 1
+zcat $CWD/xsane-0.996-no-eula.patch.gz | patch -p1 --verbose || exit 1
+zcat $CWD/xsane-0.997-off-root-build.patch.gz | patch -p1 --verbose || exit 1
+zcat $CWD/xsane-0.999-no-file-selected.patch.gz | patch -p1 --verbose || exit 1
+zcat $CWD/xsane-0.997-ipv6.patch.gz | patch -p1 --verbose || exit 1
+zcat $CWD/xsane-0.998-preview-selection.patch.gz | patch -p1 --verbose || exit 1
+zcat $CWD/xsane-0.998-libpng.patch.gz | patch -p1 --verbose || exit 1
+zcat $CWD/xsane-0.998-wmclass.patch.gz | patch -p1 --verbose || exit 1
+zcat $CWD/xsane-0.998-desktop-file.patch.gz | patch -p1 --verbose || exit 1
+zcat $CWD/xsane-0.999-man-page.patch.gz | patch -p1 --verbose || exit 1
+zcat $CWD/xsane-0.999-pdf-no-high-bpp.patch.gz | patch -p1 --verbose || exit 1
+zcat $CWD/xsane-0.999-lcms2.patch.gz | patch -p1 --verbose || exit 1
+zcat $CWD/xsane-0.999-coverity.patch.gz | patch -p1 --verbose || exit 1
+zcat $CWD/xsane-0.999-snprintf-update.patch.gz | patch -p1 --verbose || exit 1
+zcat $CWD/xsane-0.999-signal-handling.patch.gz | patch -p1 --verbose || exit 1
+zcat $CWD/xsane-0.999-7-autoconf.patch.gz | patch -p1 --verbose || exit 1
+
+# Configure:
+CFLAGS="$SLKCFLAGS" \
+./configure \
+  --mandir=/usr/man \
+  --prefix=/usr \
+  --build=$ARCH-slackware-linux-gnueabi || failconfig
+
+# Build:
+make $NUMJOBS || make || failmake
+
+# Install into package framework:
+make install DESTDIR=$PKG || failinstall
+rmdir $PKG/usr/sbin
+
+# Copy docs:
+mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
+cp -a xsane.* \
+      $PKG/usr/doc/$PKGNAM-$VERSION 
+rm -f $PKG/usr/doc/xsane-$VERSION/xsane.spec*
+( cd $PKG/usr/doc/xsane-$VERSION ; ln -s /usr/share/sane/xsane/doc html )
+
+# If necessary, start the fakeroot server so we can set file/dir ownerships:
+start_fakeroot
+
+# Apply generic Slackware packaging policies:
+cd $PKG
+slackstripall   # strip all .a archives and all ELFs
+slackgzpages -i # compress man & info pages and delete usr/info/dir
+slackslack      # chown -R root:root, chmod -R og-w, slackchown, slack644docs
+slackdesc       # install slack-desc and doinst.sh
+slackmp         # run makepkg -l y -c n
+
+# Perform any final checks on the package:
+cd $PKG
+slackhlinks     # search for any hard links

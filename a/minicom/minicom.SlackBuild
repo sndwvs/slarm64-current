@@ -1,0 +1,162 @@
+#!/bin/bash
+
+# minicom.SlackBuild
+# by Stuart Winter <mozes@slackware.com> for Slackware ARM
+# Heavily based on the original Slackware build script.
+# 03-Jun-2004
+#
+# Copyright 2008, 2009, 2010, 2011, 2012, 2013  Patrick J. Volkerding, Sebeka, Minnesota, USA
+# All rights reserved.
+#
+# Redistribution and use of this script, with or without modification, is
+# permitted provided that the following conditions are met:
+#
+# 1. Redistributions of this script must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+#
+#  THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED
+#  WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+#  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO
+#  EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+#  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+#  PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+#  OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+#  WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+#  OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+#  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+# Paths to skeleton port's source & real Slackware source tree:
+export CWD=$SLACKSOURCE/a/minicom
+export PORTCWD=$PWD
+
+# Temporary build locations:
+export TMPBUILD=$TMP/build-$PKGNAM
+export PKG=$TMP/package-$PKGNAM
+mkpkgdirs # Delete & re-create temporary directories then cd into $TMPBUILD
+
+########## minicom #############################################
+
+# Extract source:
+tar xvvf $CWD/$PKGNAM-$VERSION.tar.xz
+cd minicom-* || exit 1
+slackhousekeeping
+
+# The following command renames the internal implementation of getline
+# to g_getline as newer versions of Glibc provide an incompatible version:
+#sed -i -e "s/getline/g_&/" $(grep -lr getline *)
+
+# Configure:
+CFLAGS="$SLKCFLAGS" \
+./configure \
+  --prefix=/usr \
+  --mandir=/usr/man \
+  --sysconfdir=/etc \
+  --build=${SLK_ARCH_BUILDTARGET} || failconfig
+
+# Build:
+make $NUMJOBS || make || failmake
+make install DESTDIR=$PKG || failinstall
+
+# Install config stuff:
+mkdir -p $PKG/etc
+zcat $CWD/minicom.users.gz > $PKG/etc/minicom.users.new
+printf "# Machine-generated file - use \"minicom -s\" to change parameters.\n" \
+        > $PKG/etc/minirc.dfl.new
+
+# Docs:
+mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
+cp -a \
+  AUTHORS COPYING* ChangeLog FILE_ID.DIZ INSTALL NEWS README* TODO doc \
+  $PKG/usr/doc/$PKGNAM-$VERSION
+rm -f $PKG/usr/doc/minicom-$VERSION/doc/{ChangeLog.old,Makefile*}
+changelogliposuction ChangeLog $PKGNAM $VERSION # Trim down a "ChangeLog" file
+
+########## lrzsz #############################################
+#
+# If autotools causes failure here (which it probably will), temporarily
+# move /usr/bin/auto{conf,header,make} out of the way and it should work...
+#removepkg autoconf automake
+
+# Extract & patch source:
+cd $TMPBUILD
+tar xvvf $CWD/lrzsz_0.12.21.orig.tar.gz
+cd lrzsz-* || exit 1
+slackhousekeeping
+
+# Work-arounds for autoconf illness:
+# This doesn't work - it still tried to run.  Removing the autoconf & automake packages
+# is the hammer to crack a but approach, but it works.
+#cp -fav /usr/share/misc/{config.guess,config.sub} .
+#touch stamp-h.in # to stop autoheader from running
+#touch -d yesterday aclocal.m4 # to stop automake from running
+
+# Make x86_64 a valid machine type (thanks to Fred Emmott)
+#zcat $CWD/config.sub-x86_64.diff.gz | patch -p1 --verbose || exit 1
+# Apply some of the debian patches
+zcat $CWD/lrzsz_0.12.21-5.diff.gz | patch -p1 --verbose || exit 1
+rm -f debian/patches/{206499_ymodemg.diff.unchecked,206648_dszlog.diff.unchecked}
+for i in debian/patches/* ; do patch -p1 < $i || exit 1 ; done
+
+# Configure:
+./configure \
+  --prefix=/usr \
+  --mandir=/usr/man \
+  --build=${SLK_ARCH_BUILDTARGET} || failconfig
+
+touch stamp-h.in # to stop autoheader from running
+touch -d yesterday aclocal.m4 # to stop automake from running
+
+# Build:
+make $NUMJOBS || make || failmake
+cd src
+
+# Install binaries:
+install -m755 lrz lsz $PKG/usr/bin
+
+# Install man pages:
+cd ../man
+install -m644 lrz.1 lsz.1 $PKG/usr/man/man1
+( cd $PKG/usr/man/man1
+  ln -fs lrz.1 rz.1
+  ln -fs lsz.1 sz.1 )
+
+# Locale data:
+cd ../po
+mkdir -p $PKG/usr/share/locale/de/LC_MESSAGES
+install -m644 de.gmo $PKG/usr/share/locale/de/LC_MESSAGES/lrzsz.mo
+cd ..
+
+# Install docs:
+mkdir -p $PKG/usr/doc/lrzsz-0.12.21
+cp -a \
+  AUTHORS COMPATABILITY COPYING* INSTALL NEWS README* THANKS TODO \
+  $PKG/usr/doc/lrzsz-0.12.21
+
+##################################################################
+
+# Fix up package:
+cd $PKG/usr/bin
+for i in lrb lrx rz ; do ln -s lrz $i ; done
+for i in lsb lsx sz ; do ln -s lsz $i ; done
+for i in rx rb ; do ln -s rz $i ; done
+for i in sb sx ; do ln -s sz $i ; done
+
+# Stop minicom hanging when first started:
+echo >> $PKG/etc/minirc.dfl
+
+################################################################
+
+# If necessary, start the fakeroot server so we can set file/dir ownerships:
+start_fakeroot
+
+# Apply generic Slackware packaging policies:
+cd $PKG
+slackstripall   # strip all .a archives and all ELFs
+slackgzpages -i # compress man & info pages and delete usr/info/dir
+slackslack      # chown -R root:root, chmod -R og-w, slackchown, slack644docs
+slackdesc       # install slack-desc and doinst.sh
+slackmp         # run makepkg -l y -c n
+
+# Perform any final checks on the package:
+cd $PKG
+slackhlinks     # search for any hard links

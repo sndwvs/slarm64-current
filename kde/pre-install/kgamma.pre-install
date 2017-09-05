@@ -1,0 +1,2 @@
+#echo "*** Using older cmake version ***"
+upgradepkg --reinstall --install-new $PORTCWD/EXCLUDE/cmake-*.t?z

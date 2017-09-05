@@ -1,0 +1,113 @@
+#!/bin/bash
+
+# floppy.SlackBuild
+# Build the floppy package for ARMedslack, 
+# by Stuart Winter <mozes@slackware.com>
+# Based on the original build script by Patrick Volkerding.
+
+# Bundled packages:
+MTOOLSVER=4.0.18
+
+# Record toolchain & other info for the build log:
+slackbuildinfo
+
+# Paths to skeleton port's source & real Slackware source tree:
+export CWD=$SLACKSOURCE/$PKGSERIES/$PKGNAM
+export PORTCWD=$PWD
+
+# Temporary build locations:
+export TMPBUILD=$TMP/build-$PKGNAM
+export PKG=$TMP/package-$PKGNAM
+mkpkgdirs # Delete & re-create temporary directories then cd into $TMPBUILD
+
+# Create some package framework:
+mkdir -pm755 $PKG/{usr,etc}
+
+##### Build fdutils###################################
+
+# Extract source:
+cd $TMPBUILD
+tar xvvf $CWD/fdutils-$VERSION.tar.?z*
+cd fdutils-* || exit 1
+slackhousekeeping
+
+# Apply Debian's diff:
+#tar xvvf $PORTCWD/sources/fdutils_*debian*z
+#cat debian/patches/series | while read ptch ; do
+#  auto_apply_patch debian/patches/$ptch || exit 1
+#done
+zcat $CWD/fdutils-5.5-20081027.diff.gz | patch -p1 --verbose --backup --suffix=.orig || exit 1
+zcat $CWD/fdutils.mediaprm.diff.gz | patch -p1 --verbose --backup --suffix=.orig || exit 1
+sed -i 's|<linux/ext2_fs.h>|<ext2fs/ext2_fs.h>|' src/fdmount.c
+
+# Configure:
+CFLAGS="$SLKCFLAGS" \
+./configure \
+   --prefix=/usr \
+   --sysconfdir=/etc \
+   --mandir=/usr/man \
+   --infodir=/usr/info \
+   --host=$ARCH-slackware-linux-gnueabi \
+   --build=$ARCH-slackware-linux-gnueabi || failconfig
+
+# Build:
+#make INSTALL_PROGRAM=install INSTALL_PROG=install install || failinstall
+make-3.81 $NUMJOBS || make || exit 1
+
+# Install:
+make install prefix=$PKG/usr exec_prefix=$PKG/usr bindir=$PKG/usr/bin \
+  infodir=$PKG/usr/info mandir=$PKG/usr/man sysconfdir=$PKG/etc || exit 1
+
+# Install docs:
+mkdir -pm755 $PKG/usr/doc/fdutils-$VERSION
+cp -a COPYING CREDITS Changelog INSTALL doc/FAQ.html doc/README \
+     $PKG/usr/doc/fdutils-$VERSION
+
+##### Build mtools###################################
+
+# Extract source:
+cd $TMPBUILD
+tar xvvf $CWD/mtools-$MTOOLSVER.tar.?z*
+cd mtools-* || exit 1
+
+# Configure:
+CFLAGS="$SLKCFLAGS" \
+./configure \
+   --prefix=/usr \
+   --libdir=/usr/lib${LIBDIRSUFFIX} \
+   --mandir=/usr/man \
+   --infodir=/usr/info \
+   --sysconfdir=/etc \
+   --build=$ARCH-slackware-linux-gnueabi || failconfig
+
+# Build:
+make $NUMJOBS all || exit 1
+
+# Install:
+make install DESTDIR=$PKG || exit 1
+install -m644 $CWD/mtools.conf $PKG/etc/mtools.conf
+install -m644 $CWD/mediaprm $PKG/etc/
+
+# Install docs:
+mkdir -pm755 $PKG/usr/doc/mtools-$MTOOLSVER
+cp -a COPYING Changelog INSTALL README Release.notes TODO \
+     $PKG/usr/doc/mtools-$MTOOLSVER
+
+# These are obsolete and/or cruft:
+rm -f $PKG/usr/bin/{MAKEFLOPPIES,lz,mcheck,mcomp,mxtar,tgz,uz} \
+      $PKG/usr/man/man1/makefloppies.1
+rm -rf $PKG/usr/man/man{5,8}
+
+####################################################
+
+# Apply generic Slackware packaging policies:
+cd $PKG
+slackstripall   # strip all .a archives and all ELFs
+slackgzpages -i # compress man & info pages and delete usr/info/dir
+slackslack      # chown -R root:root, chmod -R og-w, slackchown, slack644docs
+slackdesc       # install slack-desc and doinst.sh
+slackmp         # run makepkg -l y -c n
+
+# Perform any final checks on the package:
+cd $PKG
+slackhlinks     # search for any hard links

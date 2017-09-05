@@ -1,0 +1,47 @@
+#!/bin/bash
+
+# arm/build
+# Check package dependencies, set metadata and launch
+# package build script.
+# by Stuart Winter <mozes@slackware.com>
+#
+source /usr/share/slackdev/buildkit.sh
+
+# Package metadata:
+export PKGNAM=soprano
+export VERSION=${VERSION:-2.9.4}
+export BUILD=${BUILD:-1}
+export PKGSERIES=${PKGSERIES:-l}
+export SLACKPACKAGE=$PKGNAM-$VERSION-$PKGARCH-$BUILD.txz
+
+## ******************************************************************* ##
+# For test packages - best to store in another location rather than
+# overwriting the working copy in the main tree:
+# export PKGSTORE=/tmp/
+# mkdir -vpm755 $PKGSTORE/$PKGSERIES
+## ******************************************************************* ##
+
+# Reset the ARM file system: restore it to the 'factory settings'
+# as it were (this has no effect when building natively):
+sboxsysrestore
+
+# Ensure base ARM packages are installed first:
+slackbasedeps
+
+# Ensure $PKGNAM isn't already installed:
+slackfailpkgdeps $PKGNAM || removepkg $PKGNAM
+
+# Ensure specific build dependencies (mainly libraries):
+# We don't have a Java runtime environment on ARM.
+#{ slackcheckpkgdeps jre || installpkg $PKGSTORE/l/jre-[0-9]*.t?z || exit 99 ; }
+{ slackcheckpkgdeps libiodbc        || installpkg $PKGSTORE/l/libiodbc-[0-9]*.t?z || exit 99; }
+{ slackcheckpkgdeps qt              || installpkg $PKGSTORE/l/qt-[0-9]*.t?z      || exit 99; }
+{ slackcheckpkgdeps raptor2         || installpkg $PKGSTORE/l/raptor2-[0-9]*.t?z || exit 99; }
+{ slackcheckpkgdeps redland         || installpkg $PKGSTORE/l/redland-[0-9]*.t?z || exit 99; }
+
+# Launch the package build script:
+BUILDLOG=$( basename $SLACKPACKAGE .t?z ).build.log
+( ./$PKGNAM.SlackBuild ) >& /dev/stdout | tee $BUILDLOG
+
+# Compress the build log:
+bzip2 -9fvz $BUILDLOG

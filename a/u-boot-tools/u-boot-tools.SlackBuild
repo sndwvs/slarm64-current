@@ -1,0 +1,101 @@
+#!/bin/bash
+
+# u-boot-tools.SlackBuild
+# Build the tools for Das U-Boot
+# by Stuart Winter
+#
+
+# Useful URLs:
+# http://elinux.org/U-boot_environment_variables_in_linux
+# http://www.openplug.org/plugwiki/index.php/Das_U-boot_plug_support
+
+# Record toolchain & other info for the build log:
+slackbuildinfo
+
+# Paths to skeleton port's source & real Slackware source tree:
+export CWD=$SLACKSOURCE/$PKGSERIES/$PKGNAM
+export PORTCWD=$PWD
+
+# Temporary build locations:
+export TMPBUILD=$TMP/build-$PKGNAM
+export PKG=$TMP/package-$PKGNAM
+mkpkgdirs # Delete & re-create temporary directories then cd into $TMPBUILD
+
+# Extract source:
+tar xvvf $PORTCWD/sources/u-boot-$VERSION.tar.xz
+cd u-boot* || exit 1
+# Add some Debian source to obtain some default env configs and extra man pages:
+tar xvvf $PORTCWD/sources/u-boot*debian* || exit 1
+slackhousekeeping
+
+# Configure:
+# We aren't building u-boot for a specific device (each device requires a specific version
+# of u-boot with support for that device), we just need to configure it to be some sort of 'ARM' CPU
+# so that we can build the u-boot tools.
+make distclean
+make guruplug_config || exit 1
+
+# Build:
+echo "** Building tools **"
+make $NUMJOBS tools || make tools || failmake
+echo "** Building Env tools **"
+make $NUMJOBS env   || make env   || failmake
+
+# Install into package:
+mkdir -vpm755 $PKG/usr/doc/$PKGNAM-$VERSION/
+mkdir -vpm755 $PKG/usr/man/man{1,8}
+mkdir -vpm755 $PKG/etc
+mkdir -vpm755 $PKG/usr/{bin,sbin}
+( cd tools
+  install -vpm755 \
+           jtagconsole \
+           bmp_logo \
+           gen_eth_addr \
+           img2srec \
+           mkimage \
+           easylogo/easylogo \
+           $PKG/usr/bin
+  cd env
+  install -vpm755 fw_printenv $PKG/usr/sbin/
+  ( cd $PKG/usr/sbin && ln -vfs fw_printenv fw_setenv )
+  install -vpm644 README $PKG/usr/doc/$PKGNAM-$VERSION/README.envtools
+)
+
+
+#install -vpm644 fw_env.config $PKG/etc/fw_env.config.new
+# I added the offsets for the {Guru,Sheeva}Plug into this copy;
+# the package install script will take care of renaming it into place
+# but you'll still have to manually uncomment the one line you need for
+# the specific board you're using.  This could be done automatically by looking
+# in /proc/cpuinfo -- if anyone wants to do this nicely (that does not involve
+# including the data in the install script (instead all of the info is included
+# in the sample file and sed is used to uncomment the correct one)) - let me know.
+install -vpm644 $PORTCWD/fw_env.config.new $PKG/etc/
+install -vpm644 debian/manpages/*.8 $PKG/usr/man/man8/
+install -vpm644 doc/mkimage.1 $PKG/usr/man/man1/
+cp -fa debian/env-configs $PKG/usr/doc/$PKGNAM-$VERSION/
+
+# Copy docs:
+install -vpm644 \
+        CHANGELOG COPYING CREDITS MAINTAINERS README \
+        $PKG/usr/doc/$PKGNAM-$VERSION/
+
+# If necessary, start the fakeroot server so we can set file/dir ownerships:
+start_fakeroot
+
+# Apply generic Slackware packaging policies:
+cd $PKG
+slackstripall   # strip all .a archives and all ELFs
+slackgzpages -i # compress man & info pages and delete usr/info/dir
+slackslack      # chown -R root:root, chmod -R og-w, slackchown, slack644docs
+slackdesc       # install slack-desc and doinst.sh
+
+# Replace version number with a _ so it doesn't get confused with
+# the package name.
+export VERSION="$( echo $VERSION | sed 's?-?_?g' )"
+export SLACKPACKAGE=$PKGNAM-$VERSION-$ARCH-$BUILD.txz
+slackmp         # run makepkg -l y -c n
+
+# Perform any final checks on the package:
+cd $PKG
+slackhlinks     # search for any hard links

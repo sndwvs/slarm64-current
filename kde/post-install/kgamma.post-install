@@ -1,0 +1,2 @@
+echo "*** Restoring normal cmake version ***"
+upgradepkg --reinstall --install-new $PKGSTORE/d/cmake-*.t?z

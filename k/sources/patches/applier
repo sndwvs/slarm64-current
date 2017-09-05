@@ -1,0 +1,36 @@
+#!/bin/bash
+shopt -s extglob
+
+# For the allwinner H3 patch I took from fedora:
+# Apply it to a fresh kernel.org kernel like this:
+# cp -fa linux.x linux.x.orig
+# cd linux.x.orig
+# git apply -v /tmp/AllWinner-net-emac.patch
+# then diff the original against the new one and save the output.
+# This is so that the patch file works with the library in slackkit which
+# doesn't accomodate git format patches that well.
+# I chopped some of the arm64 stuff out of that patch since it didn't apply
+# and wasn't relevant.
+
+# Apply patches to the kernel source before running 'make oldconfig'
+# since some of the patches change the kernel config files.
+
+
+for i in sources/patches/!(*debian*)xz ; do echo $i ; done
+
+source /usr/share/slackdev/buildkit.sh
+
+export TMPBUILD=/tmp/papplier
+rm -rf $TMPBUILD
+mkdir -vpm755 $TMPBUILD
+
+for i in ../patches/!(*debian*)xz ; do
+   auto_apply_patch $i || exit 1
+done
+#tar xvvf ../patches/linux*debian*
+#for i in debian/patches/features/arm/* ; do
+#  auto_apply_patch $i || exit 1
+#done
+
+
+rm -rf $TMPBUILD

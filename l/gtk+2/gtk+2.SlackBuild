@@ -1,0 +1,151 @@
+#!/bin/bash
+
+# gtk+2.SlackBuild
+# Heavily based on the original Slackware build scripts,
+# Modified by Stuart Winter <mozes@slackware.com>
+# 26-Aug-2004
+
+# Record toolchain & other info for the build log:
+slackbuildinfo
+
+# Paths to skeleton port's source & real Slackware source tree:
+export CWD=$SLACKSOURCE/$PKGSERIES/$PKGNAM
+export PORTCWD=$PWD
+
+# Temporary build locations:
+export TMPBUILD=$TMP/build-$PKGNAM
+export PKG=$TMP/package-$PKGNAM
+mkpkgdirs # Delete & re-create temporary directories then cd into $TMPBUILD
+
+# Extract source:
+tar xvvf $CWD/gtk+-$VERSION.tar.?z*
+cd gtk+-$VERSION || exit 1
+slackhousekeeping
+
+# Fix build errors
+zcat $CWD/fix_build_issues_on_tutorial_and_faq.diff.gz | patch -p1 --verbose || exit 1
+
+# Do not flood the console or .xsession-errors with "trouble ahead"
+# warnings (most noticable when using Firefox and Flash):
+zcat $CWD/gtk.xid.nowarningflood.diff.gz | patch -p1 --verbose || exit 1
+
+# Patch to restore commonly used icon names, otherwise everything breaks.
+# I fail to see the point of this "cleanup"
+zcat $CWD/gtk+-2.24.x.icon-compat.am.diff.gz | patch -p1 --verbose || exit 1
+zcat $CWD/gtk+-2.24.x.icon-compat.diff.gz | patch -p1 --verbose || exit 1
+
+# Prevents build failures in the docs.  Found online.
+# Only needed if autoreconf is used...  ?
+zcat $CWD/gtk.gtk-faq.diff.gz | patch -p1 --verbose || exit 1
+zcat $CWD/gtk.gtk-tut.diff.gz | patch -p1 --verbose || exit 1
+
+# Regenerate ./configure:
+libtoolize --force
+autoreconf -vif
+
+# Autoconf changes linux to linux-gnu.
+# Our host is $ARCH-slackware-linux-gnueabi not $ARCH-slackware-linux-gnu:
+sed -i -e 's#linux|linux-gnu|#linux|linux-gnueabi|#' config.sub
+
+# And this was how I got it build for ARMedslack prior to that patch
+# being included in Slackware.
+# See http://mail.gnome.org/archives/gtk-devel-list/2006-May/msg00257.html
+# for the reason:
+#sed -i 's?LIBPNG =\(.*\)$?LIBPNG = \1 -lz?' gdk-pixbuf/Makefile 
+
+# Configure:
+CFLAGS="$SLKCFLAGS" \
+./configure \
+   --prefix=/usr \
+   --libdir=/usr/lib${LIBDIRSUFFIX} \
+   --sysconfdir=/etc \
+   --mandir=/usr/man \
+   --with-xinput=yes \
+   --enable-xkb \
+   --enable-introspection \
+   --build=$ARCH-slackware-linux-gnueabi || failconfig
+
+# Build:
+make $NUMJOBS || make || failmake
+
+# Check the host value that is passed to the compile to the one in this script:
+host="$ARCH-slackware-linux-gnueabi"
+compile_host=$(grep 'host_triplet =' gtk/Makefile | sed -e "s/.* = //")
+if [ "x$compile_host" != "x$host" ]; then
+  echo "Host mismatch: compile='$compile_host', SlackBuild='$host'" && exit 1
+fi
+
+# Install:
+make install DESTDIR=$PKG \
+  RUN_QUERY_IMMODULES_TEST=false RUN_QUERY_LOADER_TEST=false \
+  || exit 1
+
+# Don't clobber im-multipress.conf
+mv $PKG/etc/gtk-2.0/im-multipress.conf $PKG/etc/gtk-2.0/im-multipress.conf.new || exit 1
+
+# Install a "starter" gtkrc
+# /etc/gtk-2.0/gtkrc overrides this  --rworkman
+echo 'gtk-theme-name="GTK+"' > $PKG/usr/share/gtk-2.0/gtkrc
+echo 'gtk-icon-theme-name="Adwaita"' >> $PKG/usr/share/gtk-2.0/gtkrc
+echo 'gtk-fallback-icon-theme = "Tango"' >> $PKG/usr/share/gtk-2.0/gtkrc
+
+# We need to have separate 32-bit and 64-bit binaries
+# for places where we have two copies of the GTK+ package installed.
+# (we might have x86_64 and i486 packages on the same system, for example.)
+case "$host" in
+  s390x*|x86_64*)
+   mv $PKG/usr/bin/gtk-query-immodules-2.0{,-64}
+   ( cd $PKG/usr/bin
+     ln -sf gtk-query-immodules-2.0-64 gtk-query-immodules-2.0
+   )
+   ;;
+  *)
+   mv $PKG/usr/bin/gtk-query-immodules-2.0{,-32}
+   ( cd $PKG/usr/bin
+     ln -sf gtk-query-immodules-2.0-32 gtk-query-immodules-2.0
+   )
+   ;;
+esac
+
+# Install wrappers for the binaries:
+cp -fav $CWD/update-gtk-immodules* $PKG/usr/bin/
+chmod 0755 $PKG/usr/bin/update-*
+
+# Add profile scripts to set up GTK+ environment:
+mkdir -p $PKG/etc/profile.d
+cp -fav $CWD/profile.d/* $PKG/etc/profile.d
+chmod 0755 $PKG/etc/profile.d/*
+
+mkdir -p $PKG/usr/doc/gtk+-$VERSION
+cp -a \
+  AUTHORS COPYING* NEWS README* TODO \
+  $PKG/usr/doc/gtk+-$VERSION
+
+( cd $PKG/usr/doc/gtk+-$VERSION
+  ln -vfs ../../share/gtk-doc/html/gail-libgail-util .
+  ln -vfs ../../share/gtk-doc/html/gdk .
+  ln -vfs ../../share/gtk-doc/html/gtk .
+)
+
+# note that we use "gtk+" here as the package name rather than $PKGNAM
+# (which is gtk+2).  There is an inconsistency here between gtk+2 and gtk+3.
+changelogliposuction ChangeLog gtk+ $VERSION
+
+# If necessary, start the fakeroot server so we can set file/dir ownerships:
+start_fakeroot
+
+# Apply generic Slackware packaging policies:
+cd $PKG
+slackstripall   # strip all .a archives and all ELFs
+slackgzpages -i # compress man & info pages and delete usr/info/dir
+slackslack      # chown -R root:root, chmod -R og-w, slackchown, slack644docs
+slackdesc       # install slack-desc and doinst.sh
+
+# Fix the install script:
+#sed -i 's?-slackware-linux?-slackware-linux-gnueabi?g' $PKG/install/doinst.sh 
+
+slackmp         # run makepkg -l y -c n
+
+# Perform any final checks on the package:
+cd $PKG
+slackhlinks     # search for any hard links

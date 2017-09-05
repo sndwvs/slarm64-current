@@ -1,0 +1,25 @@
+02-Jun-2004:
+------------
+There is nothing to be gained from building gcc natively but
+you are more than welcome to do so.  I haven't (yet) tried
+doing it but there should be absolutely no reason why it 
+shouldn't.  Other than:
+
+[a] You require Debian stuff to install the gcc patches into the
+    source.  If you install & setup scratchbox according to my
+    instructions (armedslack-current/source/scratchbox/SETUP_SCRATCHBOX.txt)
+    then you will have installed the Debian devkit which will 
+    allow you to run gcc.SlackBuild without modification.
+
+[b] You MUST use qemu - building using sbrsh does not work because
+    gcc puts lots of temporary stuff in /tmp which isn't exported
+    to the remote machine.  You could NFS mount the remote machine's
+    /tmp but that didn't work for me either. 
+    This was a while ago so it may work now, but it is infinitley 
+    easier *and* faster to build under qemu.
+
+[c] You need working ARM Linux kernel headers in 
+    /usr/include/{linux,asm,asm-generic}
+    /usr/include/asm-arm should be symlinked to /usr/include/asm
+    (or the other way around -- that's just my preference)
+

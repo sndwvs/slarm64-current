@@ -1,0 +1,6 @@
+Build logs -- quite useful to see what Debian are doing when
+configuring - and esp useful when using their patch set to see
+whether any patches fail to apply for Debian build hosts:
+
+http://buildd.debian.org/build.cgi?arch=arm&pkg=gcc-4.1
+

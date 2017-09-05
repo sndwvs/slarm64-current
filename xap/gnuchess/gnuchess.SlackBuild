@@ -1,0 +1,170 @@
+#!/bin/bash
+
+# gnuchess.SlackBuild
+# Heavily based on the original Slackware build scripts,
+# Modified by Stuart Winter <mozes@slackware.com>
+# 28-Dec-2004
+
+# Record toolchain & other info for the build log:
+slackbuildinfo
+
+# Versions of bundled stuff:
+VERGNUCHESS=$VERSION # taken from arm/build
+VERSJENG=11.2
+VEREBOARD=1.1.1
+VERXBOARD=4.9.1
+
+# Paths to skeleton port's source & real Slackware source tree:
+export CWD=$SLACKSOURCE/$PKGSERIES/$PKGNAM
+export PORTCWD=$PWD
+
+# Temporary build locations:
+export TMPBUILD=$TMP/build-$PKGNAM
+export PKG=$TMP/package-$PKGNAM
+mkpkgdirs # Delete & re-create temporary directories then cd into $TMPBUILD
+
+############ Build GNUchess #####################################
+
+# Extract source:
+tar xvvf $CWD/$PKGNAM-$VERGNUCHESS.tar.?z*
+cd $PKGNAM-* || exit 1
+slackhousekeeping
+
+# Configure:
+CFLAGS="$SLKCFLAGS $SLK_OPTIMS" \
+./configure \
+   --prefix=/usr \
+   --infodir=/usr/info \
+   --mandir=/usr/man \
+   --build=${SLK_ARCH_BUILDTARGET} || failconfig
+
+# Build:
+make $NUMJOBS || make || failmake
+
+# Install into package:
+make install DESTDIR=$PKG || failinstall
+
+# Copy docs:
+mkdir -p $PKG/usr/doc/$PKGNAM-$VERGNUCHESS
+cp -a \
+  doc/README* \
+  AUTHORS COPYING* INSTALL NEWS README TODO \
+  $PKG/usr/doc/$PKGNAM-$VERGNUCHESS
+
+############ Build Sjeng #########################################
+
+# Extract source:
+cd $TMPBUILD
+tar xvvf $CWD/Sjeng-Free-$VERSJENG.tar.?z*
+cd Sjeng-Free-* || exit 1
+slackhousekeeping
+
+# Configure:
+CFLAGS="$SLK_OPTIMS $SLKCFLAGS" \
+./configure \
+  --prefix=/usr \
+  --build=${SLK_ARCH_BUILDTARGET} || failconfig
+
+# Build:
+make $NUMJOBS CXX="c++ $SLKCFLAGS" || make CXX="c++ $SLKCFLAGS" || failmake
+
+# Install into package:
+make install DESTDIR=$PKG || failinstall
+
+# Copy docs:
+mkdir -p $PKG/usr/doc/Sjeng-Free-$VERSJENG
+cp -a \
+  AUTHORS BUGS COPYING* NEWS README* THANKS TODO \
+  $PKG/usr/doc/Sjeng-Free-$VERSJENG
+
+############ Build eboard #########################################
+
+# Extract source:
+cd $TMPBUILD
+tar xvvf $CWD/eboard-$VEREBOARD.tar.?z*
+cd eboard-* || exit 1
+slackhousekeeping
+
+zcat $CWD/eboard.assert.diff.gz | patch -p1 --verbose || exit 1
+zcat $CWD/eboard.ldl.diff.gz | patch -p1 --verbose || exit 1
+zcat $CWD/eboard.png16.diff.gz | patch -p1 --verbose || exit 1
+
+# Configure (CXXFLAGS has -O6 by default):
+CFLAGS="$SLK_OPTIMS $SLKCFLAGS" \
+CXXFLAGS="$SLKCFLAGS" \
+./configure \
+   --prefix=/usr \
+   --extra-flags=$(echo $SLKCFLAGS | sed -e "y/ /:/") \
+   --build=${SLK_ARCH_BUILDTARGET} || exit 1
+
+# Fix FTBFS on ARM:
+sed -i 's/^LDFLAGS.*=\(.*\)$/LDFLAGS = -ldl \1/' Makefile
+
+# Build:
+make $NUMJOBS CXX="c++ $SLKCFLAGS" || make CXX="c++ $SLKCFLAGS" || failmake
+
+# Install into package:
+make install DESTDIR=$PKG || exit 1
+mkdir -p $PKG/usr/doc/eboard-$VEREBOARD
+cp -a \
+  AUTHORS COPYING* README* TODO Documentation/*.txt \
+  $PKG/usr/doc/eboard-$VEREBOARD
+
+############ Build Xboard #########################################
+
+# Extract source:
+cd $TMPBUILD
+tar xvvf $CWD/xboard-$VERXBOARD.tar.?z*
+cd xboard-* || exit 1
+slackhousekeeping
+
+# Apply patches:
+zcat $CWD/xboard.conf.diff.gz | patch -p1 --verbose || exit 1
+
+# Configure:
+CFLAGS="$SLK_OPTIMS $SLKCFLAGS" \
+./configure \
+   --prefix=/usr \
+   --sysconfdir=/etc \
+   --infodir=/usr/info \
+   --mandir=/usr/man \
+   --with-gtk \
+   --enable-zippy \
+   --build=${SLK_ARCH_BUILDTARGET} || failconfig
+
+# Build:
+make $NUMJOBS || make || failmake
+
+# Install:
+make install DESTDIR=$PKG || exit 1
+
+# Add documentation:
+mkdir -p $PKG/usr/doc/xboard-$VERXBOARD
+cp -fav \
+  AUTHORS COPYING* COPYRIGHT FAQ.html NEWS README TODO \
+  $PKG/usr/doc/xboard-$VERXBOARD
+
+# Install desktop stuff:
+mkdir -p $PKG/usr/share/pixmaps
+cat $CWD/chess.png > $PKG/usr/share/pixmaps/chess.png
+mkdir -p $PKG/usr/share/applications
+cat $CWD/eboard.desktop > $PKG/usr/share/applications/eboard.desktop
+rm -f $PKG/usr/info/dir
+mv $PKG/etc/xboard.conf $PKG/etc/xboard.conf.new
+
+#######################################################################
+
+# If necessary, start the fakeroot server so we can set file/dir ownerships:
+start_fakeroot
+
+# Apply generic Slackware packaging policies:
+cd $PKG
+slackstripall   # strip all .a archives and all ELFs
+slackgzpages -i # compress man & info pages and delete usr/info/dir
+slackslack      # chown -R root:root, chmod -R og-w, slackchown (root:bin), slack644docs
+slackdesc       # install slack-desc and doinst.sh
+slackmp         # run makepkg -l y -c n
+
+# Perform any final checks on the package:
+cd $PKG
+slackhlinks     # search for any hard links

@@ -1,0 +1,264 @@
+#!/bin/bash
+
+# llvm.SlackBuild
+# Heavily based on the original Slackware build scripts,
+# Modified by Stuart Winter for Slackware ARM.
+#
+# Copyright 2008-2015 Heinz Wiesinger, Amsterdam, The Netherlands
+# Copyright 2012, 2013, 2014, 2015, 2016  Patrick J. Volkerding, Sebeka, MN, USA
+# All rights reserved.
+#
+# Redistribution and use of this script, with or without modification, is
+# permitted provided that the following conditions are met:
+#
+# 1. Redistributions of this script must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+#
+# THIS SOFTWARE IS PROVIDED BY THE AUTHOR ''AS IS'' AND ANY EXPRESS OR IMPLIED
+# WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+# MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
+# EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+# PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+# OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+# WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+# OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+# ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+# Record toolchain & other info for the build log:
+slackbuildinfo
+
+# Paths to skeleton port's source & real Slackware source tree:
+export CWD=$SLACKSOURCE/$PKGSERIES/$PKGNAM
+export PORTCWD=$PWD
+
+# Temporary build locations:
+export TMPBUILD=$TMP/build-$PKGNAM
+export PKG=$TMP/package-$PKGNAM
+mkpkgdirs # Delete & re-create temporary directories then cd into $TMPBUILD
+
+# llvm is a bit ropey on ARM, so we needed to disable the sanitisers in compiler-rt:
+#  http://lists.llvm.org/pipermail/llvm-dev/2016-May/099915.html
+case $ARCH in
+   # Use -g1 to ecrease debuginfo verbosity to reduce memory consumption during final library linking
+   arm)     export SLKCFLAGS="$SLKCFLAGS -Wall -Wp,-D_FORTIFY_SOURCE=2 -fexceptions -fstack-protector-strong --param=ssp-buffer-size=4 -fuse-ld=gold"
+            export SLKCONFARGS="-DCOMPILER_RT_BUILD_BUILTINS=OFF"
+            export LDFLAGS="-Wl,-z,relro"
+            export LIBDIRSUFFIX="" ;;
+   *)       export SLKCFLAGS="-O2" ;;
+esac
+
+# Determine whether we should build with gcc or clang.
+# If clang is present (as post boot strap) we'll build with that (as x86 upstream does)
+# otherwise we'll build with gcc.
+CCOMPILER=gcc
+CPPCOMPILER=g++
+which clang > /dev/null 2>&1 && { CCOMPILER=clang ; CPPCOMPILER=clang++ ;}
+echo "Using compiler: $CCOMPILER / $CPPCOMPILER"
+
+# Extract source:
+echo "Extracting source.."
+tar xf $CWD/$PKGNAM-$VERSION.src.tar.xz || exit 1
+
+cd $PKGNAM-${VERSION}/tools || cd $PKGNAM-${VERSION}.src/tools || exit 1
+  tar xvvf $CWD/cfe-$VERSION.src.tar.xz || exit 1
+  mv -fv cfe-${VERSION} clang 2>/dev/null || mv -fv cfe-${VERSION}.src clang || exit 1
+  tar xvf $CWD/lldb-$VERSION.src.tar.xz || exit 1
+  mv lldb-${VERSION} lldb 2>/dev/null || mv lldb-${VERSION}.src lldb || exit 1
+cd ../
+
+cd tools/clang/tools || exit 1
+  tar xvvf $CWD/clang-tools-extra-$VERSION.src.tar.xz || exit 1
+  mv -fv clang-tools-extra-${VERSION} extra 2>/dev/null \
+    || mv -fv clang-tools-extra-${VERSION}.src extra || exit 1
+cd ../../../
+
+cd projects || exit 1
+  tar xvvf $CWD/compiler-rt-$VERSION.src.tar.xz || exit 1
+  mv -fv compiler-rt-${VERSION} compiler-rt 2>/dev/null \
+    || mv -fv compiler-rt-${VERSION}.src compiler-rt || exit 1
+  tar xvf $CWD/openmp-$VERSION.src.tar.xz || exit 1
+  mv openmp-${VERSION} openmp 2>/dev/null \
+    || mv openmp-${VERSION}.src openmp || exit 1
+cd ../
+
+# Set sane permissions and ownerships:
+( cd $TMPBUILD ; slackhousekeeping )
+
+# Support GCC built for i586-slackware-linux:
+zcat $CWD/clang.toolchains.i586.triple.diff.gz | patch -p1 --verbose || exit 1
+
+# Fix missing include in lldb:
+zcat $CWD/lldb.functional.diff.gz | patch -p1 --verbose || exit 1
+
+# Fix build with glibc-2.26+:
+zcat $CWD/llvm.glibc226.sanitizer.diff.gz | patch -p1 --verbose || exit 1
+
+# Fix garbled Unicode output with editline:
+( cd tools/lldb
+  zcat $CWD/lldb.editline.diff.gz | patch -p2 --verbose || exit 1
+) || exit 1
+
+# disable value profiling until https://llvm.org/bugs/show_bug.cgi?id=30587
+# is fixed.
+zcat $CWD/clang_disable_pgo.patch.gz | patch -d tools/clang/ -p1 --verbose || exit 1
+
+# Use i586 $ARCH on 32-bit x86:
+sed -r "/ifeq.*CompilerTargetArch/s#i386#i586#g" \
+  -i projects/compiler-rt/make/platform/clang_linux.mk
+
+################ ARM modifications ################################################
+# Apply patches:
+#( cd $TMPBUILD
+#  tar xvvf $PORTCWD/sources/*debian*z )
+#( cd tools
+#  # don't care about "26-set-correct-float-abi.diff" as it's for soft float ARM.
+#  for i in \
+#   23-strlcpy_strlcat_warning_removed.diff \
+#   27-fix_clang_stdint.diff \
+#   unwind-chain-inclusion.diff \
+#   atomic_library_1.diff \
+#   atomic_library_2.diff \
+#   fix-clang-path-and-build.diff \
+#  ; do
+#    auto_apply_patch $TMPBUILD/debian/patches/$i || exit 1
+#   done ) || exit 1
+#for i in \
+#  declare_clear_cache.diff \
+#  do-not-fail-on-unexpected-pass.diff \
+#    ; do
+#     auto_apply_patch $TMPBUILD/debian/patches/$i || exit 1
+#    done
+## does not apply in llvm 3.9.1:
+#  fix-llvm-config-obj-src-root.patch \
+#
+# Switch a red hat toolchain name to Slackware ARM hard float:
+# This doesn't achieve at all what I want,but I'll leave it in here for
+# another day when I want to hack at it again.
+#sed -i 's?armv7hl-redhat-linux-gnueabi?arm-slackware-linux-gnueabi?g' tools/clang/lib/Driver/ToolChains.cpp
+#sed -i 's?Arch := unknown?Arch := slackware?g' projects/compiler-rt/make/platform/clang_linux.mk
+
+# Patches from Fedora:
+for i in \
+  0001-Revert-Revert-CMake-Move-sphinx-detection-into-AddSp.patch.xz \
+  0001-CMake-Split-static-library-exports-into-their-own-ex.patch.xz \
+  rust-lang-llvm-pr67.patch.xz \
+  ; do auto_apply_patch $PORTCWD/sources/$i || exit 1
+done
+
+# Taken from Fedora spec file:
+# These tests are marked as XFAIL, but they still run and hang on ARM.
+for f in `grep -Rl 'XFAIL.\+arm' test/ExecutionEngine `; do  rm -fv $f; done
+############ End ARM modifications ################################################
+
+# Configure:
+# need to disable assertions to make llvm thread-safe
+# clang resource dir is a relative path based on the location of the clang binary
+#
+# Note: Anything separated by multiple '\' has been added for ARM.
+#
+mkdir build
+cd build
+  cmake \
+   \
+   \
+   $SLKCONFARGS \
+   -DCMAKE_VERBOSE_MAKEFILE:BOOL=ON \
+   -DCMAKE_SHARED_LINKER_FLAGS="-Wl,-Bsymbolic -static-libstdc++" \
+   \
+   \
+    -DCMAKE_C_COMPILER="$CCOMPILER" \
+    -DCMAKE_CXX_COMPILER="$CPPCOMPILER" \
+    -DCMAKE_C_FLAGS:STRING="$SLKCFLAGS" \
+    -DCMAKE_CXX_FLAGS:STRING="$SLKCFLAGS" \
+    -DCMAKE_INSTALL_PREFIX=/usr \
+    -DLLVM_LIBDIR_SUFFIX=${LIBDIRSUFFIX} \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DLLVM_BUILD_LLVM_DYLIB=ON \
+    -DLLVM_DYLIB_EXPORT_ALL=ON \
+    -DLLVM_LINK_LLVM_DYLIB=ON \
+    -DLLVM_ENABLE_RTTI=ON \
+    -DLLVM_ENABLE_FFI=ON \
+    -DLLVM_ENABLE_ASSERTIONS=OFF \
+    -DLLVM_BINUTILS_INCDIR=/usr/include \
+    -DCLANG_RESOURCE_DIR="../lib${LIBDIRSUFFIX}/clang/${VERSION}" \
+    .. || exit 1
+
+# Build:
+# Turn down the number of jobs since this hammers the machine.
+NUMJOBS="-j$( nproc )"
+#NUMJOBS="-j1"
+make $NUMJOBS VERBOSE=1 || make VERBOSE=1 || failmake
+#make VERBOSE=1 || failmake
+
+# Install into package framework:
+make install DESTDIR=$PKG || failinstall
+cd ..
+
+# Add symlinks for $ARCH-slackware-linux-{clang,clang++}:
+( cd $PKG/usr/bin
+  ln -vsf clang $ARCH-slackware-linux-clang
+  ln -vsf clang++ $ARCH-slackware-linux-clang++
+)
+
+# install clang-static-analyzer
+for i in ccc c++; do
+  ln -vfs /usr/libexec/$i-analyzer \
+    $PKG/usr/bin/$i-analyzer || exit 1
+done
+
+# Remove symlink to libgomp, which is already provided by gcc
+rm -f $PKG/usr/lib$LIBDIRSUFFIX/libgomp.so
+
+# Install Python bindings
+mkdir -vpm755 "$PKG/usr/lib$LIBDIRSUFFIX/python2.7/site-packages"
+cp -fav tools/clang/bindings/python/clang "$PKG/usr/lib$LIBDIRSUFFIX/python2.7/site-packages/"
+
+# Remove bundled python-six
+rm -f "$PKG/usr/lib$LIBDIRSUFFIX/python2.7/site-packages/six.py"
+
+# Compile Python scripts
+python -m compileall "$PKG/usr/lib$LIBDIRSUFFIX/python2.7/site-packages/clang"
+python -O -m compileall "$PKG/usr/lib$LIBDIRSUFFIX/python2.7/site-packages/clang"
+python -m compileall "$PKG/usr/lib$LIBDIRSUFFIX/python2.7/site-packages/lldb"
+python -O -m compileall "$PKG/usr/lib$LIBDIRSUFFIX/python2.7/site-packages/lldb"
+python -m compileall "$PKG/usr/share/scan-view"
+python -O -m compileall "$PKG/usr/share/scan-view"
+python -m compileall "$PKG/usr/share/clang"
+python -O -m compileall "$PKG/usr/share/clang"
+
+# Move man page directory:
+mv -fv $PKG/usr/share/man $PKG/usr/
+
+# Add documentation:
+mkdir -vpm755 $PKG/usr/doc/$PKGNAM-$VERSION/{clang,lldb,clang-tools-extra,compiler-rt,openmp}
+cp -fav CREDITS* LICENSE* README* $PKG/usr/doc/$PKGNAM-$VERSION
+cp -fav tools/clang/{INSTALL,LICENSE,NOTES,README}* \
+  $PKG/usr/doc/$PKGNAM-$VERSION/clang
+cp -fav tools/lldb/{CODE_OWNERS,INSTALL,LICENSE}* \
+  $PKG/usr/doc/$PKGNAM-$VERSION/lldb
+cp -fav tools/clang/tools/extra/{CODE_OWNERS,LICENSE,README}* \
+  $PKG/usr/doc/$PKGNAM-$VERSION/clang-tools-extra
+cp -fav projects/compiler-rt/{CODE_OWNERS,CREDITS,LICENSE,README}* \
+  $PKG/usr/doc/$PKGNAM-$VERSION/compiler-rt
+cp -fav projects/openmp/{CREDITS,LICENSE}* \
+  $PKG/usr/doc/$PKGNAM-$VERSION/openmp
+mv -fv $PKG/usr/docs/llvm/* $PKG/usr/doc/$PKGNAM-$VERSION
+rm -rf $PKG/usr/docs
+
+#changelogliposuction ChangeLog $PKGNAM $VERSION # Trim down a "ChangeLog" file
+
+# If necessary, start the fakeroot server so we can set file/dir ownerships:
+start_fakeroot
+
+# Apply generic Slackware packaging policies:
+cd $PKG
+slackstripall   # strip all .a archives and all ELFs
+slackgzpages -i # compress man & info pages and delete usr/info/dir
+slackslack      # set standard Slackware file/dir permissions and ownerships
+slackdesc       # install slack-desc and doinst.sh
+slackmp         # run makepkg -l y -c n
+
+# Perform any final checks on the package:
+cd $PKG
+slackhlinks     # search for any hard links

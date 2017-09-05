@@ -1,0 +1,59 @@
+#!/bin/bash
+
+# hdparm.SlackBuild
+# by Stuart Winter <mozes@slackware.com> for the Slackware porting Project.
+# Heavily based on the original Slackware build script.
+# 12-Apr-2004
+
+# Record toolchain & other info for the build log:
+slackbuildinfo
+
+# Paths to skeleton port's source & real Slackware source tree:
+export CWD=$SLACKSOURCE/$PKGSERIES/$PKGNAM
+export PORTCWD=$PWD
+
+# Temporary build locations:
+export TMPBUILD=$TMP/build-$PKGNAM
+export PKG=$TMP/package-$PKGNAM
+mkpkgdirs # Delete and re-create temporary directories
+
+# Extract source:
+tar xvvf $CWD/$PKGNAM-$VERSION.tar.?z*
+cd $PKGNAM-$VERSION || exit 1
+slackhousekeeping
+
+# Build:
+make $NUMJOBS || make || failmake
+
+# Make directory skeleton:
+mkdir -vpm755 $PKG/{sbin,usr/{sbin,man/man8,doc/$PKGNAM-$VERSION}}
+
+# Install hdparm binary:
+install -vpm755 hdparm $PKG/sbin/
+( cd $PKG/usr/sbin
+  ln -vsf ../../sbin/hdparm . )
+
+# Man page & docs
+install -vpm644 hdparm.8 $PKG/usr/man/man8/
+cp -fav LICENSE.TXT README.acoustic hdparm.lsm contrib \
+        $PKG/usr/doc/$PKGNAM-$VERSION
+rm -f $PKG/usr/doc/hdparm-$VERSION/contrib/fix_standby.c
+changelogliposuction ChangeLog $PKGNAM $VERSION # Trim down a "ChangeLog" file
+
+# This is x86 only and the C source will not compile on ARM because it uses
+# x86 assembler:
+rm -rfv $PKG/usr/doc/hdparm-$VERSION/contrib/fix_standby
+
+# If necessary, start the fakeroot server so we can set file/dir ownerships:
+start_fakeroot
+
+# Apply generic Slackware packaging policies:
+cd $PKG
+slackstripall   # strip all .a archives and all ELFs
+slackgzpages -i # compress man & info pages and delete usr/info/dir
+slackslack      # chown -R root:root, chmod -R og-w, slackchown, slack644docs
+slackdesc       # install slack-desc and doinst.sh
+slackmp         # run makepkg -l y -c n
+
+# Perform any final checks on the package:
+slackhlinks     # search for any hard links

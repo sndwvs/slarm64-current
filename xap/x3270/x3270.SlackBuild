@@ -1,0 +1,98 @@
+#!/bin/bash
+
+# x3270.SlackBuild
+# Heavily based on the original Slackware build scripts,
+# Modified by Stuart Winter <mozes@slackware.com>
+# 28-Dec-2004
+#
+# All rights reserved.
+#
+# Redistribution and use of this script, with or without modification, is
+# permitted provided that the following conditions are met:
+#
+# 1. Redistributions of this script must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+#
+#  THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED
+#  WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+#  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO
+#  EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+#  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+#  PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+#  OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+#  WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+#  OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+#  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+# Record toolchain & other info for the build log:
+slackbuildinfo
+
+# Paths to skeleton port's source & real Slackware source tree:
+export CWD=$SLACKSOURCE/$PKGSERIES/$PKGNAM
+export PORTCWD=$PWD
+
+# Temporary build locations:
+export TMPBUILD=$TMP/build-$PKGNAM
+export PKG=$TMP/package-$PKGNAM
+mkpkgdirs # Delete & re-create temporary directories then cd into $TMPBUILD
+
+# Extract source:
+tar xvvf $CWD/$PKGNAM-*.tar.?z*
+cd $PKGNAM* || exit 1
+slackhousekeeping
+
+# Configure:
+CFLAGS="$SLKCFLAGS" \
+CXXFLAGS="$SLKCFLAGS" \
+./configure \
+   --prefix=/usr \
+   --sysconfdir=/etc/X11 \
+   --build=$ARCH-slackware-linux-gnueabi || failconfig
+
+# Build (CFLAGS & CXXFLAGS at 'configure' time have no effect):
+make $NUMJOBS CC="cc $SLKCFLAGS" CXX="c++ $SLKCFLAGS" || make CC="cc $SLKCFLAGS" CXX="c++ $SLKCFLAGS" || failmake
+
+# Install into package:
+make install DESTDIR=$PKG || failinstall
+mv $PKG/etc/X11/x3270/ibm_hosts $PKG/etc/X11/x3270/ibm_hosts.new
+mkdir -vpm755 $PKG/etc/X11/app-defaults
+install -vpm644 X3270.xad $PKG/etc/X11/app-defaults/X3270
+
+# Install man pages:
+mkdir -vpm755 $PKG/usr/man/man{1,5}
+for file in x3270-script.man x3270.man x3270if.man ; do
+  cat $file | gzip -9c > $PKG/usr/man/man1/`basename $file .man`.1.gz
+done
+install -vpm644 ibm_hosts.man $PKG/usr/X11R6/man/man5/ibm_hosts.5
+
+# Install docs:
+mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
+cp -favv \
+      LICENSE README* Examples html \
+      $PKG/usr/doc/$PKGNAM-$VERSION
+
+# Dump some junk:
+find $PKG -name fonts.dir -print0 | xargs -0 rm -f
+if [ -d $PKG/usr/lib$LIBDIRSUFFIX/X11/fonts/misc ]; then
+  mkdir -p $PKG/usr/share/fonts
+  mv $PKG/usr/lib$LIBDIRSUFFIX/X11/fonts/misc $PKG/usr/share/fonts
+  rmdir $PKG/usr/lib$LIBDIRSUFFIX/X11/fonts/misc 2> /dev/null
+  rmdir $PKG/usr/lib$LIBDIRSUFFIX/X11/fonts 2> /dev/null
+  rmdir $PKG/usr/lib$LIBDIRSUFFIX/X11 2> /dev/null
+  rmdir $PKG/usr/lib$LIBDIRSUFFIX 2> /dev/null
+fi
+
+# If necessary, start the fakeroot server so we can set file/dir ownerships:
+start_fakeroot
+
+# Apply generic Slackware packaging policies:
+cd $PKG
+slackstripall   # strip all .a archives and all ELFs
+slackgzpages -i # compress man & info pages and delete usr/info/dir
+slackslack      # chown -R root:root, chmod -R og-w, slackchown, slack644docs
+slackdesc       # install slack-desc and doinst.sh
+slackmp         # run makepkg -l y -c n
+
+# Perform any final checks on the package:
+cd $PKG
+slackhlinks     # search for any hard links

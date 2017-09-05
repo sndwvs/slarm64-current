@@ -1,0 +1,105 @@
+#!/bin/bash
+
+# harfbuzz.SlackBuild
+# Heavily based on the original Slackware build scripts,
+# Modified by Stuart Winter for Slackware ARM.
+#
+# Copyright 2013  Patrick J. Volkerding, Sebeka, Minnesota, USA
+# All rights reserved.
+#
+# Redistribution and use of this script, with or without modification, is
+# permitted provided that the following conditions are met:
+#
+# 1. Redistributions of this script must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+#
+#  THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED
+#  WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+#  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO
+#  EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+#  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+#  PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+#  OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+#  WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+#  OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+#  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+# Record toolchain & other info for the build log:
+slackbuildinfo
+
+# Paths to skeleton port's source & real Slackware source tree:
+export CWD=$SLACKSOURCE/$PKGSERIES/$PKGNAM
+export PORTCWD=$PWD
+
+# Temporary build locations:
+export TMPBUILD=$TMP/build-$PKGNAM
+export PKG=$TMP/package-$PKGNAM
+mkpkgdirs # Delete & re-create temporary directories then cd into $TMPBUILD
+
+# Extract source:
+tar xvvf $CWD/$PKGNAM-$VERSION.tar.xz
+#tar xvvf $PORTCWD/sources/$PKGNAM-$VERSION.tar.xz
+cd $PKGNAM-$VERSION || exit 1
+slackhousekeeping
+
+# Configure:
+CFLAGS="$SLKCFLAGS" \
+CXXFLAGS="$SLKCFLAGS" \
+./configure \
+   --prefix=/usr \
+   --libdir=/usr/lib${LIBDIRSUFFIX} \
+   --sysconfdir=/etc \
+   --localstatedir=/var \
+   --mandir=/usr/man \
+   --with-graphite2=auto \
+   --docdir=/usr/doc/$PKGNAM-$VERSION \
+   --build=${SLK_ARCH_BUILDTARGET} || failconfig
+
+# Build:
+make $NUMJOBS || make || failmake
+
+# Install into package framework:
+make install DESTDIR=$PKG || failinstall
+
+# Ensure that this is present:
+# This header gets skipped some times and as far as I could tell it was dependent
+# upon freetype.. but I don't know why.   I don't fancy rebuilding freetype everytime
+# I build harfbuzz.
+#
+if [ ! -f $PKG/usr/include/harfbuzz/hb-ft.h ]; then
+   echo "******************************************************************************"
+   echo "******************************************************************************"
+   echo "******************************************************************************"
+   echo "ERROR: /usr/include/hb-ft.h not found in $PKG -- copying .. if you have issues"
+   echo "       later, you should rebuild freetype then harfbuzz, then freetype.."
+   install -vpm644 src/hb-ft.h $PKG/usr/include/harfbuzz/
+   echo "******************************************************************************"
+   echo "******************************************************************************"
+   echo "******************************************************************************"
+   echo "******************************************************************************"
+##   echo "This is an incomplete build.  Check out free type - that might need a rebuild"
+##   echo "or, copy the hb-ft.h header from src/ and rebuild free type."
+##   exit 1
+fi
+
+# Add documentation:
+mkdir -vpm755 $PKG/usr/doc/$PKGNAM-$VERSION
+cp -fav \
+  AUTHORS COPYING INSTALL NEWS README THANKS TODO \
+  $PKG/usr/doc/$PKGNAM-$VERSION
+changelogliposuction ChangeLog $PKGNAM $VERSION # Trim down a "ChangeLog" file
+
+# If necessary, start the fakeroot server so we can set file/dir ownerships:
+start_fakeroot
+
+# Apply generic Slackware packaging policies:
+cd $PKG
+slackstripall   # strip all .a archives and all ELFs
+slackgzpages -i # compress man & info pages and delete usr/info/dir
+slackslack      # chown -R root:root, chmod -R og-w, slackchown, slack644docs
+slackdesc       # install slack-desc and doinst.sh
+slackmp         # run makepkg -l y -c n
+
+# Perform any final checks on the package:
+cd $PKG
+slackhlinks     # search for any hard links

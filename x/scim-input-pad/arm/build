@@ -1,0 +1,59 @@
+#!/bin/bash
+
+# arm/build
+# Check package dependencies, set metadata and launch
+# package build script.
+# by Stuart Winter <mozes@slackware.com>
+#
+source /usr/share/slackdev/buildkit.sh
+
+# Package metadata:
+export PKGNAM=scim-input-pad
+export VERSION=${VERSION:-0.1.3.1}
+export BUILD=${BUILD:-1}
+export PKGSERIES=${PKGSERIES:-x}
+export SLACKPACKAGE=$PKGNAM-$VERSION-$PKGARCH-$BUILD.txz
+
+## ******************************************************************* ##
+# For test packages - best to store in another location rather than
+# overwriting the working copy in the main tree:
+# export PKGSTORE=/tmp/
+# mkdir -vpm755 $PKGSTORE/$PKGSERIES
+## ******************************************************************* ##
+
+# Reset the ARM file system: restore it to the 'factory settings'
+# as it were (this has no effect when building natively):
+sboxsysrestore
+
+# Ensure base ARM packages are installed first:
+slackbasedeps
+
+# Ensure $PKGNAM isn't already installed:
+slackfailpkgdeps $PKGNAM || removepkg $PKGNAM
+
+# Ensure specific build dependencies (mainly libraries):
+{ slackcheckpkgdeps atk         || installpkg $PKGSTORE/l/atk-[0-9]*.t?z || exit 99 ; }
+{ slackcheckpkgdeps cairo       || installpkg $PKGSTORE/l/cairo-[0-9]*.t?z || exit 99 ; }
+{ slackcheckpkgdeps expat       || installpkg $PKGSTORE/l/expat-[0-9]*.t?z || exit 99 ; }
+{ slackcheckpkgdeps freetype    || installpkg $PKGSTORE/l/freetype-[0-9]*.t?z || exit 99 ; }
+{ slackcheckpkgdeps glib2       || installpkg $PKGSTORE/l/glib2-[0-9]*.t?z || exit 99 ; }
+{ slackcheckpkgdeps gtk+2       || installpkg $PKGSTORE/l/gtk+2-[0-9]*.t?z || exit 99 ; }
+{ slackcheckpkgdeps libpng      || installpkg $PKGSTORE/l/libpng-[0-9]*.t?z || exit 99 ; }
+{ slackcheckpkgdeps pango       || installpkg $PKGSTORE/l/pango-[0-9]*.t?z || exit 99 ; }
+{ slackcheckpkgdeps fontconfig  || installpkg $PKGSTORE/x/fontconfig-[0-9]*.t?z || exit 99 ; }
+{ slackcheckpkgdeps libX11      || installpkg $PKGSTORE/x/libX11-[0-9]*.t?z || exit 99 ; }
+{ slackcheckpkgdeps libXcursor  || installpkg $PKGSTORE/x/libXcursor-[0-9]*.t?z || exit 99 ; }
+{ slackcheckpkgdeps libXext     || installpkg $PKGSTORE/x/libXext-[0-9]*.t?z || exit 99 ; }
+{ slackcheckpkgdeps libXfixes   || installpkg $PKGSTORE/x/libXfixes-[0-9]*.t?z || exit 99 ; }
+{ slackcheckpkgdeps libXi       || installpkg $PKGSTORE/x/libXi-[0-9]*.t?z || exit 99 ; }
+{ slackcheckpkgdeps libXinerama || installpkg $PKGSTORE/x/libXinerama-[0-9]*.t?z || exit 99 ; }
+{ slackcheckpkgdeps libXrandr   || installpkg $PKGSTORE/x/libXrandr-[0-9]*.t?z || exit 99 ; }
+{ slackcheckpkgdeps libXrender  || installpkg $PKGSTORE/x/libXrender-[0-9]*.t?z || exit 99 ; }
+{ slackcheckpkgdeps scim        || installpkg $PKGSTORE/x/scim-[0-9]*.t?z || exit 99 ; }
+
+# Launch the package build script:
+BUILDLOG=$( basename $SLACKPACKAGE .t?z ).build.log
+( ./$PKGNAM.SlackBuild ) >& /dev/stdout | tee $BUILDLOG
+
+# Compress the build log:
+bzip2 -9fvz $BUILDLOG

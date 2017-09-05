@@ -1,0 +1,10 @@
+19:07 < volkerdi> Usually I start with a new kernel, then compile glibc (new gcc first, if there is
+                  one).
+19:07 < volkerdi> Then I have to compile the kernel with the new glibc/gcc (especially with a new
+                  gcc, or new modules will not work).
+19:08 < volkerdi> After that, it's gcc/glibc _again_ to make sure everything carries through.  At
+                  each step I actually make and use .tgz packages until I'm satisfied with the ones I
+                  end up keeping.
+19:09 < volkerdi> Obviously it's not possible to compile the kernel against glibc/gcc, and glibc/gcc
+                  against the kernel, but you can generally make sure there are no surprises later.
+

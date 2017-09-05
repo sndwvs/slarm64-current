@@ -1,0 +1,4 @@
+# This was for Slackware ARM 12.2 - Old ABI.
+# I'm leaving this patch file here to make it quicker to add new patches
+# in the future if necessary.
+#patch -p1 --verbose < $PORTCWD/patch/libX11/002_arm_abi_brain_damage.diff || exit 1

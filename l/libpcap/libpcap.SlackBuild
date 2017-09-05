@@ -1,0 +1,116 @@
+#!/bin/bash
+
+# libpcap.SlackBuild
+# Heavily based on the original Slackware build scripts,
+# Modified by Stuart Winter for Slackware ARM.
+#
+# Copyright 2008, 2009, 2010  Patrick J. Volkerding, Sebeka, MN, USA
+# All rights reserved.
+#
+# Redistribution and use of this script, with or without modification, is
+# permitted provided that the following conditions are met:
+#
+# 1. Redistributions of this script must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+#
+#  THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED
+#  WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+#  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO
+#  EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+#  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+#  PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+#  OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+#  WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+#  OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+#  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+# Record toolchain & other info for the build log:
+slackbuildinfo
+
+# Paths to skeleton port's source & real Slackware source tree:
+export CWD=$SLACKSOURCE/$PKGSERIES/$PKGNAM
+export PORTCWD=$PWD
+
+# Temporary build locations:
+export TMPBUILD=$TMP/build-$PKGNAM
+export PKG=$TMP/package-$PKGNAM
+mkpkgdirs # Delete & re-create temporary directories then cd into $TMPBUILD
+
+# Find headers:
+case $ARCH in
+   arm)     export SLKCFLAGS="$SLKCFLAGS -I$TMPBUILD/include"
+            export LIBDIRSUFFIX="" ;;
+   *)       export SLKCFLAGS="-O2" ;;
+esac
+
+# Extract source:
+tar xvvf $CWD/$PKGNAM-$VERSION.tar.gz
+cd $PKGNAM-$VERSION || exit 1
+slackhousekeeping
+
+# Add an older copy of the mgmt.h:
+# https://bbs.archlinux.org/viewtopic.php?id=189052
+mkdir -vpm755 $TMPBUILD/include/bluetooth
+xz -dc $PORTCWD/sources/mgmt.h.xz > $TMPBUILD/include/bluetooth/mgmt.h || exit 1
+
+# Configure:
+CFLAGS="$(getconf LFS_CFLAGS) $SLKCFLAGS" \
+./configure \
+  --prefix=/usr \
+  --libdir=/usr/lib${LIBDIRSUFFIX} \
+  --mandir=/usr/man \
+  --docdir=/usr/doc/libpcap-$VERSION \
+  --enable-ipv6 \
+  --build=${SLK_ARCH_BUILDTARGET} || failconfig
+
+# Build:
+make $NUMJOBS || make || exit 1
+make shared $NUMJOBS || make || exit 1
+
+# Install into package:
+mkdir -p $PKG/usr/bin  # otherwise it errors out on install
+make install DESTDIR=$PKG || exit 1
+
+# Use symbolic links in the man pages:
+( cd $PKG/usr/man/man3
+  ln -sf pcap_datalink_val_to_name.3pcap pcap_datalink_val_to_description.3pcap
+  ln -sf pcap_dump_open.3pcap pcap_dump_fopen.3pcap
+  ln -sf pcap_geterr.3pcap pcap_perror.3pcap
+  ln -sf pcap_inject.3pcap pcap_sendpacket.3pcap
+  ln -sf pcap_loop.3pcap pcap_dispatch.3pcap
+  ln -sf pcap_major_version.3pcap pcap_minor_version.3pcap
+  ln -sf pcap_next_ex.3pcap pcap_next.3pcap
+  ln -sf pcap_open_offline.3pcap pcap_fopen_offline.3pcap
+  ln -sf pcap_setnonblock.3pcap pcap_getnonblock.3pcap
+  ln -sf pcap_findalldevs.3pcap pcap_freealldevs.3pcap
+  ln -sf pcap_free_tstamp_types.3pcap pcap_list_tstamp_types.3pcap
+  ln -sf pcap_free_datalinks.3pcap pcap_list_datalinks.3pcap
+)
+
+# Don't ship the static library:
+rm -fv $PKG/usr/lib${LIBDIRSUFFIX}/libpcap.a
+
+# Copy docs:
+mkdir -p $PKG/usr/doc/libpcap-$VERSION
+cp -a \
+  CHANGES CREDITS INSTALL.txt LICENSE README* TODO VERSION \
+  $PKG/usr/doc/libpcap-$VERSION
+
+# If necessary, start the fakeroot server so we can set file/dir ownerships:
+start_fakeroot
+
+# Apply generic Slackware packaging policies:
+cd $PKG
+slackstripall   # strip all .a archives and all ELFs
+slackgzpages -i # compress man & info pages and delete usr/info/dir
+slackslack      # chown -R root:root, chmod -R og-w, slackchown, slack644docs
+slackdesc       # install slack-desc and doinst.sh
+slackmp         # run makepkg -l y -c n
+
+# Perform any final checks on the package:
+cd $PKG
+slackhlinks     # search for any hard links
+
+# Apparently, building tcpdump can barf if it finds the libpcap sources
+# so we'll wipe these:
+rm -rf $TMPBUILD

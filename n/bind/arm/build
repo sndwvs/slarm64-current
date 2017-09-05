@@ -1,0 +1,43 @@
+#!/bin/bash
+
+# arm/build
+# Check package dependencies, set metadata and launch
+# package build script.
+# by Stuart Winter <mozes@slackware.com>
+#
+source /usr/share/slackdev/buildkit.sh
+
+# Package metadata:
+export PKGNAM=bind
+export VERSION=${VERSION:-9.11.2} # hyphens taken care of 4 lines down
+#export BUILD=${BUILD:-1_slack15.0}
+export BUILD=${BUILD:-1}
+export PKGSERIES=${PKGSERIES:-n}
+export SLACKPACKAGE=$PKGNAM-$(echo $VERSION | tr - _)-$PKGARCH-$BUILD.txz
+
+## ******************************************************************* ##
+# For test packages - best to store in another location rather than
+# overwriting the working copy in the main tree:
+# export PKGSTORE=/tmp/
+# mkdir -vpm755 $PKGSTORE/$PKGSERIES
+## ******************************************************************* ##
+
+# Ensure base ARM packages are installed first:
+slackbasedeps
+
+# Ensure $PKGNAM isn't already installed:
+slackfailpkgdeps $PKGNAM || removepkg $PKGNAM
+
+# Ensure build dependencies:
+{ slackcheckpkgdeps attr    || installpkg $PKGSTORE/a/attr-[0-9]*.t?z    || exit 99; }
+{ slackcheckpkgdeps libcap  || installpkg $PKGSTORE/l/libcap-[0-9]*.t?z  || exit 99; }
+{ slackcheckpkgdeps libxml2 || installpkg $PKGSTORE/l/libxml2-[0-9]*.t?z || exit 99; }
+{ slackcheckpkgdeps openssl || installpkg $PKGSTORE/n/openssl-[0-9]*.t?z || exit 99; }
+{ slackcheckpkgdeps idnkit  || installpkg $PKGSTORE/n/idnkit-[0-9]*.t?z || exit 99; }
+
+# Launch the package build script:
+BUILDLOG=$( basename $SLACKPACKAGE .t?z ).build.log
+( ./$PKGNAM.SlackBuild ) >& /dev/stdout | tee $BUILDLOG
+
+# Compress the build log:
+bzip2 -9fvz $BUILDLOG

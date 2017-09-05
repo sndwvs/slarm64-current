@@ -1,0 +1,121 @@
+#!/bin/bash
+
+# rpcbind.SlackBuild
+# Heavily based on the original Slackware build scripts,
+# Modified by Stuart Winter for Slackware ARM.
+#
+# Copyright 2015  Patrick J. Volkerding, Sebeka, Minnesota, USA
+# All rights reserved.
+#
+# Redistribution and use of this script, with or without modification, is
+# permitted provided that the following conditions are met:
+#
+# 1. Redistributions of this script must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+#
+#  THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED
+#  WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+#  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO
+#  EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+#  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+#  PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+#  OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+#  WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+#  OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+#  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+# Record toolchain & other info for the build log:
+slackbuildinfo
+
+# Paths to skeleton port's source & real Slackware source tree:
+export CWD=$SLACKSOURCE/$PKGSERIES/$PKGNAM
+export PORTCWD=$PWD
+
+# Temporary build locations:
+export TMPBUILD=$TMP/build-$PKGNAM
+export PKG=$TMP/package-$PKGNAM
+mkpkgdirs # Delete & re-create temporary directories then cd into $TMPBUILD
+
+# Extract source:
+tar xvvf $CWD/$PKGNAM-$VERSION.tar.?z*
+cd $PKGNAM-$VERSION || exit 1
+slackhousekeeping
+
+# Apply patches:
+# CVE-2017-8779
+zcat $CWD/0002-rpcbind-pair-all-svc_getargs-calls-with-svc_freeargs.patch.gz | patch -p1 --verbose || exit 1
+zcat $CWD/0003-pmapproc_dump-Fixed-typo-in-memory-leak-patch.patch.gz | patch -p1 --verbose || exit 1
+zcat $CWD/0004-rpcbind-fix-building-without-enable-debug.patch.gz | patch -p1 --verbose || exit 1
+# Fixes from git master
+zcat $CWD/0005-rpcbproc_callit_com-Stop-freeing-a-static-pointer.patch.gz | patch -p1 --verbose || exit 1
+zcat $CWD/0006-rpcbproc_callit_com-No-need-to-allocate-output-buffe.patch.gz | patch -p1 --verbose || exit 1
+zcat $CWD/0001-man-rpcibind.8-Clarify-state-file-usage-and-history.patch | patch -p1 --verbose || exit 1
+zcat $CWD/rpcbind.lwrap.needs.lnsl.diff.gz | patch -p1 --verbose || exit 1
+
+# This is needed after the libwrap patch above:
+autoreconf -vif || exit 1
+./autogen.sh
+
+# Configure:
+CFLAGS="$SLKCFLAGS" \
+CXXFLAGS="$SLKCFLAGS" \
+./configure \
+  \
+   --enable-debug \
+   \
+   --prefix=/usr \
+   --bindir=/sbin \
+   --libdir=/lib${LIBDIRSUFFIX} \
+   --sysconfdir=/etc \
+   --mandir=/usr/man \
+   --enable-libwrap \
+   --enable-warmstarts \
+   --with-statedir=/var/run/rpcbind \
+   --with-rpcuser=rpc \
+   --with-nss-modules="files" \
+   --without-systemdsystemunitdir \
+   --host=$ARCH-slackware-linux-gnueabi \
+   --target=$ARCH-slackware-linux-gnueabi \
+   --build=$ARCH-slackware-linux-gnueabi || failconfig
+
+# Build:
+make $NUMJOBS || make || failmake
+
+# Install into package framework:
+make install DESTDIR=$PKG || failinstall
+
+# Install init script:
+mkdir -p $PKG/etc/rc.d
+zcat $CWD/rc.rpc.gz > $PKG/etc/rc.d/rc.rpc.new
+
+# Install defaults file:
+mkdir -p $PKG/etc/default
+install -vpm644 $CWD/rpc.default $PKG/etc/default/rpc.new
+
+# Add documentation:
+mkdir -vpm755 $PKG/usr/doc/$PKGNAM-$VERSION
+cp -fav \
+  AUTHORS COPYING* NEWS README* \
+  $PKG/usr/doc/$PKGNAM-$VERSION
+#changelogliposuction ChangeLog $PKGNAM $VERSION # Trim down a "ChangeLog" file
+#changelogliposuction CHANGES $PKGNAM $VERSION # Trim down a "ChangeLog" file
+
+# Apply generic Slackware packaging policies:
+cd $PKG
+slackstripall   # strip all .a archives and all ELFs
+slackgzpages -i # compress man & info pages and delete usr/info/dir
+slackslack      # set standard Slackware file/dir permissions and ownerships
+
+# Make state directory # (not really needed as rpcbind does this on startup)
+# This is lower down due to the "slackslack".
+# The ownership here is an exception to the normal Slackware packaging
+# standards:
+mkdir -vpm755 $PKG/var/run/rpcbind
+chown rpc:root $PKG/var/run/rpcbind
+
+slackdesc       # install slack-desc and doinst.sh
+slackmp         # run makepkg -l y -c n
+
+# Perform any final checks on the package:
+cd $PKG
+slackhlinks     # search for any hard links

@@ -1,0 +1,93 @@
+#!/bin/bash
+
+# pmake.SlackBuild
+# Heavily based on the original Slackware build scripts,
+# Modified by Stuart Winter <mozes@slackware.com>
+#
+# Copyright 2006, 2007  Patrick J. Volkerding, Sebeka, MN, USA
+# All rights reserved.
+#
+# Redistribution and use of this script, with or without modification, is
+# permitted provided that the following conditions are met:
+#
+# 1. Redistributions of this script must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+#
+#  THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED
+#  WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+#  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO
+#  EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+#  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+#  PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+#  OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+#  WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+#  OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+#  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+# Record toolchain & other info for the build log:
+slackbuildinfo
+
+# Paths to skeleton port's source & real Slackware source tree:
+export CWD=$SLACKSOURCE/$PKGSERIES/$PKGNAM
+export PORTCWD=$PWD
+
+# Temporary build locations:
+export TMPBUILD=$TMP/build-$PKGNAM
+export PKG=$TMP/package-$PKGNAM
+mkpkgdirs # Delete & re-create temporary directories then cd into $TMPBUILD
+
+# Determine the CFLAGS for the known architectures:
+case $ARCH in
+   arm)     export SLKCFLAGS="$SLKCFLAGS -Wall -DMACHINE_ARCH=\\\"${ARCH}\\\" -DHAVE_SETENV -DHAVE_STRERROR -DHAVE_STRDUP -DHAVE_STRFTIME -DHAVE_VSNPRINTF -D_GNU_SOURCE" 
+            export LIBDIRSUFFIX="" ;;
+   *)       export SLKCFLAGS="-O2" ;;
+esac
+
+# Extract source:
+tar xvvf $CWD/$PKGNAM-$VERSION.tar.gz
+cd $PKGNAM*
+slackhousekeeping
+
+# Apply patches:
+zcat $CWD/pmake_1.111-1.diff.gz | patch -p1 || failpatch
+
+# Not sure why the defines in the cflags didn't work here, but
+# we'll just hit it with a big hammer:
+zcat $CWD/pmake.strerror.strdup.diff.gz | patch -p1 || exit 1
+#if [ "$ARCH" != "i[3456]86" ]; then
+#  sed -i -e "s/i386/$ARCH/" Makefile.boot
+#fi
+
+# Build:
+CFLAGS="$SLKCFLAGS" make -e $NUMJOBS -f Makefile.boot || \
+CFLAGS="$SLKCFLAGS" make -e -f Makefile.boot || failmake
+
+# Install into package:
+mkdir -pm755 $PKG/usr/bin
+install -m755 bmake $PKG/usr/bin/pmake
+mkdir -pm755 $PKG/usr/share/mk
+cp -favv mk/*.mk $PKG/usr/share/mk
+chmod 644 $PKG/usr/share/mk/*
+mkdir -pm755 $PKG/usr/man/man1
+install -m644 make.1 $PKG/usr/man/man1/pmake.1
+
+# Add a documentation directory:
+mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
+( cd PSD.doc
+  ../bmake -m ../mk 
+  ps2ascii paper.ps > $PKG/usr/doc/$PKGNAM-$VERSION/pmake.txt )
+
+# If necessary, start the fakeroot server so we can set file/dir ownerships:
+start_fakeroot
+
+# Apply generic Slackware packaging policies:
+cd $PKG
+slackstripall   # strip all .a archives and all ELFs
+slackgzpages -i # compress man & info pages and delete usr/info/dir
+slackslack      # chown -R root:root, chmod -R og-w, slackchown, slack644docs
+slackdesc       # install slack-desc and doinst.sh
+slackmp         # run makepkg -l y -c n
+
+# Perform any final checks on the package:
+cd $PKG
+slackhlinks     # search for any hard links

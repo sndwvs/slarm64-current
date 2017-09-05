@@ -1,0 +1,56 @@
+#!/bin/bash
+
+# arm/build
+# Check package dependencies, set metadata and launch
+# package build script.
+# by Stuart Winter <mozes@slackware.com>
+#
+source /usr/share/slackdev/buildkit.sh
+
+# Package metadata:
+export PKGNAM=libmpc
+export VERSION=${VERSION:-1.0.3}
+export BUILD=${BUILD:-1}
+export PKGSERIES=${PKGSERIES:-l}
+export SLACKPACKAGE=$PKGNAM-$VERSION-$PKGARCH-$BUILD.txz
+
+## ******************************************************************* ##
+# For test packages - best to store in another location rather than
+# overwriting the working copy in the main tree:
+# export PKGSTORE=/tmp/
+# mkdir -vpm755 $PKGSTORE/$PKGSERIES
+## ******************************************************************* ##
+
+# Reset the ARM file system: restore it to the 'factory settings'
+# as it were (this has no effect when building natively):
+sboxsysrestore
+
+# Ensure base ARM packages are installed first:
+slackbasedeps
+
+# Ensure $PKGNAM isn't already installed:
+#slackfailpkgdeps $PKGNAM || removepkg $PKGNAM
+#
+# with gcc-4.5 this becomes a dependency, so best not to remove it.
+#
+# After updating libmpc, you will probably want to rebuild gcc against it.
+# To do so,
+# First store the existing version of libmpc in a safe place:
+# mkdir -p /tmp/lmpc ; cd /tmp/lmpc
+# installpkg -root /tmp/lmpc libmpc-oldv*t?z
+# mv usr/lib/libmpc*so* /usr/local/lib
+# ldconfig
+#
+# This way gcc will continue to work, and once you have rebuilt it against the
+# new libmpc, you can remove the /usr/local/lib copy, ldconfig again.
+
+# Ensure specific build dependencies (mainly libraries):
+{ slackcheckpkgdeps gmp  || installpkg $PKGSTORE/l/gmp-[0-9]*.t?z     || exit 99; }
+{ slackcheckpkgdeps mpfr || installpkg $PKGSTORE/l/mpfr-[0-9]*.t?z    || exit 99; }
+
+# Launch the package build script:
+BUILDLOG=$( basename $SLACKPACKAGE .t?z ).build.log
+( ./$PKGNAM.SlackBuild ) >& /dev/stdout | tee $BUILDLOG
+
+# Compress the build log:
+bzip2 -9fvz $BUILDLOG

@@ -1,0 +1,4 @@
+#echo "****************************************************"
+#echo "***** LOCAL PATCH OF HAL CRASH FIX **************"
+#echo "****************************************************"
+#patch  -p1 --verbose < $PORTCWD/patch/xserver/hal-crashfix.diff || exit 1

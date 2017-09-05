@@ -1,0 +1,66 @@
+#!/bin/bash
+
+# mm.SlackBuild
+# Heavily based on the original Slackware build scripts,
+# Modified by Stuart Winter <mozes@slackware.com>
+
+# Record toolchain & other info for the build log:
+slackbuildinfo
+
+# Paths to skeleton port's source & real Slackware source tree:
+export CWD=$SLACKSOURCE/$PKGSERIES/$PKGNAM
+export PORTCWD=$PWD
+
+# Temporary build locations:
+export TMPBUILD=$TMP/build-$PKGNAM
+export PKG=$TMP/package-$PKGNAM
+mkpkgdirs # Delete & re-create temporary directories then cd into $TMPBUILD
+
+# Extract source:
+tar xvvf $CWD/$PKGNAM-$VERSION.tar.?z*
+cd $PKGNAM-$VERSION || exit 1
+slackhousekeeping
+
+# Configure:
+CFLAGS="$SLKCFLAGS" \
+./configure \
+   --prefix=/usr \
+   --mandir=/usr/man \
+   --enable-static \
+   --enable-shared \
+   --build=$ARCH-slackware-linux-gnueabi || failconfig
+
+# Build and install:
+make $NUMJOBS || make || failmake
+make test || failmake
+
+# Install into package:
+make install DESTDIR=$PKG || failinstall
+
+# Make sure the shared library is executable:
+chmod 755 $PKG/usr/lib/libmm.so.*
+# 99% of these are also executable, but I don't think it matters.
+# Personally, I think they should be chmod 644, but what do I know?
+chmod 755 $PKG/usr/lib/libmm*.la
+
+# Add a documentation directory:
+mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
+cp -fav \
+   INSTALL LICENSE PORTING README* THANKS \
+   $PKG/usr/doc/$PKGNAM-$VERSION
+changelogliposuction ChangeLog $PKGNAM $VERSION # Trim down a "ChangeLog" file
+
+# If necessary, start the fakeroot server so we can set file/dir ownerships:
+start_fakeroot
+
+# Apply generic Slackware packaging policies:
+cd $PKG
+slackstripall   # strip all .a archives and all ELFs
+slackgzpages -i # compress man & info pages and delete usr/info/dir
+slackslack      # chown -R root:root, chmod -R og-w, slackchown, slack644docs
+slackdesc       # install slack-desc and doinst.sh
+slackmp         # run makepkg -l y -c n
+
+# Perform any final checks on the package:
+cd $PKG
+slackhlinks     # search for any hard links

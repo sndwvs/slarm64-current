@@ -1,0 +1,110 @@
+#!/bin/bash
+
+# curl.SlackBuild
+# Heavily based on the original Slackware build scripts,
+# Modified by Stuart Winter <mozes@slackware.com>
+# 25-Aug-2004
+#
+# Copyright 2008, 2009, 2010, 2011, 2013, 2014, 2016  Patrick J. Volkerding, Sebeka, MN, USA
+# All rights reserved.
+#
+# Redistribution and use of this script, with or without modification, is
+# permitted provided that the following conditions are met:
+#
+# 1. Redistributions of this script must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+#
+#  THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED
+#  WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+#  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO
+#  EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+#  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+#  PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+#  OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+#  WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+#  OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+#  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+# Record toolchain & other info for the build log:
+slackbuildinfo
+
+# Paths to skeleton port's source & real Slackware source tree:
+export CWD=$SLACKSOURCE/$PKGSERIES/$PKGNAM
+export PORTCWD=$PWD
+
+# Temporary build locations:
+export TMPBUILD=$TMP/build-$PKGNAM
+export PKG=$TMP/package-$PKGNAM
+mkpkgdirs # Delete & re-create temporary directories then cd into $TMPBUILD
+
+# Extract source:
+tar xvvf $CWD/$PKGNAM-$VERSION.tar.xz
+cd $PKGNAM-$VERSION || exit 1
+slackhousekeeping
+
+# Uncomment to build a no-SSL version:
+#SSLOPT=--without-ssl
+
+# Configure:
+CFLAGS="$SLKCFLAGS" \
+./configure \
+   --prefix=/usr \
+   --libdir=/usr/lib${LIBDIRSUFFIX} \
+   --mandir=/usr/man \
+   --with-ca-bundle=/usr/share/curl/ca-bundle.crt \
+   --enable-static=no \
+   $SSLOPT || failconfig
+
+# Build:
+make $NUMJOBS || make || failmake
+
+# Install into package:
+make install DESTDIR=$PKG || failinstall
+
+# We have always installed the man3 documentation, so we'll keep doing it
+# even though these are no longer installed by default. No || exit 1, if
+# it works, it works, and if it doesn't, we tried.
+( cd docs/libcurl
+  make install-man3 DESTDIR=$PKG
+  cd opts
+  make install-man3 DESTDIR=$PKG )
+
+# We don't ship the related perl script (yet):
+rm -f $PKG/usr/man/man1/mk-ca-bundle.1
+
+mkdir -p $PKG/usr/share/curl
+cp -a $CWD/cacert.pem.bz2 $PKG/usr/share/curl
+( cd $PKG/usr/share/curl
+  bzip2 -d cacert.pem.bz2
+  mv cacert.pem ca-bundle.crt
+  chown root:root ca-bundle.crt
+  chmod 644 ca-bundle.crt
+)
+
+# Install docs:
+mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
+cp -a \
+  COPYING* README* UPGRADE \
+      $PKG/usr/doc/curl-$VERSION
+( cd docs
+  cp -a BUGS CONTRIBUTE FAQ FEATURES INSTALL INTERNALS MANUAL README* RESOURCES THANKS TODO examples \
+        $PKG/usr/doc/$PKGNAM-$VERSION )
+changelogliposuction CHANGES $PKGNAM $VERSION # Trim down a "ChangeLog" file
+
+# Get rid of .deps cruft:
+rm -rf $PKG/usr/doc/curl-$VERSION/examples/.deps
+
+# If necessary, start the fakeroot server so we can set file/dir ownerships:
+start_fakeroot
+
+# Apply generic Slackware packaging policies:
+cd $PKG
+slackstripall   # strip all .a archives and all ELFs
+slackgzpages -i # compress man & info pages and delete usr/info/dir
+slackslack      # chown -R root:root, chmod -R og-w, slackchown, slack644docs
+slackdesc       # install slack-desc and doinst.sh
+slackmp         # run makepkg -l y -c n
+
+# Perform any final checks on the package:
+cd $PKG
+slackhlinks     # search for any hard links

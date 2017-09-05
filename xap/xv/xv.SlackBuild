@@ -1,0 +1,91 @@
+#!/bin/bash
+
+# xv.SlackBuild
+# Heavily based on the original Slackware build scripts,
+# Modified by Stuart Winter <mozes@slackware.com>
+# 28-Dec-2004
+#
+# Copyright 2008, 2009, 2015  Patrick J. Volkerding, Sebeka, MN, USA
+# All rights reserved.
+#
+# Redistribution and use of this script, with or without modification, is
+# permitted provided that the following conditions are met:
+#
+# 1. Redistributions of this script must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+#
+#  THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED
+#  WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+#  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO
+#  EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+#  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+#  PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+#  OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+#  WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+#  OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+#  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+# Record toolchain & other info for the build log:
+slackbuildinfo
+
+# Paths to skeleton port's source & real Slackware source tree:
+export CWD=$SLACKSOURCE/$PKGSERIES/$PKGNAM
+export PORTCWD=$PWD
+
+# Temporary build locations:
+export TMPBUILD=$TMP/build-$PKGNAM
+export PKG=$TMP/package-$PKGNAM
+mkpkgdirs # Delete & re-create temporary directories then cd into $TMPBUILD
+
+# Extract source:
+tar xvvf $CWD/$PKGNAM-*.tar.?z*
+cd $PKGNAM-* || exit 1
+slackhousekeeping
+
+# Apply patches:
+zcat $CWD/xv-3.10a.patch.gz | patch -p0 --verbose --backup --suffix=.orig || exit 1
+bzcat $CWD/xv-3.10a-jumbo-fix-enh-patch-20070520.txt.bz2 | patch -p1 --verbose --backup --suffix=.orig || exit 1
+bzcat $CWD/xv-3.10a-jumbo-additions.diff.bz2 | patch -p1 --verbose --backup --suffix=.orig || exit 1
+bzcat $CWD/xv-3.10a-enhancements.20070520-20081216.diff.bz2 | patch -p1 --verbose --backup --suffix=.orig || exit 1
+zcat $CWD/xv.prefix.diff.gz | patch -p1 --verbose --backup --suffix=.orig || exit 1
+if [ "$ARCH" = "x86_64" ]; then
+  zcat $CWD/xv.prefix_x86_64.diff.gz | patch -p1 --verbose --backup --suffix=.orig || exit 1
+fi
+zcat $CWD/xv.jasper.diff.gz | patch -p1 --verbose --backup --suffix=.orig || exit 1
+zcat $CWD/xv-libpng-1.5.patch.gz | patch -p0 --verbose --backup --suffix=.orig || exit 1
+
+# Build:
+make $NUMJOBS CC="cc $SLKCFLAGS" -f Makefile.std || make CC="cc $SLKCFLAGS" -f Makefile.std || failmake
+
+# Install:
+mkdir -p $PKG/usr/bin
+install -m755 bggen vdcomp xcmap xv xvpictoppm \
+              $PKG/usr/bin
+mkdir -p $PKG/usr/man/man1
+for page in docs/xv.man docs/bggen.man docs/xcmap.man docs/xvp2p.man ; do
+  cat $page | gzip -9c > $PKG/usr/man/man1/`basename $page .man`.1.gz
+done
+
+# Install docs:
+mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
+cp -a BUGS IDEAS INSTALL README README.jumbo README.pcd \
+      $PKG/usr/doc/$PKGNAM-$VERSION
+( cd docs
+  cp -a penn.policy xv.blurb xv.ann xvdocs.ps \
+        $PKG/usr/doc/$PKGNAM-$VERSION
+  bzip2 -9 $PKG/usr/doc/$PKGNAM-$VERSION/xvdocs.ps )
+
+# If necessary, start the fakeroot server so we can set file/dir ownerships:
+start_fakeroot
+
+# Apply generic Slackware packaging policies:
+cd $PKG
+slackstripall   # strip all .a archives and all ELFs
+slackgzpages -i # compress man & info pages and delete usr/info/dir
+slackslack      # chown -R root:root, chmod -R og-w, slackchown, slack644docs
+slackdesc       # install slack-desc and doinst.sh
+slackmp         # run makepkg -l y -c n
+
+# Perform any final checks on the package:
+cd $PKG
+slackhlinks     # search for any hard links

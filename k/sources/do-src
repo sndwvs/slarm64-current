@@ -1,0 +1,35 @@
+#!/bin/bash
+
+# Prepare updated Kernel config files & recompress the Kernel source
+# for maximum compression:
+
+CWD=$PWD
+
+#xz -vd linux-*tar.xz || exit 1
+
+rm -rf srcunpack
+mkdir srcunpack
+( cd srcunpack
+  # Back these up incase:
+  cp -fa $CWD/../configs .
+  tar xf $CWD/linux-*.tar
+  cd linux-* || exit 1
+  # The Kernel archive version doesn't necessarily match the version
+  # exported by the Kernel itself:
+  echo "Kernel version: $( sed -ne's/^VERSION *= *//p' Makefile).$(sed -ne's/^PATCHLEVEL *= *//p' Makefile).$(sed -ne's/^SUBLEVEL *= *//p' Makefile )"
+  read -p "Press ENTER"
+  ../../patches/applier
+
+  for i in $CWD/../configs/config* ; do 
+    echo "***** $i *****"
+    cp -fav $i .config
+    make ARCH=arm oldconfig || exit 1
+    cp -fav .config $i
+  done ) || exit 1
+
+# Repack with LZMA and extreme compression (kernel.org doesn't use 
+# extreme compression):
+cd $CWD
+echo "Repacking Linux source - will take some time.."
+xz -vvez9 linux*.tar
+echo "You can now wipe srcunpack .."

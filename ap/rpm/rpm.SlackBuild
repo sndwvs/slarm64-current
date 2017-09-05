@@ -1,0 +1,111 @@
+#!/bin/bash
+
+# rpm.SlackBuild
+# Heavily based on the original Slackware build scripts,
+# modifed by Stuart Winter for ARMedslack
+#
+# Copyright 2008  Patrick J. Volkerding, Sebeka, MN, USA
+# All rights reserved.
+#
+# Redistribution and use of this script, with or without modification, is
+# permitted provided that the following conditions are met:
+#
+# 1. Redistributions of this script must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+#
+#  THIS SOFTWARE IS PROVIDED BY THE AUTHOR ''AS IS'' AND ANY EXPRESS OR IMPLIED
+#  WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+#  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO
+#  EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+#  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+#  PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+#  OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+#  WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+#  OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+#  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+
+# Record toolchain & other info for the build log:
+slackbuildinfo
+
+# Paths to skeleton port's source & real Slackware source tree:
+export CWD=$SLACKSOURCE/$PKGSERIES/$PKGNAM
+export PORTCWD=$PWD
+
+# Temporary build locations:
+export TMPBUILD=$TMP/build-$PKGNAM
+export PKG=$TMP/package-$PKGNAM
+mkpkgdirs # Delete & re-create temporary directories then cd into $TMPBUILD
+
+DB_INC="/usr/include/db48"
+
+# Extract source:
+tar xvvf $CWD/$PKGNAM-$VERSION.tar.*
+cd $PKGNAM-$VERSION || exit 1
+slackhousekeeping
+
+# Change the /usr/src/redhat paths to /usr/src/rpm.  This ain't redhat.
+#fgrep -lr -- '{_usrsrc}/redhat' . | xargs sed -i 's?{_usrsrc}/redhat?{_usrsrc}/rpm/?g'
+#fgrep -lr -- 'src/redhat' .       | xargs sed -i 's?/src/redhat?/src/rpm?g'
+
+# ARM fixes:
+# Make it recognise that we're rpm.
+#patch -lp0 --verbose < $PORTCWD/sources/slackware-vendor.diff || exit 1
+# Patch to install on ARM - thanks to Jim Hawkins:
+sed -i 's?s_arm_armv3l_?          s_arm_arm_       s_arm_armv3l_?g' installplatform
+
+# We have to tell it where to find Seamonkey's NSS.
+# Also, --enable-sqlite3 needs "-ldl" in LDFLAGS
+# And --enable-broken-chown fits, as ours follows symlinks.
+# CPPFLAGS="$CPPFLAGS `pkg-config --cflags nss`"
+CFLAGS="$SLKCFLAGS -I${DB_INC} $(pkg-config --cflags nspr nss)" \
+LDFLAGS="-ldl" \
+./configure \
+  --prefix=/usr \
+  --libdir=/usr/lib${LIBDIRSUFFIX} \
+  --localstatedir=/var \
+  --mandir=/usr/man \
+  --enable-python \
+  --with-external-db \
+  --enable-broken-chown \
+  --without-hackingdocs \
+  --without-selinux \
+  --without-lua \
+  --without-dmalloc \
+  --enable-sqlite3 \
+  --build=$ARCH-slackware-linux-gnueabi || exit 1
+
+# Build:
+make $NUMJOBS || make || exit 1
+
+# Install into package:
+make install DESTDIR=$PKG || exit 1
+
+# Here's a bug - /var/tmp should NOT have mode 0755
+rmdir $PKG/var/tmp || exit 1
+
+# Initialize a dummy package database
+mkdir -p $PKG/var/lib/rpm/tmp
+zcat $CWD/Packages.gz > $PKG/var/lib/rpm/tmp/Packages
+
+# Install docs
+mkdir -p $PKG/usr/doc/rpm-$VERSION
+cp -a \
+  COPYING* CREDITS GROUPS INSTALL README* TODO doc/manual \
+   $PKG/usr/doc/rpm-$VERSION
+changelogliposuction CHANGES $PKGNAM $VERSION # Trim down a "ChangeLog" file
+
+# If necessary, start the fakeroot server so we can set file/dir ownerships:
+start_fakeroot
+
+# Apply generic Slackware packaging policies:
+cd $PKG
+slackstripall   # strip all .a archives and all ELFs
+slackgzpages -i # compress man & info pages and delete usr/info/dir
+slackslack      # chown -R root:root, chmod -R og-w, slackchown, slack644docs
+slackdesc       # install slack-desc and doinst.sh
+slackmp         # run makepkg -l y -c n
+
+# Perform any final checks on the package:
+cd $PKG
+slackhlinks     # search for any hard links

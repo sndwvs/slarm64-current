@@ -1,0 +1,8 @@
+# The aspell-dict package actually creates l/aspell-en and the rest of them in /extra.
+# the r2b fails to find this because the resulting package does not match the file name.
+# Let's check for the one in the main tree:
+if [ $PKGSTASH/$PKGSERIES/aspell-en-+([^-])-+([^-])-+([^-]).t?z -ot $PKGSTASHTESTFILE ]; then
+   NEWPACKAGEBUILT=1
+ else
+   NEWPACKAGEBUILT=0
+fi

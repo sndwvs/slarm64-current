@@ -1,0 +1,128 @@
+#!/bin/bash
+#######################################################################
+# Script : bootstrap-x11-build
+# Purpose: Bootstrap Build for X.org packages
+# Author : Stuart Winter <mozes@slackware.com>
+#          Thanks to Mark Post (Slack390) for the initial build order.
+# Version: 2.0
+# Change Log
+#######################################################################
+# v2.0 - Jul 2016
+#   * Added libvdpau dependency for mesa.
+# v1.0 - Dec 2010
+#   * First version
+#######################################################################
+#
+# Only for use when there's no X packages available - eg when
+# making a new port of Slackware
+# You need a few basic packages including some of the basic graphics libraries
+# in l/, and ap/linuxdoc-tools and d/python, d/pkgconfig, l/sdl (for xorg-server).
+# d/intltool and other bits.
+#
+# You'll need to do a round of building X first, THEN build l/sdl, then build x
+# again -- taken care of in this script.
+#
+# Once these bootstrap packages have been created, you can run X11.SlackBuild
+# to rebuild everything a few times.
+#
+# You will then have to rebuild some of the l/ and ap/ packages to link
+# them with X libraries -- many will build without X support, but Slackware x86's
+# packages are built against X (since Slackware packages are always built on a full
+# system); *then* rebuild X11 *again* a couple of times; then rebuild some of the l/
+# and ap/ series.  For example, d/python in Slackware links against X libraries
+# but WILL build (and we NEED python to build some X packages) without it.
+# Once you've built all of l/, you should build all of Xorg once again
+# to link against anything that wasn't previously present on the system:
+# the "compiz" package will also be built on this (final?) pass.
+#
+# Building an OS from scratch is quite an iterative process.
+#
+#
+
+# Load Slackware ARM build kit:
+source /usr/share/slackdev/buildkit.sh
+
+# Keep a copy of where we were launched from:
+export PORTCWD=$CWD
+
+# We don't want to increment the build number whilst bootstrapping:
+export MODBUILDNOBUMP=Yes
+echo "*** Packages are being built without build increment ***"
+
+# We want logs since stuff *will* fail during the boot strap
+# and some stuff will never build for ARM.
+mkdir -vpm755 $PORTCWD/build-logs
+
+# This is a wrapper to the SlackBuild: it sets up the environment
+# to use distcc across the build cluster.  It calls 'arm/build' which is
+# an ARMedslack SlackBuild wrapper script that sets up the envrionment, ensures
+# packages are installed.  For the rest of Slackware, you would just call
+# the <pkgname>.SlackBuild from this script instead.
+export DB=~/armedslack/dbuild
+
+# Build X11 skeleton:
+( cd ../x11-skel && $DB && upgradepkg --install-new $PKGSTORE/x/x11-skel-*.t?z )
+
+# Build fontconfig:
+( cd ../fontconfig && $DB && upgradepkg --install-new $PKGSTORE/x/fontconfig-*.t?z )
+
+# Do a few iterations of this build to get everything holding hands:
+(  for pass in $( seq 1 5 ); do
+
+cat << EOF
+***********************************************************
+          Pass $i
+***********************************************************
+EOF
+
+   # Xorg bits:
+   $DB proto
+   $DB xcb xcb-proto
+   $DB lib libpthread-stubs
+
+   # Build libdrm:
+   ( cd ../libdrm && $DB && upgradepkg --install-new $PKGSTORE/x/libdrm-*.t?z )
+
+   # The x11.SlackBuild in ARMedslack is modified to upgradepkg --install-new
+   # after it's created each package.
+   #
+   $DB util makedepend
+   $DB lib xtrans
+   $DB lib libXau
+   $DB xcb libxcb
+   $DB lib libX11
+   $DB lib libXdmcp
+   $DB lib libXfixes
+   $DB lib libXdamage
+   $DB lib libXext
+   $DB lib libXxf86vm
+   $DB lib libICE
+   $DB lib libSM
+   $DB lib libXt
+   $DB lib libXmu
+   $DB lib libXi
+
+   # Build glew - needed for Mesa:
+   # glew also links against Mesa, which will happen once the first pass
+   # has completed.
+   ( cd ../glew && $DB && upgradepkg --install-new $PKGSTORE/x/glew-*.t?z )
+
+   # Build libvdpau (required for mesa):
+   ( cd ../libvdpau && $DB && upgradepkg --install-new $PKGSTORE/x/libvdpau-*.t?z )
+
+   # Build mesa:
+   ( cd ../mesa && $DB && upgradepkg --install-new $PKGSTORE/x/mesa-*.t?z )
+
+   # Build l/sdl -- needed for xorg-server:
+   ( cd $PORTCWD/../../l/sdl && $DB && upgradepkg --install-new $PKGSTORE/l/sdl-*.t?z )
+
+   # Now use the X11.SlackBuild to build everything:
+   # which includes all of the X components above that are built
+   # using $DB:
+   $DB
+
+done ) >& /dev/stdout | tee $PORTCWD/build-logs/bootstrap-build.log
+
+# Now open the "indibuild" script and uncomment the section that builds
+# the fbdev driver, and build that.
+# Then run through x11.SlackBuild again.

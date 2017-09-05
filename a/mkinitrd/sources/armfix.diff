@@ -1,0 +1,20 @@
+--- ./networking/libiproute/libnetlink.h.orig	2009-07-09 21:22:16.000000000 +0200
++++ ./networking/libiproute/libnetlink.h	2009-07-09 21:22:33.000000000 +0200
+@@ -7,6 +7,7 @@
+  * in linux/[rt]netlink.h. 2.6.19 seems to be ok, though */
+ #include <linux/netlink.h>
+ #include <linux/rtnetlink.h>
++#include <asm/byteorder.h>
+ 
+ 
+ #if __GNUC_PREREQ(4,1)
+--- ./networking/libiproute/iptunnel.c.orig	2009-07-09 21:33:31.000000000 +0200
++++ ./networking/libiproute/iptunnel.c	2009-07-09 21:33:43.000000000 +0200
+@@ -16,6 +16,7 @@
+ 
+ #include <netinet/ip.h>
+ #include <net/if.h>
++#include <asm/byteorder.h>
+ #include <net/if_arp.h>
+ #include <asm/types.h>
+ #ifndef __constant_htons

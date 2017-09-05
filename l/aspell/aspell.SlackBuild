@@ -1,0 +1,73 @@
+#!/bin/bash
+
+# aspell.SlackBuild
+# by Stuart Winter <mozes@slackware.com> for the Slackware porting Project.
+# Heavily based on the original Slackware build script.
+# 16-Jun-2004
+
+# Record toolchain & other info for the build log:
+slackbuildinfo
+
+# Paths to skeleton port's source & real Slackware source tree:
+export CWD=$SLACKSOURCE/$PKGSERIES/$PKGNAM
+export PORTCWD=$PWD
+
+# Temporary build locations:
+export TMPBUILD=$TMP/build-$PKGNAM
+export PKG=$TMP/package-$PKGNAM
+mkpkgdirs # Delete & re-create temporary directories then cd into $TMPBUILD
+
+# Extract source:
+tar xvvf $CWD/$PKGNAM-$VERSION.tar.?z*
+#tar xvvf $PORTCWD/sources/$PKGNAM*orig*
+cd $PKGNAM* || exit 1
+slackhousekeeping
+
+# gcc 4.3 build fix:
+#auto_apply_patch $PORTCWD/sources/04_gcc43_build_fix.diff.xz || exit 1
+
+# Configure:
+CFLAGS="$SLKCFLAGS" \
+CXXFLAGS="$SLKCFLAGS" \
+./configure \
+   --prefix=/usr \
+   --mandir=/usr/man \
+   --infodir=/usr/info \
+   --libdir=/usr/lib${LIBDIRSUFFIX} \
+   --enable-pkgdatadir=/usr/lib${LIBDIRSUFFIX}/aspell \
+   --enable-data-dir=/usr/lib${LIBDIRSUFFIX}/aspell \
+   --enable-pkglibdir=/usr/lib${LIBDIRSUFFIX}/aspell \
+   --enable-dict-dir=/usr/lib${LIBDIRSUFFIX}/aspell \
+   --build=${SLK_ARCH_BUILDTARGET} || failconfig
+
+# Build:
+make $NUMJOBS || make || failmake
+
+# Install into package (first blatting over the file system).
+# I'm not sure this is needed, but Patrick did it so I suspect it is.
+make install
+ldconfig
+make install DESTDIR=$PKG
+
+# Install docs:
+mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
+cp -a \
+  COPYING* README* TODO \
+  $PKG/usr/doc/$PKGNAM-$VERSION
+mv $PKG/usr/share/doc/aspell/*html $PKG/usr/doc/aspell-$VERSION
+rm -rf $PKG/usr/share/doc
+
+# If necessary, start the fakeroot server so we can set file/dir ownerships:
+start_fakeroot
+
+# Apply generic Slackware packaging policies:
+cd $PKG
+slackstripall   # strip all .a archives and all ELFs
+slackgzpages -i # compress man & info pages and delete usr/info/dir
+slackslack      # chown -R root:root, chmod -R og-w, slackchown, slack644docs
+slackdesc       # install slack-desc and doinst.sh
+slackmp         # run makepkg -l y -c n
+
+# Perform any final checks on the package:
+cd $PKG
+slackhlinks     # search for any hard links

@@ -1,0 +1,157 @@
+#!/bin/bash
+
+# ppp.SlackBuild
+# based on the original Slackware build scripts,
+# Extensively modified by Stuart Winter <mozes@slackware.com>
+# 30-Sep-2004
+
+# Record toolchain & other info for the build log:
+slackbuildinfo
+
+# Update this with the current version of radius client:
+RADVER=1.1.6
+# Version of ppp setup:
+PPPSETUPVER=1.98
+
+# Paths to skeleton port's source & real Slackware source tree:
+export CWD=$SLACKSOURCE/$PKGSERIES/$PKGNAM
+export PORTCWD=$PWD
+
+# Temporary build locations:
+export TMPBUILD=$TMP/build-$PKGNAM
+export PKG=$TMP/package-$PKGNAM
+mkpkgdirs # Delete & re-create temporary directories then cd into $TMPBUILD
+
+################################ Build ppp ############################################
+
+printf "\t\t\t\t\t\t\t[***] Building ppp [***]\n"
+
+# Extract source:
+cd $TMPBUILD
+tar xvvf $CWD/$PKGNAM-$VERSION.tar.xz
+cd $PKGNAM* || exit 1
+slackhousekeeping
+
+# Switch /usr/local with /usr.  This saves having to pass a number of
+# variables to 'make'.
+fgrep -lr -- '/usr/local' . | xargs sed -i 's?/usr/local?/usr?g'
+
+# Apply patches (these are in Slackware):
+zcat $CWD/ppp.slack.diff.gz | patch -p1 --verbose || failpatch
+zcat $CWD/ppp.CVE-2015-3310.diff.gz | patch -p1 --verbose || exit 1
+sed -i -e "s#lib/pppd#lib${LIBDIRSUFFIX}/pppd#g" $(grep -lr 'lib/pppd' *)
+
+# This conflicts with the header in 3.5+ kernels:
+rm -fv include/linux/if_pppol2tp.h
+
+# Configure:
+./configure \
+   --prefix=/usr \
+   --libdir=/usr/lib${LIBDIRSUFFIX} || failconfig
+
+# Build:
+make $NUMJOBS || make || exit 1
+
+# Install into package:
+make install DESTDIR=$PKG/usr || exit 1
+
+# Install PPP config files:
+mkdir -p $PKG/etc/ppp
+cp -a etc.ppp/* $PKG/etc/ppp
+chmod 600 $PKG/etc/ppp/*secrets
+( cd $PKG/etc/ppp
+  mv chap-secrets chap-secrets.new
+  mv options options.new
+  mv pap-secrets pap-secrets.new
+)
+zcat $CWD/options.new.gz > $PKG/etc/ppp/options.new
+
+# Fix what seems like an insecure default setting.
+# Feel free to "chmod 4750 pppoatm.so rp-pppoe.so" at your own risk.
+# Since they are only runnable by group root, the risk really isn't much...
+chmod 755 $PKG/usr/lib${LIBDIRSUFFIX}/pppd/*/*.so
+
+# Copy docs:
+mkdir -p $PKG/usr/doc/ppp-$VERSION
+cp -a \
+  FAQ PLUGINS README* SETUP scripts \
+  $PKG/usr/doc/ppp-$VERSION
+
+################################ Build radiusclient ##################################
+
+tar xf $CWD/freeradius-client-$RADVER.tar.xz || exit 1
+cd freeradius-client-* || exit 1
+slackhousekeeping
+
+printf "\t\t\t\t\t\t\t[***] Building radiusclient [***]\n"
+# Configure:
+./configure \
+   --prefix=/usr \
+   --libdir=/usr/lib${LIBDIRSUFFIX} \
+   --sysconfdir=/etc \
+   --enable-shadow \
+   --build=$ARCH-slackware-linux || failconfig
+
+# Build:
+make $NUMJOBS CC="gcc $SLKCFLAGS" || make CC="gcc $SLKCFLAGS" || failmake 
+
+# and finally install into the package:
+make install DESTDIR=$PKG  || failinstall 
+zcat $CWD/radius.msdict.gz > $PKG/etc/radiusclient/dictionary.microsoft
+zcat $CWD/realms.gz > $PKG/etc/radiusclient/realms
+
+# Prevent clobber of config files:
+( cd $PKG/etc/radiusclient
+  chmod 600 realms servers
+  mv issue issue.new
+  mv radiusclient.conf radiusclient.conf.new
+  mv realms realms.new
+  mv servers servers.new )
+
+# Copy docs:
+mkdir -p $PKG/usr/doc/freeradius-client-$RADVER
+cp -fav \
+  BUGS CHANGES COPYRIGHT README README.radexample doc/instop.html \
+  $PKG/usr/doc/freeradius-client-$RADVER
+
+########################### Build pppsetup #############################################
+
+printf "\t\t\t\t\t\t\t[***] Building pppsetup [***]\n"
+
+# Extract source:
+cd $TMPBUILD
+tar xvvf $CWD/pppsetup-$PPPSETUPVER.tar.gz
+cd pppsetup-*
+slackhousekeeping
+
+# Apply patches:
+zcat $CWD/pppsetup-1.98.slack.diff.gz       | patch -p1 --backup
+zcat $CWD/pppsetup-1.98.pppoff.diff.gz      | patch -p0 --backup
+zcat $CWD/pppsetup-1.98.moredevs.diff.gz    | patch -p1 --backup
+zcat $CWD/pppsetup-1.98.backupfiles.diff.gz | patch -p1 --backup
+
+# Install:
+install -m755 ppp-off pppsetup $PKG/usr/sbin
+
+# Install docs:
+mkdir -p $PKG/usr/doc/pppsetup
+cp -fav \
+  README.pppsetup ppp-compile.txt pppsetup-$PPPVER.README pppsetup-$PPPVER.lsm \
+  $PKG/usr/doc/pppsetup
+
+#########################################################################################
+
+# If necessary, start the fakeroot server so we can set file/dir ownerships:
+start_fakeroot
+
+# Apply generic Slackware packaging policies:
+cd $PKG
+slackstripall   # strip all .a archives and all ELFs
+slackgzpages -i # compress man & info pages and delete usr/info/dir
+slackslack      # chown -R root:root, chmod -R og-w, slackchown, slack644docs
+slackdesc       # install slack-desc and doinst.sh
+slackmp         # run makepkg -l y -c n
+
+# Perform any final checks on the package:
+cd $PKG
+slackhlinks     # search for any hard links

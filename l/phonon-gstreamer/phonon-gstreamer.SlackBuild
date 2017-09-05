@@ -1,0 +1,119 @@
+#!/bin/bash
+
+# phonon-gstreamer.SlackBuild
+# Heavily based on the original Slackware build scripts,
+# Modified by Stuart Winter for Slackware ARM.
+#
+# Copyright 2011, 2012  Eric Hameleers, Eindhoven, NL
+# Copyright 2011, 2012  Patrick J. Volkerding, Sebeka, MN, USA
+# All rights reserved.
+#
+#   Permission to use, copy, modify, and distribute this software for
+#   any purpose with or without fee is hereby granted, provided that
+#   the above copyright notice and this permission notice appear in all
+#   copies.
+#
+#   THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED
+#   WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+#   MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+#   IN NO EVENT SHALL THE AUTHORS AND COPYRIGHT HOLDERS AND THEIR
+#   CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+#   SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+#   LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF
+#   USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+#   ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+#   OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
+#   OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+#   SUCH DAMAGE.
+# -----------------------------------------------------------------------------
+
+# Record toolchain & other info for the build log:
+slackbuildinfo
+
+# The source file name differs from that of the package:
+SRCNAM=phonon-backend-gstreamer
+
+# Paths to skeleton port's source & real Slackware source tree:
+export CWD=$SLACKSOURCE/$PKGSERIES/$PKGNAM
+export PORTCWD=$PWD
+
+# Temporary build locations:
+export TMPBUILD=$TMP/build-$PKGNAM
+export PKG=$TMP/package-$PKGNAM
+mkpkgdirs # Delete & re-create temporary directories then cd into $TMPBUILD
+
+# Add include paths:
+case $ARCH in
+   arm)     export SLKCFLAGS="$SLKCFLAGS -I/usr/lib/gstreamer-1.0/include/gst/ -I/usr/lib/gstreamer-1.0/include/"
+            export LIBDIRSUFFIX="" ;;
+   *)       export SLKCFLAGS="-O2" ;;
+esac
+
+# Extract source:
+tar xvvf $CWD/$SRCNAM*.tar.?z*
+cd $SRCNAM* || exit 1
+slackhousekeeping
+
+# Configure:
+mkdir -p build
+cd build
+cmake \
+  -DCMAKE_C_FLAGS:STRING="$SLKCFLAGS" \
+  -DCMAKE_C_FLAGS_RELEASE:STRING="$SLKCFLAGS" \
+  -DCMAKE_CXX_FLAGS:STRING="$SLKCFLAGS -I/usr/include/phonon" \
+  -DCMAKE_CXX_FLAGS_RELEASE:STRING="$SLKCFLAGS" \
+  -DCMAKE_BUILD_TYPE=Release \
+  -DCMAKE_INSTALL_PREFIX=/usr \
+  -DMAN_INSTALL_DIR=/usr/man \
+  -DSYSCONF_INSTALL_DIR=/etc \
+  -DLIB_SUFFIX=${LIBDIRSUFFIX} \
+  ..
+
+# Build:
+make VERBOSE=1 $NUMJOBS || make VERBOSE=1 || exit 1
+
+# Install into package framework:
+make install DESTDIR=$PKG || failinstall
+cd -
+
+# Conditional build of Qt5 support:
+if qtpaths-qt5 --qt-version 1>/dev/null 2>/dev/null ; then
+  mkdir -p build-qt5
+  cd build-qt5
+    cmake \
+      -DCMAKE_C_FLAGS:STRING="$SLKCFLAGS" \
+      -DCMAKE_C_FLAGS_RELEASE:STRING="$SLKCFLAGS" \
+      -DCMAKE_CXX_FLAGS:STRING="$SLKCFLAGS" \
+      -DCMAKE_CXX_FLAGS_RELEASE:STRING="$SLKCFLAGS" \
+      -DCMAKE_BUILD_TYPE=Release \
+      -DCMAKE_INSTALL_PREFIX=/usr \
+      -DMAN_INSTALL_DIR=/usr/man \
+      -DSYSCONF_INSTALL_DIR=/etc \
+      -DLIB_SUFFIX=${LIBDIRSUFFIX} \
+      -DPHONON_BUILD_PHONON4QT5=ON \
+      ..
+    make $NUMJOBS || make || exit 1
+    make DESTDIR=$PKG install
+  cd -
+fi
+
+# Add documentation:
+mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
+cp -a \
+  COPYING.LIB gstreamer/lgpl-* \
+  $PKG/usr/doc/$PKGNAM-$VERSION
+
+# If necessary, start the fakeroot server so we can set file/dir ownerships:
+start_fakeroot
+
+# Apply generic Slackware packaging policies:
+cd $PKG
+slackstripall   # strip all .a archives and all ELFs
+slackgzpages -i # compress man & info pages and delete usr/info/dir
+slackslack      # chown -R root:root, chmod -R og-w, slackchown, slack644docs
+slackdesc       # install slack-desc and doinst.sh
+slackmp         # run makepkg -l y -c n
+
+# Perform any final checks on the package:
+cd $PKG
+slackhlinks     # search for any hard links

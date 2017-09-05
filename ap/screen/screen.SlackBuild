@@ -1,0 +1,117 @@
+#!/bin/bash
+
+# screen.SlackBuild
+# Heavily based on the original Slackware build scripts,
+# Modified by Stuart Winter <mozes@slackware.com>
+
+# Record toolchain & other info for the build log:
+slackbuildinfo
+
+# Paths to skeleton port's source & real Slackware source tree:
+export CWD=$SLACKSOURCE/$PKGSERIES/$PKGNAM
+export PORTCWD=$PWD
+
+# Temporary build locations:
+export TMPBUILD=$TMP/build-$PKGNAM
+export PKG=$TMP/package-$PKGNAM
+mkpkgdirs # Delete & re-create temporary directories then cd into $TMPBUILD
+
+# Extract source:
+tar xvvf $CWD/$PKGNAM-$VERSION.tar.?z*
+cd $PKGNAM-$VERSION || exit 1
+slackhousekeeping
+
+# Revert a change to /etc/screenrc introduced in screen-4.3.x that prevents
+# the console from being properly cleared when detaching from a screen session:
+zcat $CWD/60-revert-screenrc-change.diff.gz | patch -p1 --verbose || exit 1
+
+# Apply patches taken from Debian:
+for pf in \
+   26source_encoding.patch.gz \
+   45suppress_remap.patch.gz \
+   52fix_screen_utf8_nfd.patch.gz \
+   ; do zcat $CWD/$pf | patch --verbose -p1 || exit 1
+done
+
+# Do not link against libelf:
+zcat $CWD/screen.no_libelf.diff.gz | patch -p1 --verbose || exit 1
+
+# Reconf after patching configure.ac:
+autoreconf -vif
+
+# Configure:
+CFLAGS="$SLKCFLAGS" \
+./configure \
+   --prefix=/usr \
+   --sysconfdir=/etc \
+   --libdir=/usr/lib${LIBDIRSUFFIX} \
+   --mandir=/usr/man \
+   --infodir=/usr/info \
+   --with-sys-screenrc=/etc/screenrc \
+   --with-pty-mode=0620 \
+   --with-pty-group=5 \
+   --disable-pam \
+   --enable-telnet \
+   --disable-socket-dir \
+   --enable-use-locale \
+   --enable-colors256 \
+   --enable-rxvt_osc \
+   --build=${SLK_ARCH_BUILDTARGET} || failconfig
+
+# Substitutions:
+perl -pi -e 's|.*#undef HAVE_BRAILLE.*|#define HAVE_BRAILLE 1|' config.h
+perl -pi -e 's|/usr/local/etc/screenrc|/etc/screenrc|' etc/etcscreenrc doc/*
+perl -pi -e 's|/local/etc/screenrc|/etc/screenrc|' doc/*
+
+# Build:
+make $NUMJOBS || make || failmake
+
+# Install into package:
+make install DESTDIR=$PKG || failinstall
+chmod 755 $PKG/usr/bin/screen-$VERSION
+mkdir -p $PKG/etc/skel
+cat etc/etcscreenrc > $PKG/etc/screenrc.new
+cat etc/screenrc > $PKG/etc/skel/.screenrc.new
+
+# Copy docs:
+mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
+chmod 644 doc/FAQ
+cp -favv COPYING ChangeLog HACKING INSTALL NEWS README TODO \
+         doc/FAQ doc/README.DOTSCREEN \
+         $PKG/usr/doc/$PKGNAM-$VERSION
+
+# Package install script:
+mkdir -pm755 $PKG/install
+install -m644 $CWD/slack-desc $PKG/install
+cat << EOF > $PKG/install/doinst.sh
+#!/bin/sh
+config() {
+  NEW="\$1"
+  OLD="\$(dirname \$NEW)/\$(basename \$NEW .new)"
+  # If there's no config file by that name, mv it over:
+  if [ ! -r \$OLD ]; then
+    mv \$NEW \$OLD
+  elif [ "\$(cat \$OLD | md5sum)" = "\$(cat \$NEW | md5sum)" ]; then # toss the redundant copy
+    rm \$NEW
+  fi
+  # Otherwise, we leave the .new copy for the admin to consider...
+}
+config etc/screenrc.new
+config etc/skel/.screenrc.new
+# This is probably safer than leaving the hidden .new file...  maybe?
+rm -f etc/skel/.screenrc.new
+EOF
+
+# If necessary, start the fakeroot server so we can set file/dir ownerships:
+start_fakeroot
+
+# Apply generic Slackware packaging policies:
+cd $PKG
+slackstripall   # strip all .a archives and all ELFs
+slackgzpages -i # compress man & info pages and delete usr/info/dir
+slackslack      # chown -R root:root, chmod -R og-w, slackchown, slack644docs
+slackmp         # run makepkg -l y -c n
+
+# Perform any final checks on the package:
+cd $PKG
+slackhlinks     # search for any hard links

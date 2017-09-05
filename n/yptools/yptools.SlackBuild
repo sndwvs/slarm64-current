@@ -1,0 +1,202 @@
+#!/bin/bash
+
+# yptools.SlackBuild
+# Heavily based on the original Slackware build scripts and
+# the prototype script from Slack390;
+# Modified by Stuart Winter <mozes@slackware.com>
+# 30-Sep-2004
+#
+# Copyright 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2016  Patrick J. Volkerding, Sebeka, MN, USA
+# All rights reserved.
+#
+# Redistribution and use of this script, with or without modification, is
+# permitted provided that the following conditions are met:
+#
+# 1. Redistributions of this script must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+#
+#  THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED
+#  WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+#  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO
+#  EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+#  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+#  PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+#  OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+#  WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+#  OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+#  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+# Paths to skeleton port's source & real Slackware source tree:
+export CWD=$SLACKSOURCE/$PKGSERIES/$PKGNAM
+export PORTCWD=$PWD
+
+# Versions:
+YPTOOLS=$VERSION
+YPBINDMT=1.38
+#YPMAKE=0.11
+YPSERV=2.32.1
+
+# Temporary build locations:
+export TMPBUILD=$TMP/build-$PKGNAM
+export PKG=$TMP/package-$PKGNAM
+mkpkgdirs # Delete & re-create temporary directories then cd into $TMPBUILD
+
+##### Build yptools #############################################
+
+# Extract source:
+tar xvvf $CWD/yp-tools-$YPTOOLS.tar.bz2
+cd yp-tools-$YPTOOLS || exit 1
+slackhousekeeping
+
+# Apply patches:
+zcat $CWD/yp-tools-2.14-glibc217-crypt.diff.gz | patch -p1 --verbose || exit 1
+
+# Configure:
+./configure \
+   --prefix=/usr \
+   --libdir=/usr/lib${LIBDIRSUFFIX} \
+   --disable-domainname \
+   --build=$ARCH-slackware-linux-gnueabi
+   make clean
+./configure \
+   --prefix=/usr \
+   --libdir=/usr/lib${LIBDIRSUFFIX} \
+   --disable-domainname \
+   --build=$ARCH-slackware-linux-gnueabi || failconfig
+
+# Build:
+make CFLAGS="$ARCH_CFLAGS" || failmake
+
+# Install:
+make install DESTDIR=$PKG
+
+# Install defaults:
+mkdir -p $PKG/etc/default
+install -vpm644 $CWD/yp.default $PKG/etc/default/yp.new
+
+# Add etc/nsswitch.conf-nis as a full NIS+ example config file:
+mkdir -p $PKG/etc
+zcat $CWD/nsswitch.conf-nis.gz > $PKG/etc/nsswitch.conf-nis.new
+
+# Docs:
+mkdir -p $PKG/usr/doc/$PKGNAM-$YPTOOLS
+cp -a ABOUT-NLS AUTHORS COPYING ChangeLog INSTALL NEWS README THANKS TODO \
+     $PKG/usr/doc/$PKGNAM-$YPTOOLS
+
+# Install man pages:
+mkdir -p $PKG/usr/man/man{1,5,8}
+( cd man
+  install -m644 domainname.8 nisdomainname.8 ypdomainname.8 \
+  $PKG/usr/man/man8 )
+
+# Prevent clobber:
+mv -fv $PKG/var/yp/nicknames $PKG/var/yp/nicknames.new
+
+# Switch hardlinks to symlinks:
+( cd $PKG/usr/bin
+  rm -rf ypchfn ypchsh
+  ln -sf yppasswd ypchfn
+  ln -sf yppasswd ypchsh )
+
+##### Build ypbind #######################################
+
+# Extract source:
+cd $TMPBUILD
+tar xvvf $CWD/ypbind-mt-$YPBINDMT.tar.bz2
+cd ypbind-mt-$YPBINDMT || exit 1
+slackhousekeeping
+
+# Configure:
+./configure \
+   --prefix=/usr \
+   --libdir=/usr/lib${LIBDIRSUFFIX} \
+   --build=$ARCH-slackware-linux-gnueabi || exit 1
+make clean
+./configure \
+   --prefix=/usr \
+   --libdir=/usr/lib${LIBDIRSUFFIX} \
+   --build=$ARCH-slackware-linux-gnueabi || failconfig
+
+# Build:
+make $NUMJOBS || failmake
+
+# Install:
+make install DESTDIR=$PKG
+
+# Prevent clobber:
+install -vpm644 etc/yp.conf $PKG/etc/yp.conf.new
+
+# Docs:
+mkdir -p $PKG/usr/doc/ypbind-mt-$YPBINDMT
+cp -a ABOUT-NLS AUTHORS COPYING ChangeLog INSTALL NEWS README THANKS TODO \
+      $PKG/usr/doc/ypbind-mt-$YPBINDMT
+
+##### Build ypserv  #######################################
+
+# Extract source:
+cd $TMPBUILD
+tar xvvf $CWD/ypserv-$YPSERV.tar.bz2
+cd ypserv-$YPSERV || exit 1
+slackhousekeeping
+
+# Configure:
+./configure \
+   --libdir=/usr/lib${LIBDIRSUFFIX} \
+   --libexecdir=/usr/lib${LIBDIRSUFFIX}/yp \
+   --enable-fqdn \
+   --enable-yppasswd \
+   --build=$ARCH-slackware-linux-gnueabi || exit 1
+   make clean
+./configure \
+    --libdir=/usr/lib${LIBDIRSUFFIX} \
+    --libexecdir=/usr/lib${LIBDIRSUFFIX}/yp \
+    --enable-fqdn \
+    --enable-yppasswd \
+    --build=$ARCH-slackware-linux-gnueabi || failconfig
+
+# Build:
+make $NUMJOBS || make || failmake
+
+# Install:
+make install DESTDIR=$PKG
+mkdir -vpm755 $PKG/etc/rc.d
+echo "# This file is part of the YP server package -- see 'man netgroup'" \
+       > $PKG/etc/netgroup.new
+install -vpm644 etc/netgroup $PKG/etc/netgroup.new
+install -vpm644 etc/securenets $PKG/var/yp/securenets.new
+mv -fv $PKG/var/yp/Makefile $PKG/var/yp/Makefile.new
+
+# Docs:
+mkdir -p $PKG/usr/doc/ypserv-$YPSERV
+cp -a AUTHORS COPYING ChangeLog INSTALL NEWS README THANKS TODO \
+      $PKG/usr/doc/ypserv-$YPSERV
+
+#############################################################
+
+# Install rc script:
+mkdir -p $PKG/etc/rc.d
+zcat $CWD/rc.yp.gz > $PKG/etc/rc.d/rc.yp.new
+chmod 644 $PKG/etc/rc.d/rc.yp.new
+
+# Tidy up from DESTDIR install:
+( cd $PKG/usr/share/man
+     mv man1/* $PKG/usr/man/man1
+     mv man5/* $PKG/usr/man/man5
+     mv man8/* $PKG/usr/man/man8 )
+# Junk:
+rm -rf $PKG/usr/share/man $PKG/usr/sbin/yptest $PKG/bin
+
+# If necessary, start the fakeroot server so we can set file/dir ownerships:
+start_fakeroot
+
+# Apply generic Slackware packaging policies:
+cd $PKG
+slackstripall   # strip all .a archives and all ELFs
+slackgzpages -i # compress man & info pages and delete usr/info/dir
+slackslack      # chown -R root:root, chmod -R og-w, slackchown (root:bin), slack644docs
+slackdesc       # install slack-desc and doinst.sh
+slackmp         # run makepkg -l y -c n
+
+# Perform any final checks on the package:
+cd $PKG
+slackhlinks     # search for any hard links

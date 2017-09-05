@@ -1,0 +1,298 @@
+#!/bin/bash
+
+# util-linux.SlackBuild
+# Heavily based on the original Slackware build scripts,
+# Modified by Stuart Winter for ARMedslack.
+#
+# Copyright 2008, 2009, 2010, 2011, 2012, 2013, 2015, 2017  Patrick J. Volkerding, Sebeka, MN, USA
+# All rights reserved.
+#
+# Redistribution and use of this script, with or without modification, is
+# permitted provided that the following conditions are met:
+#
+# 1. Redistributions of this script must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+#
+#  THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED
+#  WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+#  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO
+#  EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+#  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+#  PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+#  OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+#  WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+#  OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+#  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+# Record toolchain & other info for the build log:
+slackbuildinfo
+
+# Paths to skeleton port's source & real Slackware source tree:
+export CWD=$SLACKSOURCE/$PKGSERIES/$PKGNAM
+export PORTCWD=$PWD
+
+# Temporary build locations:
+export TMPBUILD=$TMP/build-$PKGNAM
+export PKG=$TMP/package-$PKGNAM
+mkpkgdirs # Delete & re-create temporary directories then cd into $TMPBUILD
+
+# Versions of bundled utils:
+ADJTIMEXVERS=1.29
+SETSERIALVERS=2.17
+ZIPTOOLVERS=1.4.0
+
+# Extract source:
+tar xvvf $CWD/$PKGNAM-$VERSION.tar.?z
+cd $PKGNAM-$VERSION || exit 1
+slackhousekeeping
+
+# Changing the fdisk -l output (this was done prior to util-linux) broke
+# our installation scripts, so we have changed the name of partition type
+# 83 back to "Linux swap":
+zcat $CWD/util-linux.fdisk-no-solaris.diff.gz | patch -p1 || exit 1
+
+# Regenerate, since patch 0001 hits mount/Makefile.am:
+#./autogen.sh
+
+# Configure:
+CFLAGS="$SLKCFLAGS" \
+./configure \
+   --prefix=/usr \
+   --libdir=/usr/lib${LIBDIRSUFFIX} \
+   --sysconfdir=/etc \
+   --localstatedir=/var \
+   --mandir=/usr/man \
+   --infodir=/usr/info \
+   --docdir=/usr/doc/util-linux-$VERSION \
+   --disable-static \
+   --enable-agetty \
+   --enable-kill \
+   --disable-last \
+   --enable-libmount-support-mtab \
+   --enable-line \
+   --enable-libmount \
+   --enable-mesg \
+   --enable-raw \
+   --enable-rename \
+   --enable-partx \
+   --enable-pg \
+   --enable-reset \
+   --disable-login \
+   --enable-schedutils \
+   --enable-wall \
+   --enable-write \
+   --enable-use-tty-group \
+   --enable-libblkid \
+   --enable-libuuid \
+   --disable-uuidd \
+   --with-python=2 \
+   --build=${SLK_ARCH_BUILDTARGET} \
+   --host=${SLK_ARCH_BUILDTARGET} || failconfig
+
+# Build:
+make $NUMJOBS || make || failmake
+
+# Install into package:
+make install DESTDIR=$PKG
+
+# Remove all overlap with the shadow package, since --disable-login doesn't quite do that:
+rm -fv $PKG/sbin/nologin $PKG/usr/man/man8/nologin.8 $PKG/sbin/sulogin $PKG/usr/man/man8/sulogin.8
+
+# Move the libblkid, libfdisk, libmount, libsmartcols, and
+# libuuid libraries to /lib${LIBSUFFIX}:
+mkdir -p $PKG/lib${LIBDIRSUFFIX}
+( cd $PKG/usr/lib${LIBDIRSUFFIX}
+  mv libblkid.so.1* $PKG/lib${LIBDIRSUFFIX}
+  mv libsmartcols.so.1* $PKG/lib${LIBDIRSUFFIX}
+  mv libfdisk.so.1* $PKG/lib${LIBDIRSUFFIX}
+  mv libmount.so.1* $PKG/lib${LIBDIRSUFFIX}
+  mv libuuid.so.1* $PKG/lib${LIBDIRSUFFIX}
+  rm -f libblkid.so libfdisk.so libmount.so libsmartcols.so libuuid.so
+  ln -sf ../../lib${LIBDIRSUFFIX}/libblkid.so.1 libblkid.so
+  ln -sf ../../lib${LIBDIRSUFFIX}/libfdisk.so.1 libfdisk.so
+  ln -sf ../../lib${LIBDIRSUFFIX}/libmount.so.1 libmount.so
+  ln -sf ../../lib${LIBDIRSUFFIX}/libsmartcols.so.1 libsmartcols.so
+  ln -sf ../../lib${LIBDIRSUFFIX}/libuuid.so.1 libuuid.so
+)
+
+# Moving things around that have been in the same place
+# for 15 years is, IMHO, not a wise idea AT ALL.
+# If this had to be moved, some place out of /usr might
+# have shown a grain of insight...
+if [ -r $PKG/usr/sbin/fdformat ]; then
+  mkdir -pm755 $PKG/usr/bin
+  mv -fv $PKG/usr/sbin/fdformat $PKG/usr/bin/fdformat
+  # Now since stuff will start looking in this new place,
+  # we have no choice but to link these:
+  ( cd $PKG/usr/sbin
+    ln -vsf ../bin/fdformat .
+  )
+fi
+
+# ddate.{1,c} taken from https://github.com/bo0ts/ddate:
+cc -O -o ddate $CWD/ddate.c
+install -vpm755 ddate $PKG/usr/bin/
+install -vpm644 $CWD/ddate.1 $PKG/usr/man/man1/
+
+# Copy docs:
+mkdir -pm755 $PKG/usr/doc/$PKGNAM-$VERSION
+cp -favv \
+  AUTHORS COPYING DEPRECATED NEWS README* TODO \
+  docs/v${VERSION}-ReleaseNotes \
+  $PKG/usr/doc/$PKGNAM-$VERSION
+
+###########################
+# Build ziptool
+# Not for ARM -- does not build, never has.
+
+#####################################################
+# Build bsdstrings
+#####################################################
+
+cd $TMPBUILD
+tar xvvf $CWD/bsdstrings.tar.gz
+cd bsdstrings || exit 1
+zcat $CWD/bsdstrings-util-linux_overflow.diff.gz | patch -p1 --verbose || exit 1
+
+# Build:
+make $NUMJOBS || make || exit 1
+
+# Install into package:
+install -vpm755 strings $PKG/usr/bin
+install -vpm644 strings.1 $PKG/usr/man/man1/
+
+#####################################################
+# Build hostname
+#####################################################
+
+# Add just the hostname utilities from net-tools, so that anyone
+# installing just the A series will not have a hostname (null):
+cd $TMPBUILD 
+tar xvvf $CWD/net-tools-*.tar.xz
+cd net-tools-* || exit 1
+
+# Apply patches:
+tar xvf $CWD/net-tools-1.60.20120726git.tar.xz
+cd net-tools-* || exit 1
+
+# Patch the Slackware config since kernels newer than 3.7 don't support STRIP and Tokenring:
+zcat $CWD/net-tools.config.h.gz | sed -e 's?HAVE_HWSTRIP.*?HAVE_HWSTRIP 0?g' -e 's?HAVE_HWTR.*?HAVE_HWTR 0?g' > config.h
+
+# Build:
+make $NUMJOBS || make || failmake
+make $NUMJOBS hostname || make hostname || failmake
+
+# Install into package:
+install -vpm755 hostname $PKG/bin/
+( cd $PKG/bin
+  ln -vsf hostname dnsdomainname
+  ln -vsf hostname nisdomainname
+  ln -vsf hostname ypdomainname
+  ln -vsf hostname domainname
+)
+cd man/en_US
+install -vpm644 hostname.1 dnsdomainname.1 nisdomainname.1 ypdomainname.1 $PKG/usr/man/man1/
+
+#####################################################
+# Build adjtimex
+#####################################################
+
+cd $TMPBUILD
+tar xvvf $CWD/adjtimex_${ADJTIMEXVERS}.orig.tar.gz || failextract
+cd adjtimex-$ADJTIMEXVERS || exit 1
+
+# Apply patches:
+zcat $CWD/adjtimex_1.29-2.2.diff.gz | patch -p1 || exit 1
+
+# Configure:
+CFLAGS="$SLKCFLAGS" \
+./configure \
+   --prefix=/usr || failconfig
+
+# Build:
+make $NUMJOBS || make || failmake
+
+# Install into package:
+install -vpm755 adjtimex $PKG/sbin/
+install -vpm644 adjtimex.8 $PKG/usr/man/man8/
+
+# Copy docs:
+mkdir -p $PKG/usr/doc/adjtimex-$ADJTIMEXVERS
+cp -a COPYING COPYRIGHT README README.ru adjtimex.lsm \
+      $PKG/usr/doc/adjtimex-$ADJTIMEXVERS
+
+#####################################################
+# Build setserial
+#####################################################
+cd $TMPBUILD
+tar xvvf $CWD/setserial-$SETSERIALVERS.tar.gz || failextract
+cd setserial-$SETSERIALVERS
+zcat $CWD/setserial-rc.serial.diff.gz | patch -E -p1 --verbose || failpatch
+zcat $CWD/setserial-undef_TIOCGHAYESESP.diff.gz | patch -E -p1 --verbose || exit 1
+
+# The original config.{guess,sub} do not work on x86_64
+cp -favv /usr/share/libtool/config/config.{guess,sub} .
+
+# Configure:
+./configure \
+   --prefix=/usr || failconfig
+
+# Build:
+make $NUMJOBS || make || failmake
+
+# Install into package:
+install -vpm755 setserial $PKG/sbin
+mkdir -p $PKG/etc/rc.d
+cat rc.serial > $PKG/etc/rc.d/rc.serial.new
+cat serial.conf > $PKG/etc/serial.conf.new
+install -vpm644 setserial.8 $PKG/usr/man/man8/
+
+# These have always traditionally been available before /usr
+# might be mounted:
+( cd $PKG/usr/bin
+  mv -fv getopt setterm $PKG/bin
+  cd $PKG/usr/bin
+  ln -vfs ../../bin/getopt .
+  ln -vfs ../../bin/setterm .
+)
+
+###################################################
+
+# Now let's add some important symlinks :)
+( cd $PKG/sbin
+  ln -vfs ../bin/mount .
+  ln -vfs ../bin/umount .
+  # Doesn't exist on the ARM platform:
+  #  ln -vfs ziptool jaztool
+  ln -vfs hwclock clock
+  cd $PKG/usr/sbin
+  ln -vfs ../../sbin/cfdisk .
+  ln -vfs ../../sbin/ctrlaltdel .
+  ln -vfs ../../sbin/sfdisk .
+  cd $PKG/usr/bin
+  ln -vfs ../sbin/readprofile .
+  # tunelp was removed by upstream:
+  #ln -s ../sbin/tunelp .
+  ln -vfs ../../bin/more .
+  ln -vfs ../../sbin/raw .
+  cd $PKG/usr/man/man1
+  # Not for ARMedslack:
+  # ln -vfs ziptool.1 jaztool.1
+  cd $PKG/usr/man/man8
+  ln -vfs hwclock.8 clock.8
+)
+
+# If necessary, start the fakeroot server so we can set file/dir ownerships:
+start_fakeroot
+
+# Apply generic Slackware packaging policies:
+cd $PKG
+slackstripall   # strip all .a archives and all ELFs
+slackgzpages -i # compress man & info pages and delete usr/info/dir
+slackslack      # chown -R root:root, chmod -R og-w, slackchown, slack644docs
+slackdesc       # install slack-desc and doinst.sh
+slackmp         # run makepkg -l y -c n
+
+# Perform any final checks on the package:
+cd $PKG
+slackhlinks     # search for any hard links

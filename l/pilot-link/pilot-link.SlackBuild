@@ -1,0 +1,114 @@
+#!/bin/bash
+
+# pilot-link.SlackBuild
+# Heavily based on the original Slackware build scripts,
+# Modified by Stuart Winter <mozes@slackware.com>
+# 20-Nov-2004
+
+# Record toolchain & other info for the build log:
+slackbuildinfo
+
+# Paths to skeleton port's source & real Slackware source tree:
+export CWD=$SLACKSOURCE/$PKGSERIES/$PKGNAM
+export PORTCWD=$PWD
+
+# Temporary build locations:
+export TMPBUILD=$TMP/build-$PKGNAM
+export PKG=$TMP/package-$PKGNAM
+mkpkgdirs # Delete & re-create temporary directories then cd into $TMPBUILD
+
+# Extract source:
+tar xvvf $CWD/$PKGNAM-$VERSION.tar.bz2
+#tar xvvf $PORTCWD/sources/$PKGNAM-$VERSION.tar.?z*
+cd $PKGNAM-* || exit 1
+slackhousekeeping
+
+# ARM build fix:
+#zcat $PORTCWD/sources/*diff* | patch -p1
+#auto_apply_patch $PORTCWD/sources/0001-Don-t-use-PERL_POLLUTE-macros.patch.xz || exit 1
+
+# libpng patch for pilot-link 0.12.3:
+zcat $CWD/pilot-link.png14.diff.gz | patch -p1 --verbose || exit 1
+zcat $CWD/pilot-link-0.12.5-redefinePerlsymbols.patch.gz | patch -p1 --verbose || exit 1
+
+# Turn errors back into warnings.  Really.
+#patch --verbose -p1 < $PORTCWD/sources/pilot-link-0.12.2-werror_194921.patch || exit 1
+sed -i 's?-Werror?-Wall?g' configure || exit 1
+
+# Configure:
+CFLAGS="$SLKCFLAGS" \
+./configure \
+   \
+   --disable-compile-werror \
+   \
+   --prefix=/usr \
+   --libdir=/usr/lib${LIBDIRSUFFIX} \
+   --localstatedir=/var/lib \
+   --docdir=/usr/doc/pilot-link-$VERSION \
+   --mandir=/usr/man \
+   --enable-static=no \
+   --enable-conduits \
+   --enable-threads \
+   --enable-libusb \
+   --with-libpng \
+   --with-perl \
+   --with-python \
+   --program-prefix="" \
+   --program-suffix="" \
+   --build=${SLK_ARCH_BUILDTARGET} || failconfig
+
+# Turn errors into warnings, again.
+sed -i 's?-Werror?-Wall?g' Makefile libtool || exit 1
+
+# Build:
+make $NUMJOBS || make || failmake
+
+# Install into package:
+make -i install DESTDIR=$PKG || failinstall
+# Get rid of perllocal.pod:
+( cd $PKG ; find . -name perllocal.pod -exec rm "{}" \; )
+
+# Right.
+mkdir -p $PKG/lib/udev/rules.d
+mv $PKG/usr/share/pilot-link/udev/60-libpisock.rules \
+  $PKG/lib/udev/rules.d/80-libpisock.rules
+rmdir $PKG/usr/share/pilot-link/udev
+
+# Fix the mode set by the default udev rules
+sed -i "s/0664/0660/g" $PKG/lib/udev/rules.d/80-libpisock.rules
+
+# Copy docs:
+mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
+cp -a \
+  AUTHORS COPYING* INSTALL NEWS README* \
+  $PKG/usr/doc/$PKGNAM-$VERSION
+changelogliposuction ChangeLog $PKGNAM $VERSION # Trim down a "ChangeLog" file
+
+# Install man pages:
+mkdir -p $PKG/usr/man/man{1,7}
+cp -a doc/man/*.1 $PKG/usr/man/man1
+cp -a doc/man/*.7 $PKG/usr/man/man7
+
+# Dropped one.
+if [ -d $PKG/usr/share/man/man3 ]; then
+  mkdir -p $PKG/usr/man/man3
+  mv $PKG/usr/share/man/man3/* $PKG/usr/man/man3
+  rmdir $PKG/usr/share/man/man3 2> /dev/null
+  rmdir $PKG/usr/share/man 2> /dev/null
+  rmdir $PKG/usr/share 2> /dev/null
+fi
+
+# If necessary, start the fakeroot server so we can set file/dir ownerships:
+start_fakeroot
+
+# Apply generic Slackware packaging policies:
+cd $PKG
+slackstripall   # strip all .a archives and all ELFs
+slackgzpages -i # compress man & info pages and delete usr/info/dir
+slackslack      # chown -R root:root, chmod -R og-w, slackchown, slack644docs
+slackdesc       # install slack-desc and doinst.sh
+slackmp         # run makepkg -l y -c n
+
+# Perform any final checks on the package:
+cd $PKG
+slackhlinks     # search for any hard links

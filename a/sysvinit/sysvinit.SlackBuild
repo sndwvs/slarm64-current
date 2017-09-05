@@ -1,0 +1,78 @@
+#!/bin/bash
+
+# sysvinit.SlackBuild
+# Heavily based on the original Slackware build scripts,
+# Modified by Stuart Winter <mozes@slackware.com>
+
+# Record toolchain & other info for the build log:
+slackbuildinfo
+
+# Paths to skeleton port's source & real Slackware source tree:
+export CWD=$SLACKSOURCE/$PKGSERIES/$PKGNAM
+export PORTCWD=$PWD
+
+# Temporary build locations:
+export TMPBUILD=$TMP/build-$PKGNAM
+export PKG=$TMP/package-$PKGNAM
+mkpkgdirs # Delete & re-create temporary directories then cd into $TMPBUILD
+
+# Extract source:
+tar xvvf $CWD/$PKGNAM-$VERSION.tar.xz
+cd $PKGNAM-$VERSION || exit 1
+slackhousekeeping
+
+# Fix paths for /etc/forcefsck and /etc/fastboot:
+zcat $CWD/sysvinit.paths.diff.gz | patch -p1 -E --verbose --backup --suffix=.orig || exit 1
+
+# Copy docs:
+cd doc
+mkdir -pm755 $PKG/usr/doc/$PKGNAM-$VERSION
+cp -fav \
+    Install Propaganda sysvinit-2.86.lsm \
+    ../COPYING* ../COPYRIGHT ../README* \
+    $PKG/usr/doc/$PKGNAM-$VERSION
+
+# Build:
+cd ../src
+make clobber || exit 1
+make $NUMJOBS || make || failmake
+
+# bootstrap hack - remove the failmake above.
+#sed -i 's?/usr/lib\*/libcrypt.a?/glibc-slk/usr/lib/libcrypt.a?g' Makefile
+#make || exit 1
+
+# Install into package:
+mkdir -p $PKG/{sbin,bin,usr/bin}
+install -m755 -oroot -groot \
+         bootlogd halt killall5 shutdown runlevel \
+         $PKG/sbin/
+install -m755 -oroot -groot init $PKG/sbin/init.new
+install -m755 -oroot -groot \
+         last \
+         $PKG/usr/bin/
+( cd $PKG/usr/bin ; ln -sf last lastb )
+cp -fav initscript.sample $PKG/sbin/initscript.sample
+
+cd ../man
+mkdir -p $PKG/usr/man/man{1,5,8}
+install -m644 last.1 $PKG/usr/man/man1/
+install -m644 inittab.5 initscript.5 $PKG/usr/man/man5/
+install -m644 halt.8 init.8 killall5.8 poweroff.8 reboot.8 runlevel.8 \
+              shutdown.8 telinit.8 bootlogd.8 \
+              $PKG/usr/man/man8/
+( cd $PKG/usr/man/man1 ; ln -sf last.1.gz lastb.1.gz )
+
+# If necessary, start the fakeroot server so we can set file/dir ownerships:
+start_fakeroot
+
+# Apply generic Slackware packaging policies:
+cd $PKG
+slackstripall   # strip all .a archives and all ELFs
+slackgzpages -i # compress man & info pages and delete usr/info/dir
+slackslack      # chown -R root:root, chmod -R og-w, slackchown, slack644docs
+slackdesc       # install slack-desc and doinst.sh
+slackmp         # run makepkg -l y -c n
+
+# Perform any final checks on the package:
+cd $PKG
+slackhlinks     # search for any hard links

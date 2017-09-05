@@ -1,0 +1,135 @@
+#!/bin/bash
+
+# pmake.SlackBuild
+# Heavily based on the original Slackware build scripts,
+# Modified by Stuart Winter <mozes@slackware.com>
+# 14-Jul-2004
+#
+# Copyright 2006, 2007  Patrick J. Volkerding, Sebeka, MN, USA
+# All rights reserved.
+#
+# Redistribution and use of this script, with or without modification, is
+# permitted provided that the following conditions are met:
+#
+# 1. Redistributions of this script must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+#
+#  THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED
+#  WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+#  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO
+#  EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+#  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+#  PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+#  OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+#  WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+#  OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+#  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+# Record toolchain & other info for the build log:
+slackbuildinfo
+
+# Paths to skeleton port's source & real Slackware source tree:
+export CWD=$SLACKSOURCE/$PKGSERIES/$PACKAGE
+export PORTCWD=$PWD
+
+# Temporary build locations:
+export TMPBUILD=$TMP/build-$PACKAGE
+export PKG=$TMP/package-$PACKAGE
+mkpkgdirs # Delete & re-create temporary directories then cd into $TMPBUILD
+
+# Determine the CFLAGS for the known architectures:
+case $PORTARCH in
+   arm)     export SLKCFLAGS="-O2 -march=armv3 -mtune=xscale" ;;
+   powerpc) export SLKCFLAGS="-O2" ;;
+   sparc)   export SLKCFLAGS="-O2" ;;
+   hppa)    export SLKCFLAGS="-O2" ;;
+   *)       export SLKCFLAGS="-O2" ;;
+esac
+
+# Extract source:
+#tar zxvf $CWD/$PACKAGE-$VERSION.tar.gz
+tar zxvf $PORTCWD/source/$PACKAGE-$VERSION.tar.Z
+cd $PACKAGE
+
+# Create package framework:
+mkdir -p $PKG/usr/{bin,doc/$PACKAGE-$VERSION,man/man1}
+
+# Apply patches:
+zcat $CWD/pmake.diff.gz | patch -p1 --verbose -E
+
+# Add system makefiles for ix86/alpha/sparc Linux:
+tar zxvvf $CWD/sys-linux.mk.tar.gz
+# Add system makefiles for ARM:
+( cd lib/mk
+cat << EOF > sys-arm.mk
+arm=    Machine is an ARM
+linux=  running linux
+SYSV=   This is not only System 5
+SVR4=   but even Release 4 compatible
+unix=   It runs UNIX.
+# some non-standard locations
+CC = /usr/bin/cc
+AS = /usr/bin/as
+AR = /usr/bin/ar
+LD = /usr/bin/ld
+LINT = :
+EOF
+ln -fs sys-arm.mk sys-armv4l.mk   # RiscPC & Netwinder
+ln -fs sys-arm.mk sys-armv5l.mk   # Iyonix & many others
+ln -fs sys-arm.mk sys-armv5tel.mk # Not telling ;-p
+)
+
+# Ensure sensible permissions in source:
+slackhousekeeping
+
+# Stage 1: Build pmake with GNU make:
+make -f makefile || failmake
+cp pmake /usr/bin/pmake
+( cd /usr/bin   && rm -f vmake && ln -sf pmake vmake )
+( cd /usr/share && rm -rf mk   && mkdir mk )
+cp -a lib/mk/system.mk lib/mk/*.mk /usr/share/mk
+
+# Stage 2: Build pmake with pmake:
+pmake -f makefile clean
+pmake -f makefile || failmake
+cp pmake /usr/bin/pmake
+
+# Stage 3: Rebuild one more time with itself:
+pmake -f makefile clean
+pmake -f makefile || failmake
+cp pmake /usr/bin/pmake
+
+# Now, we should be good to build the package:
+install -m755 pmake $PKG/usr/bin
+( cd $PKG/usr/bin ; ln -sf pmake vmake )
+mkdir -p $PKG/usr/share/mk
+cp -a lib/mk/system.mk lib/mk/*.mk $PKG/usr/share/mk
+
+# Install man pages:
+install -m644 $CWD/pmake.1.gz $PKG/usr/man/man1
+
+# Install docs:
+cp -a CHANGES INSTALL README \
+      $PKG/usr/doc/$PACKAGE-$VERSION
+groff -ms -Tascii doc/tutorial.ms > $PKG/usr/doc/$PACKAGE-$VERSION/tutorial.txt
+
+# If necessary, start the fakeroot server so we can set file/dir ownerships:
+start_fakeroot
+
+# Apply generic Slackware packaging policies:
+cd $PKG
+slackstripall   # strip all .a archives and all ELFs
+slackgzpages -i # compress man & info pages and delete usr/info/dir
+slackslack      # chown -R root:root, chmod -R og-w, slackchown, slack644docs
+slackdesc       # install slack-desc and doinst.sh
+
+# Build the package:
+if [ $PORTARCH = arm ]; then
+   slackmp # run makepkg
+  else
+   makepkg -l y -c n $PKGSTORE/$PKGSERIES/$PACKAGE-$VERSION-$ARCH-$BUILD.tgz
+fi
+
+# Perform any final checks on the package:
+cd $PKG
+slackhlinks     # search for any hard links

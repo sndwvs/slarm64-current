@@ -1,0 +1,36 @@
+# The XGI driver comes from git.
+# Well it did, but at '15 Jan 2011' - which is the version we're using here since the old Debian
+# patch applies to it.
+# For the source of that, check in the 'patches' directory.
+#
+# The code below isn't used at the moment since this driver seems to be unmaintained upstream.
+#
+# http://cgit.freedesktop.org/xorg/driver/xf86-video-xgi/snapshot/xf86-video-xgi-1.6.0.tar.bz2
+cd /tmp
+rm -rf xf86-video-xgi
+mkdir xf86-video-xgi ; cd xf86-video-xgi
+git clone git://anongit.freedesktop.org/xorg/driver/xf86-video-xgi
+rm -rf xf86-video-xgi/.git 
+mv -fv xf86-video-xgi xf86-video-xgi-1.6.0git_2012_01_13 ## x11.SlackBuild expects <pkg>-<version> to be that of the file name
+tar -Ixz -cf xf86-video-xgi-1.6.0git_2012_01_13.tar.xz xf86-video-xgi-1.6.0git_2012_01_13  ## Use the date of the HEAD in git.
+ls -1 $PWD/*.xz
+
+
+#( cd lib
+#  wget -c http://xorg.freedesktop.org/releases/individual/lib/liblbxutil-1.1.0.tar.bz2
+#  bunzip2 liblbxutil*
+#  xz -z liblbxutil*.tar
+#)
+
+#( cd app 
+#  wget -c http://xorg.freedesktop.org/releases/individual/app/lbxproxy-1.0.2.tar.bz2 
+#  bunzip2 lbxproxy*bz2
+#  xz -z lbxproxy*tar
+#)
+
+# The ARM SoC driver set.
+# http://cgit.freedesktop.org/xorg/driver/xf86-video-armsoc
+wget http://cgit.freedesktop.org/xorg/driver/xf86-video-armsoc/snapshot/xf86-video-armsoc-1.3.1.tar.gz
+#( cd driver
+#  links 'http://git.linaro.org/gitweb?p=arm/xorg/driver/xf86-video-armsoc.git;a=snapshot;h=dcf32bda38ad7c25fd7f04bfe31f08dc6d645fb5;sf=tgz'
+#)

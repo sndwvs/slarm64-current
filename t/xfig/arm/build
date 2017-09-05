@@ -1,0 +1,55 @@
+#!/bin/bash
+
+# arm/build
+# Check package dependencies, set metadata and launch
+# package build script.
+# by Stuart Winter <mozes@slackware.com>
+#
+source /usr/share/slackdev/buildkit.sh
+
+# Package metadata:
+export PKGNAM=xfig
+#export VERSION=3.2.5b
+export VERSION=3.2.5c
+export BUILD=1
+export PKGSERIES=t
+export SLACKPACKAGE=$PKGNAM-$VERSION-$ARCH-$BUILD.txz
+
+## ******************************************************************* ##
+# For test packages - best to store in another location rather than
+# overwriting the working copy in the main tree:
+# export PKGSTORE=/tmp/
+# mkdir -vpm755 $PKGSTORE/$PKGSERIES
+## ******************************************************************* ##
+
+
+# Reset the ARM file system: restore it to the 'factory settings'
+# as it were (this has no effect when building natively):
+sboxsysrestore
+
+# Ensure base ARM packages are installed first:
+slackbasedeps
+
+# Ensure $PKGNAM isn't already installed:
+slackfailpkgdeps $PKGNAM || removepkg $PKGNAM
+
+# Ensure specific build dependencies (mainly libraries):
+{ slackcheckpkgdeps libjpeg-turbo         || installpkg $PKGSTORE/l/libjpeg-turbo-[0-9]*.t?z || exit 99; }
+{ slackcheckpkgdeps libICE          || installpkg $PKGSTORE/x/libICE-[0-9]*.t?z  || exit 99; }
+{ slackcheckpkgdeps libSM           || installpkg $PKGSTORE/x/libSM-[0-9]*.t?z   || exit 99; }
+{ slackcheckpkgdeps libX11          || installpkg $PKGSTORE/x/libX11-[0-9]*.t?z  || exit 99; }
+{ slackcheckpkgdeps libXaw3d        || installpkg $PKGSTORE/x/libXaw3d-[0-9]*.t?z || exit 99; }
+{ slackcheckpkgdeps libXext         || installpkg $PKGSTORE/x/libXext-[0-9]*.t?z || exit 99; }
+{ slackcheckpkgdeps libXi           || installpkg $PKGSTORE/x/libXi-[0-9]*.t?z   || exit 99; }
+{ slackcheckpkgdeps libXmu          || installpkg $PKGSTORE/x/libXmu-[0-9]*.t?z  || exit 99; }
+{ slackcheckpkgdeps libXp           || installpkg $PKGSTORE/x/libXp-[0-9]*.t?z   || exit 99; }
+{ slackcheckpkgdeps libXpm          || installpkg $PKGSTORE/x/libXpm-[0-9]*.t?z  || exit 99; }
+{ slackcheckpkgdeps libXt           || installpkg $PKGSTORE/x/libXt-[0-9]*.t?z   || exit 99; }
+
+# Launch the package build script:
+BUILDLOG=$( basename $SLACKPACKAGE .t?z ).build.log
+( ./$PKGNAM.SlackBuild ) >& /dev/stdout | tee $BUILDLOG
+
+# Compress the build log:
+bzip2 -9fvz $BUILDLOG
+

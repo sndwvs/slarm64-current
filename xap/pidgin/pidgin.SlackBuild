@@ -1,0 +1,178 @@
+#!/bin/bash
+
+# pidgin.SlackBuild
+# Heavily based on the original Slackware build scripts,
+# Modified by Stuart Winter <mozes@slackware.com>
+#
+# Copyright 2006, 2007  Patrick J. Volkerding, Sebeka, MN, USA
+# All rights reserved.
+#
+# Redistribution and use of this script, with or without modification, is
+# permitted provided that the following conditions are met:
+#
+# 1. Redistributions of this script must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+#
+#  THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED
+#  WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+#  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO
+#  EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+#  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+#  PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+#  OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+#  WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+#  OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+#  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+# Record toolchain & other info for the build log:
+slackbuildinfo
+
+# Version of Pidgin's encryption:
+PIDGINENC=${PIDGINENC:-3.1}
+
+# Paths to skeleton port's source & real Slackware source tree:
+export CWD=$SLACKSOURCE/$PKGSERIES/$PKGNAM
+export PORTCWD=$PWD
+
+# Temporary build locations:
+export TMPBUILD=$TMP/build-$PKGNAM
+export PKG=$TMP/package-$PKGNAM
+mkpkgdirs # Delete & re-create temporary directories then cd into $TMPBUILD
+
+# Extract source:
+tar xvvf $CWD/$PKGNAM-$VERSION.tar.?z*
+cd $PKGNAM-$VERSION || exit 1
+slackhousekeeping
+
+# Configure:
+#autoreconf --force --install
+CFLAGS="$SLKCFLAGS" \
+CXXFLAGS="$SLKCFLAGS" \
+./configure \
+   --prefix=/usr \
+   --libdir=/usr/lib${LIBDIRSUFFIX} \
+   --sysconfdir=/etc \
+   --mandir=/usr/man \
+   --enable-dot=no \
+   --disable-schemas-install \
+   --disable-vv \
+   --enable-dbus \
+   --enable-gnutls=no \
+   --enable-nss=yes \
+   --with-nss-includes="$(pkg-config --variable=includedir nss)" \
+   --with-nss-libs=/usr/lib${LIBDIRSUFFIX}/ \
+   --with-nspr-includes="$(pkg-config --variable=includedir nspr)" \
+   --with-nspr-libs=/usr/lib${LIBDIRSUFFIX}/ \
+   --with-system-ssl-certs=/etc/ssl/certs \
+   --enable-gtkspell \
+   --enable-cyrus-sasl \
+   --enable-perl \
+   --disable-meanwhile \
+   --disable-avahi \
+   --disable-nm \
+   --with-gstreamer=1.0 \
+   --program-prefix= \
+   --program-suffix= \
+   --build=${SLK_ARCH_BUILDTARGET} || failconfig
+
+# Fix install location:
+grep -lr -- "lib/perl" . | xargs sed -i 's?lib/perl?lib'"$LIBDIRSUFFIX"'/perl?g'
+
+# Build:
+make $NUMJOBS || make || failmake
+
+# Install into package:
+make install DESTDIR=$PKG || failinstall
+
+# Fix misplaced items:
+eval $(perl '-V:installvendorlib')
+eval $(perl '-V:privlib')
+VENDORPERL="$(echo $installvendorlib)"
+
+mkdir -vpm755 $PKG/$VENDORPERL/
+find $PKG -type f -name perllocal.pod -exec mv -fv {} $PKG/$VENDORPERL/Pidgin.pod \;
+# Fix install location for 64bit:
+sed -i 's?/lib/perl?/lib'"$LIBDIRSUFFIX"'/perl?g' $PKG/$VENDORPERL/Pidgin.pod
+mkdir -p $PKG/usr/man/man3
+find $PKG/usr/share/man -type f -name *.3 -exec mv -fv {} $PKG/usr/man/man3 \;
+rm -rf $PKG/usr/share/man
+rm -r $PKG$privlib
+# This is empty:
+rmdir $PKG/usr/lib$LIBDIRSUFFIX/perl[0-9]*/$ARCH-linux-thread-multi/
+
+# In case of unwanted junk dirs on 64-bit...  this may fail, but doesn't hurt:
+rmdir $PKG/usr/lib/perl[0-9]*/$ARCH-linux-gnueabi-thread-multi/
+rmdir $PKG/usr/lib/perl[0-9]*
+rmdir $PKG/usr/lib
+
+# This removes our DESTDIR from the packlist filenames, to keep perl's
+# internal inventories consistent and correct.
+find $PKG -name .packlist | while read plist ; do
+  sed -e "s%/share/man%/man%g" \
+      -e "s%$PKG%%g" \
+      -e "s%\.1$%\.1\.gz%g" \
+      -e "s%\.2$%\.2\.gz%g" \
+      -e "s%\.3$%\.3\.gz%g" \
+      -e "s%\.3pm$%\.3pm\.gz%g" \
+      -e "s%\.4$%\.4\.gz%g" \
+      -e "s%\.5$%\.5\.gz%g" \
+      -e "s%\.6$%\.6\.gz%g" \
+      -e "s%\.7$%\.7\.gz%g" \
+      -e "s%\.8$%\.8\.gz%g" \
+      ${plist} > ${plist}.new
+      mv -f ${plist}.new ${plist}
+done
+
+### add pidgin-encryption
+( cd $TMPBUILD
+  rm -rf pidgin-encryption-$PIDGINENC
+  tar xvf $CWD/pidgin-encryption-$PIDGINENC.tar.gz || exit 1
+  cd pidgin-encryption-$PIDGINENC
+  zcat $CWD/fix-gmain_h-compile-error.diff.gz | patch -p1 --verbose || exit 1
+  PIDGIN_CFLAGS="-I${PKG}/usr/include/pidgin -I/usr/include/seamonkey" \
+  PIDGIN_LIBS="-L${PKG}/usr/lib${LIBDIRSUFFIX}" \
+  PURPLE_CFLAGS="-I${PKG}/usr/include/libpurple  -I/usr/include/seamonkey" \
+  PURPLE_LIBS="-L${PKG}/usr/lib${LIBDIRSUFFIX}" \
+  ./configure \
+   --prefix=/usr \
+   --libdir=/usr/lib${LIBDIRSUFFIX} \
+   --disable-static \
+   --with-nss-includes="$(pkg-config --variable=includedir nss)" \
+   --with-nss-libs=/usr/lib${LIBDIRSUFFIX}/ \
+   --with-nspr-includes="$(pkg-config --variable=includedir nspr)" \
+   --with-nspr-libs=/usr/lib${LIBDIRSUFFIX}/ \
+   --program-prefix="" \
+   --program-suffix="" \
+   --build=${SLK_ARCH_BUILDTARGET} || failconfig
+
+  # Fix install location:
+  grep -lr -- "lib/perl" . | xargs sed -i 's?lib/perl?lib'"$LIBDIRSUFFIX"'/perl?g'
+
+  make $NUMJOBS || make || exit 1
+  make install DESTDIR=$PKG || exit 1
+) || exit 1
+### end add pidgin-encryption
+
+# Add a documentation directory:
+mkdir -p $PKG/usr/doc/${PKGNAM}-$VERSION
+cp -a \
+  AUTHORS COPYING COPYRIGHT HACKING INSTALL NEWS PLUGIN_HOWTO README* doc \
+  $PKG/usr/doc/${PKGNAM}-$VERSION
+( cd $PKG/usr/doc/${PKGNAM}-$VERSION/doc
+  rm -f Makefile* *.dox *.1 *.in
+)
+
+# If necessary, start the fakeroot server so we can set file/dir ownerships:
+start_fakeroot
+
+# Apply generic Slackware packaging policies:
+cd $PKG
+slackstripall   # strip all .a archives and all ELFs
+slackgzpages -i # compress man & info pages and delete usr/info/dir
+slackslack      # chown -R root:root, chmod -R og-w, slackchown, slack644docs
+slackdesc       # install slack-desc and doinst.sh
+slackmp         # run makepkg -l y -c n
+
+# Perform any final checks on the package:
+cd $PKG
+slackhlinks     # search for any hard links

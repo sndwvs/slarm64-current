@@ -1,0 +1,109 @@
+#!/bin/bash
+
+# stunnel.SlackBuild
+# Heavily based on the original Slackware build scripts,
+# Modified by Stuart Winter <mozes@slackware.com>
+# 30-Sep-2004
+#
+# Copyright 2008, 2009, 2010  Patrick J. Volkerding, Sebeka, MN, USA
+# All rights reserved.
+#
+# Redistribution and use of this script, with or without modification, is
+# permitted provided that the following conditions are met:
+#
+# 1. Redistributions of this script must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+#
+#  THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED
+#  WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+#  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO
+#  EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+#  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+#  PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+#  OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+#  WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+#  OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+#  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+# Record toolchain & other info for the build log:
+slackbuildinfo
+
+# Paths to skeleton port's source & real Slackware source tree:
+export CWD=$SLACKSOURCE/$PKGSERIES/$PKGNAM
+export PORTCWD=$PWD
+
+# Temporary build locations:
+export TMPBUILD=$TMP/build-$PKGNAM
+export PKG=$TMP/package-$PKGNAM
+mkpkgdirs # Delete & re-create temporary directories then cd into $TMPBUILD
+
+# Extract source:
+tar xvvf $CWD/$PKGNAM-$VERSION.tar.gz
+cd $PKGNAM-$VERSION || exit 1
+slackhousekeeping
+
+# Configure:
+CFLAGS="$SLKCFLAGS" \
+./configure \
+   --prefix=/usr \
+   --bindir=/usr/bin \
+   --exec-prefix= \
+   --sysconfdir=/etc \
+   --libdir=/usr/lib${LIBDIRSUFFIX} \
+   --datadir=/usr/share \
+   --mandir=/usr/man \
+   --sbindir=/usr/sbin \
+   --localstatedir=/var || failconfig
+
+# Build: (avoid answering the key creation prompts):
+make $NUMJOBS || make || failmake
+
+# This used to be installed in /usr/sbin, so it would probably be nice to
+# link from there:
+mkdir -p $PKG/usr/sbin
+( cd $PKG/usr/sbin
+  ln -vsf ../bin/stunnel .
+  ln -vsf ../bin/stunnel3 .
+)
+
+# This will produce a useless key.
+# Stop it asking about the yet:
+yes fo | make -i install DESTDIR=$PKG
+# Get rid of key, so nobody tries to use it:
+rm -f $PKG/etc/stunnel/stunnel.pem
+
+# Add cnf:
+install -vpm644 tools/openssl.cnf $PKG/etc/stunnel/openssl.cnf.new
+install -vpm755 $CWD/generate-stunnel-key.sh $PKG/etc/stunnel
+
+# Install docs:
+mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
+mv $PKG/usr/share/doc/$PKGNAM/* $PKG/usr/doc/$PKGNAM-$VERSION
+rm -rf $PKG/usr/share
+changelogliposuction ChangeLog $PKGNAM $VERSION # Trim down a "ChangeLog" file
+
+# Install man pages:
+mkdir -p $PKG/usr/man/pl/man8
+mv $PKG/usr/man/man8/stunnel.pl.8 $PKG/usr/man/pl/man8/stunnel.8
+mkdir -p $PKG/usr/man/fr/man8
+mv $PKG/usr/man/man8/stunnel.fr.8 $PKG/usr/man/fr/man8/stunnel.8
+
+# If necessary, start the fakeroot server so we can set file/dir ownerships:
+start_fakeroot
+
+# The 4.15 version of stunnel caused some bizarre perms, so
+# we'll protect against that:
+chmod 755 $PKG/var/lib
+chown root:root $PKG/var/lib
+
+# Apply generic Slackware packaging policies:
+cd $PKG
+slackstripall   # strip all .a archives and all ELFs
+slackgzpages -i # compress man & info pages and delete usr/info/dir
+slackslack      # chown -R root:root, chmod -R og-w, slackchown, slack644docs
+slackdesc       # install slack-desc and doinst.sh
+slackmp         # run makepkg
+
+# Perform any final checks on the package:
+cd $PKG
+slackhlinks     # search for any hard links

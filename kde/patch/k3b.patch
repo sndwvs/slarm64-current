@@ -1,0 +1,19 @@
+
+
+# Fix building duplicate doc targets:
+# https://bugs.kde.org/show_bug.cgi?id=293030
+# now included in x86 tree:
+#sed -i.cmakehack -e "s|^cmake_minimum_required|#cmake_minimum_required|" CMakeLists.txt
+
+# This did not work but the above does:
+#( cd po
+#find . -type f -name CMakeLists.txt | while read file; do
+#  cat << EOF > $file
+#cmake_policy(SET CMP0013 OLD)
+#cmake_policy(SET CMP0002 OLD)
+#$( cat $file )
+#EOF
+#  done
+#sed -i.cmakehack -e "s|^cmake_minimum_required|#cmake_minimum_required|" CMakeLists.txt
+
+

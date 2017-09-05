@@ -1,0 +1,395 @@
+diff -uraN openssh-4.2p1-vanilla/Makefile.in openssh-4.2p1/Makefile.in
+--- openssh-4.2p1-vanilla/Makefile.in	2005-05-29 09:22:29.000000000 +0200
++++ openssh-4.2p1/Makefile.in	2005-09-01 17:54:49.000000000 +0200
+@@ -86,7 +86,7 @@
+ 	auth-krb5.o \
+ 	auth2-gss.o gss-serv.o gss-serv-krb5.o \
+ 	loginrec.o auth-pam.o auth-shadow.o auth-sia.o md5crypt.o \
+-	audit.o audit-bsm.o
++	audit.o audit-bsm.o limits.o
+ 
+ MANPAGES	= scp.1.out ssh-add.1.out ssh-agent.1.out ssh-keygen.1.out ssh-keyscan.1.out ssh.1.out sshd.8.out sftp-server.8.out sftp.1.out ssh-rand-helper.8.out ssh-keysign.8.out sshd_config.5.out ssh_config.5.out
+ MANPAGES_IN	= scp.1 ssh-add.1 ssh-agent.1 ssh-keygen.1 ssh-keyscan.1 ssh.1 sshd.8 sftp-server.8 sftp.1 ssh-rand-helper.8 ssh-keysign.8 sshd_config.5 ssh_config.5
+diff -uraN openssh-4.2p1-vanilla/config.h.in openssh-4.2p1/config.h.in
+--- openssh-4.2p1-vanilla/config.h.in	2005-09-01 11:15:22.000000000 +0200
++++ openssh-4.2p1/config.h.in	2005-09-01 17:54:49.000000000 +0200
+@@ -31,6 +31,8 @@
+ /* Generated automatically from acconfig.h by autoheader. */
+ /* Please make your changes there */
+ 
++/* use /etc/limits*/
++#define USE_ETC_LIMITS
+ 
+ /* Define if your platform breaks doing a seteuid before a setuid */
+ #undef SETEUID_BREAKS_SETUID
+diff -uraN openssh-4.2p1-vanilla/limits.c openssh-4.2p1/limits.c
+--- openssh-4.2p1-vanilla/limits.c	1970-01-01 01:00:00.000000000 +0100
++++ openssh-4.2p1/limits.c	2005-09-01 17:54:49.000000000 +0200
+@@ -0,0 +1,344 @@
++/*
++ * Copyright 1989 - 1994, Julianne Frances Haugh
++ * All rights reserved.
++ *
++ * Redistribution and use in source and binary forms, with or without
++ * modification, are permitted provided that the following conditions
++ * are met:
++ * 1. Redistributions of source code must retain the above copyright
++ *    notice, this list of conditions and the following disclaimer.
++ * 2. Redistributions in binary form must reproduce the above copyright
++ *    notice, this list of conditions and the following disclaimer in the
++ *    documentation and/or other materials provided with the distribution.
++ * 3. Neither the name of Julianne F. Haugh nor the names of its contributors
++ *    may be used to endorse or promote products derived from this software
++ *    without specific prior written permission.
++ *
++ * THIS SOFTWARE IS PROVIDED BY JULIE HAUGH AND CONTRIBUTORS ``AS IS'' AND
++ * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
++ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
++ * ARE DISCLAIMED.  IN NO EVENT SHALL JULIE HAUGH OR CONTRIBUTORS BE LIABLE
++ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
++ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
++ * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
++ * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
++ * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
++ * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
++ * SUCH DAMAGE.
++ */
++
++/*
++ * Separated from setup.c.  --marekm
++ * Resource limits thanks to Cristian Gafton.
++ */
++
++#include <sys/types.h>
++#include <sys/stat.h>
++#include <syslog.h>
++
++#include <stdio.h>
++#include <utmp.h>
++#include <pwd.h>
++#include <stdlib.h>
++#include <string.h>
++#include <unistd.h>
++#include "ssh.h"
++
++#include <sys/resource.h>
++#define LIMITS
++
++#ifdef LIMITS
++
++#ifndef LIMITS_FILE
++#define LIMITS_FILE "/etc/limits"
++#endif
++
++#define memzero(ptr, size) memset((void *)(ptr), 0, (size))
++
++#define LOGIN_ERROR_RLIMIT	1
++#define LOGIN_ERROR_LOGIN	2
++
++/* Set a limit on a resource */
++/*
++ *	rlimit - RLIMIT_XXXX
++ *	value - string value to be read
++ *	multiplier - value*multiplier is the actual limit
++ */
++static int
++setrlimit_value(unsigned int rlimit, const char *value, unsigned int multiplier)
++{
++	struct rlimit rlim;
++	long limit;
++	char **endptr = (char **) &value;
++	const char *value_orig = value;
++
++	limit = strtol(value, endptr, 10);
++	if (limit == 0 && value_orig == *endptr) /* no chars read */
++		return 0;
++	limit *= multiplier;
++	rlim.rlim_cur = limit;
++	rlim.rlim_max = limit;
++	if (setrlimit(rlimit, &rlim))
++		return LOGIN_ERROR_RLIMIT;
++	return 0;
++}
++
++
++static int
++set_prio(const char *value)
++{
++	int prio;
++	char **endptr = (char **) &value;
++
++	prio = strtol(value, endptr, 10);
++	if ((prio == 0) && (value == *endptr))
++		return 0;
++	if (setpriority(PRIO_PROCESS, 0, prio))
++		return LOGIN_ERROR_RLIMIT;
++	return 0;
++}
++
++
++/* Counts the number of user logins and check against the limit */
++static int
++check_logins(const char *name, const char *maxlogins)
++{
++	struct utmp *ut;
++	unsigned int limit, count;
++	char **endptr = (char **) &maxlogins;
++	const char *ml_orig = maxlogins;
++
++	limit = strtol(maxlogins, endptr, 10);
++	if (limit == 0 && ml_orig == *endptr) /* no chars read */
++		return 0;
++
++	if (limit == 0) /* maximum 0 logins ? */ {
++		syslog(LOG_WARNING, "No logins allowed for `%s'\n", name);
++		return LOGIN_ERROR_LOGIN;
++	}
++
++	setutent();
++	count = 0;
++	while ((ut = getutent())) {
++//		if (ut->ut_type != USER_PROCESS)
++//			continue;
++		if (ut->ut_user[0] == '\0')
++			continue;
++		if (strncmp(name, ut->ut_user, sizeof(ut->ut_user)) != 0)
++			continue;
++		if (++count > limit)
++			break;
++	}
++	endutent();
++	/*
++	 * This is called after setutmp(), so the number of logins counted
++	 * includes the user who is currently trying to log in.
++	 */
++
++	if (count > limit) {
++                printf("Too many logins (max %d).\n",count);
++		syslog(LOG_WARNING, "Too many logins (max %d) for %s\n",limit, name);
++		return LOGIN_ERROR_LOGIN;
++	}
++
++	return 0;
++}
++
++/* Function setup_user_limits - checks/set limits for the curent login
++ * Original idea from Joel Katz's lshell. Ported to shadow-login
++ * by Cristian Gafton - gafton@sorosis.ro
++ *
++ * We are passed a string of the form ('BASH' constants for ulimit)
++ *     [Aa][Cc][Dd][Ff][Mm][Nn][Rr][Ss][Tt][Uu][Ll][Pp]
++ *     (eg. 'C2F256D2048N5' or 'C2 F256 D2048 N5')
++ * where:
++ * [Aa]: a = RLIMIT_AS		max address space (KB)
++ * [Cc]: c = RLIMIT_CORE	max core file size (KB)
++ * [Dd]: d = RLIMIT_DATA	max data size (KB)
++ * [Ff]: f = RLIMIT_FSIZE	Maximum filesize (KB)
++ * [Mm]: m = RLIMIT_MEMLOCK	max locked-in-memory address space (KB)
++ * [Nn]: n = RLIMIT_NOFILE	max number of open files
++ * [Rr]: r = RLIMIT_RSS		max resident set size (KB)
++ * [Ss]: s = RLIMIT_STACK	max stack size (KB)
++ * [Tt]: t = RLIMIT_CPU		max CPU time (MIN)
++ * [Uu]: u = RLIMIT_NPROC	max number of processes
++ * [Ll]: l = max number of logins for this user
++ * [Pp]: p = process priority -20..20 (negative = high priority)
++ *
++ * Return value:
++ *		0 = okay, of course
++ *		LOGIN_ERROR_RLIMIT = error setting some RLIMIT
++ *		LOGIN_ERROR_LOGIN  = error - too many logins for this user
++ *
++ * buf - the limits string
++ * name - the username
++ */
++static int
++do_user_limits(const char *buf, const char *name)
++{
++	const char *pp;
++	int retval = 0;
++
++	pp = buf;
++
++	while (*pp != '\0') switch(*pp++) {
++#ifdef RLIMIT_AS
++		case 'a':
++		case 'A':
++			/* RLIMIT_AS - max address space (KB) */
++			retval |= setrlimit_value(RLIMIT_AS, pp, 1024);
++#endif
++#ifdef RLIMIT_CPU
++		case 't':
++		case 'T':
++			/* RLIMIT_CPU - max CPU time (MIN) */
++			retval |= setrlimit_value(RLIMIT_CPU, pp, 60);
++			break;
++#endif
++#ifdef RLIMIT_DATA
++		case 'd':
++		case 'D':
++			/* RLIMIT_DATA - max data size (KB) */
++			retval |= setrlimit_value(RLIMIT_DATA, pp, 1024);
++			break;
++#endif
++#ifdef RLIMIT_FSIZE
++		case 'f':
++		case 'F':
++			/* RLIMIT_FSIZE - Maximum filesize (KB) */
++			retval |= setrlimit_value(RLIMIT_FSIZE, pp, 1024);
++			break;
++#endif
++#ifdef RLIMIT_NPROC
++		case 'u':
++		case 'U':
++			/* RLIMIT_NPROC - max number of processes */
++			retval |= setrlimit_value(RLIMIT_NPROC, pp, 1);
++			break;
++#endif
++#ifdef RLIMIT_CORE
++		case 'c':
++		case 'C':
++			/* RLIMIT_CORE - max core file size (KB) */
++			retval |= setrlimit_value(RLIMIT_CORE, pp, 1024);
++			break;
++#endif
++#ifdef RLIMIT_MEMLOCK
++		case 'm':
++		case 'M':
++		/* RLIMIT_MEMLOCK - max locked-in-memory address space (KB) */
++			retval |= setrlimit_value(RLIMIT_MEMLOCK, pp, 1024);
++			break;
++#endif
++#ifdef RLIMIT_NOFILE
++		case 'n':
++		case 'N':
++			/* RLIMIT_NOFILE - max number of open files */
++			retval |= setrlimit_value(RLIMIT_NOFILE, pp, 1);
++			break;
++#endif
++#ifdef RLIMIT_RSS
++		case 'r':
++		case 'R':
++			/* RLIMIT_RSS - max resident set size (KB) */
++			retval |= setrlimit_value(RLIMIT_RSS, pp, 1024);
++			break;
++#endif
++#ifdef RLIMIT_STACK
++		case 's':
++		case 'S':
++			/* RLIMIT_STACK - max stack size (KB) */
++			retval |= setrlimit_value(RLIMIT_STACK, pp, 1024);
++			break;
++#endif
++		case 'l':
++		case 'L':
++			/* LIMIT the number of concurent logins */
++			retval |= check_logins(name, pp);
++			break;
++		case 'p':
++		case 'P':
++			retval |= set_prio(pp);
++			break;
++	}
++	return retval;
++}
++
++static int
++setup_user_limits(const char *uname)
++{
++	/* TODO: allow and use @group syntax --cristiang */
++	FILE *fil;
++	char buf[1024];
++	char name[1024];
++	char limits[1024];
++	char deflimits[1024];
++	char tempbuf[1024];
++
++	/* init things */
++	memzero(buf, sizeof(buf));
++	memzero(name, sizeof(name));
++	memzero(limits, sizeof(limits));
++	memzero(deflimits, sizeof(deflimits));
++	memzero(tempbuf, sizeof(tempbuf));
++
++	/* start the checks */
++	fil = fopen(LIMITS_FILE, "r");
++	if (fil == NULL) {
++#if 0  /* no limits file is ok, not everyone is a BOFH :-).  --marekm */
++		syslog(LOG_WARNING, NO_LIMITS, uname, LIMITS_FILE);
++#endif
++		return 0;
++	}
++	/* The limits file have the following format:
++	 * - '#' (comment) chars only as first chars on a line;
++	 * - username must start on first column
++	 * A better (smarter) checking should be done --cristiang */
++	while (fgets(buf, 1024, fil) != NULL) {
++		if (buf[0]=='#' || buf[0]=='\n')
++			continue;
++		memzero(tempbuf, sizeof(tempbuf));
++		/* a valid line should have a username, then spaces,
++		 * then limits
++		 * we allow the format:
++		 * username    L2  D2048  R4096
++		 * where spaces={' ',\t}. Also, we reject invalid limits.
++		 * Imposing a limit should be done with care, so a wrong
++		 * entry means no care anyway :-). A '-' as a limits
++		 * strings means no limits --cristiang */
++		if (sscanf(buf, "%s%[ACDFMNRSTULPacdfmnrstulp0-9 \t-]",
++		    name, tempbuf) == 2) {
++			if (strcmp(name, uname) == 0) {
++				strcpy(limits, tempbuf);
++				break;
++			} else if (strcmp(name, "*") == 0) {
++				strcpy(deflimits, tempbuf);
++			}
++		}
++	}
++	fclose(fil);
++	if (limits[0] == '\0') {
++		/* no user specific limits */
++		if (deflimits[0] == '\0') /* no default limits */
++			return 0;
++		strcpy(limits, deflimits); /* use the default limits */
++	}
++	return do_user_limits(limits, uname);
++}
++
++#endif  /* LIMITS */
++
++/*
++ *	set the process nice, ulimit, and umask from the password file entry
++ */
++
++void setup_limits(const struct passwd *info) {
++	char	*cp;
++	int	i;
++	long	l;
++
++	if (info->pw_uid) if (setup_user_limits(info->pw_name) & LOGIN_ERROR_LOGIN) {
++    		sleep(2);
++		exit(1);
++	}
++}
+diff -uraN openssh-4.2p1-vanilla/session.c openssh-4.2p1/session.c
+--- openssh-4.2p1-vanilla/session.c	2005-08-31 18:59:49.000000000 +0200
++++ openssh-4.2p1/session.c	2005-09-01 17:54:49.000000000 +0200
+@@ -653,6 +653,8 @@
+ }
+ #endif
+ 
++void setup_limits(const struct passwd *info);
++
+ /*
+  * This is called to fork and execute a command.  If another command is
+  * to be forced, execute that instead.
+@@ -678,6 +680,10 @@
+ 	}
+ #endif
+ 
++#ifdef USE_ETC_LIMITS
++        setup_limits(s->pw);
++#endif /* USE_ETC_LIMITS */
++
+ 	if (s->ttyfd != -1)
+ 		do_exec_pty(s, command);
+ 	else

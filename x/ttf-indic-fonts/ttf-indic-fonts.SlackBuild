@@ -1,0 +1,55 @@
+#!/bin/bash
+
+# ttf-indic-fonts.SlackBuild
+# Heavily based on the original Slackware build scripts,
+# Modified by Stuart Winter <mozes@slackware.com>
+
+# Record toolchain & other info for the build log:
+slackbuildinfo
+
+# Paths to skeleton port's source & real Slackware source tree:
+export CWD=$SLACKSOURCE/$PKGSERIES/$PKGNAM
+export PORTCWD=$PWD
+
+# Temporary build locations:
+export TMPBUILD=$TMP/build-$PKGNAM
+export PKG=$TMP/package-$PKGNAM
+mkpkgdirs # Delete & re-create temporary directories then cd into $TMPBUILD
+
+# Extract source:
+tar xvvf $CWD/${PKGNAM}_${VERSION}.tar.xz
+cd $PKGNAM* || exit 1
+slackhousekeeping
+
+# Install:
+mkdir -p $PKG/usr/share/fonts/TTF/
+cp -a */*.ttf $PKG/usr/share/fonts/TTF
+
+mkdir -p $PKG/etc/fonts/conf.avail
+find . -name "*.conf" -exec cp -a {} $PKG/etc/fonts/conf.avail \;
+
+mkdir -p $PKG/etc/fonts/conf.d
+( cd $PKG/etc/fonts/conf.d
+  for file in ../conf.avail/*.conf ; do
+    ln -vsf $file .
+  done )
+
+# Put copyright notices in the docs directory:
+mkdir -p $PKG/usr/doc/ttf-indic-fonts-$VERSION
+find . -name "*.copyright" -exec cp -a {} $PKG/usr/doc/ttf-indic-fonts-$VERSION \;
+
+# If necessary, start the fakeroot server so we can set file/dir ownerships:
+start_fakeroot
+
+# Apply generic Slackware packaging policies:
+cd $PKG
+slackstripall   # strip all .a archives and all ELFs
+slackgzpages -i # compress man & info pages and delete usr/info/dir
+slackslack      # chown -R root:root, chmod -R og-w, slackchown, slack644docs
+slackdesc       # install slack-desc and doinst.sh
+slackmp         # run makepkg -l y -c n
+
+# Perform any final checks on the package:
+cd $PKG
+slackhlinks     # search for any hard links
+

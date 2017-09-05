@@ -1,0 +1,183 @@
+#!/bin/bash
+
+# mkinitd.SlackBuild
+# Heavily based on the original Slackware build scripts,
+# Modified by Stuart Winter <mozes@slackware.com>
+# 21-Nov-2004
+#
+# Copyright 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2015, 2016  Patrick J. Volkerding, Sebeka, MN, USA
+# All rights reserved.
+#
+# Redistribution and use of this script, with or without modification, is
+# permitted provided that the following conditions are met:
+#
+# 1. Redistributions of this script must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+#
+#  THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED
+#  WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+#  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO
+#  EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+#  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+#  PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+#  OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+#  WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+#  OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+#  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+# Record toolchain & other info for the build log:
+slackbuildinfo
+
+# Busy box version (will need updating):
+BB=1.27.1
+
+# Paths to skeleton port's source & real Slackware source tree:
+export CWD=$SLACKSOURCE/$PKGSERIES/$PKGNAM
+export PORTCWD=$PWD
+
+# Temporary build locations:
+export TMPBUILD=$TMP/build-$PKGNAM
+export PKG=$TMP/package-$PKGNAM
+mkpkgdirs # Delete & re-create temporary directories then cd into $TMPBUILD
+
+# Write a warning to stdout if the mkinitrd script has a different version:
+eval $( grep "^MKINITRD_VERSION=" $CWD/mkinitrd )
+if [ "$VERSION" != "$MKINITRD_VERSION" ]; then
+  echo "The version of this package ($VERSION) is not equal to the version of the mkinitrd script ($MKINITRD_VERSION)."
+  sleep 5
+fi
+
+##### Build busybox #############################################
+
+# Extract source:
+tar xvvf $CWD/busybox-$BB.tar.bz2
+#tar xvvf $PORTCWD/sources/busybox-$BB.tar.?z*
+cd busybox-* || exit 1
+slackhousekeeping
+
+# Apply any patches:
+if [ -d $CWD/fixes-$BB ]; then
+  for pfile in $CWD/fixes-$BB/*.patch ; do
+    patch -p1 < $pfile || exit 1
+  done
+fi
+
+# Fix ARM build problem:
+# http://osdir.com/ml/linux-kernel/2009-06/msg09557.html
+# patch -p0 --verbose < $PORTCWD/sources/armfix.diff || exit 1
+
+# Configure:
+sed -e \
+  's#^CONFIG_PREFIX=.*#CONFIG_PREFIX="'$PKG'/usr/share/mkinitrd/initrd-tree"#' \
+  $CWD/busybox-dot-config > .config
+# Copy the local copy - we do this only if we're using a different version from Slackware x86
+# (which may be because the version in x86 won't build on ARM)
+if [ -f $PORTCWD/sources/busybox-dot-config ]; then
+   sed -e \
+  's#^CONFIG_PREFIX=.*#CONFIG_PREFIX="'$PKG'/usr/share/mkinitrd/initrd-tree"#' \
+  $PORTCWD/sources/busybox-dot-config > .config
+fi
+
+make oldconfig
+
+# Build:
+make $NUMJOBS || make || failmake
+
+mkdir -p $PKG/usr/share/mkinitrd/initrd-tree/{bin,sbin}
+make install || exit 1
+rm -f $PKG/usr/share/mkinitrd/initrd-tree/linuxrc
+
+# Add a poor-man's reboot into the initrd.
+# This is because if there is a problem and your initrd can't mount
+# the filesystems, then 'reboot' won't work; and most terminal emulators
+# disconnect when you power cycle the device, which may cause you to miss
+# being able to interrupt the boot sequence.
+#mkdir -vpm755 $PKG/sbin
+#echo 'echo b > /proc/sysrq-trigger' > $PKG/sbin/freboot
+#chmod 755 $PKG/sbin/freboot
+
+# Copying additional files:
+cp -a $CWD/mkinitrd_command_generator.sh $PKG/usr/share/mkinitrd
+chown root:root $PKG/usr/share/mkinitrd/mkinitrd_command_generator.sh
+chmod 755 $PKG/usr/share/mkinitrd/mkinitrd_command_generator.sh
+cp -a $CWD/keymaps.tar.gz $PKG/usr/share/mkinitrd
+chown root:root $PKG/usr/share/mkinitrd/keymaps.tar.gz
+chmod 644 $PKG/usr/share/mkinitrd/keymaps.tar.gz
+
+# Zip up the initrd-tree:
+( cd $PKG/usr/share/mkinitrd/initrd-tree
+  tar xf $CWD/_initrd-tree.tar.gz
+  cat $CWD/init > init
+
+  # Add Slackware ARM stuff:
+  mknod -m 644 dev/random c 1 8
+  mknod -m 644 dev/urandom c 1 9
+
+  # Archive it:
+  tar czf ../initrd-tree.tar.gz .
+)
+rm -rf $PKG/usr/share/mkinitrd/initrd-tree
+
+# Add busybox docs:
+mkdir -p $PKG/usr/doc/busybox-$BB
+cp -a AUTHORS COPYING* INSTALL LICENSE README* \
+  $PKG/usr/doc/busybox-$BB
+cp -a e2fsprogs/README $PKG/usr/doc/busybox-$BB/README.e2fsprogs
+cp -a libbb/README $PKG/usr/doc/busybox-$BB/README.libbb
+cp -a shell/README $PKG/usr/doc/busybox-$BB/README.shell
+cp -a testsuite/README $PKG/usr/doc/busybox-$BB/README.testsuite
+
+# Install mkinitrd:
+mkdir -p $PKG/sbin
+cp -a $CWD/mkinitrd $PKG/sbin/mkinitrd
+chown root:root $PKG/sbin/mkinitrd
+chmod 755 $PKG/sbin/mkinitrd
+mkdir -p $PKG/usr/man/man{5,8}
+install -vpm644 $CWD/{mkinitrd_command_generator.8,mkinitrd.8} $PKG/usr/man/man8/
+install -vpm644 $CWD/mkinitrd.conf.5 $PKG/usr/man/man5/
+mkdir -p $PKG/etc
+install -vpm644 $CWD/mkinitrd.conf.sample $PKG/etc/
+
+# ARM systems often need more time to find devices, so we'll adjust
+# the sample config file:
+case "$( uname -m )" in
+  arm*) sed -e 's@#WAIT="1"@#WAIT="4"@g' -i $PKG/etc/mkinitrd.conf.sample;;
+esac
+
+# Add documentation:
+mkdir -p $PKG/usr/doc/mkinitrd-$VERSION
+sed $CWD/README.initrd \
+  -e "s,@DATE@,$(date),g" \
+  -e "s,@KERNEL_VERSION@,$(uname -r),g" \
+  -e "s,@PACKAGE_VERSION@,$(uname -r | tr - _),g" \
+  -e "s,@LILO_KERNEL_NAME@,$echo $(uname -r) | tr -d . | tr -d - ),g" \
+  -e "s,@MKINITRD_VERSION@,$VERSION,g" \
+  -e "s,@ARCH@,$ARCH,g" \
+  -e "s,@BUILD@,$BUILD,g" \
+  > $PKG/usr/doc/mkinitrd-$VERSION/README.initrd
+# OK so there's no point in doing the above sedding, but I keep it in the build script
+# so I won't wonder why it's missing from script if I ever do a comparison between the x86 version.
+# Replace the readme with the ARM version:
+install -vpm644 $PORTCWD/README.initrd.arm $PKG/usr/doc/mkinitrd-$VERSION/README.initrd
+
+mkdir -vpm755  $PKG/boot
+( cd $PKG/boot
+  ln -vsf ../usr/doc/mkinitrd-$VERSION/README.initrd .
+)
+
+###################################################################
+
+# If necessary, start the fakeroot server so we can set file/dir ownerships:
+start_fakeroot
+
+# Apply generic Slackware packaging policies:
+cd $PKG
+slackstripall   # strip all .a archives and all ELFs
+slackgzpages -i # compress man & info pages and delete usr/info/dir
+slackslack      # chown -R root:root, chmod -R og-w, slackchown, slack644docs
+slackdesc       # install slack-desc and doinst.sh
+slackmp         # run makepkg -l y -c n
+
+# Perform any final checks on the package:
+cd $PKG
+slackhlinks     # search for any hard links

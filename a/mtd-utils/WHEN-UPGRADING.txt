@@ -1,0 +1,2 @@
+- rebuild installer
+- rebuild miniroot

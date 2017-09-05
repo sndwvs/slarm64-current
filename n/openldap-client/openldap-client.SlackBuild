@@ -1,0 +1,96 @@
+#!/bin/bash
+
+# openldap-client.SlackBuild
+# Heavily based on the original Slackware build scripts,
+# Modified by Stuart Winter <mozes@slackware.com>
+
+# Record toolchain & other info for the build log:
+slackbuildinfo
+
+# Paths to skeleton port's source & real Slackware source tree:
+export CWD=$SLACKSOURCE/$PKGSERIES/$PKGNAM
+export PORTCWD=$PWD
+
+# Temporary build locations:
+export TMPBUILD=$TMP/build-$PKGNAM
+export PKG=$TMP/package-$PKGNAM
+mkpkgdirs # Delete & re-create temporary directories then cd into $TMPBUILD
+
+# Extract source:
+tar xvvf $CWD/openldap-$VERSION.tar.?z*
+cd openldap* || exit 1
+slackhousekeeping
+
+# Configure:
+CFLAGS="$SLKCFLAGS" \
+./configure \
+   --prefix=/usr \
+   --mandir=/usr/man \
+   --localstatedir=/var/lib \
+   --libdir=/usr/lib${LIBDIRSUFFIX} \
+   --sysconfdir=/etc \
+   --with-cyrus-sasl \
+   --with-tls \
+   --with-readline \
+   --with-threads \
+   --enable-debug \
+   --enable-syslog \
+   --enable-dynamic \
+   --enable-local \
+   --enable-proctitle \
+   --disable-static \
+   --enable-shared \
+   --disable-slapd \
+   --disable-slurpd || failconfig
+
+#   --disable-ipv6 \
+
+# Build:
+make depend
+make $NUMJOBS || make || failmake
+make test || failtest
+
+# Install into package:
+make install DESTDIR=$PKG
+
+# Fix permissions on shared libraries:
+chmod 755 $PKG/usr/lib${LIBDIRSUFFIX}/*.so.*
+
+rm -f $PKG/etc/openldap/ldap.conf.default
+mv $PKG/etc/openldap/ldap.conf $PKG/etc/openldap/ldap.conf.new
+cat << EOF >> $PKG/etc/openldap/ldap.conf.new
+
+# In order to avoid problems with self-signed certificates using TLS:
+# "TLS certificate verification: Error, self signed certificate"
+# See also 'man ldap.conf' or http://www.openldap.org/doc/admin/tls.html
+TLS_REQCERT allow
+
+EOF
+
+# Copy docs:
+mkdir -p $PKG/usr/doc/openldap-$VERSION
+cp -a \
+   ANNOUNCEMENT COPYRIGHT LICENSE README \
+   $PKG/usr/doc/openldap-$VERSION
+changelogliposuction ChangeLog $PKGNAM $VERSION
+
+# Remove man pages for the servers (not currently supported or shipped...
+# do they even work properly without the evil PAM?)
+find $PKG/usr/man -name slap* -exec rm -f {} \;
+find $PKG/usr/man -name slurp* -exec rm -f {} \;
+find $PKG/usr/man -type d -empty -exec rmdir {} \;
+
+# If necessary, start the fakeroot server so we can set file/dir ownerships:
+start_fakeroot
+
+# Apply generic Slackware packaging policies:
+cd $PKG
+slackstripall   # strip all .a archives and all ELFs
+slackgzpages -i # compress man & info pages and delete usr/info/dir
+slackslack      # chown -R root:root, chmod -R og-w, slackchown, slack644docs
+slackdesc       # install slack-desc and doinst.sh
+slackmp         # run makepkg -l y -c n
+
+# Perform any final checks on the package:
+cd $PKG
+slackhlinks     # search for any hard links

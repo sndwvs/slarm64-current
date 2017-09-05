@@ -1,0 +1,32 @@
+# Determine which architecture we're being installed on
+# in order to install the correct xorg config file.
+# by Stuart Winter <mozes@slackware.com>
+# 22-Nov-2004
+
+# This is the list of currently supported architectures in Slackware ARM.
+# More will be added (Netwinder perhaps) if I get my hands on any other
+# kit!
+#
+# I suppose I could automate this entirely to save on maintenance by simply having
+# the files named xorg.conf.{RiscPC,Iyonix,NetWinder} but I prefer it this way
+# incase I have to do something other than just making a symlink to the correct
+# files.  For example, on the RiscPC I want to determine the amount of VRAM available
+# and update the VideoRam directive appropriately.  Atm I don't know how to determine
+# the amount of VRAM so this is not currently being done.
+#
+grep Acorn-RiscPC    /proc/cpuinfo 2>&1 >/dev/null && TYPE=riscpc
+grep Iyonix          /proc/cpuinfo 2>&1 >/dev/null && TYPE=iyonix
+grep Rebel-NetWinder /proc/cpuinfo 2>&1 >/dev/null && TYPE=netwinder
+grep ARM-Versatile   /proc/cpuinfo 2>&1 >/dev/null && TYPE=versatile
+grep OpenRD          /proc/cpuinfo 2>&1 >/dev/null && TYPE=openrd
+# We support the SheevaPlug too, but it has no VGA so we'd only run X
+# through VNC or some other remote method.
+
+# Make the symlink. One of the great things about "stock" type ARM stuff
+# is that it has a static graphics chip, so we can make a pretty good
+# stab at providing an appropriate X11 configuration:
+# (This long drawn out way is to make the Slackware package tools happy)
+if [ ! -z $TYPE ]; then
+( cd etc/X11 ; rm -f xorg.conf )
+( cd etc/X11 ; ln -fs xorg.conf-$TYPE xorg.conf )
+fi

@@ -1,0 +1,110 @@
+#!/bin/bash
+
+# net-snmp.SlackBuild
+# Heavily based on the original Slackware build scripts,
+# Modified by Stuart Winter <mozes@slackware.com>
+
+# Record toolchain & other info for the build log:
+slackbuildinfo
+
+# Paths to skeleton port's source & real Slackware source tree:
+export CWD=$SLACKSOURCE/$PKGSERIES/$PKGNAM
+export PORTCWD=$PWD
+
+# Temporary build locations:
+export TMPBUILD=$TMP/build-$PKGNAM
+export PKG=$TMP/package-$PKGNAM
+mkpkgdirs # Delete & re-create temporary directories then cd into $TMPBUILD
+
+# Extract source:
+tar xvvf $CWD/$PKGNAM-$VERSION.tar.?z*
+cd $PKGNAM-$VERSION || exit 1
+slackhousekeeping
+
+# Apply patches:
+zcat $CWD/net-snmp.net-snmp-create-v3-user.etc.snmpd.conf.diff.gz | patch -p1 --verbose || exit 1
+zcat $CWD/net-snmp-5.7.3-Fix-Makefile-PL.patch.gz | patch -p1 --verbose || exit 1
+# Replace a typedef that conflicts with perl:
+zcat $CWD/net-snmp-5.7.3-Remove-U64-typedef.patch.gz | patch -p1 --verbose || exit 1
+
+# Fix destdir for python modules
+sed -i "s|\$(PYMAKE) install|\$(PYMAKE) install --root=$PKG|" \
+  Makefile.in
+
+# Configure:
+CFLAGS="$SLKCFLAGS" \
+./configure \
+   --prefix=/usr \
+   --sysconfdir=/etc/snmp \
+   --libdir=/usr/lib${LIBDIRSUFFIX} \
+   --mandir=/usr/man \
+   --enable-ipv6 \
+   --disable-debugging \
+   --enable-static=no \
+   --with-libwrap \
+   --with-perl-modules \
+   --with-default-snmp-version=3 \
+   --with-sys-contact="root@example.org" \
+   --with-sys-location="unknown" \
+   --with-logfile="/var/log/snmpd.log" \
+   --with-persistent-directory="/var/lib/net-snmp" \
+   --without-rpm \
+   --program-prefix= \
+   --program-suffix= \
+   --with-mib-modules="ucd-snmp/lmsensorsMib ucd-snmp/diskio" \
+   --with-python-modules \
+   --build=${SLK_ARCH_BUILDTARGET} || failconfig
+
+# Build:
+make INSTALLDIRS=vendor || failmake
+
+# Install into package:
+make install DESTDIR=$PKG INSTALLDIRS=vendor || failinstall
+mkdir -p $PKG/var/lib/net-snmp/{cert,mib}_indexes
+mkdir -p $PKG/etc/snmp
+zcat $CWD/snmpd.conf.gz > $PKG/etc/snmp/snmpd.conf.new
+mkdir -p $PKG/etc/rc.d
+cat $CWD/rc.snmpd > $PKG/etc/rc.d/rc.snmpd.new
+if [ -d $PKG/usr/share/man/man3 ]; then
+  mkdir -p $PKG/usr/man/man3
+  mv $PKG/usr/share/man/man3/* $PKG/usr/man/man3
+  rmdir $PKG/usr/share/man/man3 $PKG/usr/share/man
+fi
+mkdir -p $PKG/usr
+mv $PKG/usr/share/man $PKG/usr
+
+# This removes our DESTDIR from the packlist filenames, to keep perl's
+# internal inventories consistent and correct.
+find $PKG -name .packlist | while read plist ; do
+  sed -e "s%$PKG%%g" \
+      -e "s%/share/man%/man%g" \
+      -re "s%\.([1-9]n?|3pm)$%&.gz%g   # extend man filenames for .gz" \
+      ${plist} > ${plist}.new
+      mv -f ${plist}.new ${plist}
+done
+
+# Add a documentation directory:
+mkdir -p $PKG/usr/doc/${PKGNAM}-$VERSION
+cp -a \
+  AGENT.txt CHANGES COPYING* CodingStyle EXAMPLE* FAQ \
+  INSTALL NEWS PORTING README* TODO \
+  $PKG/usr/doc/${PKGNAM}-$VERSION
+changelogliposuction ChangeLog $PKGNAM $VERSION # Trim down a "ChangeLog" file
+
+# Remove perllocal files:
+( cd $PKG ; find . -name perllocal.pod -exec rm "{}" \; )
+
+# If necessary, start the fakeroot server so we can set file/dir ownerships:
+start_fakeroot
+
+# Apply generic Slackware packaging policies:
+cd $PKG
+slackstripall   # strip all .a archives and all ELFs
+slackgzpages -i # compress man & info pages and delete usr/info/dir
+slackslack      # chown -R root:root, chmod -R og-w, slackchown, slack644docs
+slackdesc       # install slack-desc and doinst.sh
+slackmp         # run makepkg -l y -c n
+
+# Perform any final checks on the package:
+cd $PKG
+slackhlinks     # search for any hard links

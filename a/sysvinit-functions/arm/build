@@ -1,0 +1,33 @@
+#!/bin/bash
+
+# arm/build
+# Check package dependencies, set metadata and launch
+# package build script.
+# by Stuart Winter <mozes@slackware.com>
+#
+source /usr/share/slackdev/buildkit.sh
+
+# Package metadata:
+export PKGNAM=sysvinit-functions
+export VERSION=8.53
+export BUILD=1
+export PKGSERIES=a
+export SLACKPACKAGE=$PKGNAM-$VERSION-$ARCH-$BUILD.txz
+
+# Reset the ARM file system: restore it to the 'factory settings'
+# as it were (this has no effect when building natively):
+sboxsysrestore
+
+# Needs l/popt to build.
+{ slackcheckpkgdeps popt || installpkg $PKGSTORE/l/popt-*.t?z || exit 99 ; }
+
+# Ensure base ARM packages are installed first:
+slackbasedeps
+
+# Launch the package build script:
+BUILDLOG=$( basename $SLACKPACKAGE .t?z ).build.log
+( ./$PKGNAM.SlackBuild ) >& /dev/stdout | tee $BUILDLOG
+
+# Compress the build log:
+bzip2 -9fvz $BUILDLOG
+

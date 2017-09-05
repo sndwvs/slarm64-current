@@ -1,0 +1,10 @@
+--- netkit-rwho-0.17/rwhod/rwhod.c.time	2004-10-22 08:18:03.000000000 -0400
++++ netkit-rwho-0.17/rwhod/rwhod.c	2004-10-22 08:18:13.000000000 -0400
+@@ -69,6 +69,7 @@
+ #include <arpa/inet.h>
+ #include <pwd.h>
+ #include <grp.h>
++#include <time.h>
+ 
+ #include "daemon.h"
+ 

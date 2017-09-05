@@ -1,0 +1,33 @@
+#!/bin/bash
+
+# The firmware blobs are arch neutral anyway so I'll just copy Slackware's package.
+# Stuart Winter.
+
+# Record toolchain & other info for the build log:
+slackbuildinfo
+
+# Paths to skeleton port's source & real Slackware source tree:
+export CWD=$SLACKSOURCE/$PKGSERIES/$PKGNAM
+export PORTCWD=$PWD
+
+# Temporary build locations:
+export TMPBUILD=$TMP/build-$PKGNAM
+export PKG=$TMP/package-$PKGNAM
+mkpkgdirs # Delete & re-create temporary directories then cd into $TMPBUILD
+
+cd $PKG
+
+# Unpack Slackware package:
+tar xvvf $SLACKSOURCE/../slackware*/a/kernel-firmware-*.t?z -C.
+
+# Add firmware for ARM devices:
+echo "**Adding firmware for ARM devices**"
+mkdir -vpm755 $PKG/lib/firmware/
+tar xvvf $PORTCWD/sources/rtl_nic.tar.xz -C$PKG/lib/firmware/
+tar xvvf $PORTCWD/sources/brcm80211.tar.xz -C$PKG/lib/firmware/
+
+# Just incase! ;-)
+slackhousekeeping
+
+# Make our package:
+slackmp  # run makepkg -l y -c n

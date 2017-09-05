@@ -1,0 +1,6 @@
+# Only try and apply patches if we find out first patch file - otherwise this
+# can cause a bailout of building all X packages (I think!)
+if [ -f $PORTCWD/patch/driver/fbdev-0.4.3-BGNoneRoot.patch.xz ]; then
+   auto_apply_patch $PORTCWD/patch/driver/fbdev-0.4.3-BGNoneRoot.patch.xz || exit 1
+fi
+

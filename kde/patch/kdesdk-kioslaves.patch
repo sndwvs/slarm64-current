@@ -1,0 +1,10 @@
+# kdesdk-kioslaves no longer builds with svn, so we patch it
+#
+# http://bear.alienbase.nl/cgit/ktown/plain/kde/patch/kdesdk-kioslaves/svn19.patch
+# https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=799525
+#
+for kdesdkkioslavespatch in $PORTCWD/patch/kdesdk-kioslaves/* ; do
+  echo "Applying patch: $kdesdkkioslavespatch"
+  auto_apply_patch $kdesdkkioslavespatch || { touch ${PORTCWD}/build-logs/${PKGNAME}.failed ; continue ; }
+done
+

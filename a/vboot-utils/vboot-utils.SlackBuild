@@ -1,0 +1,86 @@
+#!/bin/bash
+
+# vboot-utils.SlackBuild
+# Heavily based on the original Slackware build scripts,
+# Modified by Stuart Winter for Slackware ARM.
+
+# Record toolchain & other info for the build log:
+slackbuildinfo
+
+# Paths to skeleton port's source & real Slackware source tree:
+export CWD=$PWD
+export PORTCWD=$PWD
+
+# Temporary build locations:
+export TMPBUILD=$TMP/build-$PKGNAM
+export PKG=$TMP/package-$PKGNAM
+mkpkgdirs # Delete & re-create temporary directories then cd into $TMPBUILD
+
+####### Build "Trousers" ###################################################
+# This is just a build time requirement, so we'll build it and install into
+# a temporary location
+############################################################################
+
+# Extract source:
+tar xvvf $CWD/sources/trousers*tar.xz
+cd trousers* || exit 1
+
+# Apply patches:
+auto_apply_patch $PORTCWD/sources/trousers-0.3.13-noinline.patch.xz || exit 1
+
+# Configure:
+CFLAGS="$SLKCFLAGS" \
+CXXFLAGS="$SLKCFLAGS" \
+./configure \
+   --prefix=/usr \
+   --host=$ARCH-slackware-linux-gnueabi \
+   --target=$ARCH-slackware-linux-gnueabi \
+   --build=$ARCH-slackware-linux-gnueabi || failconfig
+
+# Build:
+make $NUMJOBS || make || exit 1
+
+# Install into temporary location:
+make install DESTDIR=$TMPBUILD/trousers-install || exit 1
+
+####### Build "vboot-utils" ###################################################
+
+# Extract source:
+tar xvvf $CWD/sources/$PKGNAM-$VERSION.tar.xz
+cd $PKGNAM* || exit 1
+slackhousekeeping
+
+# Apply patches:
+shopt -s extglob
+for i in $PORTCWD/sources/!(*trousers*)patch.xz ; do
+  auto_apply_patch $i || exit 1
+done
+shopt -u extglob
+
+# Build:
+make $NUMJOBS V=1 ARCH=arm COMMON_FLAGS="$SLKCFLAGS -I${TMPBUILD}/trousers-install/usr/include/" || \
+make V=1 ARCH=arm COMMON_FLAGS="$SLKCFLAGS -I${TMPBUILD}/trousers-install/usr/include/" || exit 1
+
+# Install into package framework:
+make install V=1 ARCH=arm COMMON_FLAGS="$SLKCFLAGS" DESTDIR=$PKG/usr/bin || failinstall
+
+# Add documentation:
+mkdir -vpm755 $PKG/usr/doc/$PKGNAM-$VERSION
+cp -fav \
+  LICENSE README \
+  $PKG/usr/doc/$PKGNAM-$VERSION
+
+# If necessary, start the fakeroot server so we can set file/dir ownerships:
+start_fakeroot
+
+# Apply generic Slackware packaging policies:
+cd $PKG
+slackstripall   # strip all .a archives and all ELFs
+slackgzpages -i # compress man & info pages and delete usr/info/dir
+slackslack      # chown -R root:root, chmod -R og-w, slackchown, slack644docs
+slackdesc       # install slack-desc and doinst.sh
+slackmp         # run makepkg -l y -c n
+
+# Perform any final checks on the package:
+cd $PKG
+slackhlinks     # search for any hard links

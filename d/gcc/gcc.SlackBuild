@@ -1,0 +1,723 @@
+#!/bin/bash
+ulimit -s unlimited
+
+#
+# GCC package build script (written by volkerdi@slackware.com)
+#
+# Copyright 2003, 2004  Slackware Linux, Inc., Concord, California, USA
+# Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012  Patrick J. Volkerding, Sebeka, MN, USA
+# All rights reserved.
+#
+# Redistribution and use of this script, with or without modification, is
+# permitted provided that the following conditions are met:
+#
+# 1. Redistributions of this script must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+#
+#  THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED
+#  WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+#  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO
+#  EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+#  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+#  PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+#  OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+#  WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+#  OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+#  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+#
+#
+# Modified by Stuart Winter <mozes@slackware.com> for Slackware ARM.
+# 30-May-04
+# Notes:
+# [1] Some parts of the gcc suite do not work for ARM so they are currently
+#     missing; this isn't an oversight on my part - they simply don't work! ;-)
+
+# Record toolchain & other info for the build log:
+slackbuildinfo
+
+# Paths to skeleton port's source & real Slackware source tree:
+export CWD=$SLACKSOURCE/$PKGSERIES/$PKGNAM
+
+# Determine the CFLAGS for the known architectures.  If you specify -mtune=xscale
+# for ARM then the build breaks.
+# Also disable libspp (Stack Protector) because with gcc 4.2.3, code compiled
+# with it tends to segfault.  Unfortunately, many newer releases of sources
+# check for -fstack-protector & use it if available; glibc is one of these.
+#
+case $ARCH in
+   arm)     # "--with-arch" sets the gcc defaults
+            export SLKCFLAGS="$SLKCFLAGS -fPIC"
+            export ARCH_CONFARGS="--with-march=armv7-a --with-float=hard --disable-werror"  ;;
+esac
+
+# We only use the slack-desc files from the Slackware source tree.
+#CWD=$SLACKSOURCE/d/gcc
+#if [ ! -d "$CWD" ]; then
+#   echo "ERROR: Cannot find original Slackware source dir $CWD"
+#   echo "       you would miss the slack-desc files."
+#   exit 1
+#fi
+PORTCWD=$PWD
+
+# The new toolchain's name:
+# We suffix "gnueabi" to tell gcc that we want to build a compiler that
+# builds for the EABI by default.
+TARGET=$ARCH-slackware-linux-gnueabi
+
+# Temporary build location.  This should *NOT* be a directory
+# path a non-root user could create later...
+# grr - this got annoying actually - deleting /gcc-foo -- and
+# nobody should have write access to /root.
+rm -rf $TMP/build-$PKGNAM*
+export TMPBUILD=$TMP/build-$PKGNAM
+export PKG=$TMP/package-$PKGNAM
+rm -rf $TMP/package-gcc* # clear other gcc named packages
+mkpkgdirs # Delete & re-create temporary directories then cd into $TMPBUILD
+
+# Python branch version (e.g. 2.6 , 2.7)  we have installed on the
+# system currently:
+PYTHONVER=$( python -c 'import sys; print sys.version[:3]' )
+echo "Building with Python branch version: $PYTHONVER"
+
+# This is the main DESTDIR target:
+PKG1=$TMP/package-gcc
+# These are the directories to build other packages in:
+PKG2=$TMP/package-gcc-g++
+PKG3=$TMP/package-gcc-gfortran
+PKG4=$TMP/package-gcc-gnat
+PKG6=$TMP/package-gcc-objc
+PKG8=$TMP/package-gcc-go
+PKG9=$TMP/package-gcc-brig
+
+mkdir -p $PKG{1,2,3,4,5,6,7,8,9}/install
+# Install the descriptions:
+( cd $CWD
+  install -vpm644 slack-desc.gcc          $PKG1/install/slack-desc
+  install -vpm644 slack-desc.gcc-g++      $PKG2/install/slack-desc
+  install -vpm644 slack-desc.gcc-gfortran $PKG3/install/slack-desc
+  install -vpm644 slack-desc.gcc-gnat     $PKG4/install/slack-desc
+  install -vpm644 slack-desc.gcc-objc     $PKG6/install/slack-desc
+#  install -vpm644 slack-desc.gcc-g++-gch $PKG7/install/slack-desc
+  install -vpm644 slack-desc.gcc-go       $PKG8/install/slack-desc
+  install -vpm644 slack-desc.gcc-brig     $PKG9/install/slack-desc
+)
+
+# Create doc dirs:
+mkdir -p $PKG{1,2,3,4,5,6,7,8,9}/usr/doc/gcc-$VERSION
+
+# Extract source:
+echo "Unpacking gcc source..."
+tar xf $CWD/gcc-[0-9].[0-9]*.tar.xz || exit 1
+# Rename gcc-<version> to 'src' so that the patch utility lets us use
+# the Debian patches.  The newer version of patch 2.7.4 (despite having an option
+# to allow symlinks) won't follow them.
+mv -fv gcc-* src
+ln -vfs src gcc-$VERSION
+cd gcc-$VERSION || exit 1
+slackhousekeeping
+
+##
+# If there are any patches that get applied in the x86 SlackBuild, apply
+# them here, but note that we're already inside the source dir so we don't
+# need to spawn a subshell.
+
+##
+
+# Extract the Debian patch set:
+#tar xvvf $PORTCWD/sources/patches-*gcc*.xz || exit 1
+# Debian switched back to a diff file for gcc 4.9 and changed the dir structure:
+( cd $TMPBUILD
+  mkdir gcc-dpatches ; cd gcc-dpatches
+  auto_apply_patch $PORTCWD/sources/gcc-[0-9]*_*[0-9]*-*diff*z || exit 1
+  mv */debian ../src/ )
+
+cd .. # back to the parent dir so we can use "src" which makes the debian patch set happy.
+
+# This list is taken from the Debian Build log for the particular
+# patch release we're using, with a few redundant Debian-only ones stripped.
+for patchf in \
+  \
+ svn-updates.diff \
+ gcc-gfdl-build.diff \
+ gcc-textdomain.diff \
+ gcc-driver-extra-langs.diff \
+ gcc-hash-style-gnu.diff \
+ libstdc++-pic.diff \
+ libstdc++-doclink.diff \
+ libstdc++-man-3cxx.diff \
+ libstdc++-test-installed.diff \
+ alpha-no-ev4-directive.diff \
+ note-gnu-stack.diff \
+ libgomp-omp_h-multilib.diff \
+ pr47818.diff \
+ libgo-testsuite.diff \
+ gcc-target-include-asm.diff \
+ libgo-revert-timeout-exp.diff \
+ libgo-setcontext-config.diff \
+ gcc-auto-build.diff \
+ kfreebsd-unwind.diff \
+ libitm-no-fortify-source.diff \
+ sparc64-biarch-long-double-128.diff \
+ gotools-configury.diff \
+ pr66368.diff \
+ pr67590.diff \
+ libjit-ldflags.diff \
+ PR55947-revert.diff \
+ libffi-pax.diff \
+ libffi-race-condition.diff \
+ gcc-foffload-default.diff \
+ gcc-fuse-ld-lld.diff \
+ libgo-s390x-default-isa.diff \
+ pr81723.diff \
+ pr81829.diff \
+ ada-arm.diff \
+ ada-tools-move-ldflags.diff \
+ ada-lib-info-source-date-epoch.diff \
+ ada-armel-libatomic.diff \
+ sys-auxv-header.diff \
+ libcilkrts-targets.diff \
+ arm-multilib-defaults.diff \
+ gcc-ice-dump.diff \
+ gcc-ice-apport.diff \
+ skip-bootstrap-multilib.diff \
+ libffi-ro-eh_frame_sect.diff \
+ libffi-mips.diff \
+ ada-drop-termio-h.diff \
+ canonical-cpppath.diff \
+ libgomp-kfreebsd-testsuite.diff \
+ go-testsuite.diff \
+ ada-749574.diff \
+ ada-changes-in-autogen-output.diff \
+ \
+   ; do auto_apply_patch src/debian/patches/$patchf || exit 1
+done
+
+# Regenerate:
+# Removed since removing one of the ada patches stops this dir being created:
+#  ./src/libada-sjlj \
+#  ./src/libgnatprj \
+#for regendir in \
+#  \
+#  ./src \
+#  ./src/gcc \
+#  ./src/gotools \
+#  ./src/libada \
+#  ./src/libcc1 \
+#  ./src/libffi \
+#  ./src/libgcc \
+#  ./src/libgfortran \
+#  ./src/libgo \
+#  ./src/libjava/classpath \
+#  ./src/libjava \
+#  ./src/libstdc++-v3 \
+#  \
+#  ; do
+#    pushd $regendir && autoconf || exit 1
+#    popd
+#  done
+
+#
+# Apply Slackware patches:
+#
+cd gcc-$VERSION || exit 1
+# Smite the fixincludes:
+zcat $CWD/gcc-no_fixincludes.diff.gz | patch -p1 --verbose || exit 1
+# Included here so I can easily keep a track of which are applied, then remove them.
+# These aren't required because they're included in the Debian patch set.
+#  # Fixes for glibc-2.26+:
+#  zcat $CWD/gcc.sanitizer.diff.gz | patch -p1 --verbose || exit 1
+#  zcat $CWD/gcc.ucontext_t.diff.gz | patch -p1 --verbose || exit 1
+
+# Install docs
+( mkdir -p $PKG1/usr/doc/gcc-$VERSION
+  cp -favv \
+    COPYING* ChangeLog* FAQ INSTALL \
+    LAST_UPDATED MAINTAINERS NEWS \
+    README* *.html \
+  $PKG1/usr/doc/gcc-$VERSION
+
+  # We will keep part of these, but they are really big...
+  if [ -r ChangeLog ]; then
+    DOCSDIR=$(echo $PKG1/usr/doc/gcc-$VERSION)
+    cat ChangeLog | head -n 1000 > $DOCSDIR/ChangeLog
+    touch -r ChangeLog $DOCSDIR/ChangeLog
+  fi
+  if [ -r NEWS ]; then
+    DOCSDIR=$(echo $PKG1/usr/doc/gcc-$VERSION)
+    cat NEWS | head -n 1000 > $DOCSDIR/NEWS
+    touch -r NEWS $DOCSDIR/NEWS
+  fi
+
+
+  mkdir -p $PKG1/usr/doc/gcc-${VERSION}/gcc
+  ( cd gcc || exit 1
+    cp -favv \
+      ABOUT* COPYING* DATESTAMP DEV-PHASE LANG* ONEWS README* SERVICE \
+    $PKG1/usr/doc/gcc-$VERSION/gcc
+
+    mkdir -p $PKG3/usr/doc/gcc-${VERSION}/gcc/fortran
+    ( cd fortran || exit 1
+      if [ -r ChangeLog ]; then
+        cat ChangeLog | head -n 1000 > $PKG3/usr/doc/gcc-$VERSION/gcc/fortran/ChangeLog
+        touch -r ChangeLog $PKG3/usr/doc/gcc-$VERSION/gcc/fortran/ChangeLog
+      fi
+    )
+
+    mkdir -p $PKG4/usr/doc/gcc-${VERSION}/gcc/ada
+    ( cd ada || exit 1
+      cp -favv \
+         ChangeLog.tree-ssa \
+      $PKG4/usr/doc/gcc-$VERSION/gcc/ada
+      if [ -r ChangeLog ]; then
+        cat ChangeLog | head -n 1000 > $PKG4/usr/doc/gcc-$VERSION/gcc/ada/ChangeLog
+        touch -r ChangeLog $PKG4/usr/doc/gcc-$VERSION/gcc/ada/ChangeLog
+      fi
+    )
+
+    mkdir -p $PKG6/usr/doc/gcc-${VERSION}/gcc/objc
+    ( cd objc || exit 1
+      cp -favv \
+        README* \
+      $PKG6/usr/doc/gcc-${VERSION}/gcc/objc
+      if [ -r ChangeLog ]; then
+        cat ChangeLog | head -n 1000 > $PKG6/usr/doc/gcc-${VERSION}/gcc/objc/ChangeLog
+        touch -r ChangeLog $PKG6/usr/doc/gcc-${VERSION}/gcc/objc/ChangeLog
+      fi
+    )
+  )
+
+    mkdir -p $PKG8/usr/doc/gcc-${VERSION}/gcc/go
+    ( cd go || exit 1
+      if [ -r ChangeLog ]; then
+        cat ChangeLog | head -n 1000 > $PKG8/usr/doc/gcc-${VERSION}/gcc/go/ChangeLog
+        touch -r ChangeLog $PKG8/usr/doc/gcc-${VERSION}/gcc/go/ChangeLog
+      fi
+      cp -a \
+        README* THREADS* \
+        gofrontend/{LICENSE,PATENTS,README} \
+      $PKG8/usr/doc/gcc-${VERSION}/gcc/go
+    )
+
+    mkdir -p $PKG9/usr/doc/gcc-${VERSION}/gcc/brig
+    ( cd brig || exit 1
+      if [ -r ChangeLog ]; then
+        cat ChangeLog | head -n 1000 > $PKG9/usr/doc/gcc-${VERSION}/gcc/brig/ChangeLog
+        touch -r ChangeLog $PKG9/usr/doc/gcc-${VERSION}/gcc/brig/ChangeLog
+      fi
+    )
+
+  mkdir -p $PKG3/usr/doc/gcc-${VERSION}/libgfortran
+  ( cd libgfortran || exit 1
+    if [ -r ChangeLog ]; then
+      cat ChangeLog | head -n 1000 > $PKG3/usr/doc/gcc-${VERSION}/libgfortran/ChangeLog
+      touch -r ChangeLog $PKG3/usr/doc/gcc-${VERSION}/libgfortran/ChangeLog
+    fi
+  )
+ mkdir -p $PKG4/usr/doc/gcc-${VERSION}/libada
+  ( cd libada || exit 1
+    if [ -r ChangeLog ]; then
+      cat ChangeLog | head -n 1000 > $PKG4/usr/doc/gcc-${VERSION}/libada/ChangeLog
+      touch -r ChangeLog $PKG4/usr/doc/gcc-${VERSION}/libada/ChangeLog
+    fi
+  )
+
+  mkdir -p $PKG1/usr/doc/gcc-${VERSION}/libgomp
+  ( cd libgomp || exit 1
+    if [ -r ChangeLog ]; then
+      cat ChangeLog | head -n 1000 > $PKG1/usr/doc/gcc-${VERSION}/libgomp/ChangeLog
+      touch -r ChangeLog $PKG1/usr/doc/gcc-${VERSION}/libgomp/ChangeLog
+    fi
+  )
+
+  mkdir -p $PKG6/usr/doc/gcc-${VERSION}/libobjc
+  ( cd libobjc || exit 1
+    if [ -r ChangeLog ]; then
+      cat ChangeLog | head -n 1000 > $PKG6/usr/doc/gcc-${VERSION}/libobjc/ChangeLog
+      touch -r ChangeLog $PKG6/usr/doc/gcc-${VERSION}/libobjc/ChangeLog
+    fi
+    cp -favv \
+      README* THREADS* \
+    $PKG6/usr/doc/gcc-${VERSION}/libobjc
+  )
+
+  mkdir -p $PKG2/usr/doc/gcc-${VERSION}/libstdc++-v3
+  ( cd libstdc++-v3 || exit 1
+    cp -favv \
+       README* \
+       docs/html/faq.html \
+      $PKG2/usr/doc/gcc-${VERSION}/libstdc++-v3
+    if [ -r ChangeLog ]; then
+      cat ChangeLog | head -n 1000 > $PKG2/usr/doc/gcc-${VERSION}/libstdc++-v3/ChangeLog
+      touch -r ChangeLog $PKG2/usr/doc/gcc-${VERSION}/libstdc++-v3/ChangeLog
+    fi
+  )
+)
+
+# build gcc
+  cd $TMPBUILD || exit 1
+
+  echo "*************************"
+  echo "*** Building main GCC ***"
+  echo "*************************"
+  mkdir gcc.build.lnx
+  cd gcc.build.lnx
+  BOOT_CFLAGS="$SLKCFLAGS" \
+  STAGE1_CFLAGS="$SLKCFLAGS" \
+  CFLAGS="$SLKCFLAGS" \
+  CXXFLAGS="$SLKCFLAGS" \
+  LIBCFLAGS="$SLKCFLAGS" \
+  LIBCXXFLAGS="$SLKCFLAGS" \
+  GCJFLAGS="$SLKCFLAGS" \
+  ../gcc-$VERSION/configure $ARCH_CONFARGS \
+       --prefix=/usr \
+       --mandir=/usr/man \
+       --infodir=/usr/info \
+       --libdir=/usr/lib$LIBDIRSUFFIX \
+       --enable-bootstrap \
+       --enable-checking=release \
+       --with-system-zlib \
+       --disable-libunwind-exceptions \
+       --enable-libstdcxx-dual-abi \
+       --with-default-libstdcxx-abi=gcc4-compatible \
+       --enable-shared \
+       --enable-languages=c,c++,ada,fortran,go,lto,objc \
+       --enable-objc-gc \
+       --enable-threads=posix \
+       --enable-__cxa_atexit \
+       --enable-libssp \
+       --enable-lto \
+       --with-gnu-ld \
+       --verbose \
+       --with-arch-directory=$LIB_ARCH \
+       --disable-gtktest \
+       --disable-install-libiberty \
+       --host=$TARGET \
+       --build=$TARGET \
+       --target=$TARGET || exit 1
+
+# go support doesn't work on ARM in gxx 4.7 (at least without a Java installed, it
+# seems from a brief inspection of the build log).  This may be one to try after OpenJDK
+# is built.
+#       --enable-languages=c,c++,fortran,go,java,objc,lto \
+
+  # Start the build:
+#       BOOT_CFLAGS="$SLKCFLAGS -fno-stack-protector" \
+#       STAGE1_CFLAGS="$SLKCFLAGS -fno-stack-protector" \
+
+# Hard code the number of parallel jobs here rather than use $NUMJOBS
+# This is because the bootstrap compiler is built using distcc against the x86 cluster, but
+# the new compiler (built *from* the bootstrap compiler) is run natively, so -j22
+# is a bit too much for a single ARM core.
+# -j3 will be fine on the NVidia Tegra20 though..
+# If the parallel build fails, perform a single job build.
+       make "-j$( echo $( nproc ) +1 | bc -l )" \
+       BOOT_CFLAGS="$SLKCFLAGS" \
+       STAGE1_CFLAGS="$SLKCFLAGS" \
+       CFLAGS="$SLKCFLAGS" \
+       CXXFLAGS="$SLKCFLAGS" \
+       LIBCFLAGS="$SLKCFLAGS" \
+       LIBCXXFLAGS="$SLKCFLAGS" \
+       bootstrap || make \
+       BOOT_CFLAGS="$SLKCFLAGS" \
+       STAGE1_CFLAGS="$SLKCFLAGS" \
+       CFLAGS="$SLKCFLAGS" \
+       CXXFLAGS="$SLKCFLAGS" \
+       LIBCFLAGS="$SLKCFLAGS" \
+       LIBCXXFLAGS="$SLKCFLAGS" \
+       bootstrap || exit 1
+
+# Build GNAT:
+( cd gcc
+    make gnatlib GNATLIBCFLAGS="$SLKCFLAGS" || exit 1
+
+    CFLAGS="$SLKCFLAGS" \
+    CXXFLAGS="$SLKCFLAGS" \
+    make gnattools || exit 1
+  ) || exit 1
+
+  # Build info pages:
+  make info
+
+  # Set GCCCHECK=something to run the tests
+  if [ ! -z $GCCCHECK ]; then
+     make check
+  fi
+
+  # To begin, install the whole thing into one package.  We split up later.
+  make install DESTDIR=$PKG1
+
+  # Move gdb pretty printers to the correct place
+  mkdir -p $PKG1/usr/share/gdb/auto-load/usr/lib$LIBDIRSUFFIX
+  mv $PKG1/usr/lib$LIBDIRSUFFIX/*-gdb.py \
+    $PKG1/usr/share/gdb/auto-load/usr/lib$LIBDIRSUFFIX/
+
+  # Be sure the "specs" file is installed.  There was an issue with that on 4.1.1:
+  if [ ! -r $PKG1/usr/lib${LIBDIRSUFFIX}/gcc/${ARCH}-slackware-linux-gnueabi/${VERSION}/specs ]; then
+     echo "************************************************************************"
+     echo "************************* MISSING SPECS FILE ***************************"
+     echo "************************************************************************"
+     echo "************************************************************************"
+     set -x
+     cat stage1-gcc/specs > $PKG1/usr/lib${LIBDIRSUFFIX}/gcc/${ARCH}-slackware-linux-gnueabi/${VERSION}/specs
+     set +x
+  fi
+
+  # Make our 64bit gcc look for 32bit gcc binaries in ./32 subdirectory:
+  if [ "$ARCH" = "aarch64" ]; then
+    sed -i 's#;.\(:../lib !m64 m32;\)$#;32\1#' \
+      $PKG1/usr/lib${LIBDIRSUFFIX}/gcc/${TARGET}/${VERSION}/specs
+  fi
+
+  make -i install-info DESTDIR=$PKG1
+
+  chmod 755 $PKG1/usr/lib${LIBDIRSUFFIX}/libgcc_s.so.1
+
+  # Fix stuff up:
+  ( cd $PKG1/usr/info ; rm dir ; gzip -9 * )
+  ( cd $PKG1
+    # *not* ${LIBDIRSUFFIX}
+    mkdir -p lib
+    cd lib
+    ln -sf /usr/bin/cpp .  )
+
+  ( cd $PKG1/usr/bin
+    mv g++ g++-gcc-$VERSION
+    mv gcc gcc-$VERSION
+    mv ${TARGET}-gfortran gfortran-gcc-$VERSION
+    ln -sf g++-gcc-$VERSION g++
+    ln -sf gcc-$VERSION gcc
+    ln -sf g++ c++
+    ln -sf gcc cc
+    ln -sf gcc-$VERSION ${TARGET}-gcc
+    ln -sf gcc-$VERSION ${TARGET}-gcc-$VERSION
+    ln -sf gcc-ar ${TARGET}-gcc-ar
+    ln -sf gcc-nm ${TARGET}-gcc-nm
+    ln -sf gcc-ranlib ${TARGET}-gcc-ranlib
+    ln -sf g++-gcc-$VERSION ${TARGET}-c++
+    ln -sf g++-gcc-$VERSION ${TARGET}-g++
+    ln -sf gfortran-gcc-$VERSION gfortran
+    ln -sf gfortran-gcc-$VERSION ${TARGET}-gfortran
+    ln -sf gfortran-gcc-$VERSION ${TARGET}-gfortran-$VERSION
+    ln -sf gfortran-gcc-$VERSION ${TARGET}-g95
+    ln -sf gfortran g95
+    ln -sf gfortran f95
+    ln -sf gfortran-gcc-$VERSION ${TARGET}-g77
+    ln -sf gfortran g77
+    ln -sf gfortran f77
+    cat $CWD/c89.sh > c89
+    cat $CWD/c99.sh > c99
+    chmod 755 c89 c99  )
+
+  ( cd $PKG1/usr/man
+    gzip -9 */*
+    cd man1
+    ln -sf g++.1.gz c++.1.gz
+    ln -sf gcc.1.gz cc.1.gz  )
+
+  ## build an all-in-one txz package:
+  #(
+  #  cd $PKG1;
+  #  makepkg -l y -c n $TMP/gcc-$VERSION-$ARCH-$BUILD.txz
+  #)
+
+# Filter all .la files (thanks much to Mark Post for the sed script):
+( cd $PKG1
+  for file in $(find . -type f -name "*.la") ; do
+    cat $file | sed -e 's%-L/gcc-[[:graph:]]* % %g' > $TMPBUILD/tmp-la-file
+    cat $TMPBUILD/tmp-la-file > $file
+  done
+  rm $TMPBUILD/tmp-la-file
+)
+
+
+# Strip bloated binaries and libraries:
+( cd $PKG1
+  find . -name "lib*so*" -exec strip --strip-unneeded "{}" \;
+  find . -name "lib*a" -exec strip -g "{}" \;
+  strip --strip-unneeded usr/bin/* 2> /dev/null
+  find . | xargs file | grep "executable" | grep ELF | cut -f 1 -d : | xargs strip --strip-unneeded 2> /dev/null
+  find . | xargs file | grep "shared object" | grep ELF | cut -f 1 -d : | xargs strip --strip-unneeded 2> /dev/null
+)
+
+# OK, time to split the big package where needed:
+# gcc-g++:
+echo "**************** Setting up $PKG2 ******************"
+( cd $PKG2
+  mkdir -p usr/bin
+  mv $PKG1/usr/bin/*++* usr/bin
+  mkdir -p usr/include
+  mv $PKG1/usr/include/c++ usr/include
+  mkdir -p usr/lib${LIBDIRSUFFIX}
+  mv $PKG1/usr/lib${LIBDIRSUFFIX}/*++* usr/lib${LIBDIRSUFFIX}
+  mkdir -p usr/libexec/gcc/$TARGET/$VERSION
+  mv $PKG1/usr/libexec/gcc/$TARGET/$VERSION/cc1plus usr/libexec/gcc/$TARGET/$VERSION/cc1plus
+  mkdir -p usr/man/man1
+  mv $PKG1/usr/man/man1/*++* usr/man/man1
+  mkdir -p usr/share
+  mv $PKG1/usr/share/gdb usr/share
+  mkdir -p usr/share/gcc-$VERSION/python
+  mv $PKG1/usr/share/gcc-$VERSION/python/libstdcxx usr/share/gcc-$VERSION/python
+)
+
+# gcc-gfortran:
+echo "******************* Setting up $PKG3 ****************"
+
+( cd $PKG3
+  mkdir -p usr/bin
+  mv $PKG1/usr/bin/*gfortran* usr/bin
+  mv $PKG1/usr/bin/*95* usr/bin
+  mv $PKG1/usr/bin/*77* usr/bin
+  # Doesn't this seem like a logical idea?
+  ( cd usr/bin ; ln -sf gfortran-gcc-${VERSION} fortran )
+  mkdir -p usr/info
+  mv $PKG1/usr/info/gfortran* usr/info
+  mkdir -p usr/lib${LIBDIRSUFFIX}
+  mv $PKG1/usr/lib${LIBDIRSUFFIX}/libgfortran* usr/lib${LIBDIRSUFFIX}
+  mkdir -p usr/lib${LIBDIRSUFFIX}/gcc/$TARGET/$VERSION
+  mv $PKG1/usr/lib${LIBDIRSUFFIX}/gcc/$TARGET/$VERSION/finclude usr/lib${LIBDIRSUFFIX}/gcc/$TARGET/$VERSION
+  mv $PKG1/usr/lib${LIBDIRSUFFIX}/gcc/$TARGET/$VERSION/libgfortran* usr/lib${LIBDIRSUFFIX}/gcc/$TARGET/$VERSION
+  mkdir -p usr/libexec/gcc/$TARGET/$VERSION
+  mv $PKG1/usr/libexec/gcc/$TARGET/$VERSION/f951 usr/libexec/gcc/$TARGET/$VERSION/f951
+  # On ARM This is in /usr/lib - possibly one of the patches has changed this.
+  # mv $PKG1/usr/libexec/gcc/$TARGET/$VERSION/libgfortran* usr/libexec/gcc/$TARGET/$VERSION
+  mv $PKG1/usr/libexec/gcc/$TARGET/$VERSION/libgfortran* usr/libexec/gcc/$TARGET/$VERSION
+  mkdir -p usr/man/man1
+  mv $PKG1/usr/man/man1/gfortran* usr/man/man1
+)
+
+# gcc-gnat:
+echo "***************** Setting up $PKG4 ****************"
+( cd $PKG4
+  mkdir -p usr/bin
+  mv $PKG1/usr/bin/gnat* usr/bin
+  mv $PKG1/usr/bin/gpr* usr/bin
+  mkdir -p usr/info
+  mv $PKG1/usr/info/gnat* usr/info
+  mkdir -p usr/libexec/gcc/$TARGET/$VERSION
+  mv $PKG1/usr/libexec/gcc/$TARGET/$VERSION/gnat1 usr/libexec/gcc/$TARGET/$VERSION
+  mkdir -p usr/lib${LIBDIRSUFFIX}/gcc/$TARGET/$VERSION
+  mv $PKG1/usr/lib${LIBDIRSUFFIX}/gcc/$TARGET/$VERSION/adainclude usr/lib${LIBDIRSUFFIX}/gcc/$TARGET/$VERSION
+  mv $PKG1/usr/lib${LIBDIRSUFFIX}/gcc/$TARGET/$VERSION/adalib usr/lib${LIBDIRSUFFIX}/gcc/$TARGET/$VERSION
+)
+
+# gcc-objc:
+echo "******************* Setting up $PKG6 **********************"
+( cd $PKG6
+  mkdir -p usr/lib${LIBDIRSUFFIX}
+  mv $PKG1/usr/lib${LIBDIRSUFFIX}/libobjc* usr/lib${LIBDIRSUFFIX}
+  mkdir -p usr/libexec/gcc/$TARGET/$VERSION
+  mv $PKG1/usr/libexec/gcc/$TARGET/$VERSION/cc1obj usr/libexec/gcc/$TARGET/$VERSION
+  mkdir -p usr/lib${LIBDIRSUFFIX}/gcc/$TARGET/$VERSION/include
+  mv $PKG1/usr/lib${LIBDIRSUFFIX}/gcc/$TARGET/$VERSION/include/objc usr/lib${LIBDIRSUFFIX}/gcc/$TARGET/$VERSION/include
+)
+
+## NOTE: Thought about this, because the precompiled headers are so large.
+## Probably easier to keep everything together, though.
+## gcc-g++-gch (precompiled c++ headers)
+#echo "****************** Setting up $PKG7 **********************"
+#( cd $PKG7
+#  mkdir -p usr/include/c++/$VERSION/$TARGET/bits
+#  mv $PKG2/usr/include/c++/$VERSION/$TARGET/bits/stdc++.h.gch usr/include/c++/$VERSION/$TARGET/bits
+#)
+
+# gcc-go:
+echo "******************* Setting up $PKG8 **********************"
+( cd $PKG8
+  mkdir -p usr/bin
+  mv $PKG1/usr/bin/*gccgo* usr/bin
+  mv $PKG1/usr/bin/go{,fmt} usr/bin
+  mkdir -p usr/libexec/gcc/$TARGET/$VERSION
+  mv $PKG1/usr/libexec/gcc/$TARGET/$VERSION/{cgo,go1} usr/libexec/gcc/$TARGET/$VERSION
+  mkdir -p usr/info
+  mv $PKG1/usr/info/gccgo.info.gz usr/info
+  mkdir -p usr/lib${LIBDIRSUFFIX}
+  mv $PKG1/usr/lib${LIBDIRSUFFIX}/go usr/lib${LIBDIRSUFFIX}
+  mv $PKG1/usr/lib${LIBDIRSUFFIX}/{libgo.la,libgo.so*,libgobegin.a,libgolibbegin.a} usr/lib${LIBDIRSUFFIX} || exit 1
+  # Ordinarily Slackware doesn't package static libraries, but in this case
+  # it is useful for deploying compiled binaries on machines that do not yet
+  # have libgo.so.0.0.0.
+  mv $PKG1/usr/lib${LIBDIRSUFFIX}/libgo.a usr/lib${LIBDIRSUFFIX}
+  mkdir -p usr/man/man1
+  mv $PKG1/usr/man/man1/gccgo.1.gz usr/man/man1
+  mv $PKG1/usr/man/man1/go.1.gz usr/man/man1
+  mv $PKG1/usr/man/man1/gofmt.1.gz usr/man/man1
+) || exit 1
+
+# gcc-brig:
+echo "******************* Setting up $PKG9 **********************"
+( cd $PKG9
+  mkdir -p usr/bin
+  mv $PKG1/usr/bin/*brig* usr/bin
+  mkdir -p usr/lib${LIBDIRSUFFIX}
+  mv $PKG1/usr/lib${LIBDIRSUFFIX}/libhsail* usr/lib${LIBDIRSUFFIX}
+  mkdir -p usr/libexec/gcc/$TARGET/$VERSION
+  mv $PKG1/usr/libexec/gcc/$TARGET/$VERSION/brig1 usr/libexec/gcc/$TARGET/$VERSION
+)
+
+# Start the fakeroot server:
+start_fakeroot
+
+# Delete old packages - if you want the old ones, move them out
+# of the way first!
+rm -fv $PKGSTORE/$PKGSERIES/gcc-*.t*
+
+# Don't delete old packages otherwise 'slackmp' wipes
+# the base gcc package.
+export DELETEOLDPKGS=No
+
+# Build packages:
+( echo "Building gcc package"
+  cd $PKG1
+  slackchown
+  slack644docs
+  export SLACKPACKAGE=gcc-$VERSION-$PKGARCH-$BUILD.txz
+  slackmp )
+
+( echo "Building g++ package"
+  cd $PKG2
+  slackchown
+  slack644docs
+  export SLACKPACKAGE=gcc-g++-$VERSION-$PKGARCH-$BUILD.txz
+  slackmp )
+
+( cd $PKG3
+  slackchown
+  slack644docs
+  export SLACKPACKAGE=gcc-gfortran-$VERSION-$PKGARCH-$BUILD.txz
+  slackmp )
+
+if [ -x $PKG4/usr/bin/gnat ]; then
+   ( cd $PKG4
+     slackchown
+     slack644docs
+     export SLACKPACKAGE=gcc-gnat-$VERSION-$PKGARCH-$BUILD.txz
+     slackmp )
+fi
+
+( cd $PKG6
+  slackchown
+  slack644docs
+  export SLACKPACKAGE=gcc-objc-$VERSION-$PKGARCH-$BUILD.txz
+  slackmp )
+
+# Only package if it's been built:
+if [ -x $PKG8/usr/bin/gccgo ]; then
+   ( cd $PKG8
+     slackchown
+     slack644docs
+     export SLACKPACKAGE=gcc-go-$VERSION-$PKGARCH-$BUILD.txz
+     slackmp )
+  else
+   echo "****** gcc-go did not build, so has not been packaged! *****"
+fi
+
+# Only package if it's been built:
+if [ -x $PKG9/usr/bin/brig ]; then
+   ( cd $PKG9
+     slackchown
+     slack644docs
+     export SLACKPACKAGE=gcc-brig-$VERSION-$PKGARCH-$BUILD.txz
+     slackmp )
+  else
+   echo "****** gcc-brig did not build, so has not been packaged! *****"
+fi

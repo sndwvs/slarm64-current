@@ -1,0 +1,38 @@
+#!/bin/bash
+
+builddir=$TMPBUILD/kbd-$VERSION/data
+
+for k in `find $builddir/keymaps/i386 -name *.inc` \
+    `find $builddir/keymaps/i386 -name *.map`; do
+      ka=`echo $k | sed 's/keymaps/keymaps-acorn/;s/\.gz$//'`
+      mkdir -p `dirname $ka`
+      cat $k | $PORTCWD/arm/ps2-to-riscpc | gzip > $ka.gz
+done
+
+#for k in `find keymaps/i386 -name '*.inc'` \
+#         `find $PKG/usr/share/kbd/keymaps/i386 -name '*.map.gz'`; do
+#           ka=`echo $k | sed 's/keymaps/keymaps-acorn/'`
+#           mkdir -p `dirname $ka`
+#           if [ ${ka#*.} = "gz" ]; then
+#              CAT=zcat
+#            else
+#              CAT=cat
+#           fi
+#           $CAT $k | $PORTCWD/arm/ps2-to-riscpc | gzip -9 > $ka
+#done
+
+( cd $PKG/usr/share/kbd
+  mv -f keymaps keymaps-original 
+  # and so makepkg finds the symlink:
+  ln -fs keymaps-original keymaps )
+mv $TMPBUILD/kbd-$VERSION/data/keymaps-acorn $PKG/usr/share/kbd/
+
+# Rename the keymaps:
+( cd $PKG/usr/share/kbd
+  mv keymaps-acorn keymaps-acorn-for-linux-2.4
+  cd keymaps-acorn-for-linux-2.4
+  mv i386 acorn 
+  # Copy the missing include files (the code above only copies .map & .inc files):
+  mkdir include
+  cp -a $builddir/keymaps/include/compose.* include/
+  gzip -9 include/* )

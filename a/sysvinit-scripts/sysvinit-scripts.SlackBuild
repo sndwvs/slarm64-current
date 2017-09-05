@@ -1,0 +1,77 @@
+#!/bin/bash
+
+# sysvinit-scripts.SlackBuild
+# Heavily based on the original Slackware build scripts,
+# Modified by Stuart Winter <mozes@slackware.com>
+
+# Record toolchain & other info for the build log:
+slackbuildinfo
+
+# Paths to skeleton port's source & real Slackware source tree:
+export CWD=$SLACKSOURCE/$PKGSERIES/$PKGNAM
+export PORTCWD=$PWD
+
+# Temporary build locations:
+export TMPBUILD=$TMP/build-$PKGNAM
+export PKG=$TMP/package-$PKGNAM
+mkpkgdirs # Delete & re-create temporary directories then cd into $TMPBUILD
+
+# Install Slackware scripts and config files from $CWD/scripts/:
+mkdir -vpm755 $PKG/etc/rc.d
+for file in rc.{4,6,K,M,S} rc.cpufreq rc.local rc.loop rc.sysvinit rc.modules rc.modules.local ; do
+  install -oroot -groot -vpm755 $CWD/scripts/$file $PKG/etc/rc.d/${file}.new
+done
+
+install -oroot -groot -vpm644 $CWD/scripts/inittab $PKG/etc/inittab.new
+
+# Add a very handy tool for scanning new SCSI devices.  Most useful for
+# finding new USB and Firewire storage devices which show up as SCSI.
+mkdir -p $PKG/sbin
+install -oroot -groot -vpm755 $CWD/scripts/rescan-scsi-bus.sh $PKG/sbin/rescan-scsi-bus
+
+# Apply RiscPC fix for hwclock:
+# 02-Aug-2007: no longer required because the Acorn clock works with
+# Linux 2.6.  Wooo!
+#
+# Jawkins says:
+# The RPC RTC chip can only actually count 4 years.
+# The year field is only 2 bits long.
+# It has some CMOS RAM as well where it stores the year offset.
+# Well, as long as you update the CMOS as well.
+# Which is driver does appear to do, but something's broken with it somewhere.
+#( cd $PKG/etc/rc.d
+#  patch --no-backup-if-mismatch --verbose -lp0 < $PORTCWD/sources/rc.6.diff
+#  patch --no-backup-if-mismatch --verbose -lp0 < $PORTCWD/sources/rc.S.diff || failpatch ) || failpatch
+
+# Stop fc-cache from complaining on machines where the system clock isn't
+# set during boot -- ARM Versatile under QEMU, for example:
+# http://www.mail-archive.com/debian-bugs-dist@lists.debian.org/msg266900.html
+( cd $PKG/etc/rc.d
+  patch -p0 --verbose < $PORTCWD/sources/fc-cache.diff
+  rm -f *.orig )
+
+# If necessary, start the fakeroot server so we can set file/dir ownerships:
+start_fakeroot
+
+# Apply generic Slackware packaging policies:
+cd $PKG
+slackstripall   # strip all .a archives and all ELFs
+slackgzpages -i # compress man & info pages and delete usr/info/dir
+slackslack      # chown -R root:root, chmod -R og-w, slackchown, slack644docs
+
+# For the Marvell SheevaPlug unit (and probably many other embedded ARM devices)
+# we want to open a serial login on ttyS0.
+# It's important that this little script is first in the post-install
+# script, so that this in-place hack appears as if it was always in
+# the original shipped package file; this allows us to (in theory) upgrade
+# the sysvinit-scripts package and not leave an /etc/inittab.new file around
+# (most people don't edit their inittab files I don't think!)
+mkdir -vpm755 $PKG/install
+cat $PORTCWD/sources/doinst.sh.openttyS0 >> install/doinst.sh
+
+slackdesc       # install slack-desc and doinst.sh
+slackmp         # run makepkg -l y -c n
+
+# Perform any final checks on the package:
+cd $PKG
+slackhlinks     # search for any hard links

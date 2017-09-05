@@ -1,0 +1,55 @@
+##!/bin/bash
+
+# arm/build
+# Check package dependencies, set metadata and launch
+# package build script.
+# by Stuart Winter <mozes@slackware.com>
+#
+source /usr/share/slackdev/buildkit.sh
+
+# Package metadata:
+export PKGNAM=perl
+export VERSION=${VERSION:-5.24.0}
+export BUILD=${BUILD:-1}
+export PKGSERIES=${PKGSERIES:-d}
+export SLACKPACKAGE=$PKGNAM-$VERSION-$PKGARCH-$BUILD.txz
+
+## ******************************************************************* ##
+# For test packages - best to store in another location rather than
+# overwriting the working copy in the main tree:
+# export PKGSTORE=/tmp/
+# mkdir -vpm755 $PKGSTORE/$PKGSERIES
+## ******************************************************************* ##
+
+# Ensure base ARM packages are installed first:
+#slackbasedeps
+
+# We need to remove the existing Perl first:
+# (note that this will delete the Perl libraries installed by other
+#  packages -- so only do this on a devbox and don't build this package
+#  simultaneously).
+# You probably don't *need* to rm -rf /usr/lib/perl* but I prefer it.
+slackfailpkgdeps perl || removepkg perl && rm -rf /usr/lib/perl*
+
+# Perl finds libnm - apparently because it's a requirement in HPUX and NetworkManager
+# uses the same library name.  Remove networkmanager
+# We can deal with this with a patch instead:
+#slackfailpkgdeps NetworkManager || export HADNETMGR=yes
+#slackfailpkgdeps NetworkManager || removepkg NetworkManager
+
+# Ensure package build dependencies are met:
+{ slackcheckpkgdeps mariadb         || installpkg $PKGSTORE/ap/mariadb-[0-9]*.t?z || exit 99; }
+{ slackcheckpkgdeps db48            || installpkg $PKGSTORE/l/db48-[0-9]*.t?z    || exit 99; }
+{ slackcheckpkgdeps expat           || installpkg $PKGSTORE/l/expat-[0-9]*.t?z   || exit 99; }
+{ slackcheckpkgdeps gdbm            || installpkg $PKGSTORE/l/gdbm-[0-9]*.t?z    || exit 99; }
+{ slackcheckpkgdeps openssl         || installpkg $PKGSTORE/n/openssl-[0-9]*.t?z || exit 99; }
+
+# Launch the package build script:
+BUILDLOG=$( basename $SLACKPACKAGE .t?z ).build.log
+( ./$PKGNAM.SlackBuild ) >& /dev/stdout | tee $BUILDLOG
+
+# Reinstall Network Manager if we had it prior to the build:
+#[ "$HADNETMGR" = "yes" ] && upgradepkg --install-new $PKGSTORE/n/NetworkManager-[0-9]*.t?z
+
+# Compress the build log:
+bzip2 -9fvz $BUILDLOG

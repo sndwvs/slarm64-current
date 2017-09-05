@@ -1,0 +1,89 @@
+#!/bin/bash
+
+# ash.SlackBuild
+# Heavily based on the original Slackware build script,
+# Modified by Stuart Winter <mozes@slackware.com> for the Slackware porting Project.
+# 24-Jun-2004
+
+# Record toolchain & other info for the build log:
+slackbuildinfo
+
+# Paths to skeleton port's source & real Slackware source tree:
+export CWD=$SLACKSOURCE/$PKGSERIES/$PKGNAM
+export PORTCWD=$PWD
+
+# Temporary build locations:
+export TMPBUILD=$TMP/build-$PKGNAM
+export PKG=$TMP/package-$PKGNAM
+mkpkgdirs # Delete & re-create temporary directories then cd into $TMPBUILD
+
+# Extract source:
+tar xvvf $CWD/$PKGNAM-$VERSION.tar.gz
+cd $PKGNAM-$VERSION || exit 1
+slackhousekeeping
+
+# Create package framework:
+mkdir -p $PKG/usr/{man/man1,doc/$PKGNAM-$VERSION} $PKG/{install,bin}
+
+# Apply patches:
+( cd $CWD/patches
+  for file in ash-builtin.patch.gz \
+              ash-echo.patch.gz \
+              ash-getcwd.patch.gz \
+              ash-getopt.patch.gz \
+              ash-glob.patch.gz \
+              ash-jobs.patch.gz \
+              ash-kill.patch.gz \
+              ash-makefile.patch.gz \
+              ash-manpage.patch.gz \
+              ash-hetio.patch.gz \
+              ash-memout.patch.gz \
+              ash-misc.patch.gz \
+              ash-redir.patch.gz \
+              ash-setmode.patch.gz \
+              ash-syntax.patch.gz \
+              ash-test.patch.gz \
+              ash-times.patch.gz \
+              ash-debian.patch.gz \
+              ash-ppid.patch.gz \
+              ash-freebsd.patch.gz \
+              ash-sighup.patch.gz ; do
+    zcat $file
+  done ) | patch -p1 --verbose
+
+sed -i -e 's#= {#{#' arith.y || exit 1 # prevent "syntax error, unexpected ="
+sed -i -e '/yyerrok;/d' arith.y || exit 1 # "error: 'yyerrstatus' undeclared"
+# Fred Emmott found this on the LFS mailing list:
+sed -i -e 's#extern int hetio_inter#static int hetio_inter#' hetio.h || exit 1
+
+# Build:
+make $NUMJOBS || make || failmake
+
+# Install the ware:
+install -vpm755 sh $PKG/bin/ash
+install -vpm644 sh.1 $PKG/usr/man/man1/ash.1
+cp -a TOUR $PKG/usr/doc/$PKGNAM-$VERSION
+
+# Create a post installation script:
+cat << EOF > $PKG/install/doinst.sh
+if grep "bin/ash" etc/shells 1> /dev/null 2> /dev/null; then
+  true
+else
+  echo "/bin/ash" >> etc/shells
+fi
+EOF
+
+# If necessary, start the fakeroot server so we can set file/dir ownerships:
+start_fakeroot
+
+# Apply generic Slackware packaging policies:
+cd $PKG
+slackstripall   # strip all .a archives and all ELFs
+slackgzpages -i # compress man & info pages and delete usr/info/dir
+slackslack      # chown -R root:root, chmod -R og-w, slackchown, slack644docs
+slackdesc       # install slack-desc and doinst.sh
+slackmp         # run makepkg -l y -c n
+
+# Perform any final checks on the package:
+cd $PKG
+slackhlinks     # search for any hard links

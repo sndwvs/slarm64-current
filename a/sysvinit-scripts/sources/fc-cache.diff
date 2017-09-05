@@ -1,0 +1,11 @@
+--- /dev/null	2007-09-06 14:42:27.000000000 +0100
++++ rc.M.new	2007-09-06 14:43:14.000000000 +0100
+@@ -68,6 +68,8 @@
+ 
+ # Update the X font indexes:
+ if [ -x /usr/bin/fc-cache ]; then
++  # Prevent error when the system time is not correct (happens on ARM Versatile)
++  find /usr/share/fonts -type d -print0 | xargs -0 touch
+   echo "Updating X font indexes:  /usr/bin/fc-cache -f &"
+   /usr/bin/fc-cache -f &
+ fi

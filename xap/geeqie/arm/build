@@ -1,0 +1,51 @@
+#!/bin/bash
+
+# arm/build
+# Check package dependencies, set metadata and launch
+# package build script.
+# by Stuart Winter <mozes@slackware.com>
+#
+source /usr/share/slackdev/buildkit.sh
+
+# Package metadata:
+export PKGNAM=geeqie
+export VERSION=${VERSION:-1.3}
+export BUILD=${BUILD:-2}
+export PKGSERIES=${PKGSERIES:-xap}
+export SLACKPACKAGE=$PKGNAM-$VERSION-$PKGARCH-$BUILD.txz
+
+## ******************************************************************* ##
+# For test packages - best to store in another location rather than
+# overwriting the working copy in the main tree:
+# export PKGSTORE=/tmp/
+# mkdir -vpm755 $PKGSTORE/$PKGSERIES
+## ******************************************************************* ##
+
+# Ensure base ARM packages are installed first:
+slackbasedeps
+
+# Ensure $PKGNAM isn't already installed:
+slackfailpkgdeps $PKGNAM || removepkg $PKGNAM
+
+# Ensure specific build dependencies (mainly libraries):
+{ slackcheckpkgdeps atk        || installpkg $PKGSTORE/l/atk-[0-9]*.t?z     || exit 99; }
+{ slackcheckpkgdeps cairo      || installpkg $PKGSTORE/l/cairo-[0-9]*.t?z   || exit 99; }
+{ slackcheckpkgdeps exiv2      || installpkg $PKGSTORE/l/exiv2-[0-9]*.t?z   || exit 99; }
+{ slackcheckpkgdeps expat      || installpkg $PKGSTORE/l/expat-[0-9]*.t?z   || exit 99; }
+{ slackcheckpkgdeps freetype   || installpkg $PKGSTORE/l/freetype-[0-9]*.t?z || exit 99; }
+{ slackcheckpkgdeps glib2      || installpkg $PKGSTORE/l/glib2-[0-9]*.t?z   || exit 99; }
+{ slackcheckpkgdeps gtk+2      || installpkg $PKGSTORE/l/gtk+2-[0-9]*.t?z   || exit 99; }
+{ slackcheckpkgdeps lcms       || installpkg $PKGSTORE/l/lcms-[0-9]*.t?z    || exit 99; }
+{ slackcheckpkgdeps libpng     || installpkg $PKGSTORE/l/libpng-[0-9]*.t?z  || exit 99; }
+{ slackcheckpkgdeps pango      || installpkg $PKGSTORE/l/pango-[0-9]*.t?z   || exit 99; }
+{ slackcheckpkgdeps fontconfig || installpkg $PKGSTORE/x/fontconfig-[0-9]*.t?z || exit 99; }
+{ slackcheckpkgdeps libX11     || installpkg $PKGSTORE/x/libX11-[0-9]*.t?z  || exit 99; }
+{ slackcheckpkgdeps libXrender || installpkg $PKGSTORE/x/libXrender-[0-9]*.t?z || exit 99; }
+{ slackcheckpkgdeps pixman     || installpkg $PKGSTORE/x/pixman-[0-9]*.t?z  || exit 99; }
+
+# Launch the package build script:
+BUILDLOG=$( basename $SLACKPACKAGE .t?z ).build.log
+( ./$PKGNAM.SlackBuild ) >& /dev/stdout | tee $BUILDLOG
+
+# Compress the build log:
+bzip2 -9fvz $BUILDLOG

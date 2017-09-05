@@ -1,0 +1,47 @@
+#!/bin/bash
+
+# arm/build
+# Check package dependencies, set metadata and launch
+# package build script.
+# by Stuart Winter <mozes@slackware.com>
+#
+source /usr/share/slackdev/buildkit.sh
+
+# Package metadata:
+export PKGNAM=fontconfig
+export VERSION=${VERSION:-2.12.4}
+export BUILD=${BUILD:-1}
+export PKGSERIES=${PKGSERIES:-x}
+export SLACKPACKAGE=$PKGNAM-$VERSION-$PKGARCH-$BUILD.txz
+
+# Reset the ARM file system: restore it to the 'factory settings'
+# as it were (this has no effect when building natively):
+sboxsysrestore
+
+# Ensure base ARM packages are installed first:
+slackbasedeps
+
+# Ensure $PKGNAM isn't already installed:
+# This build blats over the filesystem too, so it's best to remove it:
+slackfailpkgdeps $PKGNAM || removepkg $PKGNAM
+
+# Ensure specific build dependencies (mainly libraries):
+# You also need t/tetex installed *AND* if you are going to build it just to build
+# fontconfig (eg bootstrapping a new OS as I am now ;-) ) then you need to also
+# relogin to your host, or run the profile script to include the /usr/share/jadetex
+# bin directory into your $PATH.
+# Plus you need n/links to convert HTML to text because it's specified in here:
+#    /usr/share/sgml/docbook/utils-<version>/backends/txt 
+# You can skip these if you're bootstrapping by adding "-i" to make -- just remember
+# to rebuild fontconfig again later.
+{ slackcheckpkgdeps bzip2           || installpkg $PKGSTORE/a/bzip2-[0-9]*.t?z   || exit 99; }
+{ slackcheckpkgdeps expat           || installpkg $PKGSTORE/l/expat-[0-9]*.t?z   || exit 99; }
+{ slackcheckpkgdeps freetype        || installpkg $PKGSTORE/l/freetype-[0-9]*.t?z || exit 99; }
+{ slackcheckpkgdeps libpng          || installpkg $PKGSTORE/l/libpng-[0-9]*.t?z  || exit 99; }
+
+# Launch the package build script:
+BUILDLOG=$( basename $SLACKPACKAGE .t?z ).build.log
+( ./$PKGNAM.SlackBuild ) >& /dev/stdout | tee $BUILDLOG
+
+# Compress the build log:
+bzip2 -9fvz $BUILDLOG

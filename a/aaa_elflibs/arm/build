@@ -1,0 +1,20 @@
+#!/bin/bash
+
+# arm/build
+# Setup initial environment for building an ARMedSlack package
+# Stuart Winter <mozes@slackware.com>
+# 31-May-2004
+
+source /usr/share/slackdev/buildkit.sh
+export PKGNAM=aaa_elflibs
+export PKGSERIES=a
+export VERSION=14.2
+export BUILD=8
+export SLACKPACKAGE=$PKGNAM-$VERSION-$PKGARCH-$BUILD.txz
+
+# Launch the package build script:
+BUILDLOG=$( basename $SLACKPACKAGE .t?z ).build.log
+( ./$PKGNAM.SlackBuild ) >& /dev/stdout | tee $BUILDLOG
+
+# Compress the build log:
+bzip2 -9fvz $BUILDLOG

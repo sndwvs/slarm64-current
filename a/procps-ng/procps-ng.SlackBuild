@@ -1,0 +1,232 @@
+#!/bin/bash
+
+# procps-ng.SlackBuild
+# Heavily based on the original Slackware build scripts,
+# Modified by Stuart Winter for Slackware ARM.
+#
+# Copyright 2005-2015  Patrick J. Volkerding, Sebeka, Minnesota, USA
+# All rights reserved.
+#
+# Redistribution and use of this script, with or without modification, is
+# permitted provided that the following conditions are met:
+#
+# 1. Redistributions of this script must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+#
+#  THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED
+#  WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+#  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO
+#  EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+#  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+#  PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+#  OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+#  WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+#  OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+#  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+# Record toolchain & other info for the build log:
+slackbuildinfo
+
+# Bundled versions:
+PSMISCVER=${PSMISCVER:-22.21}
+PROCINFONGVER=${PROCINFONGVER:-2.0.304}
+PROCINFOVER=${PROCINFOVER:-18}
+
+# Paths to skeleton port's source & real Slackware source tree:
+export CWD=$SLACKSOURCE/$PKGSERIES/$PKGNAM
+export PORTCWD=$PWD
+
+# Temporary build locations:
+export TMPBUILD=$TMP/build-$PKGNAM
+export PKG=$TMP/package-$PKGNAM
+mkpkgdirs # Delete & re-create temporary directories then cd into $TMPBUILD
+
+# Extract source:
+tar xvvf $CWD/$PKGNAM-$VERSION.tar.xz
+cd $PKGNAM-$VERSION || exit 1
+tar xvvf $CWD/psmisc-$PSMISCVER.tar.xz || exit 1
+tar xvvf $CWD/procinfo-ng-$PROCINFONGVER.tar.xz || exit 1
+tar xvvf $CWD/procinfo-$PROCINFOVER.tar.xz || exit 1
+slackhousekeeping
+
+#############################################################################
+#### Build procps-ng   ######################################################
+#############################################################################
+
+# Configure:
+CFLAGS="$SLKCFLAGS" \
+CXXFLAGS="$SLKCFLAGS" \
+./configure \
+   --prefix=/ \
+   --bindir=/bin \
+   --sbindir=/sbin \
+   --libdir=/usr/lib${LIBDIRSUFFIX} \
+   --includedir=/usr/include \
+   --sysconfdir=/etc \
+   --localstatedir=/var \
+   --mandir=/usr/man \
+   --datarootdir=/usr/share \
+   --docdir=/usr/doc/$PKGNAM-$VERSION \
+   --enable-static=no \
+   --disable-silent-rules \
+   --disable-rpath \
+   --enable-watch8bit \
+   --enable-skill \
+   --enable-sigwinch \
+   --enable-w-from \
+   --disable-kill \
+   --without-systemd \
+   --disable-modern-top \
+   --build=${SLK_ARCH_BUILDTARGET} || exit 1
+
+# Build:
+make $NUMJOBS || make || exit 1
+
+# Install into package:
+make install DESTDIR=$PKG || exit 1
+
+# Move the shared library to $PKG/lib${LIBDIRSUFFIX}:
+mkdir -vpm755 $PKG/lib${LIBDIRSUFFIX}
+( cd $PKG/usr/lib${LIBDIRSUFFIX}
+  for file in lib*.so.?.* ; do
+    mv -fv $file ../../lib${LIBDIRSUFFIX}
+    ln -vsf ../../lib${LIBDIRSUFFIX}/$file .
+  done
+  cp -fav lib*.so.? ../../lib${LIBDIRSUFFIX}
+)
+
+# Remove .la file(s):
+rm -fv $PKG/usr/lib${LIBDIRSUFFIX}/*.la
+
+# It seems that upstream has shuffled the location of many tools with the
+# 3.3.11 release.  To me, this just doesn't make sense to break any existing
+# scripts that might be using an absolute path, or to move tools that might
+# be needed before /usr is mounted into /usr.  So, we will make sure that
+# everything is moved back to where the Slackware locations have always been.
+# These tools belong in /bin:
+mkdir -vpm755 $PKG/bin
+for file in free killall ps ; do
+  find $PKG -name $file -exec mv -fv "{}" $PKG/bin \;
+done
+# These tools belong in /sbin:
+mkdir -vpm755 $PKG/sbin
+for file in pidof sysctl ; do
+  find $PKG -name $file -exec mv -fv "{}" $PKG/sbin \;
+done
+mkdir -vpm755 $PKG/usr/bin
+# These tools belong in /usr/bin:
+for file in fuser lsdev peekfd pgrep pkill pmap procinfo prtstat pstree pwdx skill slabtop snice socklist tload top uptime vmstat w watch ; do
+  find $PKG -name $file -exec mv -fv "{}" $PKG/usr/bin \;
+done
+# These symlinks belong in /bin:
+rm -fv $PKG/bin/pidof
+ln -vfs /sbin/pidof $PKG/bin/pidof
+# These symlinks belong in /usr/bin:
+rm -fv $PKG/usr/bin/free $PKG/usr/bin/pidof $PKG/usr/bin/ps
+ln -vfs /bin/free $PKG/usr/bin/free
+ln -vfs /sbin/pidof $PKG/usr/bin/pidof
+ln -vfs /bin/ps $PKG/usr/bin/ps
+
+# Create /etc/sysctl.d:
+mkdir -vpm755 $PKG/etc/sysctl.d
+
+#############################################################################
+#### Build psmisc      ######################################################
+#############################################################################
+
+# Configure:
+cd psmisc-$PSMISCVER || exit 1
+
+# Fix fuser -s:
+zcat $CWD/psmisc.3638cc55b4d08851faba46635d737b24d016665b.diff.gz | patch -p1 --verbose || exit 1
+
+CFLAGS="$SLKCFLAGS" \
+CXXFLAGS="$SLKCFLAGS" \
+./configure \
+   --prefix=/usr \
+   --libdir=/usr/lib${LIBDIRSUFFIX} \
+   --sysconfdir=/etc \
+   --localstatedir=/var \
+   --mandir=/usr/man \
+   --docdir=/usr/doc/psmisc-$PSMISCVER \
+   --disable-silent-rules \
+   --disable-rpath \
+   --build=${SLK_ARCH_BUILDTARGET} || exit 1
+
+# Build:
+make $NUMJOBS || make || exit 1
+
+# Install into package:
+make install DESTDIR=$PKG || exit 1
+
+# Move "killall" to the traditional location:
+mv -fv $PKG/usr/bin/killall $PKG/bin
+# This long winded way is for "makepkg"'s benefit:
+( cd $PKG/usr/bin && ln -vfs ../../bin/killall . )
+
+# Copy docs:
+mkdir -p $PKG/usr/doc/psmisc-$PSMISCVER
+cp -fav ChangeLog COPYING* NEWS README* $PKG/usr/doc/psmisc-$PSMISCVER
+changelogliposuction ChangeLog $PKGNAM $VERSION # Trim down a "ChangeLog" file
+
+#############################################################################
+#### Build procinfo-ng ######################################################
+#############################################################################
+
+cd ../procinfo-ng-$PROCINFONGVER || exit 1
+CFLAGS="$SLKCFLAGS" \
+CXXFLAGS="$SLKCFLAGS" \
+./configure \
+   --prefix=/usr \
+   --libdir=/usr/lib${LIBDIRSUFFIX} \
+   --sysconfdir=/etc \
+   --localstatedir=/var \
+   --mandir=/usr/man \
+   --docdir=/usr/doc/procinfo-ng-$PROCINFONGVER \
+   --enable-maintainer-mode \
+   --build=${SLK_ARCH_BUILDTARGET} || exit 1
+
+# Build:
+make $NUMJOBS || make || exit 1
+
+# Install into package:
+make install DESTDIR=$PKG || exit 1
+
+# Copy docs:
+mkdir -p $PKG/usr/doc/procinfo-ng-$PROCINFONGVER
+cp -fav GPL-2.txt LGPL-2.1.txt LICENSE.txt COPYING* README* $PKG/usr/doc/procinfo-ng-$PROCINFONGVER
+
+#############################################################################
+#### Build procinfo    ######################################################
+#############################################################################
+
+# Now install a couple of scripts from the original procinfo package.
+cd ../procinfo-$PROCINFOVER || exit 1
+install -m 0755 lsdev.pl $PKG/usr/bin/lsdev
+install -m 0755 socklist.pl $PKG/usr/bin/socklist
+install -m 0644 lsdev.8 socklist.8 $PKG/usr/man/man8
+
+# Back to the procps-ng main source directory...
+cd ..
+
+# Add documentation:
+mkdir -vpm755 $PKG/usr/doc/$PKGNAM-$VERSION
+cp -fav \
+  AUTHORS ChangeLog COPYING* NEWS README* \
+  $PKG/usr/doc/$PKGNAM-$VERSION
+changelogliposuction ChangeLog $PKGNAM $VERSION # Trim down a "ChangeLog" file
+
+# If necessary, start the fakeroot server so we can set file/dir ownerships:
+start_fakeroot
+
+# Apply generic Slackware packaging policies:
+cd $PKG
+slackstripall   # strip all .a archives and all ELFs
+slackgzpages -i # compress man & info pages and delete usr/info/dir
+slackslack      # chown -R root:root, chmod -R og-w, slackchown, slack644docs
+slackdesc       # install slack-desc and doinst.sh
+slackmp         # run makepkg -l y -c n
+
+# Perform any final checks on the package:
+cd $PKG
+slackhlinks     # search for any hard links

@@ -1,0 +1,195 @@
+#!/bin/sh
+# Copyright 2000 BSDi, Inc. Concord, CA, USA
+# Copyright 2001, 2002 Slackware Linux, Inc.  Concord, CA, USA
+# Copyright 2005 Patrick J. Volkerding, Sebeka, MN, USA
+# All rights reserved.
+#
+# Redistribution and use of this script, with or without modification, is
+# permitted provided that the following conditions are met:
+#
+# 1. Redistributions of this script must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+#
+#  THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED
+#  WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+#  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO
+#  EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+#  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+#  PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+#  OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+#  WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+#  OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+#  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+# openssl.SlackBuild
+# Heavily based on the original Slackware build scripts,
+# with patches and parts taken from Debian's 'rules' script;
+# Modified by Stuart Winter <mozes@slackware.com>
+# 22-Dec-2004
+
+# Record toolchain & other info for the build log:
+slackbuildinfo
+
+# Paths to skeleton port's source & real Slackware source tree:
+export CWD=$SLACKSOURCE/$PKGSERIES/$PKGNAM
+export PORTCWD=$PWD
+
+# Temporary build locations:
+export TMPBUILD=$TMP/build-$PKGNAM
+export PKG=$TMP/package-$PKGNAM
+mkpkgdirs # Delete and re-create temporary directories
+
+# This build script creates the basic a/openssl-solibs (consisting just of the shared objects)
+# plus the full n/openssl package:
+PKG1=$TMP/package-openssl
+PKG2=$TMP/package-ossllibs
+NAME1=$PKGNAM-$VERSION-$ARCH-$BUILD
+NAME2=$PKGNAM-solibs-$VERSION-$ARCH-$BUILD
+
+cd $TMP
+rm -rf $PKG1 $PKG2
+mkdir -p $PKG1/install $PKG2/{install,usr}
+
+# Extract source:
+cd $TMPBUILD
+tar xvvf $CWD/openssl-$VERSION.tar.gz
+cd $PKGNAM-$VERSION || exit 1
+slackhousekeeping
+
+# Fix pod syntax errors which are fatal wih a newer perl:
+find . -name "*.pod" -exec sed -i "s/^\=item \([0-9]\)\(\ \|$\)/\=item C<\1>/g" {} \;
+
+# This Configure file was taken from Debian's diff.
+# We've always used this since openssl-0.x, and Red Hat has a similar patch.
+# I wonder why this isn't upstream yet..
+# We're also using ARM assembler optimisations - see http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=676533
+if [ $ARCH = "arm" ]; then
+   xz -dc $PORTCWD/sources/debian-targets.patch.xz | sed -e 's?${debian_cflags}?'"$SLKCFLAGS"'?g' -e 's?no_asm?armv4_asm?g' | patch -p1 --verbose || exit 1
+fi
+
+# Use .so.1, not .so.1.0.0:
+sed -i "s/soname=\$\$SHLIB\$\$SHLIB_SOVER\$\$SHLIB_SUFFIX/soname=\$\$SHLIB.1/g" Makefile.shared
+
+# OpenSSL has a (nasty?) habit of bumping the internal version number with
+# every release.  This wouldn't be so bad, but some applications are so
+# paranoid that they won't run against a different OpenSSL version than
+# what they were compiled against, whether or not the ABI has changed.
+#
+# So, we will use the OPENSSL_VERSION_NUMBER from openssl-1.0.2e unless ABI
+sed -i "s/#define OPENSSL_VERSION_NUMBER.*/\/* Use 0x1000205fL (1.0.2e) below to avoid pointlessly breaking the ABI *\/\n#define OPENSSL_VERSION_NUMBER 0x1000205fL/g" crypto/opensslv.h || exit 1
+
+# Copy docs:
+mkdir -p $PKG1/usr/doc/openssl-$VERSION
+cp -a CHANGES CHANGES.SSLeay FAQ INSTALL INSTALL.MacOS INSTALL.VMS INSTALL.W32 \
+  LICENSE NEWS README README.ENGINE doc $PKG1/usr/doc/openssl-$VERSION
+# If there's a CHANGES file, installing at least part of the recent history
+# is useful, but don't let it get totally out of control:
+if [ -r CHANGES ]; then
+  DOCSDIR=$(echo $PKG2/usr/doc/*-$VERSION)
+  cat CHANGES | head -n 2000 > $DOCSDIR/CHANGES
+  touch -r CHANGES $DOCSDIR/CHANGES
+fi
+
+# Make apps/openssl work after compilation so that it can generate
+# certificates.  This is required since we removepkg openssl before building.
+ln -vfs libcrypto.so libcrypto.so.0
+ln -vfs libssl.so    libssl.so.0
+
+# Configure:
+perl util/perlpath.pl /usr/bin
+perl \
+Configure \
+   --prefix=/usr \
+   --openssldir=/etc/ssl \
+   shared \
+   no-idea \
+   no-mdc2 \
+   no-rc5 \
+   no-sse2 \
+   no-ssl2 \
+   no-weak-ssl-ciphers \
+   debian-armhf || exit 1
+
+# Build:
+make depend || exit 1
+ln -vsf apps/openssl.pod crypto/crypto.pod ssl/ssl.pod doc/
+# Build will fail with parallel builds, so keep to a single build:
+make $NUMJOBS || make || exit 1
+
+# Start fakeroot server:
+start_fakeroot
+
+# Install into package:
+make install INSTALL_PREFIX=$PKG1 || exit 1
+# Add a cron script to warn root if a certificate is going to expire soon:
+mkdir -vpm755 $PKG1/etc/cron.daily
+zcat $CWD/certwatch.gz > $PKG1/etc/cron.daily/certwatch.new
+chmod 755 $PKG1/etc/cron.daily/certwatch.new
+mv -fv $PKG1/etc/ssl/openssl.cnf $PKG1/etc/ssl/openssl.cnf.new
+
+# Move libraries, as they might be needed by programs that bring a network
+# mounted /usr online:
+mkdir -vpm755 $PKG1/lib${LIBDIRSUFFIX}
+( cd $PKG1/usr/lib${LIBDIRSUFFIX}
+  for file in lib*.so.?.* ; do
+    mv -fv $file ../../lib${LIBDIRSUFFIX}
+    ln -vsf ../../lib${LIBDIRSUFFIX}/$file .
+  done
+  cp -fav lib*.so.? ../../lib${LIBDIRSUFFIX}
+)
+
+mv -fv $PKG1/etc/ssl/man $PKG1/usr
+( cd $PKG1/usr/man/man1 ; mv -fv passwd.1 ssl_passwd.1 )
+( cd $PKG1/usr/man/man3 ; mv -fv rand.3 ssl_rand.3 )
+( cd $PKG1/usr/man/man3 ; mv -fv err.3 ssl_err.3 )
+
+# Change into package1's ('openssl') directory
+cd $PKG1
+chmod 755 usr/lib/pkgconfig
+sed -i -e "s#lib\$#lib${LIBDIRSUFFIX}#" usr/lib${LIBDIRSUFFIX}/pkgconfig/*.pc
+
+# Set some generic Slackware packaging policies:
+slackgzpages -i # compress man & info pages and delete usr/info/dir
+slackslack      # set all files to root.root, chmod -R og-w, slackchown, slack644docs
+slackdesc       # install slack-desc and doinst.sh
+
+# Install package description:
+install -vpm644 $CWD/slack-desc.openssl install/slack-desc
+zcat $CWD/doinst.sh-openssl.gz > install/doinst.sh
+
+# Build 'openssl' full package:
+( PKGNAM=openssl \
+  SLACKPACKAGE=$PKGNAM-$VERSION-$PKGARCH-$BUILD.txz \
+  PKGSERIES=n \
+  slackmp )
+
+# Make runtime package:
+mkdir -vpm755 $PKG2/lib${LIBDIRSUFFIX}
+( cd lib${LIBDIRSUFFIX} ; cp -fav lib*.so.* $PKG2/lib${LIBDIRSUFFIX} )
+( cd $PKG2/lib${LIBDIRSUFFIX} ; ldconfig -l * )
+mkdir -vpm755 $PKG2/etc
+( cd $PKG2/etc ; cp -fav $PKG1/etc/ssl . )
+mkdir -vpm755 $PKG2/usr/doc/openssl-$VERSION
+( cd $TMPBUILD/openssl-$VERSION
+  cp -fav CHANGES CHANGES.SSLeay FAQ INSTALL INSTALL.MacOS INSTALL.VMS INSTALL.W32 \
+  LICENSE NEWS README README.ENGINE $PKG2/usr/doc/openssl-$VERSION
+)
+find $PKG2/usr/doc/openssl-$VERSION -type d -exec chmod 755 {} \;
+find $PKG2/usr/doc/openssl-$VERSION -type f -exec chmod 644 {} \;
+# If there's a CHANGES file, installing at least part of the recent history
+# is useful, but don't let it get totally out of control:
+if [ -r CHANGES ]; then
+   DOCSDIR=$(echo $PKG2/usr/doc/*-$VERSION)
+   cat CHANGES | head -n 2000 > $DOCSDIR/CHANGES
+   touch -r CHANGES $DOCSDIR/CHANGES
+fi
+
+# Build runtime package:
+cd $PKG2
+install -vpm644 $CWD/slack-desc.openssl-solibs install/slack-desc
+zcat $CWD/doinst.sh-openssl-solibs.gz > install/doinst.sh
+
+( PKGNAM=openssl-solibs \
+  SLACKPACKAGE=$PKGNAM-$VERSION-$PKGARCH-$BUILD.txz \
+  PKGSERIES=a \
+  slackmp )

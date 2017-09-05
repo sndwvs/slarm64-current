@@ -1,0 +1,80 @@
+#!/bin/bash
+
+# arm/build
+# Check package dependencies, set metadata and launch
+# package build script.
+# by Stuart Winter <mozes@slackware.com>
+#
+source /usr/share/slackdev/buildkit.sh
+
+# Package metadata:
+export PKGNAM=x11
+export VERSION=7.5
+export ARCH=arm
+export BUILD=1
+export PKGSERIES=x
+export SLACKPACKAGE=$PKGNAM-$VERSION-$ARCH-$BUILD.txz
+
+# Reset the ARM file system: restore it to the 'factory settings'
+# as it were (this has no effect when building natively):
+sboxsysrestore
+
+# Ensure base ARM packages are installed first:
+slackbasedeps
+
+## ******************************************************************* ##
+# For test packages - best to store in another location rather than
+# overwriting the working copy in the main tree:
+# export PKGSTORE=/tmp/
+# mkdir -vpm755 $PKGSTORE/x
+## ******************************************************************* ##
+
+# Don't bump the BUILD numbers of the packages.
+# This is only what you want when either boostrapping a new port
+# or building a new release where you know that all of the versions
+# of your existing X.org will be superceded.
+#export MODBUILDNOBUMP=Yes
+#echo "***********************************************"
+#echo "*** Package rebuild without build increment ***"
+#echo "***********************************************"
+#sleep 12
+
+# Ensure $PKGNAM isn't already installed:
+# Don't do this because the build order in x11.SlackBuild isn't 
+# correct -- you need the X packages installed before this will work.
+# To rebuilt entirely from scratch, you need to use the xorg build script
+# and install onto the filesystem, THEN run x11.SlackBuild:
+#( cd /var/log/packages
+#  removepkg x11* )
+
+# Ensure specific build dependencies (mainly libraries):
+{ slackcheckpkgdeps libgsf   || installpkg $PKGSTORE/l/libgsf-*.t?z || exit 99 ; }
+{ slackcheckpkgdeps libdrm   || installpkg $PKGSTORE/x/libdrm-*.t?z || exit 99 ; }
+{ slackcheckpkgdeps mesa     || installpkg $PKGSTORE/x/mesa-*.t?z || exit 99 ; }
+{ slackcheckpkgdeps dbus     || installpkg $PKGSTORE/a/dbus-*.t?z || exit 99 ; }
+# And libwnck is required by compiz to compile gtk-window-decorator, but you
+# don't need it to build xorg: build xorg first, then build libwnck,
+# then rebuild xorg (or perhaps just compiz).
+# So if it's not installed, let's try and install it but continue if the
+# package file isn't available.
+slackcheckpkgdeps libwnck || installpkg $PKGSTORE/l/libwnck-*.t?z 
+
+# The build of X11 also looks for Mesa in /tmp.
+# It's easier to do this than patch the Slackware configure scripts:
+#rm -rf /tmp/Mesa*
+#if [ ! -d /tmp/Mesa-* ]; then
+if [ ! -d /tmp/mesa-* ]; then
+   echo "Unpacking ../mesa/mesa-compiled.tar.xz into /tmp - please wait"
+   tar -xf $PKGSTORE/../source/x/mesa/mesa-compiled.tar* -C /tmp/
+ else
+   echo Found /tmp/mesa-* -- using that rather than unpacking archived copy
+   sleep 3
+fi
+
+# Launch the package build script:
+BUILDLOG=$( basename $SLACKPACKAGE .t?z ).build.log
+( ./$PKGNAM.SlackBuild $@ ) >& /dev/stdout | tee $BUILDLOG
+
+# Compress the build log:
+bzip2 -9fvz $BUILDLOG
+

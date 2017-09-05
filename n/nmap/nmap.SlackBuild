@@ -1,0 +1,99 @@
+#!/bin/bash
+
+# nmap.SlackBuild
+
+# Record toolchain & other info for the build log:
+slackbuildinfo
+
+# Paths to skeleton port's source & real Slackware source tree:
+export CWD=$SLACKSOURCE/$PKGSERIES/$PKGNAM
+export PORTCWD=$PWD
+
+# Temporary build locations:
+export TMPBUILD=$TMP/build-$PKGNAM
+export PKG=$TMP/package-$PKGNAM
+mkpkgdirs # Delete & re-create temporary directories then cd into $TMPBUILD
+
+# Extract source:
+tar xvvf $CWD/$PKGNAM-$VERSION.tar.?z*
+cd $PKGNAM-$VERSION || exit 1
+slackhousekeeping
+
+sed -i "s,share/man/man1,man/man1,g" ndiff/setup.py
+
+# Configure:
+LIBS="-lnl" \
+CFLAGS="$SLKCFLAGS" \
+./configure \
+  --prefix=/usr \
+  --libdir=/usr/lib${LIBDIRSUFFIX} \
+  --with-liblua=included \
+  --with-libpcap=included \
+  --without-nmap-update \
+  --mandir=/usr/man \
+  --docdir=/usr/doc/$PKGNAM-$VERSION \
+  --build=${SLK_ARCH_BUILDTARGET} || failconfig
+
+# Build:
+make $NUMJOBS || make || failmake
+
+# Install into package:
+make install DESTDIR=$PKG || failinstall
+if [ -d $PKG/usr/share/man ]; then
+   mv $PKG/usr/share/man $PKG/usr
+fi
+
+# Copy docs:
+mkdir -p $PKG/usr/doc/nmap-$VERSION
+cp -a COPYING* HACKING INSTALL \
+  docs/licenses/ \
+  docs/*.txt \
+  $PKG/usr/doc/nmap-$VERSION
+( cd docs
+  # It looks like all of these translations are gone from the 4.00+ tarball, and
+  # most of them are not available on the web site.  Sorry -- I didn't do it.
+  if [ -f nmap_german.1 ] ; then
+    mkdir -p $PKG/usr/man/de/man1
+    cat nmap_german.1 | gzip -9c > $PKG/usr/man/de/man1/nmap.1.gz
+  fi
+  if [ -f nmap_spanish.1 ] ; then
+    mkdir -p $PKG/usr/man/es/man1
+    cat nmap_spanish.1 | gzip -9c > $PKG/usr/man/es/man1/nmap.1.gz
+  fi
+  if [ -f nmap_french.1 ] ; then
+    mkdir -p $PKG/usr/man/fr/man1
+    cat nmap_french.1 | gzip -9c > $PKG/usr/man/fr/man1/nmap.1.gz
+  fi
+  if [ -f nmap_italian.1 ] ; then
+    mkdir -p $PKG/usr/man/it/man1
+    cat nmap_italian.1 | gzip -9c > $PKG/usr/man/it/man1/nmap.1.gz
+  fi
+  if [ -f nmap_lithuanian.1 ] ; then
+    mkdir -p $PKG/usr/man/lt/man1
+    cat nmap_lithuanian.1 | gzip -9c > $PKG/usr/man/lt/man1/nmap.1.gz
+  fi
+  if [ -f nmap_portuguese.1 ] ; then
+    mkdir -p $PKG/usr/man/pt/man1
+    cat nmap_portuguese.1 | gzip -9c > $PKG/usr/man/pt/man1/nmap.1.gz
+  fi
+  if [ -f nmap_russian.1 ] ; then
+    mkdir -p $PKG/usr/man/ru/man1
+    cat nmap_russian.1 | gzip -9c > $PKG/usr/man/ru/man1/nmap.1.gz
+  fi
+)
+changelogliposuction CHANGELOG $PKGNAM $VERSION # Trim down a "ChangeLog" file
+
+# If necessary, start the fakeroot server so we can set file/dir ownerships:
+start_fakeroot
+
+# Apply generic Slackware packaging policies:
+cd $PKG
+slackstripall   # strip all .a archives and all ELFs
+slackgzpages -i # compress man & info pages and delete usr/info/dir
+slackslack      # chown -R root:root, chmod -R og-w, slackchown, slack644docs
+slackdesc       # install slack-desc and doinst.sh
+slackmp         # run makepkg -l y -c n
+
+# Perform any final checks on the package:
+cd $PKG
+slackhlinks     # search for any hard links

@@ -1,0 +1,23 @@
+#!/bin/bash
+
+# arm/build
+# Check package dependencies, set metadata and launch
+# package build script.
+# by Stuart Winter <mozes@slackware.com>
+#
+source /usr/share/slackdev/buildkit.sh
+
+# Package metadata:
+export PKGNAM=linux-howtos
+export VERSION=20160401
+export ARCH=noarch
+export BUILD=1
+export PKGSERIES=f
+export SLACKPACKAGE=$PKGNAM-$VERSION-$ARCH-$BUILD.txz
+
+# Launch the package build script:
+BUILDLOG=$( basename $SLACKPACKAGE .t?z ).build.log
+( ./$PKGNAM.SlackBuild ) >& /dev/stdout | tee $BUILDLOG
+
+# Compress the build log:
+bzip2 -9fvz $BUILDLOG

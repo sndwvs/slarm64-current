@@ -1,0 +1,29 @@
+#!/bin/sh
+
+# Find packages in slackware/x which are part of the Xorg build
+# (Rather than the additional stuff in source/x).
+# The idea is to find which are old and track why they haven't
+# been upgraded by the new X.org build -- could either be because
+# they no longer exist, or because the build failed.
+
+source /usr/share/slackdev/buildkit.sh
+
+pkgbase() {
+  # basename + strip extensions .tbz, .tgz, .tlz and .txz
+  echo "$1" | sed 's?.*/??;s/\.t[bglx]z$//'
+}
+
+# Strip version, architecture and build from the end of the name
+package_name() {
+  pkgbase $1 | sed 's?-[^-]*-[^-]*-[^-]*$??'
+}
+
+# Build filter list:
+EXTERNALLIST="x11\$$( find .. -type d -mindepth 1 -maxdepth 1 -printf "|%f" )"
+#echo $EXTERNALLIST
+
+cd $PKGSTORE/x
+find . -type f -name '*.t?z' -printf "%f\n" | egrep -v "$EXTERNALLIST" | while read line ; do
+  echo "*$line*"
+done
+

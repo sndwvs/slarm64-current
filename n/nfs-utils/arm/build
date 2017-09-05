@@ -1,0 +1,39 @@
+#!/bin/bash
+
+# arm/build
+# Check package dependencies, set metadata and launch
+# package build script.
+# by Stuart Winter <mozes@slackware.com>
+#
+source /usr/share/slackdev/buildkit.sh
+
+# Package metadata:
+export PKGNAM=nfs-utils
+export VERSION=${VERSION:-1.3.4}
+export BUILD=${BUILD:-2}
+export PKGSERIES=${PKGSERIES:-n}
+export SLACKPACKAGE=$PKGNAM-$VERSION-$PKGARCH-$BUILD.txz
+
+## ******************************************************************* ##
+# For test packages - best to store in another location rather than
+# overwriting the working copy in the main tree:
+# export PKGSTORE=/tmp/
+# mkdir -vpm755 $PKGSTORE/$PKGSERIES
+## ******************************************************************* ##
+
+# Ensure base ARM packages are installed first:
+slackbasedeps
+
+# Ensure specific build dependencies (mainly libraries):
+{ slackcheckpkgdeps kernel-headers || installpkg $PKGSTORE/d/kernel-headers-[0-9]*.t?z || exit 99; }
+{ slackcheckpkgdeps libtirpc       || installpkg $PKGSTORE/n/libtirpc-[0-9]*.t?z || exit 99; }
+
+# ALso needs:
+# n/tcp_wrappers
+
+# Launch the package build script:
+BUILDLOG=$( basename $SLACKPACKAGE .t?z ).build.log
+( ./$PKGNAM.SlackBuild ) >& /dev/stdout | tee $BUILDLOG
+
+# Compress the build log:
+bzip2 -9fvz $BUILDLOG

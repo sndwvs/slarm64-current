@@ -1,0 +1,48 @@
+#!/bin/bash
+
+# arm/build
+# Check package dependencies, set metadata and launch
+# package build script.
+# by Stuart Winter <mozes@slackware.com>
+#
+source /usr/share/slackdev/buildkit.sh
+
+# Package version data:
+export PKGNAM=ncurses
+export PKGSERIES=l
+export VERSION=6.0
+export BUILD=2
+export SLACKPACKAGE=$PKGNAM-$VERSION-$ARCH-$BUILD.txz
+
+## ******************************************************************* ##
+# For test packages - best to store in another location rather than
+# overwriting the working copy in the main tree:
+# export PKGSTORE=/tmp/
+# mkdir -vpm755 $PKGSTORE/$PKGSERIES
+## ******************************************************************* ##
+
+# Ensure base ARM packages are installed first:
+slackbasedeps
+
+# We do NOT want to link against gpm!
+# 19-sep-04: I don't know why I said this. Slackware's ncurses links with gpm
+#            and gpm's .so is in aaa_elflibs, so I don't see what the problem is
+#            although I *think* linking against gpm turned out to be bad
+#            when I last did it.
+#            .. and gpm links against ncurses.. hmm.
+# slackfailpkgdeps gpm || removepkg gpm
+
+# We link against gpm, but if we can't find gpm installed nor can we install it
+# then it doesn't matter:
+# 1. build ncurses without gpm
+# 2. build gpm with ncurses
+# 3. rebuild ncurses with gpm
+# This is what is suggested in the Slackware ncurses build script anyway.
+slackcheckpkgdeps gpm        || installpkg $PKGSTORE/a/gpm-*.t?z
+
+# Launch the package build script:
+BUILDLOG=$( basename $SLACKPACKAGE .t?z ).build.log
+( ./$PKGNAM.SlackBuild ) >& /dev/stdout | tee $BUILDLOG
+
+# Compress the build log:
+bzip2 -9fvz $BUILDLOG

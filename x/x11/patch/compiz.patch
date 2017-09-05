@@ -1,0 +1,4 @@
+# When generating, this thing tries to do gconf stuff -- Slackware does not have
+# GNOME, so we cannot generate a good "configure" script; so let's patch out the
+# gconf stuff:
+auto_apply_patch $PORTCWD/patch/app/compiz-autoconffix.diff.gz || exit 1

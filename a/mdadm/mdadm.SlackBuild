@@ -1,0 +1,61 @@
+#!/bin/bash
+
+# mdadm.SlackBuild
+# Heavily based on the original Slackware build scripts,
+# Modified by Stuart Winter <mozes@slackware.com>
+# 18-Sep-2004
+
+# Record toolchain & other info for the build log:
+slackbuildinfo
+
+# Paths to skeleton port's source & real Slackware source tree:
+export CWD=$SLACKSOURCE/$PKGSERIES/$PKGNAM
+export PORTCWD=$PWD
+
+# Temporary build locations:
+export TMPBUILD=$TMP/build-$PKGNAM
+export PKG=$TMP/package-$PKGNAM
+mkpkgdirs # Delete & re-create temporary directories then cd into $TMPBUILD
+
+# Extract source:
+tar xvvf $CWD/$PKGNAM-$VERSION.tar.xz
+#tar xvvf $PORTCWD/sources/$PKGNAM-$VERSION.tar.bz2
+cd $PKGNAM-$VERSION || exit 1
+slackhousekeeping
+
+# We'll let the developers handle fixing mdadm - otherwise
+# we get build failures:
+sed -i 's?-Werror??g' Makefile
+
+# Build:
+make clean
+make $NUMJOBS CXFLAGS="$SLKCFLAGS" MANDIR=/usr/man || make CXFLAGS="$SLKCFLAGS" MANDIR=/usr/man || failmake
+
+# Install into package:
+make install MANDIR=/usr/man DESTDIR=$PKG || exit 1
+
+# Install sample config file:
+mkdir -vpm755 $PKG/etc
+install -vpm644 mdadm.conf-example $PKG/etc/mdadm.conf.new
+
+# Install docs:
+mkdir -vpm755 $PKG/usr/doc/$PKGNAM-$VERSION
+cp -fav \
+   ANNOUNCE-$VERSION COPYING* INSTALL README* TODO \
+    $PKG/usr/doc/$PKGNAM-$VERSION
+changelogliposuction ChangeLog $PKGNAM $VERSION # Trim down a "ChangeLog" file
+
+# If necessary, start the fakeroot server so we can set file/dir ownerships:
+start_fakeroot
+
+# Apply generic Slackware packaging policies:
+cd $PKG
+slackstripall   # strip all .a archives and all ELFs
+slackgzpages -i # compress man & info pages and delete usr/info/dir
+slackslack      # chown -R root:root, chmod -R og-w, slackchown, slack644docs
+slackdesc       # install slack-desc and doinst.sh
+slackmp         # run makepkg -l y -c n
+
+# Perform any final checks on the package:
+cd $PKG
+slackhlinks     # search for any hard links

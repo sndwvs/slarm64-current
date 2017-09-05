@@ -1,0 +1,24 @@
+#!/bin/bash
+
+# Unpack the uinitrd (for Slackware ARM it's probably the "kirkwood" one) you wish to modify:
+#
+# cd /tmp
+# rm -rf initrd-hack && cd initrd-hack
+# dd if=~/ac/kernels/kirkwood/uinitrd-kirkwood bs=64 skip=1 | gzip -dc | cpio -div
+#
+# Make your modifications; then it's time to pack it up back into a unitrd.
+#
+
+# Pack an unpacked initrd so we can hack it and test changes.
+find . | cpio -o -H newc | gzip -1fv > /tmp/repack.gz
+# Call the U-Boot program that turns standard "initrd" format into "uInitrd":
+mkimage \
+  -A arm \
+  -O linux \
+  -T ramdisk \
+  -C gzip \
+  -n 'TEMP hack RAM disk' \
+  -d /tmp/repack.gz \
+  /mnt/prisroot/tftpboot/slackwarearm-current/uinitrd-tmp
+
+#EOF

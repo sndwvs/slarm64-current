@@ -1,0 +1,29 @@
+To get pidgin to work with Webex, you need to use the NSPR libs rather than
+GNUTLS
+
+CFLAGS="$SLKCFLAGS" \
+CXXFLAGS="$SLKCFLAGS" \
+./configure \
+  --prefix=/usr \
+  --libdir=/usr/lib${LIBDIRSUFFIX} \
+  --sysconfdir=/etc \
+  --mandir=/usr/man \
+  --enable-dot=no \
+  --disable-schemas-install \
+  --enable-dbus \
+  --enable-nss=no \
+  --disable-vv \
+  --enable-gtkspell \
+  --enable-cyrus-sasl \
+  --enable-perl \
+  --disable-meanwhile \
+  --disable-avahi \
+  --disable-nm \
+  --enable-nss=yes \
+  --with-nspr-includes=/usr/include/seamonkey-2.0.6 \
+  --with-nspr-libs=/usr/lib64/seamonkey-2.0.6/ \
+  --with-nss-includes=/usr/include/seamonkey-2.0.6 --with-nss-libs=/usr/lib64/seamonkey-2.0.6/ \
+  --program-prefix= \
+  --program-suffix= \
+  --build=$ARCH-slackware-linux$ARCHQUADLET || exit 1
+

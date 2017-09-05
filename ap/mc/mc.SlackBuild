@@ -1,0 +1,84 @@
+#!/bin/bash
+
+# mc.SlackBuild
+# by Stuart Winter <mozes@slackware.com> for the Slackware porting Project.
+# Heavily based on the original Slackware build script.
+# 02-Jun-2004
+
+# Record toolchain & other info for the build log:
+slackbuildinfo
+
+# Paths to skeleton port's source & real Slackware source tree:
+export CWD=$SLACKSOURCE/$PKGSERIES/$PKGNAM
+export PORTCWD=$PWD
+
+# Temporary build locations:
+export TMPBUILD=$TMP/build-$PKGNAM
+export PKG=$TMP/package-$PKGNAM
+mkpkgdirs # Delete & re-create temporary directories then cd into $TMP
+
+# Extract source:
+tar xvvf $CWD/$PKGNAM*.tar.?z*
+cd $PKGNAM* || exit 1
+slackhousekeeping
+
+# Use geeqie instead of gqview as an external image viewer:
+zcat $CWD/mc.image.sh.geeqie.diff.gz | patch -p1 --verbose || exit 1
+
+# Upstream fixes:
+zcat $CWD/mc-3605-extfs.c-fix-buffer-overflow.patch.gz | patch -p1 --verbose || exit 1
+
+# Configure:
+[ ! -x ./configure ] && ./autogen.sh
+CFLAGS="${SLKCFLAGS}" \
+./configure \
+   --prefix=/usr \
+   --sysconfdir=/etc \
+   --mandir=/usr/man \
+   --localstatedir=/var \
+   --docdir=/usr/doc/mc-$VERSION \
+   --enable-extcharset \
+   --enable-netcode \
+   --enable-background \
+   --enable-charset \
+   --with-gpm-mouse \
+   --with-ext2undel \
+   --with-x=yes \
+   --with-vfs \
+   --enable-vfs-smb \
+   --with-smb-configdir=/etc/samba \
+   --with-smb-codepagedir=/etc/codepages \
+   --build=${SLK_ARCH_BUILDTARGET} || failconfig
+
+# Build:
+make $NUMJOBS || make || failmake
+
+# Install into package:
+make DESTDIR=$PKG install || failinstall
+mkdir -p $PKG/usr/share/mc/bin
+cp -a $CWD/profile.d/mc-wrapper.* $PKG/usr/share/mc/bin
+chown root:root $PKG/usr/share/mc/bin/*
+chmod 755 $PKG/usr/share/mc/bin/*
+mkdir -p $PKG/etc/profile.d
+cp -a $CWD/profile.d/mc.* $PKG/etc/profile.d
+chown root:root $PKG/etc/profile.d/*
+chmod 755 $PKG/etc/profile.d/*
+mkdir -p $PKG/usr/doc/mc-$VERSION
+cp -a \
+  AUTHORS doc/COPYING* doc/FAQ doc/HACKING doc/INSTALL doc/MAINTAINERS doc/NEWS doc/README* doc/TODO \
+  $PKG/usr/doc/mc-$VERSION
+
+# If necessary, start the fakeroot server so we can set file/dir ownerships:
+start_fakeroot
+
+# Apply generic Slackware packaging policies:
+cd $PKG
+slackstripall   # strip all .a archives and all ELFs
+slackgzpages -i # compress man & info pages and delete usr/info/dir
+slackslack      # chown -R root:root, chmod -R og-w, slackchown, slack644docs
+slackdesc       # install slack-desc and doinst.sh
+slackmp         # run makepkg -l y -c n
+
+# Perform any final checks on the package:
+cd $PKG
+slackhlinks     # search for any hard links

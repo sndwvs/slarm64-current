@@ -1,0 +1,18 @@
+# HOW TO EDIT THIS FILE:
+# The "handy ruler" below makes it easier to edit a package description.  Line
+# up the first '|' above the ':' following the base package name, and the '|' on
+# the right side marks the last column you can put a character in.  You must make
+# exactly 11 lines for the formatting to be correct.  It's also customary to
+# leave one space after the ':'.
+   |-----handy-ruler------------------------------------------------------|
+ejre: Java(TM) Platform Standard Edition Runtime Environment,
+ejre: for embedded platforms.
+ejre:
+ejre: The J2SE(TM) Runtime Environment (JRE) is intended for software
+ejre: developers and vendors to redistribute with their applications.
+ejre: It contains the Java virtual machine, runtime class libraries, and
+ejre: Java application launcher that are necessary to run programs written
+ejre: in the Java programming language.
+ejre:
+ejre: If you need development tools, currently your best bet is to develop
+ejre: on x86 using Oracle's JDK available from: http://java.sun.com/

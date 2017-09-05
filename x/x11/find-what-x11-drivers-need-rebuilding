@@ -1,0 +1,45 @@
+#!/bin/bash
+
+###################################################################################
+# Script.: find-what-x11-drivers-need-rebuilding                                  #
+# Purpose: Test the X11 drivers to ensure that none need a rebuild following from #
+#          an upgrade of X11                                                      #
+# Author : Stuart Winter <mozes@slackware.com>                                    #
+# Date...: 29th-Dec-2014                                                          #
+# Version: v1.00                                                                  #
+###################################################################################
+
+# Strip all known package extensions,build number and architecture to return 
+# the naked package name:
+package_name() {
+  echo $1 | sed -e 's?.*/??;s/\.t[bglx]z$//' -e 's?-[^-]*-[^-]*-[^-]*$??'
+}
+
+# Clean up:
+rm -f /var/log/Xorg.0.log*
+
+# Let X automatically try to configure itself with the drivers installed
+# upon the running OS.  We'll parse the log file to see what happened:
+X -configure > /dev/null 2>&1 
+
+if [ ! -z "$( grep 'Failed to load module' /var/log/Xorg.0.log )" ]; then
+   printf "The following drivers need a rebuild:\n\n"
+
+   cd /var/log/packages || exit 1
+
+   # Parse the log file looking for failures:
+   grep "Failed to load module" /var/log/Xorg.0.log  | awk -F\" '{print $2}' | while read xdriver ; do
+
+      # Find the Slackware package file name that corresponds to the X11 driver name:
+      # (The trailing '/' allows pasting of the package name directly into the
+      # 'indibuild' script for ARM)
+      printf "\t $( package_name $( ls -1 *${xdriver}*-*[0-9] ) ) \\ \n\n"
+
+      # Provide the error message from X11's log:
+      printf "$( grep "UnloadModule: \"$xdriver\"" /var/log/Xorg.0.log -B1 | head -n1 )\n\n"
+   done
+ else
+   echo "The X11 log suggests that all modules loaded successfully - none need rebuilding."
+fi
+
+#EOF

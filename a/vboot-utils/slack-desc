@@ -1,0 +1,23 @@
+# HOW TO EDIT THIS FILE:
+# The "handy ruler" below makes it easier to edit a package description.  Line
+# up the first '|' above the ':' following the base package name, and the '|'
+# on the right side marks the last column you can put a character in.  You must
+# make exactly 11 lines for the formatting to be correct.  It's also
+# customary to leave one space after the ':'.
+#
+# I copied the description from here:
+# https://bugzilla.redhat.com/show_bug.cgi?id=893866 
+#
+
+           |-----handy-ruler------------------------------------------------------|
+vboot-utils: vboot-utils (Verified Boot Utility from Chromium OS)
+vboot-utils:
+vboot-utils: Verified Boot utility from Chromium OS. This collection of tools will
+vboot-utils: help Slackware ARM install onto the 1012 Sansung Chromebook computer.
+vboot-utils:
+vboot-utils: The collection contains tools to format a GTP disklabel, pack &
+vboot-utils: cryptography sign the kernel, among other useful things.
+vboot-utils:
+vboot-utils:
+vboot-utils:
+vboot-utils:

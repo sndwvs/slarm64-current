@@ -1,0 +1,56 @@
+#!/bin/bash
+
+# libkarma.SlackBuild
+# Heavily based on the original Slackware build scripts,
+# Modified by Stuart Winter <mozes@slackware.com>
+
+# Record toolchain & other info for the build log:
+slackbuildinfo
+
+# Paths to skeleton port's source & real Slackware source tree:
+export CWD=$SLACKSOURCE/$PKGSERIES/$PKGNAM
+export PORTCWD=$PWD
+
+# Temporary build locations:
+export TMPBUILD=$TMP/build-$PKGNAM
+export PKG=$TMP/package-$PKGNAM
+mkpkgdirs # Delete & re-create temporary directories then cd into $TMPBUILD
+
+# Extract source:
+tar xvvf $CWD/$PKGNAM-$VERSION.tar.gz
+cd $PKGNAM-$VERSION || exit 1
+slackhousekeeping
+
+# Build: no >1 parallel build otherwise it blows up.
+#make -j1 PREFIX=/usr || failmake
+make PREFIX=/usr || failmake
+
+# Install into package:
+make install PREFIX=$PKG/usr || failinstall
+rm $PKG/usr/lib/*.a
+mv $PKG/usr/share/man $PKG/usr
+rm -r $PKG/usr/share/doc
+rmdir $PKG/usr/share
+
+# Add a documentation directory:
+mkdir -p $PKG/usr/doc/${PKGNAM}-$VERSION
+cp -a \
+  COPYING* INSTALL THANKS TODO \
+  $PKG/usr/doc/${PKGNAM}-$VERSION
+  cp -a tools/TODO $PKG/usr/doc/${PKGNAM}-$VERSION/TODO.tools
+changelogliposuction ChangeLog $PKGNAM $VERSION # Trim down a "ChangeLog" file
+
+# If necessary, start the fakeroot server so we can set file/dir ownerships:
+start_fakeroot
+
+# Apply generic Slackware packaging policies:
+cd $PKG
+slackstripall   # strip all .a archives and all ELFs
+slackgzpages -i # compress man & info pages and delete usr/info/dir
+slackslack      # chown -R root:root, chmod -R og-w, slackchown, slack644docs
+slackdesc       # install slack-desc and doinst.sh
+slackmp         # run makepkg -l y -c n
+
+# Perform any final checks on the package:
+cd $PKG
+slackhlinks     # search for any hard links

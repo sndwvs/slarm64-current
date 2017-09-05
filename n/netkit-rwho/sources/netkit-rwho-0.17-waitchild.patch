@@ -1,0 +1,33 @@
+--- netkit-rwho-0.17/rwhod/rwhod.c.waitchild	2006-08-15 14:20:01.000000000 +0200
++++ netkit-rwho-0.17/rwhod/rwhod.c	2006-08-15 14:20:28.000000000 +0200
+@@ -125,6 +125,7 @@
+ 
+ static void huphandler(int);
+ static void termhandler(int);
++static void childhandler(int);
+ static void sendpacket(struct whod *);
+ static void getboottime(struct whod *);
+ 
+@@ -213,6 +214,7 @@
+ 	(void) umask(022);
+ 
+ 	signal(SIGTERM, termhandler);
++	signal(SIGCHLD, childhandler);
+ 	child_pid = fork();
+ 	if (child_pid < 0) {
+ 		syslog(LOG_ERR, "fork: %m");
+@@ -332,6 +334,14 @@
+ 	exit(0);
+ }
+ 
++static void
++childhandler(int dummy)
++{
++        (void) dummy;
++        exit(0);
++}
++
++
+ /*
+  * Obtain boot time again
+  */

@@ -1,0 +1,11 @@
+--- netkit-rwho-0.17-pre20000412/ruptime/Makefile.bug22014	Wed Dec 27 20:19:07 2000
++++ netkit-rwho-0.17-pre20000412/ruptime/Makefile	Wed Dec 27 20:19:13 2000
+@@ -3,8 +3,6 @@
+ include ../MCONFIG
+ include ../MRULES
+ 
+-CFLAGS += -I../include
+-
+ ruptime: ruptime.o
+ 	$(CC) $(LDFLAGS) $^ $(LIBS) -o $@
+ 

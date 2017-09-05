@@ -1,0 +1,7 @@
+# https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=795488
+#
+
+for kpfile in $PORTCWD/patch/${PKGNAME}/* ; do
+  auto_apply_patch $kpfile || { touch ${PORTCWD}/build-logs/${PKGNAME}.failed ; continue ; }
+done
+

@@ -1,0 +1,109 @@
+#!/bin/bash
+
+# m17n-lib.SlackBuild
+# based on the original Slackware build scripts,
+# *Heavily* modified by Stuart Winter to align with ARMedslack build scripts
+# format.
+
+# Record toolchain & other info for the build log:
+slackbuildinfo
+
+# Paths to skeleton port's source & real Slackware source tree:
+export CWD=$SLACKSOURCE/$PKGSERIES/$PKGNAM
+export PORTCWD=$PWD
+
+# Temporary build locations:
+export TMPBUILD=$TMP/build-$PKGNAM
+export PKG=$TMP/package-$PKGNAM
+mkpkgdirs # Delete & re-create temporary directories then cd into $TMPBUILD
+
+# Versions:
+DBVERSION=${DBVERSION:-1.7.0}
+#DOCVERSION=${DOCVERSION:-1.5.5}
+SHORTNAM=m17n
+
+DOCS="AUTHORS COPYING ChangeLog NEWS README TODO"
+DOCS_DB="ABOUT-NLS AUTHORS COPYING ChangeLog NEWS README"
+
+SOURCE[0]="$CWD/${PKGNAM}-${VERSION}.tar.xz"
+SOURCE[1]="$CWD/${SHORTNAM}-db-${DBVERSION}.tar.xz"
+
+for (( i = 0; i < ${#SOURCE[*]}; i++ )) ; do
+  tar xvf ${SOURCE[$i]} || exit 1
+done
+slackhousekeeping
+
+########### Build main package ###############################
+cd $TMPBUILD
+cd ${PKGNAM}-${VERSION} || exit 1
+
+# Configure:
+CXXFLAGS="$SLKCFLAGS" \
+CFLAGS="$SLKCFLAGS" \
+./configure \
+   --prefix=/usr \
+   --libdir=/usr/lib${LIBDIRSUFFIX} \
+   --localstatedir=/var \
+   --sysconfdir=/etc \
+   --mandir=/usr/man \
+   --disable-gui \
+   --disable-static \
+   --program-prefix= \
+   --program-suffix= \
+   --build=$ARCH-slackware-linux-gnueabi || failconfig
+
+make $NUMJOBS || make || exit 1
+make DESTDIR=$PKG install || exit 1
+
+########### DB Package ############################################
+
+cd $TMPBUILD
+cd ${SHORTNAM}-db-${DBVERSION} || exit 1
+slackhousekeeping
+
+# Configure:
+LDFLAGS="$SLKLDFLAGS" \
+CXXFLAGS="$SLKCFLAGS" \
+CFLAGS="$SLKCFLAGS" \
+./configure \
+   --prefix=/usr \
+   --libdir=/usr/lib${LIBDIRSUFFIX} \
+   --localstatedir=/var \
+   --sysconfdir=/etc \
+   --program-prefix="" \
+   --program-suffix="" \
+   --build=$ARCH-slackware-linux-gnueabi || failconfig
+
+# Build:
+make $NUMJOBS || make || failmake
+
+# Install into package:
+make DESTDIR=$PKG install || failinstall
+
+####################################################################
+
+cd $TMPBUILD
+
+# Add package documentation:
+mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION/db
+cd ${PKGNAM}-${VERSION}
+cp -a $DOCS $PKG/usr/doc/$PKGNAM-$VERSION
+changelogliposuction ChangeLog $PKGNAM $VERSION # Trim down a "ChangeLog" file
+cd ../${SHORTNAM}-db-${DBVERSION}
+cp -a $DOCS_DB $PKG/usr/doc/$PKGNAM-$VERSION/db
+changelogliposuction ChangeLog $PKGNAM $VERSION # Trim down a "ChangeLog" file
+
+# If necessary, start the fakeroot server so we can set file/dir ownerships:
+start_fakeroot
+
+# Apply generic Slackware packaging policies:
+cd $PKG
+slackstripall   # strip all .a archives and all ELFs
+slackgzpages -i # compress man & info pages and delete usr/info/dir
+slackslack      # chown -R root:root, chmod -R og-w, slackchown, slack644docs
+slackdesc       # install slack-desc and doinst.sh
+slackmp         # run makepkg -l y -c n
+
+# Perform any final checks on the package:
+cd $PKG
+slackhlinks     # search for any hard links

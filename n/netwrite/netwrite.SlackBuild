@@ -1,0 +1,61 @@
+#!/bin/bash
+
+# netwrite.SlackBuild
+# Heavily based on the original Slackware build scripts,
+# Modified by Stuart Winter <mozes@slackware.com>
+
+# Record toolchain & other info for the build log:
+slackbuildinfo
+
+# Paths to skeleton port's source & real Slackware source tree:
+export CWD=$SLACKSOURCE/$PKGSERIES/$PKGNAM
+export PORTCWD=$PWD
+
+# Temporary build locations:
+export TMPBUILD=$TMP/build-$PKGNAM
+export PKG=$TMP/package-$PKGNAM
+mkpkgdirs # Delete & re-create temporary directories then cd into $TMPBUILD
+
+# Extract source:
+tar xvvf $CWD/$PKGNAM-$VERSION.tar.gz
+cd $PKGNAM-$VERSION || exit 1
+slackhousekeeping
+
+# Apply patches:
+zcat $CWD/netwrite-0.17.diff.gz | patch -p1 || failpatch
+
+# Configure:
+./configure \
+   --prefix=/usr || failconfig
+
+# Build:
+make $NUMJOBS || make || failmake
+
+# Install into package:
+# The versions in util-linux are better, but we'll keep in.writed just in case:
+#cat write > $PKG/usr/bin/write
+#cat write.1 | gzip -9c > $PKG/usr/man/man1/write.1.gz
+cd writed
+mkdir -p $PKG/usr/sbin
+cat writed > $PKG/usr/sbin/in.writed
+chmod 755 $PKG/usr/sbin/in.writed
+mkdir -p $PKG/usr/man/man8
+cat writed.8 | gzip -9c > $PKG/usr/man/man8/in.writed.8.gz
+cd ..
+mkdir -p $PKG/usr/doc/netwrite-0.17
+cp -a README $PKG/usr/doc/netwrite-0.17
+
+# If necessary, start the fakeroot server so we can set file/dir ownerships:
+start_fakeroot
+
+# Apply generic Slackware packaging policies:
+cd $PKG
+slackstripall   # strip all .a archives and all ELFs
+slackgzpages -i # compress man & info pages and delete usr/info/dir
+slackslack      # chown -R root:root, chmod -R og-w, slackchown, slack644docs
+slackdesc       # install slack-desc and doinst.sh
+slackmp         # run makepkg -l y -c n
+
+# Perform any final checks on the package:
+cd $PKG
+slackhlinks     # search for any hard links

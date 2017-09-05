@@ -1,0 +1,140 @@
+#!/bin/bash
+
+# emacs.SlackBuild
+# Heavily based on the original Slackware build scripts,
+# Modified by Stuart Winter for Slackware ARM.
+#
+# Copyright 2008, 2009, 2010, 2011, 2012, 2014, 2015  Patrick J. Volkerding, Sebeka, MN, USA
+# All rights reserved.
+#
+# Redistribution and use of this script, with or without modification, is
+# permitted provided that the following conditions are met:
+#
+# 1. Redistributions of this script must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+#
+#  THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED
+#  WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+#  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO
+#  EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+#  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+#  PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+#  OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+#  WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+#  OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+#  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+#
+# Slackware build script for emacs-22
+
+# Written by DuÅ¡an StefanoviÄ<87> (stefanovic.dusan@gmail.com)
+# Modified by Robby Workman <rworkman@slackbuilds.org>
+# Modified by Patrick Volkerding <volkerdi@slackware.com>
+
+# Record toolchain & other info for the build log:
+slackbuildinfo
+
+# Paths to skeleton port's source & real Slackware source tree:
+export CWD=$SLACKSOURCE/$PKGSERIES/$PKGNAM
+export PORTCWD=$PWD
+
+# Temporary build locations:
+export TMPBUILD=$TMP/build-$PKGNAM
+export PKG=$TMP/package-$PKGNAM
+mkpkgdirs # Delete & re-create temporary directories then cd into $TMPBUILD
+
+# Extract source:
+tar xvvf $CWD/$PKGNAM-$VERSION*.tar.xz
+cd $PKGNAM* || exit 1
+slackhousekeeping
+
+# Configure:
+CFLAGS="$SLKCFLAGS" \
+CXXFLAGS="$SLKCFLAGS" \
+./configure \
+   --prefix=/usr \
+   --sysconfdir=/etc \
+   --localstatedir=/var \
+   --program-prefix="" \
+   --program-suffix="" \
+   --mandir=/usr/man \
+   --infodir=/usr/info \
+   --without-gconf \
+   --without-gsettings \
+   --with-x \
+   --with-x-toolkit=gtk3 \
+   --build=${SLK_ARCH_BUILDTARGET} || failconfig
+
+# Build:
+make $NUMJOBS || make || failmake
+
+# Install into package:
+make install DESTDIR=$PKG
+
+( cd $PKG/usr/bin
+  rm -f emacs
+  mv -fv emacs-${VERSION} emacs-${VERSION}-with-x11
+  ln -vsf emacs-${VERSION}-with-x11 emacs )
+
+# Also add a version of the binary that is not linked to X11:
+cd $TMPBUILD
+rm -rf $PKGNAM*
+tar xvvf $CWD/$PKGNAM-$VERSION*.tar.xz
+cd $PKGNAM* || exit 1
+slackhousekeeping
+
+# Configure:
+CFLAGS="$SLKCFLAGS" \
+CXXFLAGS="$SLKCFLAGS" \
+./configure \
+   --prefix=/usr \
+   --sysconfdir=/etc \
+   --localstatedir=/var \
+   --program-prefix="" \
+   --program-suffix="" \
+   --mandir=/usr/man \
+   --infodir=/usr/info \
+   --without-gconf \
+   --without-gsettings \
+   --with-x=no \
+   --build=${SLK_ARCH_BUILDTARGET} || failconfig
+
+# Build:
+make $NUMJOBS || make || failmake
+
+# If necessary, start the fakeroot server so we can set file/dir ownerships:
+start_fakeroot
+
+# Install the non-x version:
+install -vpm1755 src/emacs $PKG/usr/bin/emacs-${VERSION}-no-x11
+
+# This avoids a collision with Exuberant Ctags...
+mv $PKG/usr/bin/ctags $PKG/usr/bin/ctags-emacs
+if [ -r $PKG/usr/man/man1/ctags.1 ]; then
+  mv -fv $PKG/usr/man/man1/ctags.1 $PKG/usr/man/man1/ctags-emacs.1
+elif [ -r $PKG/usr/man/man1/ctags.1.gz ]; then
+  mv -fv $PKG/usr/man/man1/ctags.1.gz $PKG/usr/man/man1/ctags-emacs.1.gz
+fi
+
+# Copy docs:
+mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
+cp -favv \
+  AUTHORS COPYING* INSTALL README* \
+  $PKG/usr/doc/$PKGNAM-$VERSION
+changelogliposuction ChangeLog $PKGNAM $VERSION # Trim down a "ChangeLog" file
+
+# Apply generic Slackware packaging policies:
+cd $PKG
+slackstripall   # strip all .a archives and all ELFs
+slackgzpages -i # compress man & info pages and delete usr/info/dir
+slackslack      # chown -R root:root, chmod -R og-w, slackchown, slack644docs
+slackdesc       # install slack-desc and doinst.sh
+
+# Set special permissions:
+chown -R root:games $PKG/var/games/emacs
+chmod 664 $PKG/var/games/emacs/*
+
+slackmp         # run makepkg -l y -c n
+
+# Perform any final checks on the package:
+cd $PKG
+slackhlinks     # search for any hard links

@@ -1,0 +1,5 @@
+
+source /usr/share/slackdev/buildkit.sh
+export PKGNAM=slackpkg
+
+./slackpkg.SlackBuild 

@@ -1,0 +1,77 @@
+#!/bin/bash
+
+# libwmf.SlackBuild
+# Heavily based on the original Slackware build scripts,
+# Modified by Stuart Winter <mozes@slackware.com>
+# 25-Jul-2004
+
+# Record toolchain & other info for the build log:
+slackbuildinfo
+
+# Paths to skeleton port's source & real Slackware source tree:
+export CWD=$SLACKSOURCE/$PKGSERIES/$PKGNAM
+export PORTCWD=$PWD
+
+# Temporary build locations:
+export TMPBUILD=$TMP/build-$PKGNAM
+export PKG=$TMP/package-$PKGNAM
+mkpkgdirs # Delete & re-create temporary directories then cd into $TMPBUILD
+PKG2=$TMP/package-$PKGNAM-docs
+rm -rf $PKG2 && mkdir -p $PKG2
+
+# Create framework for packages:
+mkdir -p $PKG2/{install,usr/doc}
+mkdir -p $PKG/{install,usr/doc/$PKGNAM-$VERSION}
+
+# Extract source:
+tar xvvf $CWD/$PKGNAM-$VERSION.tar.?z*
+cd $PKGNAM-$VERSION || exit 1
+slackhousekeeping
+
+zcat $CWD/libwmf.png14.diff.gz | patch -p1 --verbose || exit 1
+
+# Configure:
+CFLAGS="$SLKCFLAGS" \
+./configure \
+   --prefix=/usr \
+   --enable-static=no \
+   --build=$ARCH-slackware-linux-gnueabi || failconfig
+
+# Build:
+make $NUMJOBS || make || failmake
+
+# Install into package framework:
+make install DESTDIR=$PKG
+
+# Install docs:
+mv $PKG/usr/share/doc/$PKGNAM $PKG2/usr/doc/$PKGNAM-$VERSION
+rm -rf $PKG/usr/share/doc
+cp -a AUTHORS BUILDING COPYING CREDITS NEWS README TODO \
+      $PKG/usr/doc/$PKGNAM-$VERSION
+changelogliposuction ChangeLog $PKGNAM $VERSION
+
+# Install package descriptions:
+install -m644 $CWD/slack-desc $PKG/install
+install -m644 $CWD/slack-desc-docs $PKG2/install/slack-desc
+
+# Start fakeroot server if required:
+start_fakeroot
+
+# Set generic Slackware packaging policies:
+for i in $PKG $PKG2 ; do
+    cd $i
+    slackstripall   # strip all .a archives and all ELFs
+    slackgzpages -i # compress man & info pages and delete usr/info/dir
+    slackslack      # chown -R root:root, chmod -R og-w, slackchown, slack644docs
+    slackhlinks     # search for any hard links
+done
+
+# Runtime package:
+cd $PKG
+slackmp
+
+# Docs package:
+cd $PKG2
+export PKGNAM=$PKGNAM-docs
+export SLACKPACKAGE=$PKGNAM-$VERSION-noarch-$BUILD.txz
+slackmp

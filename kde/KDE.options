@@ -1,0 +1,21 @@
+# This file should be pretty minimal and should override a few of the variables
+# set in the Slackware x86 tree's copy of the file with this same name:
+export VERSION=4.14.3
+export BUILD=1
+ARCH=arm
+
+[ -z $PKGARCH ] && export PKGARCH=$ARCH
+
+# Use this as CFLAGS and CXXFLAGS:
+# These are set from the slackdev build library config
+#export SLKCFLAGS="$SLKCFLAGS -fPIC"
+#export LIBDIRSUFFIX=""
+
+# In the Slackware ARM build cluster, the number of parallel jobs is set by the 'dbuild' wrapper script
+# but you can set it here if you wish.
+# export NUMJOBS="-j22"
+
+# Additional cmake flags that are spanned across the KDE modules
+# Do not use "final build" unless we build an actual release.
+#export KDE_OPT_ARGS=" -DKDE4_ENABLE_FINAL=\"ON\"  -DSITE=\"slackware.com\" "
+export KDE_OPT_ARGS=" -DKDE4_BUILD_TESTS=OFF -DSITE=\"slackware.com\" -DKDE_DISTRIBUTION_TEXT=\"mozes@slackware.com\" "

@@ -1,0 +1,121 @@
+#!/bin/bash
+
+# tar.SlackBuild
+# by Stuart Winter <mozes@slackware.com> for the Slackware porting Project.
+# Heavily based on the original Slackware build script.
+# 21-May-2004
+#
+# Copyright 2008, 2009  Patrick J. Volkerding, Sebeka, MN, USA
+# All rights reserved.
+#
+# Redistribution and use of this script, with or without modification, is
+# permitted provided that the following conditions are met:
+#
+# 1. Redistributions of this script must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+#
+#  THIS SOFTWARE IS PROVIDED BY THE AUTHOR ''AS IS'' AND ANY EXPRESS OR IMPLIED
+#  WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+#  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO
+#  EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+#  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+#  PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+#  OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+#  WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+#  OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+#  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+# Record toolchain & other info for the build log:
+slackbuildinfo
+
+# Paths to skeleton port's source & real Slackware source tree:
+export CWD=$SLACKSOURCE/$PKGSERIES/$PKGNAM
+export PORTCWD=$PWD
+
+# Temporary build locations:
+export TMPBUILD=$TMP/build-$PKGNAM
+export PKG=$TMP/package-$PKGNAM
+mkpkgdirs # Delete and re-create temporary directories
+
+# Create some package framework:
+mkdir -p $PKG/bin $PKG/usr/{doc/$PKGNAM-$VERSION,man/man{1,8}}
+
+# Compile tar-1.13.  This is used by pkgtools.
+cd $TMPBUILD
+tar xvvf $CWD/tar-1.13.tar.gz
+cd tar-1.13 || exit 1
+slackhousekeeping
+zcat $CWD/tar-1.13.bzip2.diff.gz | patch -p1 --verbose || failpatch
+# The original config.{guess,sub} do not work on x86_64
+cp -p --verbose /usr/share/libtool/build-aux/config.{guess,sub} .
+
+# Configure:
+FORCE_UNSAFE_CONFIGURE=1 \
+CFLAGS="$SLKCFLAGS" \
+./configure \
+   --prefix=/usr \
+   --disable-nls \
+   --target=$ARCH-slackware-linux-gnueabi \
+   --host=$ARCH-slackware-linux-gnueabi \
+   --build=$ARCH-slackware-linux-gnueabi || failconfig
+make $NUMJOBS || make || failmake
+install -vpm755 src/tar $PKG/bin/tar-1.13
+
+# Build the newest tar:
+cd $TMPBUILD
+tar xvvf $CWD/tar-$VERSION.tar.xz
+cd $PKGNAM-$VERSION || exit 1
+slackhousekeeping
+
+# The "A lone zero block at %s" messages also cause problems:
+zcat $CWD/tar.nolonezero.diff.gz | patch -p1 --verbose || exit 1
+
+# Patch for glibc-2.19:
+sed -i -e '/gets is a/d' gnu/stdio.in.h || exit 1
+
+# Configure:
+FORCE_UNSAFE_CONFIGURE=1 \
+CFLAGS="$SLKCFLAGS" \
+./configure \
+   --prefix=/usr \
+   --mandir=/usr/man \
+   --docdir=/usr/doc/$PKGNAM-$VERSION \
+   --infodir=/usr/info \
+   --enable-backup-scripts \
+   --build=$ARCH-slackware-linux-gnueabi || failconfig
+
+# Build:
+make $NUMJOBS || make || failmake
+
+# Install into package:
+make install DESTDIR=$PKG || failinstall
+mv $PKG/usr/bin/tar $PKG/bin
+( cd $PKG/usr/bin && ln -sf ../../bin/tar . )
+( cd $PKG/bin     && ln -sf tar tar-$VERSION )
+
+# Support "historic" rmt locations:
+mkdir -p $PKG/{etc,sbin}
+( cd $PKG/etc
+  ln -vsf /usr/libexec/rmt .
+  cd $PKG/sbin
+  ln -vsf /usr/libexec/rmt . )
+
+# Install docs:
+cp -fav \
+   AUTHORS COPYING* NEWS PORTS README* THANKS TODO \
+   $PKG/usr/doc/$PKGNAM-$VERSION
+
+# If necessary, start the fakeroot server so we can set file/dir ownerships:
+start_fakeroot
+
+# Apply generic Slackware packaging policies:
+cd $PKG
+slackstripall   # strip all .a archives and all ELFs
+slackgzpages -i # compress man & info pages and delete usr/info/dir
+slackslack      # chown -R root:root, chmod -R og-w, slackchown, slack644docs
+slackdesc       # install slack-desc and doinst.sh
+slackmp         # run makepkg -l y -c n
+
+# Perform any final checks on the package:
+cd $PKG
+slackhlinks     # search for any hard links

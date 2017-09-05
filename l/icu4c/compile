@@ -1,0 +1,8 @@
+gcc -D_REENTRANT -DU_HAVE_ELF_H=1 -DU_HAVE_ATOMIC=1 -I../common -DU_ATTRIBUTE_DEPRECATED= -O2 -march=armv7-a -mfpu=vfpv3-d16 -mfloat-abi=hard -fno-strict-aliasing -std=c99 -Wall -pedantic -
+Wshadow -Wpointer-arith -Wmissing-prototypes -Wwrite-strings -c -DPIC -fPIC -o stubdata.o stubdata.c
+#gcc -O2 -march=armv7-a -mfpu=vfpv3-d16 -mfloat-abi=hard -fno-strict-aliasing -std=c99 -Wall -pedantic -Wshadow -Wpointer-arith -Wmissing-prototypes -Wwrite-strings    -nodefaultlibs -nostdlib -shared -Wl,-Bsymbolic -Wl,-soname -Wl,libicudata.so.56 -o libicudata.so.56.1 stubdata.o
+
+
+ gcc -D_REENTRANT  -DU_HAVE_ELF_H=1 -DU_HAVE_ATOMIC=1  -DU_ATTRIBUTE_DEPRECATED= -O2 -march=armv7-a -mfpu=vfpv3-d16 -mfloat-abi=hard -fno-strict-aliasing -std=c99 -Wall -pedantic -Wshadow -Wpointer-arith -Wmissing-prototypes -Wwrite-strings   -c -I../common -I../common -DPIC -fPIC -o ./out/tmp/icudt56l_dat.o ./out/tmp/icudt56l_dat.S
+ggcc -O2 -march=armv7-a -mfpu=vfpv3-d16 -mfloat-abi=hard -fno-strict-aliasing -std=c99 -Wall -pedantic -Wshadow -Wpointer-arith -Wmissing-prototypes -Wwrite-strings    -shared -Wl,-Bsymbolic -nodefaultlibs -nostdlib -o ../lib/libicudata.so.56.1 ./out/tmp/icudt56l_dat.o -Wl,-soname -Wl,libicudata.so.56  -Wl,-Bsymbolic
+

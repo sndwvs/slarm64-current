@@ -1,0 +1,18 @@
+
+#################################################################################
+# RealTek
+#################################################################################
+
+# The Trimslice page says to apt-get the 'firmware-nonfree' Debian package, so
+# I'll make it easy on myself by using Debian's 'source' package as an upstream for this.
+# http://trimslice.com/wiki/index.php/Trim-Slice_Linux_Kernel
+#
+# http://packages.debian.org/sid/firmware-linux-nonfree
+#
+rm -f rtl_nic.tar.xz
+wget http://http.debian.net/debian/pool/non-free/f/firmware-nonfree/firmware-nonfree_20160110.orig.tar.xz
+tar xf firmware*z
+rm -f firmware*z
+mv -fv firmware-nonfree*/rtl_nic .
+tar -cf- rtl_nic | xz -ze9 - > rtl_nic.tar.xz
+rm -rf rtl_nic firmware-nonfree*

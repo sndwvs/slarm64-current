@@ -1,0 +1,138 @@
+#!/bin/bash
+
+# shadow.SlackBuild
+#
+# Copyright 2005-2010  Patrick J. Volkerding, Sebeka, Minnesota, USA
+# All rights reserved.
+#
+# Redistribution and use of this script, with or without modification, is
+# permitted provided that the following conditions are met:
+#
+# 1. Redistributions of this script must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+#
+#  THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED
+#  WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+#  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO
+#  EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+#  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+#  PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+#  OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+#  WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+#  OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+#  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+# Record toolchain & other info for the build log:
+slackbuildinfo
+
+# Paths to skeleton port's source & real Slackware source tree:
+export CWD=$SLACKSOURCE/$PKGSERIES/$PKGNAM
+export PORTCWD=$PWD
+
+# Temporary build locations:
+export TMPBUILD=$TMP/build-$PKGNAM
+export PKG=$TMP/package-$PKGNAM
+mkpkgdirs # Delete & re-create temporary directories then cd into $TMPBUILD
+
+# Extract source:
+tar xvvf $CWD/$PKGNAM-$VERSION.tar.xz
+cd $PKGNAM-$VERSION || exit 1
+slackhousekeeping
+
+# Apply some patches taken from the svn trunk that
+# fix some of the more serious bugs in 4.1.4.3:
+for patch in $CWD/patches/*.diff.gz ; do
+  zcat $patch | patch -p0 --verbose || exit 1
+done
+
+# Relax the restrictions on "su -c" when it is used to become root.
+# It's not likely that root is going to try to inject commands back into
+# the user's shell to hack it, and the unnecessary restriction is causing
+# breakage:
+zcat $CWD/shadow.CVE-2005-4890.relax.diff.gz | patch -p1 --verbose || exit 1
+
+# Patch a race condition that allows a user to kill processes that they don't
+# own.  Note that the bug requires that shadow is using PAM, which is not yet
+# the case on Slackware.  So we're unaffected, but patching this anyway in
+# -current, because you never know...
+zcat $CWD/shadow.CVE-2017-2616.diff.gz | patch -p1 --verbose || exit 1
+
+# Configure:
+CFLAGS="$SLKCFLAGS" \
+./configure \
+   --prefix=/usr \
+   --disable-shared \
+   --sysconfdir=/etc \
+   --mandir=/usr/man \
+   --docdir=/usr/doc/shadow-$VERSION \
+   --disable-shared \
+   --enable-subordinate-ids \
+   --without-libcrack \
+   --build=${SLK_ARCH_BUILDTARGET} || failconfig
+
+# Build:
+make $NUMJOBS || make || failmake
+
+# Install into package framework:
+make install DESTDIR=$PKG || failinstall
+
+# Fix user group = 100:
+zcat $CWD/useradd.gz > $PKG/etc/default/useradd
+
+# /bin/groups is provided by coreutils.
+rm -f $PKG/bin/groups
+find $PKG -name groups.1 -exec rm {} \;
+
+# Install a login.defs with unsurprising defaults:
+rm -f $PKG/etc/login.defs
+zcat $CWD/login.defs.gz > $PKG/etc/login.defs.new
+
+mv -fv $PKG/etc/login.access $PKG/etc/login.access.new
+
+# I don't think this works well enough to recommend it.
+#mv $PKG/etc/limits $PKG/etc/limits.new
+rm -f $PKG/etc/limits
+
+# Add the friendly 'adduser' script:
+cat $CWD/adduser > $PKG/usr/sbin/adduser
+chmod 0755 $PKG/usr/sbin/adduser
+
+# Add sulogin to the package:
+cp -a src/sulogin $PKG/sbin
+( cd $PKG/bin ; ln -s ../sbin/sulogin )
+
+# Add the empty faillog log file:
+mkdir -p $PKG/var/log
+touch $PKG/var/log/faillog.new
+
+# Put some stuff back in "old" locations and make symlinks for compat
+( cd $PKG/usr/bin
+  mv faillog ../sbin
+  mv lastlog ../sbin
+  ln -s ../sbin/faillog
+  ln -s ../sbin/lastlog
+)
+
+# Fixup a few permissions:
+# Use 4711 rather than 4755 permissions where setuid root is required:
+find $PKG -type f -perm 4755 -exec chmod 4711 "{}" \;
+
+# Copy docs:
+mkdir -p $PKG/usr/doc/shadow-$VERSION
+cp -a \
+  COPYING* NEWS README* TODO doc/{README*,HOWTO,WISHLIST,*.txt} \
+  $PKG/usr/doc/shadow-$VERSION
+changelogliposuction ChangeLog $PKGNAM $VERSION # Trim down a "ChangeLog" file
+
+# Apply generic Slackware packaging policies:
+cd $PKG
+slackstripall   # strip all .a archives and all ELFs
+slackgzpages -i # compress man & info pages and delete usr/info/dir
+slack644docs    # set doc file permissions to 644
+#slackslack      # chown -R root:root, chmod -R og-w, slackchown, slack644docs
+slackdesc       # install slack-desc and doinst.sh
+slackmp         # run makepkg -l y -c n
+
+# Perform any final checks on the package:
+cd $PKG
+slackhlinks     # search for any hard links

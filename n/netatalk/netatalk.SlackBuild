@@ -1,0 +1,97 @@
+#!/bin/bash
+
+# netatalk.SlackBuild
+# Heavily based on the original Slackware build scripts,
+# Modified by Stuart Winter <mozes@slackware.com>
+# 30-Sep-2004
+
+# Record toolchain & other info for the build log:
+slackbuildinfo
+
+# Paths to skeleton port's source & real Slackware source tree:
+export CWD=$SLACKSOURCE/$PKGSERIES/$PKGNAM
+export PORTCWD=$PWD
+
+# Temporary build locations:
+export TMPBUILD=$TMP/build-$PKGNAM
+export PKG=$TMP/package-$PKGNAM
+mkpkgdirs # Delete & re-create temporary directories then cd into $TMPBUILD
+
+# Extract source:
+tar xvvf $CWD/$PKGNAM-$VERSION.tar.?z*
+cd $PKGNAM-$VERSION || exit 1
+slackhousekeeping
+
+# Fixup some paths in etc2ps.sh
+zcat $CWD/netatalk.etc2ps.diff.gz | patch -p1 || exit 1
+
+# Configure:
+autoreconf -vif
+CFLAGS="$SLKCFLAGS" \
+CPPFLAGS="-D_IPP_PRIVATE_STRUCTURES" \
+./configure \
+   --prefix=/usr \
+   --libdir=/usr/lib${LIBDIRSUFFIX} \
+   --mandir=/usr/man \
+   --sysconfdir=/etc \
+   --libexecdir=/usr/sbin \
+   --localstatedir=/var \
+   --disable-static \
+   --with-shadow \
+   --enable-ddp \
+   --build=$ARCH-slackware-linux-gnueabi || failconfig
+
+# Build:
+make $NUMJOBS || make || exit 1
+
+# Install:
+make install DESTDIR=$PKG || exit 1
+
+# This is normally installed setuid root, but I'm not 100% sure I trust it yet.
+# I see it uses strcpy() in a few places...
+chmod 755 $PKG/usr/bin/afppasswd
+
+# Install the afppasswd config file
+mkdir -p $PKG/etc/netatalk
+cat $CWD/afppasswd > $PKG/etc/netatalk/afppasswd
+
+# Install an init script
+mkdir -p $PKG/etc/rc.d
+cat $CWD/rc.atalk.new > $PKG/etc/rc.d/rc.atalk.new
+chmod 644 $PKG/etc/rc.d/rc.atalk.new
+
+( cd $PKG/etc/netatalk
+  for file in AppleVolumes.default AppleVolumes.system afpd.conf afp_ldap.conf afppasswd atalkd.conf netatalk.conf papd.conf ; do
+    mv -fv $file ${file}.new
+  done
+)
+
+mkdir -p $PKG/usr/doc/netatalk-$VERSION
+cp -a \
+  CONTRIBUTORS COPYING COPYRIGHT NEWS README TODO VERSION doc/* \
+  $PKG/usr/doc/netatalk-$VERSION
+# -1, Redundant
+rm -rf $PKG/usr/doc/netatalk-$VERSION/doc/Makefile* \
+       $PKG/usr/doc/netatalk-$VERSION/doc/htmldocs \
+       $PKG/usr/doc/netatalk-$VERSION/doc/*.pdf
+
+# "make install" creates this directory with chmod 0777
+# I'd rather use 755, but I'll assume since this is a
+# new directory that it is needed for something.  This
+# will help it a bit anyway...
+chmod 1777 $PKG/var/spool/netatalk
+
+# If necessary, start the fakeroot server so we can set file/dir ownerships:
+start_fakeroot
+
+# Apply generic Slackware packaging policies:
+cd $PKG
+slackstripall   # strip all .a archives and all ELFs
+slackgzpages -i # compress man & info pages and delete usr/info/dir
+slackslack      # chown -R root:root, chmod -R og-w, slackchown, slack644docs
+slackdesc       # install slack-desc and doinst.sh
+slackmp         # run makepkg -l y -c n
+
+# Perform any final checks on the package:
+cd $PKG
+slackhlinks     # search for any hard links

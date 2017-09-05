@@ -1,0 +1,115 @@
+#!/bin/bash
+
+# arm/build
+# Check package dependencies, set metadata and launch
+# package build script.
+# by Stuart Winter <mozes@slackware.com>
+#
+source /usr/share/slackdev/buildkit.sh
+
+# Package metadata:
+export PKGNAM=mozilla-firefox
+export VERSION=${VERSION:-55.0.3}
+export BUILD=${BUILD:-1}
+export PKGSERIES=${PKGSERIES:-xap}
+export SLACKPACKAGE=$PKGNAM-$VERSION-$PKGARCH-$BUILD.txz
+
+#
+# For patches, you need to edit the location at which we can find
+# autoconf.
+#
+## ******************************************************************* ##
+# For test packages - best to store in another location rather than
+# overwriting the working copy in the main tree:
+# export PKGSTORE=/tmp/
+# mkdir -vpm755 $PKGSTORE/$PKGSERIES
+## ******************************************************************* ##
+
+# Ensure base ARM packages are installed first:
+slackbasedeps
+
+# Ensure $PKGNAM isn't already installed:
+slackfailpkgdeps $PKGNAM || removepkg $PKGNAM
+
+# Firefox will link against these if installed during build time, but I'd rather make them independent:
+removepkg mozilla-thunderbird seamonkey
+
+# We also need autoconf-2.13 from the extra series.
+# directory.  This is because the newer version of gtk+2-2.12.7
+# causes the build to explode.  So we need to regenerate the autoconf
+# stuff - which needs an older autoconf.
+removepkg autoconf
+# This isn't exactly portable outside of my own build environment
+# but honestly, is anybody else actually using ARMedslack's build system?
+# If so, send me a post card! (or plane tickets to an exotic
+# island with dancing girls and fine wines!  :-)
+# You must install the packages in this order:
+upgradepkg --install-new $PKGSTORE/../extra/autoconf213/autoconf*t?z
+#upgradepkg --install-new ~/armedslack/slackwarearm-current/extra/autoconf213/*z
+
+# Ensure specific build dependencies (mainly libraries):
+{ slackcheckpkgdeps dbus            || installpkg $PKGSTORE/a/dbus-[0-9]*.t?z    || exit 99; }
+{ slackcheckpkgdeps rust            || installpkg $PKGSTORE/d/rust-[0-9]*.t?z    || exit 99; }
+{ slackcheckpkgdeps cargo           || installpkg $PKGSTORE/d/cargo-[0-9]*.t?z    || exit 99; }
+{ slackcheckpkgdeps alsa-lib        || installpkg $PKGSTORE/l/alsa-lib-[0-9]*.t?z || exit 99; }
+{ slackcheckpkgdeps atk             || installpkg $PKGSTORE/l/atk-[0-9]*.t?z     || exit 99; }
+{ slackcheckpkgdeps cairo           || installpkg $PKGSTORE/l/cairo-[0-9]*.t?z   || exit 99; }
+{ slackcheckpkgdeps dbus-glib       || installpkg $PKGSTORE/l/dbus-glib-[0-9]*.t?z || exit 99; }
+{ slackcheckpkgdeps freetype        || installpkg $PKGSTORE/l/freetype-[0-9]*.t?z || exit 99; }
+{ slackcheckpkgdeps gdk-pixbuf2     || installpkg $PKGSTORE/l/gdk-pixbuf2-[0-9]*.t?z || exit 99; }
+{ slackcheckpkgdeps glib2           || installpkg $PKGSTORE/l/glib2-[0-9]*.t?z   || exit 99; }
+{ slackcheckpkgdeps gtk+2           || installpkg $PKGSTORE/l/gtk+2-[0-9]*.t?z   || exit 99; }
+{ slackcheckpkgdeps mozilla-nss     || installpkg $PKGSTORE/l/mozilla-nss-[0-9]*.t?z || exit 99; }
+{ slackcheckpkgdeps pango           || installpkg $PKGSTORE/l/pango-[0-9]*.t?z   || exit 99; }
+{ slackcheckpkgdeps startup-notification || installpkg $PKGSTORE/l/startup-notification-[0-9]*.t?z || exit 99; }
+{ slackcheckpkgdeps fontconfig      || installpkg $PKGSTORE/x/fontconfig-[0-9]*.t?z || exit 99; }
+{ slackcheckpkgdeps libX11          || installpkg $PKGSTORE/x/libX11-[0-9]*.t?z  || exit 99; }
+{ slackcheckpkgdeps libXcomposite   || installpkg $PKGSTORE/x/libXcomposite-[0-9]*.t?z || exit 99; }
+{ slackcheckpkgdeps libXdamage      || installpkg $PKGSTORE/x/libXdamage-[0-9]*.t?z || exit 99; }
+{ slackcheckpkgdeps libXext         || installpkg $PKGSTORE/x/libXext-[0-9]*.t?z || exit 99; }
+{ slackcheckpkgdeps libXfixes       || installpkg $PKGSTORE/x/libXfixes-[0-9]*.t?z || exit 99; }
+{ slackcheckpkgdeps libXrender      || installpkg $PKGSTORE/x/libXrender-[0-9]*.t?z || exit 99; }
+{ slackcheckpkgdeps libXt           || installpkg $PKGSTORE/x/libXt-[0-9]*.t?z   || exit 99; }
+#
+# Just Slackware ARM does this:
+{ slackcheckpkgdeps libffi      || installpkg $PKGSTORE/l/libffi-*.t?z || exit 99 ; }
+
+# Let's build only against mozilla-nss rather than anything else in the mozilla packages:
+removepkg seamonkey seamonkey-solibs mozilla-thunderbird
+{ slackcheckpkgdeps mozilla-nss     || installpkg $PKGSTORE/l/mozilla-nss-[0-9]*.t?z || exit 99; }
+
+# I know.  This is an awful hack but the libffi inside the GCC sources
+# doesn't create a pkg-config file, and I'm not going to create another
+# package from the independant libffi sources (that does create a .pc).
+# We only need this file at build time.
+#cat << EOF > /usr/share/pkgconfig/libffi.pc
+#prefix=/usr/
+#exec_prefix=${prefix}
+#libdir=${exec_prefix}/lib
+#includedir=$( ls -d /usr/lib/gcc/arm-slackware-linux-gnueabi/*/include )
+#
+#Name: libffi
+#Description: Library supporting Foreign Function Interfaces
+#Version: 3.0.9
+#Libs: -lffi
+#Cflags:
+#EOF
+
+# Overwrite the automatic NUMJOBS settings from the build system, since the
+# amount of cores supplied causes firefox to segfault during the build due to RAM
+# exhaustion!
+#export NUMJOBS="-j1"
+
+# Launch the package build script:
+BUILDLOG=$( basename $SLACKPACKAGE .t?z ).build.log
+( ./$PKGNAM.SlackBuild ) >& /dev/stdout | tee $BUILDLOG
+
+# Compress the build log:
+bzip2 -9fvz $BUILDLOG
+
+# Clean up the hack:
+#rm -f /usr/share/pkgconfig/libffi.pc
+
+# Switch back to the normal autoconf:
+removepkg autoconf
+{ slackcheckpkgdeps autoconf || installpkg $PKGSTORE/d/autoconf-[0-9]*.t?z || exit 99; }

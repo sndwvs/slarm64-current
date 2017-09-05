@@ -1,0 +1,102 @@
+#!/bin/bash
+
+# bzip2.SlackBuild
+# by Stuart Winter <mozes@slackware.com> for the Slackware porting Project.
+# Heavily based on the original Slackware build script.
+# 30-May-2004
+
+# Record toolchain & other info for the build log:
+slackbuildinfo
+
+# Incase this lags behind the real package version:
+SOLIB=1.0.6
+
+# Paths to skeleton port's source & real Slackware source tree:
+export CWD=$SLACKSOURCE/$PKGSERIES/$PKGNAM
+export PORTCWD=$PWD
+
+# Temporary build locations:
+export TMPBUILD=$TMP/build-$PKGNAM
+export PKG=$TMP/package-$PKGNAM
+mkpkgdirs # Delete & re-create temporary directories then cd into $TMPBUILD
+
+# Extract source:
+tar xvvf $CWD/$PKGNAM-$VERSION.tar.gz
+cd $PKGNAM-$VERSION || exit 1
+slackhousekeeping
+
+# This should be ok, since libbz2.so.1.0 will still exist.
+zcat $CWD/bzip2.saneso.diff.gz | patch -p1 || exit
+
+# This hack will go away when the ARMv3l toolchain is ready:
+# but.. I sort of like it for historical reasons :-)
+# I'd never do it like this again..
+sed -e 's/^CFLAGS.*=\(.*\)$/CFLAGS = '"$SLKCFLAGS"' \1/' Makefile-libbz2_so | make -f- $NUMJOBS || exit 1
+sed -e 's/^CFLAGS.*=\(.*\)$/CFLAGS = '"$SLKCFLAGS"' \1/' Makefile | make -f- $NUMJOBS || exit 1
+
+# Includes:
+mkdir -p $PKG/usr/include
+install -vpm644 bzlib.h $PKG/usr/include
+
+# Static libraries:
+mkdir -p $PKG/usr/lib
+install -vpm644 libbz2.a $PKG/usr/lib${LIBDIRSUFFIX}/
+
+# Shared objects:
+mkdir -p $PKG/lib
+install -vpm755 libbz2.so.$SOLIB $PKG/lib${LIBDIRSUFFIX}/
+
+# Binaries:
+mkdir -p $PKG/bin
+install -vpm755 bzip2-shared $PKG/bin/bzip2
+install -vpm755 bzip2recover $PKG/bin
+
+# Install man pages:
+mkdir -p $PKG/usr/man/man1
+install -vpm644 bzip2.1 $PKG/usr/man/man1
+( cd $PKG/usr/man/man1 ; ln -vfs bzip2.1 bzip2recover.1 )
+
+# Install docs:
+mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
+cp -favv \
+   CHANGES LICENSE README* \
+   $PKG/usr/doc/$PKGNAM-$VERSION
+
+# Link up them links
+( cd $PKG
+  ( cd lib
+    rm -fv libbz2.so.1.0 libbz2.so.1
+    ln -vsf libbz2.so.$SOLIB libbz2.so.1.0
+    ln -vsf libbz2.so.1.0 libbz2.so.1 )
+  ( cd usr/lib ; ln -vsf ../../lib${LIBDIRSUFFIX}/libbz2.so.1 libbz2.so )
+  ( cd bin ; ln -vsf bzip2 bunzip2 )
+  ( cd bin ; ln -vsf bzip2 bzcat )
+  mkdir -p usr/bin
+  ( cd usr/bin
+    ln -vsf ../../bin/bzip2 .
+    ln -vsf ../../bin/bzip2 bunzip2
+    ln -vsf ../../bin/bzip2 bzcat
+    ln -vsf bzmore bzless
+  )
+)
+
+# Install some optional scripts:
+for file in bzdiff bzgrep bzmore ; do
+  install -vpm755 $file $PKG/usr/bin
+  install -vpm644 $file.1 $PKG/usr/man/man1
+done
+
+# If necessary, start the fakeroot server so we can set file/dir ownerships:
+start_fakeroot
+
+# Apply generic Slackware packaging policies:
+cd $PKG
+slackstripall   # strip all .a archives and all ELFs
+slackgzpages -i # compress man & info pages and delete usr/info/dir
+slackslack      # chown -R root:root, chmod -R og-w, slackchown, slack644docs
+slackdesc       # install slack-desc and doinst.sh
+slackmp         # run makepkg -l y -c n
+
+# Perform any final checks on the package:
+cd $PKG
+slackhlinks     # search for any hard links

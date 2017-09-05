@@ -1,0 +1,25 @@
+#!/bin/bash
+
+# I maintain linuxdoc-tools in Slackware so it's already
+# set up for ARM.
+
+source /usr/share/slackdev/buildkit.sh
+
+OOCWD=$PWD
+
+export PKGNAM=linuxdoc-tools
+export BUILD=${BUILD:-2} # overrides the version in slackware's arm/build
+export PKGEXT=txz
+
+# Temporary build locations:
+export TMPBUILD=$TMP/build-$PKGNAM
+export PKG=$TMP/package-$PKGNAM
+mkpkgdirs # Delete & re-create temporary directories then cd into $TMPBUILD
+
+rm -rf /tmp/linuxdoc-tools
+cp -fa $SLACKSOURCE/ap/linuxdoc-tools $TMPBUILD/
+cd $TMPBUILD/linuxdoc-tools
+#~/armedslack/dbuild
+./arm/build
+
+mv -fv $TMPBUILD/linuxdoc-tools/build*arm*log* $OOCWD/

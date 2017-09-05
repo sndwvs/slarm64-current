@@ -1,0 +1,13 @@
+# Don't set anything if we're building Pixman, since it
+# barfs with -march=armv5te.
+
+if [ "$PKGNAME" != "pixman" ]; then
+   echo "**** x11.SlackBuild (arch.use.flags) Using standard CFLAGS *****"
+   ## Determine the CFLAGS for the known architectures:
+   case $ARCH in
+      arm)     export SLKCFLAGS="-O2 -march=armv7-a -mfpu=vfpv3-d16 -mfloat-abi=hard" ;;
+      *)       export SLKCFLAGS="-O2" ;;
+   esac
+ else
+   echo "**** x11.SlackBuild (arch.use.flags) Not setting architecture CFLAGS because we're building pixman! ****"
+fi

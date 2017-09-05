@@ -1,0 +1,45 @@
+#!/bin/bash
+source /usr/share/slackdev/buildkit.sh
+
+# Global package metadata (applies to both packages):
+export VERSION=${VERSION:-8.15.2}
+export BUILD=${BUILD:-1}
+#export BUILD=${BUILD:-1_slack14.1}
+export PKGSERIES=${PKGSERIES:-n}
+export SLACKPACKAGE=$PKGNAM-$VERSION-$PKGARCH-$BUILD.txz
+
+# Ensure base ARM packages are installed first:
+slackbasedeps
+
+## ******************************************************************* ##
+# For test packages - best to store in another location rather than
+# overwriting the working copy in the main tree:
+# export PKGSTORE=/tmp/
+# mkdir -vpm755 $PKGSTORE/$PKGSERIES
+## ******************************************************************* ##
+
+# Ensure build dependencies (we use lftp's lftpget to grab an faq!):
+# slackcheckpkgdeps tcpip || installpkg $PKGSTORE/n/tcpip-*tgz
+{ slackcheckpkgdeps db44        || installpkg $PKGSTORE/l/db44-[0-9]*.t?z || exit 99 ; }
+{ slackcheckpkgdeps cyrus-sasl  || installpkg $PKGSTORE/n/cyrus-sasl-[0-9]*.t?z || exit 99 ; }
+{ slackcheckpkgdeps openssl     || installpkg $PKGSTORE/n/openssl-[0-9]*.t?z || exit 99 ; }
+# Not sure why it needs this -- but my original script had it in.
+{ slackcheckpkgdeps lftp       || installpkg $PKGSTORE/n/lftp-*.t?z || exit 99 ; }
+
+# Start fakeroot server:
+start_fakeroot
+
+# Package metadata for main sendmail package:
+export PKGNAM=sendmail
+export SLACKPACKAGE=$PKGNAM-$VERSION-$ARCH-$BUILD.txz
+BUILDLOG=$( basename $SLACKPACKAGE .t?z ).build.log
+( ./sendmail.SlackBuild ) >& /dev/stdout | tee $BUILDLOG
+bzip2 -9fvz $BUILDLOG
+
+# Build sendmail config package
+export PKGNAM=sendmail-cf
+export ARCH=noarch
+export SLACKPACKAGE=$PKGNAM-$VERSION-$ARCH-$BUILD.txz
+BUILDLOG=$( basename $SLACKPACKAGE .t?z ).build.log
+( ./sendmail-cf.SlackBuild ) >& /dev/stdout | tee $BUILDLOG
+bzip2 -9fvz $BUILDLOG

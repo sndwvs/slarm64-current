@@ -1,0 +1,14 @@
+--- netkit-rwho-0.17-pre20000412/rwhod/rwhod.c.fixbcast	Fri Feb  2 17:03:03 2001
++++ netkit-rwho-0.17-pre20000412/rwhod/rwhod.c	Fri Feb  2 17:03:38 2001
+@@ -533,6 +533,11 @@
+ 			continue;
+ 		}
+ 		strcpy(np->n_name, ifr->ifr_name);
++		if (strchr(np->n_name, ':')) {
++		  /* virtual interface found */
++		  free((char *) np);
++		  continue;
++		}
+ 		np->n_addrlen = sizeof (ifr->ifr_addr);
+ 		np->n_addr = malloc(np->n_addrlen);
+ 		if (np->n_addr == NULL) {

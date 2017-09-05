@@ -1,0 +1,136 @@
+#!/bin/bash
+
+# kde-l10n.SlackBuild
+# Heavily based on the original Slackware build scripts,
+# Modified by Stuart Winter for ARMedslack.
+#
+# Copyright 2008  Robby Workman  Northport, AL, USA
+# Copyright 2009  Patrick J. Volkerding, Sebeka, MN, USA
+# All rights reserved.
+#
+# Redistribution and use of this script, with or without modification, is
+# permitted provided that the following conditions are met:
+#
+# 1. Redistributions of this script must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+#
+# THIS SOFTWARE IS PROVIDED BY THE AUTHOR ''AS IS'' AND ANY EXPRESS OR IMPLIED
+# WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+# MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
+# EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+# PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+# OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+# WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+# OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+# ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+# Record toolchain & other info for the build log:
+slackbuildinfo
+
+# Paths to skeleton port's source & real Slackware source tree:
+export CWD=$SLACKSOURCE/$PKGSERIES/$PKGNAM
+export PORTCWD=$PWD
+
+# Temporary build locations:
+export TMPBUILD=$TMP/build-kde-l10n
+export PKG=$TMP/package-kde-l10n
+mkpkgdirs # Delete & re-create temporary directories then cd into $TMPBUILD
+
+# When I adapted the Slackware script for kdei, there weren't any
+# files in the local.options directory; so let me know if that changes!
+if [  $( find $CWD/local.options -type f | wc -l ) -ne 0 ]; then 
+   echo "***********************************************"
+   echo "***********************************************"
+   read -p "$CWD/local.options now has files in it!"
+fi
+
+# This is in the Slackware script, but there are no such files in the source
+# dir so I assume this was left over from the KDE package build script template.
+# Get the kde environment variables
+#[ -d kdebase ] && . ./kdebase/profile.d/kde.sh
+
+# Set the config option variables if they are not already set:
+#[ -r ../KDE.options ] && . ../KDE.options
+
+# This function will insert missing kdepim translations from kde-l10n-4.4.5:
+insert_kdepim() {
+  if [ -r $CWD/kdepim-l10n/kdepim-l10n-$(echo $PKGNAM | cut -f 3 -d -)-4.4.5.tar.xz ]; then
+    tar xvf $CWD/kdepim-l10n/kdepim-l10n-$(echo $PKGNAM | cut -f 3 -d -)-4.4.5.tar.xz
+  fi
+  for dir in $(find . -type d -name messages) $(find . -type d -name docs) ; do
+    ( cd $dir
+      if [ -d kdepim ]; then
+        echo "add_subdirectory( kdepim )" >> CMakeLists.txt.new
+      fi
+      if [ -r CMakeLists.txt ]; then
+        cat CMakeLists.txt >> CMakeLists.txt.new
+        mv CMakeLists.txt.new CMakeLists.txt
+      else
+        rm -f CMakeLists.txt.new
+      fi
+    )
+  done
+  # Update DTD specification.  This will fix some of the issues...
+  sed -i -e "s/V4.1.2-Based/V4.2-Based/g" $(grep -lr "V4.1.2-Based" *)
+  sed -i -e "s/V4.1-Based/V4.2-Based/g" $(grep -lr "V4.1-Based" *)
+  sed -i -e "s/V4.2-Based Variant V1.0/V4.2-Based Variant V1.1/g" $(grep -lr "V4.2-Based Variant V1.0" *)
+  if ls $CWD/kdepim-l10n/kdepim-l10n-$(echo $PKGNAM | cut -f 3 -d -)-4.4.5.*.diff.gz 1> /dev/null 2> /dev/null ; then
+    for patch in $CWD/kdepim-l10n/kdepim-l10n-$(echo $PKGNAM | cut -f 3 -d -)-4.4.5.*.diff.gz ; do
+      zcat $patch | patch -p1 --verbose || exit 1
+    done
+  fi
+}
+
+# Build language pack:
+make_language_pack() {
+   rm -rf $PKG
+   mkdir -vpm755 $PKG
+   cd $TMPBUILD
+   rm -rf $PKGNAM-$VERSION
+   tar xvvf $CWD/$PKGNAM-$VERSION.tar.xz || exit 1
+   cd $PKGNAM-$VERSION || exit 1
+   slackhousekeeping
+   insert_kdepim
+   mkdir -p build
+   ( cd build
+      cmake \
+        -DCMAKE_C_FLAGS:STRING="$SLKCFLAGS" \
+        -DCMAKE_CXX_FLAGS:STRING="$SLKCFLAGS" \
+        -DCMAKE_INSTALL_PREFIX=/usr \
+        -DMAN_INSTALL_DIR=/usr/man \
+        -DSYSCONF_INSTALL_DIR=/etc/kde \
+        -DLIB_SUFFIX=${LIBDIRSUFFIX} \
+        .. || exit 1
+     make $NUMJOBS || make || exit 1
+     make install DESTDIR=$PKG || exit 1
+   ) || touch $TMPBUILD/$PKGNAM.failed
+
+   mkdir -p $PKG/install
+   install -vpm644 $CWD/slack-desc/slack-desc.kde-l10n-$PKGLANG $PKG/install/slack-desc
+   cd $PKG
+
+   # Slackware ARM build specific stuff:
+   export SLACKPACKAGE=$PKGNAM-$VERSION-noarch-$BUILD.txz
+   slackstripall   # strip all .a archives and all ELFs
+   slackgzpages -i # compress man & info pages and delete usr/info/dir
+   slackslack      # chown -R root:root, chmod -R og-w, slackchown, slack644docs
+   slackmp         # run makepkg -l y -c n
+}
+
+
+if [ -z $PKGLANG ]; then
+  for PKGLANG in $(cat $CWD/languages) ; do
+    PKGNAM=kde-l10n-$PKGLANG
+    PKG=$TMPBUILD/package-kde-l10n-$PKGLANG
+    # The global options may be overridden here (if needed):
+    [ -r $PORTCWD/local.options/$PKGLANG ] && . $PORTCWD/local.options/$PKGLANG
+    make_language_pack;
+  done
+else
+  PKGNAM=kde-l10n-$PKGLANG
+  PKG=$TMPBUILD/package-kde-l10n-$PKGLANG
+  # The global options may be overridden here (if needed):
+  [ -r $PORTCWD/local.options/$PKGLANG ] && . $PORTCWD/local.options/$PKGLANG
+  make_language_pack;
+fi

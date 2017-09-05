@@ -1,0 +1,71 @@
+#!/bin/bash
+
+# arm/build
+# Pre-build setup script for ARMedslack Linux's gcc
+# by Stuart Winter <mozes@slackware.com>
+# Last modified: 03-Jan-05
+
+source /usr/share/slackdev/buildkit.sh
+
+# Package metadata:
+export PKGNAM=gcc
+export VERSION=${VERSION:-7.2.0}
+export BUILD=${BUILD:-1}
+export PKGSERIES=${PKGSERIES:-d}
+export SLACKPACKAGE=$PKGNAM-$VERSION-$PKGARCH-$BUILD.txz
+
+## ******************************************************************* ##
+# For test packages - best to store in another location rather than
+# overwriting the working copy in the main tree:
+# export PKGSTORE=/tmp/
+# mkdir -vpm755 $PKGSTORE/$PKGSERIES
+## ******************************************************************* ##
+
+# Ensure base ARM packages are installed first:
+slackbasedeps
+
+# Needs
+{ slackcheckpkgdeps infozip  || installpkg $PKGSTORE/a/infozip-[0-9]*.t?z || exit 99; }
+{ slackcheckpkgdeps gmp      || installpkg $PKGSTORE/l/gmp-[0-9]*.t?z     || exit 99; }
+{ slackcheckpkgdeps mpfr     || installpkg $PKGSTORE/l/mpfr-[0-9]*.t?z    || exit 99; }
+{ slackcheckpkgdeps gtk+2    || installpkg $PKGSTORE/l/gtk+2-[0-9]*.t?z    || exit 99; }
+# Introduced in gcc-4.5:
+{ slackcheckpkgdeps libmpc   || installpkg $PKGSTORE/l/libmpc-[0-9]*.t?z  || exit 99; }
+{ slackcheckpkgdeps elfutils || installpkg $PKGSTORE/l/elfutils-[0-9]*.t?z  || exit 99; }
+# configure: error: libXtst not found, required by java.awt.Robot
+
+{ slackcheckpkgdeps harfbuzz || installpkg $PKGSTORE/l/harfbuzz-[0-9]*.t?z  || exit 99; }
+
+# 21-Jan-2016:
+# Remove LLVM.  I cannot get llvm to build when llvm was present during the building of the
+# gcc package.  Removing llvm before building gcc makes llvm build again.
+removepkg llvm
+
+# We need autoconf 2.64 for the moment:
+#removepkg autoconf
+#upgradepkg --install-new $PKGSTORE/../extra/autoconf264/autoconf*t?z || exit 1
+
+# Ensure the kernel headers package is installed.  These should always be installed
+# but it doesn't hurt (unless you're in the middle of building something else)
+# to do this:
+ORIGPATH=$PWD # store this location because we change to /usr/include below
+#( cd /usr/include
+#  rm -rf linux asm-arm asm-generic asm
+#  removepkg kernel-headers
+# Incase I ever forget and delete them from the main ARMedslack tree, I've copied a working Kernel
+# headers from Linux 2.4.26.  In the past I have found 2.6 headers break building gcc.
+#  installpkg ~/tgzstash/d/kernel-headers-*.t?z
+#  installpkg $ORIGPATH/arm/kernel-headers-2.4.26-arm-1.t?z
+#  installpkg $ORIGPATH/arm/kernel-headers-2.4.26-arm-1.t?z
+#  ln -s asm asm-arm )
+
+# Launch the package build script:
+BUILDLOG=$( basename $SLACKPACKAGE .t?z ).build.log
+( ./$PKGNAM.SlackBuild ) >& /dev/stdout | tee $BUILDLOG
+
+# Compress the build log:
+bzip2 -9fvz $BUILDLOG
+
+# Put back the current autoconf:
+#removepkg autoconf
+#{ slackcheckpkgdeps autoconf || installpkg $PKGSTORE/d/autoconf-[0-9]*.t?z  || exit 99; }

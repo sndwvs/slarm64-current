@@ -1,0 +1,70 @@
+#!/bin/bash
+
+# rpm2tgz.SlackBuild
+# Heavily based on the original Slackware build scripts,
+# Modified by Stuart Winter <mozes@slackware.com>
+
+# Record toolchain & other info for the build log:
+slackbuildinfo
+
+# Paths to skeleton port's source & real Slackware source tree:
+export CWD=$SLACKSOURCE/$PKGSERIES/$PKGNAM
+export PORTCWD=$PWD
+
+# Temporary build locations:
+export TMPBUILD=$TMP/build-$PKGNAM
+export PKG=$TMP/package-$PKGNAM
+mkpkgdirs # Delete & re-create temporary directories then cd into $TMPBUILD
+
+# Build:
+cc $SLKCFLAGS -o rpmoffset $CWD/rpmoffset.c || failmake
+
+# Install into package:
+mkdir -p $PKG/usr/{bin,/doc/$PKGNAM}
+install -m755 rpmoffset $PKG/usr/bin
+install -m755 $CWD/rpm2targz $PKG/usr/bin
+
+# Apply some patches:
+( cd $PKG/usr/bin
+  # These are all against "rpm2tgz", so mv it until we are done patching:
+  mv rpm2targz rpm2tgz
+  zcat $CWD/patches/0001-fix-d-handling.patch.gz | patch -p1 || exit 1
+  zcat $CWD/patches/0002-fix-spurious-path-to-rpm-file-with-n-option.patch.gz | patch -p1 || exit 1
+  zcat $CWD/patches/0003-allow-every-user-to-use-rpm2tgz.patch.gz | patch -p1 || exit 1
+  zcat $CWD/patches/0004-produce-more-compliant-slack-desc.patch.gz | patch -p1 || exit 1
+  # Not applied.  Rationale:  We do not want to alter the files in the RPM.
+  #zcat $CWD/patches/0005-gzip-man-info-pages.patch.gz | patch -p1 || exit 1
+  # Not applied.  Rationale:  .tgz works with all versions of Slackware.
+  # Translated RPMs may be targeting systems with no .txz support.
+  #zcat $CWD/patches/0006-should-we-use-.txz-format-in-slackware-current.patch.gz | patch -p1 || exit 1
+  # OK, I will take this version of the patch, as it doesn't change the
+  # default behaviour of rpm2tgz.
+  # mv the script back (wow, this is rather random ;-)
+  mv rpm2tgz rpm2targz
+  zcat $CWD/patches/0007-Add-support-for-.txz-packages-and-rpm2txz-symlink.patch.gz | patch -p1 || exit 1
+  zcat $CWD/patches/0008-Avoid-none-values-in-slack-desc.patch.gz | patch -p1 || exit 1
+  zcat $CWD/patches/0009-Add-c-option-just-as-makepkg-c-y.patch.gz | patch -p1 || exit 1
+) || exit 1
+
+( cd $PKG/usr/bin ; ln -sf rpm2targz rpm2tgz )
+( cd $PKG/usr/bin ; ln -sf rpm2targz rpm2txz )
+chmod 755 $PKG/usr/bin/{rpmoffset,rpm2targz}
+
+# Copy docs:
+cp -favv $CWD/rpm2targz.README \
+          $PKG/usr/doc/$PKGNAM/
+
+# If necessary, start the fakeroot server so we can set file/dir ownerships:
+start_fakeroot
+
+# Apply generic Slackware packaging policies:
+cd $PKG
+slackstripall   # strip all .a archives and all ELFs
+slackgzpages -i # compress man & info pages and delete usr/info/dir
+slackslack      # chown -R root:root, chmod -R og-w, slackchown, slack644docs
+slackdesc       # install slack-desc and doinst.sh
+slackmp         # run makepkg -l y -c n
+
+# Perform any final checks on the package:
+cd $PKG
+slackhlinks     # search for any hard links

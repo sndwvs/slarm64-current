@@ -1,0 +1,67 @@
+#!/bin/bash
+
+# gdbm.SlackBuild
+# Heavily based on the original Slackware build scripts,
+# Modified by Stuart Winter <mozes@slackware.com>
+
+# Record toolchain & other info for the build log:
+slackbuildinfo
+
+# Paths to skeleton port's source & real Slackware source tree:
+export CWD=$SLACKSOURCE/$PKGSERIES/$PKGNAM
+export PORTCWD=$PWD
+
+# Temporary build locations:
+export TMPBUILD=$TMP/build-$PKGNAM
+export PKG=$TMP/package-$PKGNAM
+mkpkgdirs # Delete & re-create temporary directories then cd into $TMPBUILD
+
+# Extract source:
+tar xvvf $CWD/$PKGNAM-$VERSION.tar.?z*
+cd $PKGNAM-$VERSION || exit 1
+slackhousekeeping
+
+# Configure:
+CFLAGS="$SLKCFLAGS" \
+./configure \
+   --prefix=/usr \
+   --libdir=/usr/lib${LIBDIRSUFFIX} \
+   --infodir=/usr/info \
+   --mandir=/usr/man \
+   --disable-static \
+   --build=${SLK_ARCH_BUILDTARGET} || failconfig
+
+# Build:
+make $NUMJOBS || make || failmake
+
+# Install into package:
+make install DESTDIR=$PKG || failinstall
+
+# I'm not sure what out there would need the "libgdbm_compat" library,
+# but it causes versions of ndbm.h and dbm.h to be installed that break
+# compiling nearly everything with any dbm support (like python's dbm.so,
+# and mod_ssl).  Putting 'em in /usr/include/gdbm/ doesn't isolate them
+# enough, either.  File this one under "not worth it".
+#make install-compat INSTALL_ROOT=$PKG
+
+# Copy docs:
+mkdir -p $PKG/usr/doc/gdbm-$VERSION
+cp -fav \
+  ABOUT-NLS AUTHORS COPYING* NEWS NOTE-WARNING README* THANKS \
+  $PKG/usr/doc/gdbm-$VERSION
+changelogliposuction ChangeLog $PKGNAM $VERSION # Trim down a "ChangeLog" file
+
+# If necessary, start the fakeroot server so we can set file/dir ownerships:
+start_fakeroot
+
+# Apply generic Slackware packaging policies:
+cd $PKG
+slackstripall   # strip all .a archives and all ELFs
+slackgzpages -i # compress man & info pages and delete usr/info/dir
+slackslack      # chown -R root:root, chmod -R og-w, slackchown, slack644docs
+slackdesc       # install slack-desc and doinst.sh
+slackmp         # run makepkg -l y -c n
+
+# Perform any final checks on the package:
+cd $PKG
+slackhlinks     # search for any hard links

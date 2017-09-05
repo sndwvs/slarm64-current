@@ -1,0 +1,83 @@
+#!/bin/bash
+
+# v4l-utils.SlackBuild
+# Heavily based on the original Slackware build scripts,
+# Modified by Stuart Winter for Slackware ARM.
+
+# Record toolchain & other info for the build log:
+slackbuildinfo
+
+# Paths to skeleton port's source & real Slackware source tree:
+export CWD=$SLACKSOURCE/$PKGSERIES/$PKGNAM
+export PORTCWD=$PWD
+
+# Temporary build locations:
+export TMPBUILD=$TMP/build-$PKGNAM
+export PKG=$TMP/package-$PKGNAM
+mkpkgdirs # Delete & re-create temporary directories then cd into $TMPBUILD
+
+# Extract source:
+#tar xvvf $CWD/$PKGNAM-$VERSION.tar.?z*
+tar xvvf $PORTCWD/sources/$PKGNAM-$VERSION*tar*
+cd $PKGNAM-$VERSION || exit 1
+slackhousekeeping
+
+# Apply patches:
+#auto_apply_patch $PORTCWD/sources/v4l-utils-1.6.2-sysmacros.patch.xz || exit 1
+
+# Configure:
+CFLAGS="$SLKCFLAGS" \
+CXXFLAGS="$SLKCFLAGS" \
+./configure \
+  --prefix=/usr \
+  --sysconfdir=/etc \
+  --libdir=/usr/lib${LIBDIRSUFFIX} \
+  --mandir=/usr/man \
+  --infodir=/usr/info \
+  --disable-static \
+  --build=$ARCH-slackware-linux-gnueabi || exit 1
+
+# Build:
+make $NUMJOBS || make || exit 1
+
+# Install into package:
+make install DESTDIR=$PKG || exit 1
+
+# These shouldn't be used:
+rm -f $PKG/usr/lib${LIBDIRSUFFIX}/*.la
+
+# System udev files should go under /lib:
+if [ -r $PKG/etc/udev/rules.d/70-infrared.rules ]; then
+   mkdir -p $PKG/lib/udev/rules.d
+   mv $PKG/etc/udev/rules.d/70-infrared.rules $PKG/lib/udev/rules.d
+   rmdir $PKG/etc/udev/rules.d 2> /dev/null
+   rmdir $PKG/etc/udev 2> /dev/null
+   rmdir $PKG/etc 2> /dev/null
+   sed -i "s,/etc/udev/rules.d,/lib/udev/rules.d,g" $PKG/lib/udev/rules.d/70-infrared.rules
+fi
+
+# I'd rather see these remain in /etc where they have been:
+mv $PKG/lib/udev/rc_keymaps/* $PKG/etc/rc_keymaps
+rmdir $PKG/lib/udev/rc_keymaps
+
+# Add a documentation directory:
+mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
+cp -a \
+  COPYING* README* TODO  \
+  $PKG/usr/doc/$PKGNAM-$VERSION
+changelogliposuction ChangeLog $PKGNAM $VERSION # Trim down a "ChangeLog" file
+
+# If necessary, start the fakeroot server so we can set file/dir ownerships:
+start_fakeroot
+
+# Apply generic Slackware packaging policies:
+cd $PKG
+slackstripall   # strip all .a archives and all ELFs
+slackgzpages -i # compress man & info pages and delete usr/info/dir
+slackslack      # chown -R root:root, chmod -R og-w, slackchown, slack644docs
+slackdesc       # install slack-desc and doinst.sh
+slackmp         # run makepkg -l y -c n
+
+# Perform any final checks on the package:
+cd $PKG
+slackhlinks     # search for any hard links

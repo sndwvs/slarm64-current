@@ -1,0 +1,51 @@
+#!/bin/bash
+
+# arm/build
+# Check package dependencies, set metadata and launch
+# package build script.
+# by Stuart Winter <mozes@slackware.com>
+#
+source /usr/share/slackdev/buildkit.sh
+
+# Package metadata:
+export PKGNAM=t1lib
+export VERSION=5.1.2
+export BUILD=1
+#export BUILD=3_slack13.37
+#export BUILD=4_slack14.0
+export PKGSERIES=l
+export SLACKPACKAGE=$PKGNAM-$VERSION-$ARCH-$BUILD.txz
+
+## ******************************************************************* ##
+# For test packages - best to store in another location rather than
+# overwriting the working copy in the main tree:
+# export PKGSTORE=/tmp/
+# mkdir -vpm755 $PKGSTORE/$PKGSERIES
+## ******************************************************************* ##
+
+# Reset the ARM file system: restore it to the 'factory settings'
+# as it were (this has no effect when building natively):
+sboxsysrestore
+
+# Ensure base ARM packages are installed first:
+slackbasedeps
+
+# Ensure specific build dependencies (mainly libraries):
+{ slackcheckpkgdeps util-linux      || installpkg $PKGSTORE/a/util-linux-[0-9]*.t?z || exit 99; }
+{ slackcheckpkgdeps libICE          || installpkg $PKGSTORE/x/libICE-[0-9]*.t?z  || exit 99; }
+{ slackcheckpkgdeps libSM           || installpkg $PKGSTORE/x/libSM-[0-9]*.t?z   || exit 99; }
+{ slackcheckpkgdeps libX11          || installpkg $PKGSTORE/x/libX11-[0-9]*.t?z  || exit 99; }
+{ slackcheckpkgdeps libXau          || installpkg $PKGSTORE/x/libXau-[0-9]*.t?z  || exit 99; }
+{ slackcheckpkgdeps libXdmcp        || installpkg $PKGSTORE/x/libXdmcp-[0-9]*.t?z || exit 99; }
+{ slackcheckpkgdeps libXext         || installpkg $PKGSTORE/x/libXext-[0-9]*.t?z || exit 99; }
+{ slackcheckpkgdeps libXpm          || installpkg $PKGSTORE/x/libXpm-[0-9]*.t?z  || exit 99; }
+{ slackcheckpkgdeps libXt           || installpkg $PKGSTORE/x/libXt-[0-9]*.t?z   || exit 99; }
+{ slackcheckpkgdeps libxcb          || installpkg $PKGSTORE/x/libxcb-[0-9]*.t?z  || exit 99; }
+
+# Launch the package build script:
+BUILDLOG=$( basename $SLACKPACKAGE .t?z ).build.log
+( ./$PKGNAM.SlackBuild ) >& /dev/stdout | tee $BUILDLOG
+
+# Compress the build log:
+bzip2 -9fvz $BUILDLOG
+

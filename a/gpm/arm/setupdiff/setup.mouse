@@ -1,0 +1,104 @@
+#!/bin/sh
+#BLURB="Configure the console mouse support (GPM)."
+
+# These platforms are headless so we don't need to configure
+# this package.
+#
+# Silently exit if we find ourselves on one of these platforms
+egrep -q "SheevaPlug" /proc/cpuinfo > /dev/null 2>&1 && exit
+
+T_PX=$1
+TMP=/var/log/setup/tmp
+GPM=/usr/sbin/gpm
+# If the mouse is USB, we can autodetect it:
+if [ -r /proc/bus/usb/devices ]; then
+ if cat /proc/bus/usb/devices | grep usb_mouse 1> /dev/null 2> /dev/null ; then
+  MOUSE_TYPE=usb
+  MTYPE="imps2"
+  ( cd $T_PX/dev ; rm -f mouse ; ln -sf input/mice mouse )
+ fi
+fi
+
+if [ "$MOUSE_TYPE" = "" ]; then
+ dialog --title "MOUSE CONFIGURATION" --default-item "imps2" --menu \
+"This part of the configuration \
+process will create a /dev/mouse link pointing to your default mouse device.  \
+You can change the /dev/mouse link later if the mouse doesn't work, or if \
+you switch to a different type of pointing device.  We will also use the \
+information about the mouse to set the correct protocol for gpm, the Linux \
+mouse server.  Please select a mouse type \
+from the list below:" 20 76 8 \
+ "PS2" "Bus/PS2 mouse (ARM Versatile)" \
+ "USB" "USB Mouse (Most systems)" \
+ 2> $TMP/mtype
+ if [ ! $? = 0 ]; then
+  rm -f $TMP/mtype
+  exit
+ fi
+ if [ -f $TMP/mtype ]; then
+  MOUSE_TYPE="`cat $TMP/mtype`"
+ else
+  unset MOUSE_TYPE
+ fi
+ rm -f $TMP/mtype
+
+# I know how nasty this code looks now but I don't want to patch
+# this script more than I have to.
+# This is for Linux 2.4.  ARMedslack/MoZes (me) doesn't "support" 2.4. This is just for
+# future reference:
+#   RiscPC)      ( cd $T_PX/dev ; rm -f mouse ; ln -sf riscpcmouse mouse ) ; MOUSE_TYPE=busmouse ;;
+#
+ case "${MOUSE_TYPE}" in
+   PS2)      ( cd $T_PX/dev ; rm -f mouse ; ln -sf input/mice mouse ) ; MTYPE=ps2 ;;
+   USB)      ( cd $T_PX/dev ; rm -f mouse ; ln -sf input/mice mouse ) ; MTYPE=ps2 ;;
+ esac
+
+fi
+
+# OK, we know enough now to create a sample rc.gpm:
+cat << EOF > $T_PX/etc/rc.d/rc.gpm-sample
+#!/bin/sh
+# Start/stop/restart the GPM mouse server:
+
+if [ "\$1" = "stop" ]; then
+  echo "Stopping gpm..."
+  $GPM -k
+elif [ "\$1" = "restart" ]; then
+  echo "Restarting gpm..."
+  $GPM -k
+  sleep 1
+  $GPM -m /dev/mouse -t $MTYPE
+else # assume \$1 = start:
+  echo "Starting gpm:  $GPM -m /dev/mouse -t $MTYPE"
+  $GPM -m /dev/mouse -t $MTYPE
+fi
+
+# There is another way to run GPM, where it acts as a repeater outputting a
+# virtual MouseSystems mouse on /dev/gpmdata.  This is useful for feeding
+# gpm's data to X, especially if you've got a busmouse (in that situation X
+# and gpm may not coexist without using a repeater).  To try running a GPM
+# repeater for X, change the gpm command line to look like this:
+# $GPM -R msc -m /dev/mouse -t $MTYPE
+# Then, make sure that the mouse configuration in your XF86Config file refers
+# to the repeater device (/dev/gpmdata) and a MouseSystems mouse type.  If you
+# edit the file directly, you'll want the lines to look like this (minus the
+# comment marks '#' shown here, of course):
+#Section "Pointer"
+#    Protocol    "MouseSystems"
+#    Device      "/dev/gpmdata"
+
+EOF
+chmod 755 $T_PX/etc/rc.d/rc.gpm-sample
+# Now ask if this should be the new rc.gpm:
+ dialog --title "GPM CONFIGURATION" --yesno \
+"The gpm program allows you to cut and paste text on\n\
+the virtual consoles using a mouse.  If you choose to\n\
+run it at boot time, this line will be added to your\n\
+/etc/rc.d/rc.gpm:\n\
+\n\
+  $GPM -m /dev/mouse -t $MTYPE \n\
+\n\
+Shall we load the gpm program at boot time?" 12 58 
+ if [ $? = 0 ]; then
+   mv $T_PX/etc/rc.d/rc.gpm-sample $T_PX/etc/rc.d/rc.gpm
+ fi

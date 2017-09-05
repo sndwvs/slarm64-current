@@ -1,0 +1,231 @@
+#!/bin/bash
+
+#
+# Script : slackwarearm-current/source/kde/indibuild
+# Purpose: Build modular KDE packages, handling build numbers automatically.
+# by Stuart Winter <mozes@slackware.com>
+#
+# Copyright 2012,2017  Stuart Winter, Surrey, England.
+# All rights reserved.
+#
+# Redistribution and use of this script, with or without modification, is
+# permitted provided that the following conditions are met:
+#
+# 1. Redistributions of this script must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+#
+#  THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED
+#  WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+#  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO
+#  EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+#  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+#  PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+#  OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+#  WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+#  OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+#  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+#
+# Building individual packages
+# -----------------------------
+# This script aids with building, unattended, the individual components.
+# Before running this script, be sure to wipe the existing packages from the
+# 'slackware/x' directory.  This helps determine if any of the builds failed/
+# if there packages missing.
+# It's a bit clunky, but we love it :)
+#
+# Build numbers
+# -------------
+# You can set specific build numbers by creating the
+# package name inside build-nums dir:
+# echo 2 > build-nums/xinit
+#
+# The way build numbers are handled in Slackware ARM is that
+# when building individual components (which is always the way
+# unless you're starting a port from scratch), you:
+#
+# 1.  Check if there's a file with the package base name inside the 'build-nums' directory
+#     and create one if there isn't.
+#
+# 2.  Adjust the build number -- either increasing it if it's a package rebuild,
+#     or resetting it to '1' if it's a version update.
+#
+# The reason for this is that Slackware build numbers often differ from Slackware ARM
+# since it takes a while to catch up, and there may have already been several
+# rebuilds in Slackware before we even start looking at rebuilding the package.
+#
+# When dealing with an Xorg update in Slackware, the easiest way to do it (without
+# running the entire KDE.SlackBuild), is to:
+# - Filter only the x updates from the ChangeLog entries
+# - Grep "Removed" note down which exist for ARM, and paste those .tgz file names into
+#   Slackware ARM's changelog.
+# - Grep "Rebuilt" and add those to this script
+# - Grep "Added" and add those to the "Upgraded" (since the script handles them the same)
+# - Grep "Upgraded", as below:
+# cat /tmp/f | grep Upgraded | sed 's?+x/??g' | cut -d: -f1 | rev | cut -d- -f4- | rev | while read updpkg ; do echo "$updpkg \\" ; done
+# The first time, run this script WITHOUT updating build numbers - just to get everything
+# upgraded and on the live filesystem.
+# Run again, without updating version numbers to ensure everything links against each other
+# For the Rebuilt packages, build those by supplying the "R" option to the "build" function
+# For Upgraded packages, build those with the U option.
+#######################################################################################
+#
+# pkg-config --libs --cflags glib-2.0
+#
+#
+
+source /usr/share/slackdev/buildkit.sh
+ORIGCWD=$PWD
+
+mkdir -vpm755 $ORIGCWD/build-logs
+
+##############################################################
+#
+# Syntax:
+#    build <pkgname> [U|R]
+# U=Package version upgrade, so the .tgz will be at build '1'
+#   do this for NEW packages also
+# R=Package rebuild, so the .tgz will be build+1
+#
+# If you exclude R or U then the build number is unmodified.
+#
+function build () {
+
+ unset MODBUILDNOBUMP ## allow build number to be incremented.
+ INDIPKG=$1
+
+ echo "*********************************"
+ echo "***** Working on modular package: $INDIPKG *****"
+ echo "*********************************"
+
+ # If it's an upgrade then we delete any build number, otherwise if it's a rebuild,
+ # we'd want to update the build number but I'll leave that until later :)
+ if [ "$2" = "U" -o "$2" = "A" ]; then
+    echo "This is tagged as a package UPGRADE/NEW PACKAGE, set build: 1."
+    echo "MODBUILD=1" > $ORIGCWD/build-nums/$INDIPKG
+  elif [ "$2" = "R" ]; then
+    # It's a rebuild & increment the build number:
+    if [ -s $ORIGCWD/build-nums/$INDIPKG ]; then
+       source $ORIGCWD/build-nums/$INDIPKG
+       let MODBUILD++
+       echo "Tagged as a rebuild - will be build: $MODBUILD"
+       # This is handled in KDE.SlackBuild now:
+       # but ensure that MODBUILDNOBUMP is unset in arm/build:
+       # (it should always be unless we're bootstrapping a new X)
+#       echo "_PKGVER=${_PKGVER}" > $ORIGCWD/build-nums/$INDIPKG
+#       echo "MODBUILD=$MODBUILD" >> $ORIGCWD/build-nums/$INDIPKG
+      else
+       # KDE.SlackBuild assumes a build number of what is set in "arm/build" if there isn't a
+       # build stamp file for a particular modular package.
+       # but if we've not already got a build number, but got a package then we need
+       # to assume that this is going to be the 2nd build.
+       # There's no package version included at this point but that does not
+       # matter - it'll be dealt with in KDE.SlackBuild.
+       echo "MODBUILD=2" > $ORIGCWD/build-nums/$INDIPKG
+       echo "Tagged as a rebuild but has no build stamp file - setting as build: 2"
+    fi
+  # If we don't specify either U or R, then we leave the build number alone
+  # since we may be just making some test packages prior to a public tree push.
+  # Build numbers are never updated when the build of a particular package version
+  # hasn't ever been pushed publically.
+  elif [ -z "$2" ]; then
+     export MODBUILDNOBUMP=Yes
+     echo "*** Package rebuild without build increment ***"
+  fi
+
+ # Start the build:
+  if [ -f $SLACKSOURCE/kde/modules/${INDIPKG} ]; then
+     echo "** Appears to be a full package **"
+     # It's a full component e.g. "kdebindings"
+     ~/armedslack/dbuild ${INDIPKG} | tee $ORIGCWD/build-logs/$INDIPKG.log
+    else
+    # It's a sub module - e.g. "smokeqt" so we supply KDE.SlackBuild with "kdebindings:smokeqt"
+    # Fix up the module lists - the white spacing is screwed for some reason:
+    sed -i 's/[ \t]*$//' $SLACKSOURCE/kde/modules/*
+    echo "** Perhaps a component package? **"
+    if [ -z "$( cd $SLACKSOURCE/kde/modules && egrep -riH ${INDIPKG}$ * 2>&1 )" ]; then
+       echo "Module: $INDIPKG not found either a full or component package. Check package name?"
+       exit 1
+    fi
+    ~/armedslack/dbuild "$( cd $SLACKSOURCE/kde/modules && egrep -riH ${INDIPKG}$ * 2>&1 )" | tee $ORIGCWD/build-logs/$INDIPKG.log
+fi
+ bzip2 -9vf $ORIGCWD/build-logs/$INDIPKG.log
+}
+
+#########################################################################################
+# Slackware ARM packages
+# These packages aren't included in Slackware either because they aren't needed
+# or are found not to work.
+#
+# They're needed on the ARM platform though.
+#########################################################################################
+
+# Amarok update block:
+#( pushd ~/ac/source/ap/mysql && ./amarok-dance
+#  popd
+#  build amarok U
+#  pushd ~/ac/source/ap/mysql && ./amarok-dance )
+# Comment this out unless you're building amarok:
+#export NOCHECKMYSQLEMBEDDED=yes
+
+build kdelibs U
+exit
+
+#build step
+
+#build kmix R
+
+#build kde-runtime
+#build kde-runtime R
+#exit
+
+#build bluedevil R
+#build kdeconnect-kde R
+#build kdevelop-pg-qt R
+
+#build kopete R
+#exit
+#build kdepimlibs R
+build calligra R
+#build kig R
+#build kde-workspace R
+exit
+
+# We rebuild things over and over to get them all holding hands.  Obviously this doesn't
+# guarantee hand holding since the build list remains static, but those who refuse can be
+# cajoled into it later if need be.
+
+for (( pass=1; pass <=2 ; pass++ )); do
+  echo "***********************************"
+  echo "***** KDE indibuild PASS $pass *******"
+  echo "***********************************"
+
+  for kdepkg in \
+     "kde-runtime R" \
+      ; do
+
+
+  #thispkg=${i% *}
+  #thistag=${i##* }
+
+  # If you're UPGRADING all of the packages in the list below then you can
+  # set this to be 'U'.
+
+  # Running independently (not via r2b (the Slackware ARM build system)) and on final pass,
+  # or running through r2b and on both indibuild & r2b's final pass:
+  #
+  # Until the final pass we only care about getting the package compiled and installed
+  # on the system: the Slackware binary package build numbers (1=added/upgraded or >1 = rebuilt)
+  # get set on the final pass.
+  #
+  if [ -z "$R2BCURRENTPASS" -a $pass = 2 ] || [ "$R2BFINALPASS" = "1" -a $pass = 2 ]; then
+     BUILDTAG=${kdepkg##* } # Take tag supplied with the package name from the list above
+    else
+     unset BUILDTAG ## Build version will remain untouched until the final pass of either r2b and/or indibuild.
+  fi
+
+  echo "Package: ${kdepkg%%\ *}, Final tag: ${kdepkg##*\ } [ current pass tag=${BUILDTAG:-none, still building} ]"
+  build ${kdepkg% *} $BUILDTAG # e.g. sends "kdelibs U" to the build function
+done
+
+# end "pass"
+done

@@ -1,0 +1,101 @@
+#!/bin/bash
+
+# wireless-tools.SlackBuild
+# Heavily based on the original Slackware build scripts,
+# Modified by Stuart Winter <mozes@slackware.com>
+# 30-Sep-2004
+#
+# Copyright 2008, 2009, 2010, 2012  Patrick J. Volkerding, Sebeka, Minnesota, USA
+# All rights reserved.
+#
+# Redistribution and use of this script, with or without modification, is
+# permitted provided that the following conditions are met:
+#
+# 1. Redistributions of this script must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+#
+#  THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED
+#  WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+#  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO
+#  EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+#  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+#  PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+#  OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+#  WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+#  OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+#  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+
+# Paths to skeleton port's source & real Slackware source tree:
+export CWD=$SLACKSOURCE/$PKGSERIES/$PKGNAM
+export PORTCWD=$PWD
+
+# Temporary build locations:
+export TMPBUILD=$TMP/build-$PKGNAM
+export PKG=$TMP/package-$PKGNAM
+mkpkgdirs # Delete & re-create temporary directories then cd into $TMPBUILD
+
+# Extract source:
+tar xvvf $CWD/wireless_tools.$VERSION.tar.gz
+cd wireless_tools* || exit 1
+slackhousekeeping
+
+# Create package directory framework:
+mkdir -vpm755 $PKG/{sbin,etc/rc.d,usr/{lib,include,man/man8,doc/$PKGNAM-$VERSION}}
+
+# Apply patches:
+zcat $CWD/wireless_tools.nowhine.diff.gz | patch -p1 --verbose --suffix=.orig --backup || failpatch
+zcat $CWD/wireless_tools.static.diff.gz | patch -p1 --verbose --suffix=.orig --backup || failpatch
+
+# Set CFLAGS:
+sed -i 's/^CFLAGS.*=\(.*\)$/CFLAGS='"$SLKCFLAGS"' \1/' Makefile
+
+# Build:
+make $NUMJOBS || make || failmake
+
+# Install:
+install -m755 ifrename iwconfig iwevent iwgetid iwlist iwpriv iwspy $PKG/sbin
+
+# The library seems to be used by kdenetwork, but since the .soname in the shared library
+# doesn't seem to be forward-thinking we'll leave that out still:
+install -m644 libiw.a $PKG/usr/lib
+install -m644 wireless.h iwlib.h $PKG/usr/include
+
+# Install man pages:
+mkdir -p $PKG/usr/man/man{5,7,8}
+install -m644 *.8 $PKG/usr/man/man8
+install -m644 iftab.5 $PKG/usr/man/man5
+install -m644 wireless.7 $PKG/usr/man/man7
+
+# Install docs:
+mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
+cp -a COPYING INSTALL *.txt README* \
+     $PKG/usr/doc/$PKGNAM-$VERSION
+
+# Add init scripts from Eric Hameleers:
+mkdir -p $PKG/etc/rc.d
+cat $CWD/scripts/rc.wireless > $PKG/etc/rc.d/rc.wireless.new
+chmod 755 $PKG/etc/rc.d/rc.wireless.new
+# This might contain a secret key, so we'll use chmod 600:
+cat $CWD/scripts/rc.wireless.conf > $PKG/etc/rc.d/rc.wireless.conf.new
+chmod 600 $PKG/etc/rc.d/rc.wireless.conf.new
+
+# Quell error messages from looking on a box which has no wireless
+# support in /proc.  This drives me mad.
+#( cd $PKG/etc/rc.d
+#  patch --verbose -p0 < $PORTCWD/quieten-rc.diff ) || failpatch
+
+# If necessary, start the fakeroot server so we can set file/dir ownerships:
+start_fakeroot
+
+# Apply generic Slackware packaging policies:
+cd $PKG
+slackstripall   # strip all .a archives and all ELFs
+slackgzpages -i # compress man & info pages and delete usr/info/dir
+slackslack      # chown -R root:root, chmod -R og-w, slackchown, slack644docs
+slackdesc       # install slack-desc and doinst.sh
+slackmp         # run makepkg -l y -c n
+
+# Perform any final checks on the package:
+cd $PKG
+slackhlinks     # search for any hard links

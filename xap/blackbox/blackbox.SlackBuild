@@ -1,0 +1,136 @@
+#!/bin/bash
+
+# blackbox.SlackBuild
+# Heavily based on the original Slackware build scripts,
+# Modified by Stuart Winter <mozes@slackware.com>
+#
+# Copyright 2006, 2007  Patrick J. Volkerding, Sebeka, MN, USA
+# All rights reserved.
+#
+# Redistribution and use of this script, with or without modification, is
+# permitted provided that the following conditions are met:
+#
+# 1. Redistributions of this script must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+#
+#  THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED
+#  WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+#  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO
+#  EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+#  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+#  PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+#  OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+#  WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+#  OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+#  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+# Version of bbkeys:
+BBKEYSVER=${BBKEYSVER:-0.9.1}
+
+# Record toolchain & other info for the build log:
+slackbuildinfo
+
+# Paths to skeleton port's source & real Slackware source tree:
+export CWD=$SLACKSOURCE/$PKGSERIES/$PKGNAM
+export PORTCWD=$PWD
+
+# Temporary build locations:
+export TMPBUILD=$TMP/build-$PKGNAM
+export PKG=$TMP/package-$PKGNAM
+mkpkgdirs # Delete & re-create temporary directories then cd into $TMPBUILD
+
+# Extract source:
+tar xvvf $CWD/$PKGNAM-$VERSION.tar.xz
+cd $PKGNAM* || exit 1
+slackhousekeeping
+
+# Build fix for libX11-1.5+
+zcat $CWD/textpropertytostring-unconditional.diff.gz | patch --verbose -p1 || exit 1
+
+# Build fix for gcc-4:
+zcat $CWD/blackbox-0.70.1-gcc-4.3.patch.gz | patch --verbose -p1 || exit 1
+
+# Build fixes:
+#tar xf $PORTCWD/sources/*debian*tar* || exit 1
+#for i in debian/patches/*diff* ; do
+#  auto_apply_patch $i || exit 1
+#done
+
+# Configure:
+CFLAGS="$SLKCFLAGS" \
+./configure \
+   --prefix=/usr \
+   --libdir=/usr/lib${LIBDIRSUFFIX} \
+   --enable-shape \
+   --enable-slit \
+   --enable-interlace \
+   --enable-nls \
+   --enable-shared=yes \
+   --enable-static=no \
+   --enable-timed-cache \
+   --infodir=/usr/info \
+   --mandir=/usr/man \
+   --build=$ARCH-slackware-linux-gnueabi || failconfig
+
+# Build:
+make $NUMJOBS || make || failmake
+
+# Install onto filesystem - needed for bbkeys to find libbt:
+make install || exit 1
+
+# Install into package:
+make install DESTDIR=$PKG || failinstall
+mkdir -p $PKG/etc/X11/xinit
+zcat $CWD/xinitrc.blackbox.gz > $PKG/etc/X11/xinit/xinitrc.blackbox
+chmod 755 $PKG/etc/X11/xinit/xinitrc.blackbox
+zcat $CWD/startblackbox.gz > $PKG/usr/bin/startblackbox
+chmod 755 $PKG/usr/bin/startblackbox
+
+# Add a documentation directory:
+mkdir -p $PKG/usr/doc/${PKGNAM}-$VERSION
+cp -a \
+  AUTHORS INSTALL LICENSE README* TODO \
+  $PKG/usr/doc/${PKGNAM}-$VERSION
+changelogliposuction ChangeLog $PKGNAM $VERSION
+
+######################################
+# Compile bbkeys program for blackbox:
+
+cd $TMPBUILD
+tar xvvf $CWD/bbkeys-${BBKEYSVER}.tar.xz
+cd bbkeys-${BBKEYSVER} || exit 1
+
+# Configure:
+CFLAGS="$SLKCFLAGS" \
+./configure \
+   --prefix=/usr \
+   --libdir=/usr/lib${LIBDIRSUFFIX} \
+   --infodir=/usr/info \
+   --mandir=/usr/man \
+   --docdir=/usr/doc/bbkeys-$BBKEYSVER \
+   --build=$ARCH-slackware-linux-gnueabi || failconfig
+
+# --docdir isn't honoured:
+sed -i 's?docdir.*=.*?docdir = /usr/doc/bbkeys-'"$BBKEYSVER"'?g' Makefile
+
+# Build and install:
+make $NUMJOBS || failmake
+
+# Install into package:
+make install DESTDIR=$PKG || failinstall
+changelogliposuction ChangeLog bbkeys $BBKEYSVER
+
+# If necessary, start the fakeroot server so we can set file/dir ownerships:
+start_fakeroot
+
+# Apply generic Slackware packaging policies:
+cd $PKG
+slackstripall   # strip all .a archives and all ELFs
+slackgzpages -i # compress man & info pages and delete usr/info/dir
+slackslack      # chown -R root:root, chmod -R og-w, slackchown, slack644docs
+slackdesc       # install slack-desc and doinst.sh
+slackmp         # run makepkg -l y -c n
+
+# Perform any final checks on the package:
+cd $PKG
+slackhlinks     # search for any hard links
