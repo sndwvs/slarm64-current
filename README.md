@@ -1,4 +1,4 @@
-[b] slackwarearm64-current [/b]
+### slackwarearm64-current ###
 
-original project [b] Stuarta Wintera [/b] http://slackware.uk/slackwarearm/slackwarearm-current/
+original project ### Stuarta Wintera ### http://slackware.uk/slackwarearm/slackwarearm-current/
 
