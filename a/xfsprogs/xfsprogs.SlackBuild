@@ -64,11 +64,11 @@ make $NUMJOBS || make || failmake
 # Install into package:
 make install DIST_ROOT=$PKG
 make install-dev DIST_ROOT=$PKG
-make install-qa DIST_ROOT=$PKG
 
 # Do docs:
+mv $PKG/usr/share/doc $PKG/usr
 mv $PKG/usr/doc/xfsprogs $PKG/usr/doc/xfsprogs-$PKG_VERSION
-cp -a README doc/COPYING doc/CREDITS doc/PORTING \
+cp -a README doc/COPYING doc/CREDITS \
   $PKG/usr/doc/xfsprogs-$PKG_VERSION
 rm -f $PKG/usr/doc/xfsprogs-$VERSION/CHANGES.gz
 changelogliposuction ChangeLog $PKGNAM $VERSION
@@ -80,19 +80,19 @@ mv $PKG/sbin/xfs_* $PKG/usr/sbin
 mv $PKG/usr/sbin/xfs_repair $PKG/sbin
 
 # Remove bogus files:
-rm -f $PKG/lib/*.a $PKG/lib/*.so $PKG/lib/*.la $PKG/usr/lib/*.la
+rm -f $PKG/lib${LIBDIRSUFFIX}/*.a $PKG/lib${LIBDIRSUFFIX}/*.so $PKG/lib${LIBDIRSUFFIX}/*.la $PKG/usr/lib/*.la
 
 # Make /usr/lib/libhandle.so a symlink to /lib/libhandle.so.1:
-if [ -f $PKG/lib/libhandle.so.1 ]; then
+if [ -f $PKG/lib${LIBDIRSUFFIX}/libhandle.so.1 ]; then
    mkdir -p $PKG/usr/lib${LIBDIRSUFFIX}
-  ( cd $PKG/usr/lib ; rm -f libhandle.so ; ln -sf /lib/libhandle.so.1 libhandle.so )
+  ( cd $PKG/usr/lib${LIBDIRSUFFIX} ; rm -f libhandle.so ; ln -sf /lib${LIBDIRSUFFIX}/libhandle.so.1 libhandle.so )
 else
   exit 1
   # and fix your script!  ;-)
 fi
 
 # Fix shared library perms:
-chmod 755 $PKG/lib/*
+chmod 755 $PKG/lib${LIBDIRSUFFIX}/*
 
 # If necessary, start the fakeroot server so we can set file/dir ownerships:
 start_fakeroot
