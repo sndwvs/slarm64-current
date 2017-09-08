@@ -141,7 +141,7 @@ function extractglibcsource () {
 #    done
 
   # Determine version of ld-linux.so
-  case $ARCH in
+  case $SLACKWARE_ARCH in
     arm)     export ARMLDLINUXVER="$( grep -A1 "hard-float ABI" sysdeps/unix/sysv/linux/arm/shlib-versions | egrep "^ld=" | awk -F= '{print $2}' )" ;;
     aarch64) export ARMLDLINUXVER="$( egrep "^ld=" sysdeps/unix/sysv/linux/aarch64/shlib-versions | grep -v "be" | awk -F= '{print $2}' )" ;;
   esac
