@@ -33,7 +33,7 @@ slackhousekeeping
 # of u-boot with support for that device), we just need to configure it to be some sort of 'ARM' CPU
 # so that we can build the u-boot tools.
 make distclean
-make guruplug_config || exit 1
+make sandbox_config || exit 1
 
 # Build:
 echo "** Building tools **"
