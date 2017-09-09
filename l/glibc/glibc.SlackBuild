@@ -39,7 +39,7 @@ export PORTCWD=$PWD
 case $ARCH in
    arm|aarch64) SLKCFLAGS="${SLKCFLAGS/-O2/-O3} -pipe -fPIC -fno-strict-aliasing"
                 SLKCONFARGS="--without-selinux --disable-werror"
-                LIBDIRSUFFIX=""
+                LIBDIRSUFFIX="64"
               ;;
 esac
 
@@ -336,7 +336,7 @@ fi
 mkdir -vpm755 $PPROFILE/usr/lib${LIBDIRSUFFIX}
 cd $PPROFILE
 # Might as well just grab these with 'mv' to simplify things later:
-mv $PKG/usr/lib${LIBDIRSUFFIX}/lib*_p.a usr/lib
+mv $PKG/usr/lib${LIBDIRSUFFIX}/lib*_p.a usr/lib${LIBDIRSUFFIX}
 # Profile libs should be stripped.  Use the debug libs to debug...
 ( cd usr/lib${LIBDIRSUFFIX} ; strip -g *.a )
 mkdir -vpm755 install
@@ -349,7 +349,7 @@ makepkg -l y -c n $PKGSTORE/l/glibc-profile-$VERSION-$PKGARCH-$BUILD.txz
 cd $PDEBUG
 mkdir -vpm755 usr/lib${LIBDIRSUFFIX}
 # Might as well just grab these with 'mv' to simplify things later:
-mv $PKG/usr/lib/debug usr/lib
+mv $PKG/usr/lib${LIBDIRSUFFIX}/debug usr/lib${LIBDIRSUFFIX}
 mkdir -vpm755 install
 install -m644 -oroot -groot $CWD/slack-desc.glibc-debug install/slack-desc
 makepkg -l y -c n $TMPBUILD/glibc-debug-$VERSION-$PKGARCH-$BUILD.txz
@@ -378,9 +378,9 @@ mkdir -vpm755 etc/profile.d
 cp -a $CWD/profile.d/* etc/profile.d
 chown -R root:root etc
 chmod 755 etc/profile.d/*
-mkdir -vpm755 lib
-cp -a $PKG/lib${LIBDIRSUFFIX}/* lib
-( cd lib
+mkdir -vpm755 lib${LIBDIRSUFFIX}
+cp -a $PKG/lib${LIBDIRSUFFIX}/* lib${LIBDIRSUFFIX}
+( cd lib${LIBDIRSUFFIX}
   mkdir -vpm755 incoming
   mv *so* incoming
   mv incoming/libSegFault.so .
@@ -433,7 +433,7 @@ install -vpm644 -oroot -groot $CWD/slack-desc.glibc install/slack-desc
 install -vpm644 -oroot -groot $CWD/doinst.sh-glibc install/doinst.sh
 fix_doinst
 sed -i "s/@@VERSION@@/$VERSION/g" install/doinst.sh
-( cd lib
+( cd lib${LIBDIRSUFFIX}
   mkdir -vpm755 incoming
   mv *so* incoming
   mv incoming/libSegFault.so .
