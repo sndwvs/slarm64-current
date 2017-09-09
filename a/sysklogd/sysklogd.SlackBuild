@@ -50,6 +50,10 @@ zcat $CWD/use_memmove_not_strcpy.diff.gz | patch -p1 --verbose || exit 1
 # Allow -c option to log all (even repeated) messages:
 zcat $CWD/sysklogd.allow.repeated.messages.diff.gz | patch -p1 --verbose || exit 1
 
+# Apply patches:
+auto_apply_patch $PORTCWD/sources/sysklogd.diff.xz || exit 1
+
+
 # Build:
 RPM_OPT_FLAGS="$SLKCFLAGS" make $NUMJOBS all syslog_tst || \
 RPM_OPT_FLAGS="$SLKCFLAGS" make all syslog_tst || failmake
