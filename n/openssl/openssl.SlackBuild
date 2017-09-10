@@ -108,6 +108,7 @@ perl \
 Configure \
    --prefix=/usr \
    --openssldir=/etc/ssl \
+   --libdir=lib${LIBDIRSUFFIX} \
    shared \
    no-idea \
    no-mdc2 \
@@ -118,7 +119,7 @@ Configure \
    debian-$DEBIAN_ARCH || exit 1
 
 # Build:
-make depend || exit 1
+make $NUMJOBS depend || make depend || exit 1
 ln -vsf apps/openssl.pod crypto/crypto.pod ssl/ssl.pod doc/
 # Build will fail with parallel builds, so keep to a single build:
 make $NUMJOBS || make || exit 1
@@ -152,7 +153,7 @@ mv -fv $PKG1/etc/ssl/man $PKG1/usr
 
 # Change into package1's ('openssl') directory
 cd $PKG1
-chmod 755 usr/lib/pkgconfig
+chmod 755 usr/lib${LIBDIRSUFFIX}/pkgconfig
 sed -i -e "s#lib\$#lib${LIBDIRSUFFIX}#" usr/lib${LIBDIRSUFFIX}/pkgconfig/*.pc
 
 # Set some generic Slackware packaging policies:
