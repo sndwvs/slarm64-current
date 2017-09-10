@@ -39,11 +39,11 @@ mkdir -p $PKG/usr/include
 install -vpm644 bzlib.h $PKG/usr/include
 
 # Static libraries:
-mkdir -p $PKG/usr/lib
+mkdir -p $PKG/usr/lib${LIBDIRSUFFIX}
 install -vpm644 libbz2.a $PKG/usr/lib${LIBDIRSUFFIX}/
 
 # Shared objects:
-mkdir -p $PKG/lib
+mkdir -p $PKG/lib${LIBDIRSUFFIX}
 install -vpm755 libbz2.so.$SOLIB $PKG/lib${LIBDIRSUFFIX}/
 
 # Binaries:
@@ -64,11 +64,11 @@ cp -favv \
 
 # Link up them links
 ( cd $PKG
-  ( cd lib
+  ( cd lib${LIBDIRSUFFIX}
     rm -fv libbz2.so.1.0 libbz2.so.1
     ln -vsf libbz2.so.$SOLIB libbz2.so.1.0
     ln -vsf libbz2.so.1.0 libbz2.so.1 )
-  ( cd usr/lib ; ln -vsf ../../lib${LIBDIRSUFFIX}/libbz2.so.1 libbz2.so )
+  ( cd usr/lib${LIBDIRSUFFIX} ; ln -vsf ../../lib${LIBDIRSUFFIX}/libbz2.so.1 libbz2.so )
   ( cd bin ; ln -vsf bzip2 bunzip2 )
   ( cd bin ; ln -vsf bzip2 bzcat )
   mkdir -p usr/bin
