@@ -1,0 +1,114 @@
+#!/bin/bash
+
+# cdparanoia.SlackBuild
+# Heavily based on the original Slackware build scripts,
+# Modified by Stuart Winter for ARMedslack.
+#
+# Copyright 2008  Patrick J. Volkerding, Sebeka, Minnesota, USA
+# All rights reserved.
+#
+# Redistribution and use of this script, with or without modification, is
+# permitted provided that the following conditions are met:
+#
+# 1. Redistributions of this script must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+#
+#  THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED
+#  WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+#  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO
+#  EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+#  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+#  PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+#  OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+#  WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+#  OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+#  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+# Record toolchain & other info for the build log:
+slackbuildinfo
+
+# Paths to skeleton port's source & real Slackware source tree:
+export CWD=$SLACKSOURCE/$PKGSERIES/$PKGNAM
+export PORTCWD=$PWD
+
+# Temporary build locations:
+export TMPBUILD=$TMP/build-$PKGNAM
+export PKG=$TMP/package-$PKGNAM
+mkpkgdirs # Delete & re-create temporary directories then cd into $TMPBUILD
+
+# Extract source:
+tar xvvf $CWD/$PKGNAM-${VERSION}*.tar.gz
+cd $PKGNAM-$VERSION || exit 1
+slackhousekeeping
+
+# Patch for changes in cdda headers:
+#zcat $CWD/cdparanoia-III-10.2_cdda_private.patch.gz | patch -p3 --verbose --backup --suffix=.orig || exit 1
+
+# Needed for ARM support:
+zcat $PORTCWD/sources/*diff* | patch -p1 --verbose || failpatch
+patch -p1 < debian/patches/04-endian.patch || failpatch
+patch -p1 < debian/patches/01-typos-and-spelling.patch || failpatch
+patch -p1 < debian/patches/06-autoconf.patch || failpatch
+patch -p1 < debian/patches/02-ide-devices.patch || failpatch
+patch -p1 < debian/patches/03-gcc4.3.patch || failpatch
+
+# Configure:
+OPT="$SLKCFLAGS" \
+./configure \
+   --prefix=/usr \
+   --libdir=/usr/lib${LIBDIRSUFFIX} \
+   --mandir=/usr/man \
+   --includedir=/usr/include/cdda \
+   --build=$ARCH-slackware-linux || failconfig
+
+# Build:
+make $NUMJOBS OPT="$SLKCFLAGS" || make OPT="$SLKCFLAGS" || failmake
+
+# If necessary, start the fakeroot server so we can set file/dir ownerships:
+start_fakeroot
+
+# Install into package:
+install -d $PKG/usr/bin
+install -d $PKG/usr/include/cdda
+install -d $PKG/usr/lib${LIBDIRSUFFIX}
+install -d $PKG/usr/man/man1
+install -m 0755 cdparanoia $PKG/usr/bin/
+install -m 0644 cdparanoia.1  $PKG/usr/man/man1/
+install -m 0644 utils.h paranoia/cdda_paranoia.h interface/cdda_interface.h \
+	$PKG/usr/include/cdda/
+install -m 0755 paranoia/libcdda_paranoia.so.0.10.? \
+	interface/libcdda_interface.so.0.10.? \
+	$PKG/usr/lib${LIBDIRSUFFIX}/
+install -m 0644 paranoia/libcdda_paranoia.a interface/libcdda_interface.a \
+	$PKG/usr/lib${LIBDIRSUFFIX}/
+ldconfig -n $PKG/usr/lib${LIBDIRSUFFIX}
+chmod 755 $PKG/usr/lib${LIBDIRSUFFIX}/libcdda*.so
+
+( cd $PKG/usr/lib${LIBDIRSUFFIX}
+  ln -sf libcdda_paranoia.so.0.10.? libcdda_paranoia.so
+  ln -sf libcdda_interface.so.0.10.? libcdda_interface.so )
+
+mkdir -p $PKG/usr/man/jp/man1
+install -vpm644 cdparanoia.1.jp $PKG/usr/man/jp/man1/cdparanoia.1
+
+# Docs:
+mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
+cp -a \
+  FAQ.txt GPL* COPYING* README* \
+  $PKG/usr/doc/$PKGNAM-$VERSION
+
+# Apply generic Slackware packaging policies:
+cd $PKG
+slackstripall   # strip all .a archives and all ELFs
+slackgzpages -i # compress man & info pages and delete usr/info/dir
+slackslack      # chown -R root:root, chmod -R og-w, slackchown, slack644docs
+slackdesc       # install slack-desc and doinst.sh
+# Replace version number with a _ so it doesn't get confused with
+# the package name.
+export VERSION="$( echo $VERSION | sed 's?-?_?g' )"
+export SLACKPACKAGE=$PKGNAM-$VERSION-$PKGARCH-$BUILD.txz
+slackmp         # run makepkg -l y -c n
+
+# Perform any final checks on the package:
+cd $PKG
+slackhlinks     # search for any hard links
