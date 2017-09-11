@@ -1,7 +1,0 @@
-#!/bin/bash
-printf "\n\n\n\n"
-echo "Use script: build-qt"
-printf "\n\n\n\n"
-
-./build-qt
-

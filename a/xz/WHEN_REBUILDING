@@ -1,6 +1,0 @@
-When this is rebuilt and the ABI or SO changes, the following
-need rebuilding:
-
- * rpm,
- * all of KDE
-

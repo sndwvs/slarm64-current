@@ -1,4 +1,0 @@
-With the Slackwre ARM hp port, I will probably need to adjust the 
-bit of sed that replaces the -slackware-linux with -gnueabi, as it'll
-have probably changed to $TARGET
-

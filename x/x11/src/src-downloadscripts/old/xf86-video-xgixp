@@ -1,9 +1,0 @@
-# The XGIXP driver supports the 'Volari 8300' which we don't need
-# http://cgit.freedesktop.org/xorg/driver/xf86-video-xgixp
-cd /tmp
-rm -f xf86-video-xgixp*
-mkdir xf86-video-xgixp ; cd xf86-video-xgixp
-wget http://cgit.freedesktop.org/xorg/driver/xf86-video-xgixp/snapshot/xf86-video-xgixp-1.8.1.tar.gz
-gunzip xf86-video-xgixp*z
-xz -ze9 xf86-video-xgixp*
-ls -1 $PWD/*.xz

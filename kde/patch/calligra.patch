@@ -1,3 +1,0 @@
-for kpfile in $PORTCWD/patch/${PKGNAME}/* ; do
-  auto_apply_patch $kpfile || { touch ${PORTCWD}/build-logs/${PKGNAME}.failed ; continue ; }
-done

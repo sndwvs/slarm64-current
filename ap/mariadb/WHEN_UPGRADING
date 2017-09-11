@@ -1,9 +1,0 @@
-find . -path './*arm/build' -print0  | xargs -0 grep "slackcheckpkgdeps mysql"
-
-Rebuild these packages:
-
-d/perl
-kde/koffice
-kde/qt
-n/php
-

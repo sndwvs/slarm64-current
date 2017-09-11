@@ -1,6 +1,0 @@
-checking for libasound headers version >= 1.0.9... not present.
-configure: error: Sufficiently new version of libasound not found.
-
-If necessary, first rebuild
- l/alsa-lib
-

@@ -1,7 +1,0 @@
-#!/bin/bash
-
-#start_fakeroot  # start the fakeroot server so we can set ownerships
-slackx86        # search for any Intel x86 binaries
-slackslack      # set all files to root.root, chmod -R og-w, slackchown, slack644docs
-slackmp         # run makepkg
-shortwords      # find LDRH/STRH instructions that do not work correctly on StrongARM110 RiscPC

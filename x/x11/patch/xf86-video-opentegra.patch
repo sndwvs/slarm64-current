@@ -1,8 +1,0 @@
-#sh autogen.sh
-
-# Only try and apply patches if we find out first patch file - otherwise this
-# can cause a bailout of building all X packages (I think!)
-if [ -f $PORTCWD/patch/driver/xf86-video-opentegra_0001-Adapt-Block-WakeupHandler-signature-for-ABI-23.patch.xz ]; then
-   auto_apply_patch $PORTCWD/patch/driver/xf86-video-opentegra_0001-Adapt-Block-WakeupHandler-signature-for-ABI-23.patch.xz || exit 1
-fi
-

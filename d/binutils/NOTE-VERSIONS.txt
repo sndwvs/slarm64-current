@@ -1,8 +1,0 @@
-05-Aug-04
----------
-
-binutils-2.15.90.0.3 works for ARM.
-binutils-2.15.91.0.2 does not.
-binutils-2.18.50.0.4 produces 3GB kernel Image files.
- http://www.at91.com/phpbb/viewtopic.php?t=3805&sid=d7ec8904481e352b618a381cc0fc07cc
-binutils-2.17.50.0.17 produces normal size kernel Image files :)

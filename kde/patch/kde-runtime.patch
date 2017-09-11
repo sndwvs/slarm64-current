@@ -1,6 +1,0 @@
-# Patch came from:
-# http://bear.alienbase.nl/cgit/ktown/tree/kde/patch/kde-runtime/kde-runtime_gpgme.patch
-
-for kpfile in $PORTCWD/patch/${PKGNAME}/* ; do
-  auto_apply_patch $kpfile || { touch ${PORTCWD}/build-logs/${PKGNAME}.failed ; continue ; }
-done

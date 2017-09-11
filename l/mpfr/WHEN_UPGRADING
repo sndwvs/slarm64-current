@@ -1,9 +1,0 @@
-When upgrading to a major release, you need to keep the old version
-of mpfr in place in ordre for gcc to continue working.
-
-First build the new mpfr package;
- installpkg new_version
-
-Keeping the old version on the filesystem too - just ensure that
-the pkgconfig version is the NEW version.
-Then it can be upgradepkg'd (or have the system reinstalled, preferably)
