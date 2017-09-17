@@ -24,21 +24,17 @@ remove_links() {
 create_links() {
     [[ -z "$1" ]] && exit 1
     ln -sf "${_SOURCE}/$1/"* "${_BUILD}/$1/"
-#    rm "${_BUILD}/$1/"*.SlackBuild
-#    cp -a "${_SOURCE}/$1/"*.SlackBuild "${_BUILD}/$1/"
 }
 
-copy_patch_files() {
+patching_files() {
     [[ -z "$1" ]] && exit 1
     local PATCH_FILES=$(find -type f | grep patch | xargs basename | xargs echo | sed 's#.patch$##')
     for pf in "${PATCH_FILES}";do
         echo "$pf"
         rm "$pf"
         cp -a "${_SOURCE}/$1/$pf" "${_BUILD}/$1/"
+        patch -p1 --verbose < "${pf}.patch" || exit 1
     done
-#    ln -sf "${_SOURCE}/$1/"* "${_BUILD}/$1/"
-#    rm "${_BUILD}/$1/"*.SlackBuild
-#    cp -a "${_SOURCE}/$1/"*.SlackBuild "${_BUILD}/$1/"
 }
 
 move_pkg() {
@@ -62,9 +58,8 @@ build() {
 #            export TMP=$TMP/$PKG/
 #            $ARCH/*.SlackBuild || exit 1
 #            ./*.SlackBuild || exit 1
-               copy_patch_files ${_PKG}
-               exit
-               [[ -x $p.SlackBuild.patch ]] && ( patch -p1 --verbose < *SlackBuild*.patch || exit 1 )
+               patching_files ${_PKG}
+#               [[ -x $p.SlackBuild.patch ]] && ( patch -p1 --verbose < *SlackBuild*.patch || exit 1 )
                sed -i 's/\(-slackware\)\(-linux.*\s\)/-unknown\2/g' *.SlackBuild
                sed -i 's/\(-slackware\)\(-linux$\)/-unknown\2/g' *.SlackBuild
                ./*.SlackBuild || exit 1
