@@ -1,0 +1,39 @@
+--- a/cdparanoia.SlackBuild	2017-09-17 16:34:14.331236843 +0100
++++ b/cdparanoia.SlackBuild	2017-09-17 16:35:56.317236892 +0100
+@@ -40,19 +40,23 @@
+ TMP=${TMP:-/tmp}
+ PKG=$TMP/package-cdparanoia
+ 
+-if [ "$ARCH" = "i486" ]; then
+-  SLKCFLAGS="-O2 -march=i486 -mtune=i686"
+-  LIBDIRSUFFIX=""
+-elif [ "$ARCH" = "s390" ]; then
+-  SLKCFLAGS="-O2"
+-  LIBDIRSUFFIX=""
+-elif [ "$ARCH" = "x86_64" ]; then
+-  SLKCFLAGS="-O2 -fPIC"
+-  LIBDIRSUFFIX="64"
+-else
+-  SLKCFLAGS="-O2"
+-  LIBDIRSUFFIX=""
+-fi
++case "$ARCH" in
++     i?86) SLKCFLAGS="-O2 -march=i586 -mtune=i686"
++           LIBDIRSUFFIX=""
++           ;;
++     s390) SLKCFLAGS="-O2"
++           LIBDIRSUFFIX=""
++           ;;
++   x86_64) SLKCFLAGS="-O2 -fPIC"
++           LIBDIRSUFFIX="64"
++           ;;
++  aarch64) SLKCFLAGS="-O2 -w"
++           LIBDIRSUFFIX="64"
++           ;;
++        *) SLKCFLAGS="-O2"
++           LIBDIRSUFFIX=""
++           ;;
++esac
+ 
+ rm -rf $PKG
+ mkdir -p $TMP $PKG
