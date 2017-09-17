@@ -28,12 +28,13 @@ create_links() {
 
 patching_files() {
     [[ -z "$1" ]] && exit 1
-    [[ ! -d "../../$1" ]] && return
-    local PATCH_FILES=$(find -type f | grep patch | xargs basename | xargs echo | sed 's#.patch$##')
+    local PATCH_FILES=$(find -type f | grep patch | sed 's#.patch$##')
     for pf in "${PATCH_FILES}";do
+        pf=$(basename "$pf")
+        [[ -z "$pf" ]] && continue
         echo "$pf"
         rm "$pf"
-        cp -a "${_SOURCE}/$1/$pf" "${_BUILD}/$1/"
+        cp -a "${_SOURCE}/$1/${pf}" "${_BUILD}/$1/"
         patch -p1 --verbose < "${pf}.patch" || exit 1
     done
 }
