@@ -1,0 +1,19 @@
+--- a/acl.SlackBuild	2015-04-14 02:07:27.000000000 +0100
++++ b/acl.SlackBuild	2017-09-17 13:13:53.972231111 +0100
+@@ -38,11 +38,11 @@
+ TMP=${TMP:-/tmp}
+ PKG=$TMP/package-acl
+ 
+-if [ "$ARCH" = "x86_64" ]; then
+-  LIBDIRSUFFIX="64"
+-else
+-  LIBDIRSUFFIX=""
+-fi
++case "$ARCH" in
++  x86_64|aarch64) LIBDIRSUFFIX="64" ;;
++               *) LIBDIRSUFFIX="" ;;
++
++esac
+ 
+ rm -rf $PKG
+ mkdir -p $TMP $PKG

@@ -1,0 +1,33 @@
+--- a/a2ps.SlackBuild	2010-07-28 18:23:16.000000000 +0100
++++ b/a2ps.SlackBuild	2017-09-17 14:20:54.544233029 +0100
+@@ -45,16 +45,20 @@
+ rm -rf $PKG
+ mkdir -p $TMP $PKG
+ 
+-if [ "$ARCH" = "i486" ]; then
+-  SLKCFLAGS="-O2 -march=i486 -mtune=i686"
+-  LIBDIRSUFFIX=""
+-elif [ "$ARCH" = "s390" ]; then
+-  SLKCFLAGS="-O2"
+-  LIBDIRSUFFIX=""
+-elif [ "$ARCH" = "x86_64" ]; then
+-  SLKCFLAGS="-O2 -fPIC"
+-  LIBDIRSUFFIX="64"
+-fi
++case "$ARCH" in
++  i?86)    SLKCFLAGS="-O2 -march=i486 -mtune=i686"
++           LIBDIRSUFFIX=""
++           ;;
++  s390)    SLKCFLAGS="-O2"
++           LIBDIRSUFFIX=""
++           ;;
++  x86_64)  SLKCFLAGS="-O2 -fPIC"
++           LIBDIRSUFFIX="64"
++           ;;
++  aarch64) SLKCFLAGS="-O2"
++           LIBDIRSUFFIX="64"
++           ;;
++esac
+ 
+ # First, build and install psutils:
+ cd $TMP
