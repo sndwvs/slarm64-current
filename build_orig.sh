@@ -5,8 +5,8 @@ _CWD=$(pwd)
 #source config.sh || exit 1
 #source "packages-minirootfs.conf" || exit 1
 #source "n-packages.conf_" || exit 1
-#ource "a-packages.conf_" || exit 1
-source "ap-packages.conf" || exit 1
+source "a-packages.conf_" || exit 1
+#source "ap-packages.conf" || exit 1
 #source "l-packages.conf" || exit 1
 #source "d-packages.conf" || exit 1
 #source "tcl-packages.conf" || exit 1
@@ -24,6 +24,31 @@ remove_links() {
 create_links() {
     [[ -z "$1" ]] && exit 1
     ln -sf "${_SOURCE}/$1/"* "${_BUILD}/$1/"
+}
+
+fix_default() {
+    [[ -z "$1" ]] && exit 1
+    local PATCH_FILES=$(find -type l | grep .SlackBuild)
+    for pf in "${PATCH_FILES}";do
+        pf=$(basename "$pf")
+        echo "$pf"
+        rm "$pf"
+        cp -af "${_SOURCE}/$1/${pf}" "${_BUILD}/$1/"
+        sed -n '/if \[ \"$ARCH\" = \"\(i.86\|x86_64\)\" \]/{:a;N;/fi$/!ba;N;s/.*\n/case \"\$ARCH\" in\
+     i?86\) SLKCFLAGS=\"-O2 -march=i586 -mtune=i686\"\
+           LIBDIRSUFFIX=\"\"\
+           ;;\
+   x86_64\) SLKCFLAGS=\"-O2 -fPIC\"\
+           LIBDIRSUFFIX=\"64\"\
+           ;;\
+  aarch64\) SLKCFLAGS=\"-O2\"\
+           LIBDIRSUFFIX=\"64\"\
+           ;;\
+        \*\) SLKCFLAGS=\"-O2\"\
+           LIBDIRSUFFIX=\"\"\
+           ;;\
+esac\n/};p' -i "${pf}"
+    done
 }
 
 patching_files() {
@@ -49,6 +74,7 @@ build() {
     for _PKG in $PKG_LIST;do
         if [[ ! $(echo "${_PKG}" | grep "^#") ]];then
             echo "${_PKG}"
+            [[ ! -d ${_BUILD}/${_PKG} ]] && ( mkdir -p ${_BUILD}/${_PKG} || exit 1 )
             t=$(echo ${_PKG} | cut -d '/' -f1)
             p=$(echo ${_PKG} | cut -d '/' -f2)
 #            if [[ ! $(ls ${_INSTALL}/$t/ | grep "$p-") ]];then
@@ -60,10 +86,11 @@ build() {
 #            export TMP=$TMP/$PKG/
 #            $ARCH/*.SlackBuild || exit 1
 #            ./*.SlackBuild || exit 1
-               patching_files ${_PKG}
+               #patching_files ${_PKG}
+               fix_default ${_PKG}
 #               [[ -x $p.SlackBuild.patch ]] && ( patch -p1 --verbose < *SlackBuild*.patch || exit 1 )
-               sed -i 's/\(-slackware\)\(-linux.*\s\)/-unknown\2/g' *.SlackBuild
-               sed -i 's/\(-slackware\)\(-linux$\)/-unknown\2/g' *.SlackBuild
+#               sed -i 's/\(-slackware\)\(-linux.*\s\)/-unknown\2/g' *.SlackBuild
+#               sed -i 's/\(-slackware\)\(-linux$\)/-unknown\2/g' *.SlackBuild
                ./*.SlackBuild || exit 1
 #                ./arm/build || ( echo ${_PKG} >> ${_CWD}/error_build_pkgs.log & continue )
                 echo ${_PKG} >> ${_CWD}/install_pkgs.log
