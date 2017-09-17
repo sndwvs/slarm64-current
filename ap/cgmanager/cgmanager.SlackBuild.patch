@@ -1,0 +1,39 @@
+--- a/cgmanager.SlackBuild	2017-09-17 17:16:50.678238062 +0100
++++ b/cgmanager.SlackBuild	2017-09-17 17:18:00.505238096 +0100
+@@ -38,19 +38,23 @@
+ 
+ NUMJOBS=${NUMJOBS:-" -j7 "}
+ 
+-if [ "$ARCH" = "i586" ]; then
+-  SLKCFLAGS="-O2 -march=i586 -mtune=i686"
+-  LIBDIRSUFFIX=""
+-elif [ "$ARCH" = "s390" ]; then
+-  SLKCFLAGS="-O2"
+-  LIBDIRSUFFIX=""
+-elif [ "$ARCH" = "x86_64" ]; then
+-  SLKCFLAGS="-O2 -fPIC"
+-  LIBDIRSUFFIX="64"
+-else
+-  SLKCFLAGS="-O2"
+-  LIBDIRSUFFIX=""
+-fi
++case "$ARCH" in
++     i?86) SLKCFLAGS="-O2 -march=i586 -mtune=i686"
++           LIBDIRSUFFIX=""
++           ;;
++     s390) SLKCFLAGS="-O2"
++           LIBDIRSUFFIX=""
++           ;;
++   x86_64) SLKCFLAGS="-O2 -fPIC"
++           LIBDIRSUFFIX="64"
++           ;;
++  aarch64) SLKCFLAGS="-O2 -w"
++           LIBDIRSUFFIX="64"
++           ;;
++        *) SLKCFLAGS="-O2"
++           LIBDIRSUFFIX=""
++           ;;
++esac
+ 
+ CWD=$(pwd)
+ TMP=${TMP:-/tmp}
