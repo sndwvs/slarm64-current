@@ -1,0 +1,24 @@
+--- a/floppy.SlackBuild	2017-09-18 21:34:45.158489405 +0300
++++ b/floppy.SlackBuild	2017-09-18 21:34:07.060489405 +0300
+@@ -34,13 +34,14 @@
+   esac
+ fi
+ 
+-if [ "$ARCH" = "x86_64" ]; then
+-  SLKCFLAGS="-O -fPIC"
+-  LIBDIRSUFFIX="64"
+-else
+-  SLKCFLAGS="-O"
+-  LIBDIRSUFFIX=""
+-fi
++case "$ARCH" in
++  x86_64|aarch64) SLKCFLAGS="-O -fPIC"
++                  LIBDIRSUFFIX="64"
++                  ;;
++               *) SLKCFLAGS="-O"
++                  LIBDIRSUFFIX=""
++                  ;;
++esac
+ 
+ CWD=$(pwd)
+ TMP=${TMP:-/tmp}
