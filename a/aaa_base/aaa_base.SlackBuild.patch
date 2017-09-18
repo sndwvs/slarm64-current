@@ -1,0 +1,15 @@
+--- a/aaa_base.SlackBuild	2017-09-18 19:15:19.748282651 +0100
++++ b/aaa_base.SlackBuild	2017-09-18 19:16:56.221282697 +0100
+@@ -57,9 +57,9 @@
+ chmod 644 $PKG/etc/os-release
+ 
+ # Add lib64 directories on x86_64:
+-if [ "$ARCH" = "x86_64" ]; then
+-  mkdir -p $PKG/lib64 $PKG/usr/lib64 $PKG/usr/local/lib64
+-fi
++case "$ARCH" in
++  x86_64|aarch64) mkdir -p $PKG/lib64 $PKG/usr/lib64 $PKG/usr/local/lib64 ;;
++esac
+ 
+ # Build the package:
+ cd $PKG
