@@ -8,8 +8,8 @@ _CWD=$(pwd)
 #source "l-packages.conf" || exit 1
 #source "tcl-packages.conf" || exit 1
 #source "d-packages.conf" || exit 1
-#source "ap-packages.conf" || exit 1
-source "a-packages.conf" || exit 1
+source "ap-packages.conf" || exit 1
+#source "a-packages.conf" || exit 1
 #source "l.conf" || exit 1
 
 _BUILD="${_CWD}/slackwarearm64-current/source"
@@ -102,7 +102,7 @@ build() {
                 move_pkg ${_PKG} $p
 #            installpkg ${_TXZ}/$t/$p-*.txz || exit 1
 #                installpkg ${_TXZ}/${_PKG}/$p-*.txz || exit 1
-                installpkg ${_INSTALL}/$t/$p-*.txz || return 1
+                installpkg ${_TXZ}/${_PKG}/$p-*.txz
                 popd
 #            fi
         fi
