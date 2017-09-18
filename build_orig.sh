@@ -18,17 +18,17 @@ _SOURCE="${_CWD}/slackware64-current/source"
 
 
 remove_links() {
-    [[ -z "$1" ]] && exit 1
+    [[ -z "$1" ]] && return 1
     find "${_BUILD}/$1/" -type l -delete
 }
 
 create_links() {
-    [[ -z "$1" ]] && exit 1
+    [[ -z "$1" ]] && return 1
     ln -sf "${_SOURCE}/$1/"* "${_BUILD}/$1/"
 }
 
 fix_default() {
-    [[ -z "$1" ]] && exit 1
+    [[ -z "$1" ]] && return 1
     local PATCH_FILES=$(find -type l | grep .SlackBuild)
     for pf in "${PATCH_FILES}";do
         pf=$(basename "$pf")
@@ -70,7 +70,7 @@ patching_files() {
 
 move_pkg() {
     [[ -z "$1" ]] && exit 1
-    [[ ! -d "${_TXZ}/$1" ]] && ( mkdir -p "${_TXZ}/$1" || exit 1 )
+    [[ ! -d "${_TXZ}/$1" ]] && ( mkdir -p "${_TXZ}/$1" || return 1 )
     [[ -e "${_TXZ}/$1" ]] && mv /tmp/$2-*.txz "${_TXZ}/$1/"
 }
 
@@ -78,7 +78,7 @@ build() {
     for _PKG in $PKG_LIST;do
         if [[ ! $(echo "${_PKG}" | grep "^#") ]];then
             echo "${_PKG}"
-            [[ ! -d ${_BUILD}/${_PKG} ]] && ( mkdir -p ${_BUILD}/${_PKG} || exit 1 )
+            [[ ! -d ${_BUILD}/${_PKG} ]] && ( mkdir -p ${_BUILD}/${_PKG} || return 1 )
             t=$(echo ${_PKG} | cut -d '/' -f1)
             p=$(echo ${_PKG} | cut -d '/' -f2)
 #            if [[ ! $(ls ${_INSTALL}/$t/ | grep "$p-") ]];then
@@ -101,8 +101,8 @@ build() {
                 echo ${_PKG} >> ${_CWD}/install_pkgs.log
                 move_pkg ${_PKG} $p
 #            installpkg ${_TXZ}/$t/$p-*.txz || exit 1
-                installpkg ${_TXZ}/${_PKG}/$p-*.txz || exit 1
-#                installpkg ${_INSTALL}/$t/$p-*.txz || continue
+#                installpkg ${_TXZ}/${_PKG}/$p-*.txz || exit 1
+                installpkg ${_INSTALL}/$t/$p-*.txz || return 1
                 popd
 #            fi
         fi
