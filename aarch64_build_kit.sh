@@ -90,19 +90,18 @@ build() {
 #            export TMP=$TMP/$PKG/
 #            $ARCH/*.SlackBuild || exit 1
 #            ./*.SlackBuild || exit 1
-               patching_files ${_PKG} STATUS
-               [[ $STATUS == 1 ]] && fix_default ${_PKG}
+                [[ -e .ignore ]] && continue
+                patching_files ${_PKG} STATUS
+                [[ $STATUS == 1 ]] && fix_default ${_PKG}
 #               [[ -x $p.SlackBuild.patch ]] && ( patch -p1 --verbose < *SlackBuild*.patch || exit 1 )
-               sed -i 's/\(-slackware\)\(-linux.*\s\)/-unknown\2/g' *.SlackBuild
-               sed -i 's/\(-slackware\)\(-linux$\)/-unknown\2/g' *.SlackBuild
+                sed -i 's/\(-slackware\)\(-linux.*\s\)/-unknown\2/g' *.SlackBuild
+                sed -i 's/\(-slackware\)\(-linux$\)/-unknown\2/g' *.SlackBuild
 #               ./*.SlackBuild || exit 1
-               ./*.SlackBuild | tee $p.build.log
+               ./*.SlackBuild | tee ${p}.build.log
 #                ./arm/build || ( echo ${_PKG} >> ${_CWD}/error_build_pkgs.log & continue )
                 echo ${_PKG} >> ${_CWD}/install_pkgs.log
-                move_pkg ${_PKG} $p
-#            installpkg ${_TXZ}/$t/$p-*.txz || exit 1
-#                installpkg ${_TXZ}/${_PKG}/$p-*.txz || exit 1
-                installpkg ${_TXZ}/${_PKG}/$p-*.txz
+                move_pkg ${t} ${p}
+                installpkg ${_TXZ}/${t}/${p}-*.txz
                 popd
 #            fi
         fi
