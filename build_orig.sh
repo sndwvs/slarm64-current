@@ -5,11 +5,12 @@ _CWD=$(pwd)
 #source config.sh || exit 1
 #source "packages-minirootfs.conf" || exit 1
 #source "n-packages.conf_" || exit 1
-source "a-packages.conf_" || exit 1
-#source "ap-packages.conf" || exit 1
 #source "l-packages.conf" || exit 1
-#source "d-packages.conf" || exit 1
 #source "tcl-packages.conf" || exit 1
+#source "d-packages.conf" || exit 1
+#source "ap-packages.conf" || exit 1
+source "a-packages.conf" || exit 1
+#source "l.conf" || exit 1
 
 _BUILD="${_CWD}/slackwarearm64-current/source"
 _TXZ="${_CWD}/slackwarearm64-current/slackware"
@@ -52,22 +53,25 @@ esac\n/};p' -i "${pf}"
 }
 
 patching_files() {
-    [[ -z "$1" ]] && exit 1
+    [[ -z "$1" ]] && return 1
     local PATCH_FILES=$(find -type f | grep patch | sed 's#.patch$##')
+    local count=1
     for pf in "${PATCH_FILES}";do
         pf=$(basename "$pf")
         [[ -z "$pf" ]] && continue
         echo "$pf"
         rm "$pf"
         cp -a "${_SOURCE}/$1/${pf}" "${_BUILD}/$1/"
-        patch -p1 --verbose < "${pf}.patch" || exit 1
+        patch -p1 --verbose < "${pf}.patch" || return 1
+        count=$(($count+1))
     done
+    eval "$2=\$count"
 }
 
 move_pkg() {
     [[ -z "$1" ]] && exit 1
     [[ ! -d "${_TXZ}/$1" ]] && ( mkdir -p "${_TXZ}/$1" || exit 1 )
-    mv /tmp/$2-*.txz "${_TXZ}/$1/" || return
+    [[ -e "${_TXZ}/$1" ]] && mv /tmp/$2-*.txz "${_TXZ}/$1/"
 }
 
 build() {
@@ -86,12 +90,13 @@ build() {
 #            export TMP=$TMP/$PKG/
 #            $ARCH/*.SlackBuild || exit 1
 #            ./*.SlackBuild || exit 1
-               #patching_files ${_PKG}
-               fix_default ${_PKG}
+               patching_files ${_PKG} STATUS
+               [[ $STATUS == 1 ]] && fix_default ${_PKG}
 #               [[ -x $p.SlackBuild.patch ]] && ( patch -p1 --verbose < *SlackBuild*.patch || exit 1 )
-#               sed -i 's/\(-slackware\)\(-linux.*\s\)/-unknown\2/g' *.SlackBuild
-#               sed -i 's/\(-slackware\)\(-linux$\)/-unknown\2/g' *.SlackBuild
-               ./*.SlackBuild || exit 1
+               sed -i 's/\(-slackware\)\(-linux.*\s\)/-unknown\2/g' *.SlackBuild
+               sed -i 's/\(-slackware\)\(-linux$\)/-unknown\2/g' *.SlackBuild
+#               ./*.SlackBuild || exit 1
+               ./*.SlackBuild | tee $p.build.log
 #                ./arm/build || ( echo ${_PKG} >> ${_CWD}/error_build_pkgs.log & continue )
                 echo ${_PKG} >> ${_CWD}/install_pkgs.log
                 move_pkg ${_PKG} $p
