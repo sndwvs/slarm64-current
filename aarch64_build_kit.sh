@@ -1,6 +1,7 @@
 #!/bin/bash
 
 _CWD=$(pwd)
+THREADS=$(($(grep -c 'processor' /proc/cpuinfo)-2))
 
 #source config.sh || exit 1
 #source "packages-minirootfs.conf" || exit 1
@@ -8,8 +9,8 @@ _CWD=$(pwd)
 #source "l-packages.conf" || exit 1
 #source "tcl-packages.conf" || exit 1
 #source "d-packages.conf" || exit 1
-source "ap-packages.conf" || exit 1
-#source "a-packages.conf" || exit 1
+#source "ap-packages.conf" || exit 1
+source "a-packages.conf" || exit 1
 #source "l.conf" || exit 1
 
 _BUILD="${_CWD}/slackwarearm64-current/source"
@@ -52,6 +53,14 @@ esac\n/};p' -i "${pf}"
     done
 }
 
+fix_global() {
+  [[ -z "$1" ]] && return 1
+  sed -e "s/\" -j. \"/\" -j$THREADS \"/" \
+      -e 's/\(-slackware\)\(-linux.*\s\)/-unknown\2/g' \
+      -e 's/\(-slackware\)\(-linux$\)/-unknown\2/g' \
+      -i ${1}.SlackBuild
+}
+
 patching_files() {
     [[ -z "$1" ]] && return 1
     local PATCH_FILES=$(find -type f | grep patch | sed 's#.patch$##')
@@ -86,22 +95,14 @@ build() {
                 remove_links "${_PKG}"
                 create_links "${_PKG}"
                 pushd ${_BUILD}/${_PKG}/
-#            $BUILD/$PKG/*.SlackBuild || exit 1
-#            export TMP=$TMP/$PKG/
-#            $ARCH/*.SlackBuild || exit 1
-#            ./*.SlackBuild || exit 1
                 [[ -e .ignore ]] && continue
                 patching_files ${_PKG} STATUS
                 [[ $STATUS == 1 ]] && fix_default ${_PKG}
-#               [[ -x $p.SlackBuild.patch ]] && ( patch -p1 --verbose < *SlackBuild*.patch || exit 1 )
-                sed -i 's/\(-slackware\)\(-linux.*\s\)/-unknown\2/g' *.SlackBuild
-                sed -i 's/\(-slackware\)\(-linux$\)/-unknown\2/g' *.SlackBuild
-#               ./*.SlackBuild || exit 1
-               ./*.SlackBuild | tee ${p}.build.log
-#                ./arm/build || ( echo ${_PKG} >> ${_CWD}/error_build_pkgs.log & continue )
-                echo ${_PKG} >> ${_CWD}/install_pkgs.log
+                fix_global ${p}
+               ./${p}.SlackBuild 2>&1 | tee ${p}.build.log
                 move_pkg ${t} ${p}
                 installpkg ${_TXZ}/${t}/${p}-*.txz
+                echo ${_PKG} >> ${_CWD}/install_packages.log
                 popd
 #            fi
         fi
