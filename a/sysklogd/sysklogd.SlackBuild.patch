@@ -1,0 +1,12 @@
+--- a/sysklogd.SlackBuild	2016-06-29 09:34:00.000000000 +0300
++++ b/sysklogd.SlackBuild	2017-09-19 20:48:49.098827258 +0300
+@@ -57,6 +57,9 @@
+ # Allow -c option to log all (even repeated) messages:
+ zcat $CWD/sysklogd.allow.repeated.messages.diff.gz | patch -p1 --verbose || exit 1
+ 
++# fix build aarch64
++zcat $CWD/sysklogd.diff.xz | patch -p1 --verbose || exit 1
++
+ make all syslog_tst $NUMJOBS || make || exit 1
+ 
+ mkdir -p $PKG/usr/sbin

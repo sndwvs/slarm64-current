@@ -1,0 +1,11 @@
+--- a/linuxdoc-tools.build	2017-09-19 16:46:18.178780653 +0100
++++ b/linuxdoc-tools.build	2017-09-19 16:46:27.019780653 +0100
+@@ -40,7 +40,7 @@
+            export HOSTTARGET="-gnueabi"
+            ;;
+   aarch64) export SLKCFLAGS="-O2"
+-           export LIBDIRSUFFIX=""
++           export LIBDIRSUFFIX="64"
+            export HOSTTARGET=""
+            ;;
+   i586)    export SLKCFLAGS="-O2 -march=i586 -mtune=i686"
