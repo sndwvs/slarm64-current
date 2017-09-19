@@ -5,7 +5,7 @@
  zcat $CWD/sysklogd.allow.repeated.messages.diff.gz | patch -p1 --verbose || exit 1
  
 +# fix build aarch64
-+zcat $CWD/sysklogd.diff.xz | patch -p1 --verbose || exit 1
++xzcat $CWD/sysklogd.diff.xz | patch -p1 --verbose || exit 1
 +
  make all syslog_tst $NUMJOBS || make || exit 1
  
