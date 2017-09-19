@@ -9,8 +9,8 @@ THREADS=$(($(grep -c 'processor' /proc/cpuinfo)-2))
 #source "l-packages.conf" || exit 1
 #source "tcl-packages.conf" || exit 1
 #source "d-packages.conf" || exit 1
-#source "ap-packages.conf" || exit 1
-source "a-packages.conf" || exit 1
+#source "ap-packages.conf_" || exit 1
+source "a-packages.conf_" || exit 1
 #source "l.conf" || exit 1
 
 _BUILD="${_CWD}/slackwarearm64-current/source"
@@ -99,10 +99,14 @@ build() {
                 patching_files ${_PKG} STATUS
                 [[ $STATUS == 1 ]] && fix_default ${_PKG}
                 fix_global ${p}
-               ./${p}.SlackBuild 2>&1 | tee ${p}.build.log
+#                ( ./${p}.SlackBuild || echo "${_PKG}" 2>&1 >> ${_CWD}/build_error.log ) 2>&1 | tee ${p}.build.log
+                ./${p}.SlackBuild 2>&1 | tee ${p}.build.log
+                if [[ ${PIPESTATUS[0]} == 1 ]];then
+                    echo "${_PKG}" 2>&1 >> ${_CWD}/build_error.log
+                    continue
+                fi
                 move_pkg ${t} ${p}
                 installpkg ${_TXZ}/${t}/${p}-*.txz
-                echo ${_PKG} >> ${_CWD}/install_packages.log
                 popd
 #            fi
         fi
