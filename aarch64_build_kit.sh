@@ -86,7 +86,7 @@ move_pkg() {
 build() {
     for _PKG in $PKG_LIST;do
         if [[ ! $(echo "${_PKG}" | grep "^#") ]];then
-            echo "${_PKG}"
+#            echo "${_PKG}"
             [[ ! -d ${_BUILD}/${_PKG} ]] && ( mkdir -p ${_BUILD}/${_PKG} || return 1 )
             t=$(echo ${_PKG} | cut -d '/' -f1)
             p=$(echo ${_PKG} | cut -d '/' -f2)
@@ -94,12 +94,11 @@ build() {
 #                removepkg $p
                 remove_links "${_PKG}"
                 create_links "${_PKG}"
-                pushd ${_BUILD}/${_PKG}/
+                pushd ${_BUILD}/${_PKG}/ 2>&1>/dev/null
                 [[ -e .ignore ]] && continue
                 patching_files ${_PKG} STATUS
                 [[ $STATUS == 1 ]] && fix_default ${_PKG}
                 fix_global ${p}
-#                ( ./${p}.SlackBuild || echo "${_PKG}" 2>&1 >> ${_CWD}/build_error.log ) 2>&1 | tee ${p}.build.log
                 ./${p}.SlackBuild 2>&1 | tee ${p}.build.log
                 if [[ ${PIPESTATUS[0]} == 1 ]];then
                     echo "${_PKG}" 2>&1 >> ${_CWD}/build_error.log
@@ -107,7 +106,7 @@ build() {
                 fi
                 move_pkg ${t} ${p}
                 installpkg ${_TXZ}/${t}/${p}-*.txz
-                popd
+                popd 2>&1>/dev/null
 #            fi
         fi
     done
