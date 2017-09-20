@@ -1,0 +1,18 @@
+--- a/dmapi.SlackBuild	2017-09-20 22:31:06.914174937 +0300
++++ b/dmapi.SlackBuild	2017-09-20 22:30:28.672174937 +0300
+@@ -34,11 +34,10 @@
+   esac
+ fi
+ 
+-if [ "$ARCH" = "x86_64" ]; then
+-  LIBDIRSUFFIX="64"
+-else
+-  LIBDIRSUFFIX=""
+-fi
++case "$ARCH" in
++  x86_64|aarch64) LIBDIRSUFFIX="64" ;;
++               *) LIBDIRSUFFIX="" ;;
++esac
+ 
+ CWD=$(pwd)
+ TMP=${TMP:-/tmp}

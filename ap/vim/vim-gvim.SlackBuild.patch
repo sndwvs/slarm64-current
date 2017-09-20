@@ -1,0 +1,20 @@
+--- a/vim-gvim.SlackBuild	2017-09-20 22:02:51.853174937 +0300
++++ b/vim-gvim.SlackBuild	2017-09-20 22:05:06.014174937 +0300
+@@ -37,13 +37,16 @@
+   esac
+ fi
+ 
+-NUMJOBS=${NUMJOBS:-" -j7 "}
++NUMJOBS=${NUMJOBS:-" -j5 "}
+ 
+ PYVER=$(python -V 2>&1 | cut -f 2 -d' ' | cut -f 1-2 -d.)
+ 
+ if [ "$ARCH" = "x86_64" ]; then
+   export SLKCFLAGS="-O2 -fPIC"
+   export LIBDIRSUFFIX="64"
++elif [ "$ARCH" = "aarch64" ]; then
++  export SLKCFLAGS="-O2"
++  export LIBDIRSUFFIX="64"
+ else
+   export SLKCFLAGS="-O2"
+   export LIBDIRSUFFIX=""

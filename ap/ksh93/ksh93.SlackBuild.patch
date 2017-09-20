@@ -1,0 +1,36 @@
+--- a/ksh93.SlackBuild	2017-09-20 22:11:16.355174937 +0300
++++ b/ksh93.SlackBuild	2017-09-20 22:38:49.080174937 +0300
+@@ -43,6 +43,8 @@
+ # but package with our real arch label...
+ if [ "$ARCH" = "x86_64" ]; then
+   SARCH=i386-64
++elif [ "$ARCH" = "aarch64" ]; then
++  SARCH=aarch64
+ else
+   SARCH=i386
+ fi
+@@ -68,7 +70,7 @@
+   \( -perm 666 -o -perm 664 -o -perm 600 -o -perm 444 -o -perm 440 -o -perm 400 \) \
+   -exec chmod 644 {} \;
+ 
+-/bin/ksh bin/package read || exit 1
++./bin/package read || exit 1
+ 
+ zcat $CWD/patches/ksh-20070328-builtins.patch.gz | patch -p1 --verbose || exit 1
+ zcat $CWD/patches/ksh-20100826-fixregr.patch.gz | patch -p1 --verbose || exit 1
+@@ -130,11 +132,11 @@
+ # disable register for debugging
+ sed -i 1i"#define register" src/lib/libast/include/ast.h
+ 
+-/bin/ksh ./bin/package
+-/bin/ksh ./bin/package make mamake ||:
+-/bin/ksh ./bin/package make mamake ||:
++./bin/package
++./bin/package make mamake ||:
++./bin/package make mamake ||:
+ export CC=gcc
+-/bin/ksh ./bin/package make -S || exit 1
++./bin/package make -S || exit 1
+ 
+ mkdir -p $PKG/bin
+ cp arch/linux.$SARCH/bin/ksh $PKG/bin/ksh.new
