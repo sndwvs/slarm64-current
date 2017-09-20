@@ -16,6 +16,7 @@ source "a-packages.conf_" || exit 1
 _BUILD="${_CWD}/slackwarearm64-current/source"
 _TXZ="${_CWD}/slackwarearm64-current/slackware"
 _SOURCE="${_CWD}/slackware64-current/source"
+_TMP="/tmp"
 
 
 remove_links() {
@@ -36,7 +37,7 @@ fix_default() {
         echo "$pf"
         rm "$pf"
         cp -af "${_SOURCE}/$1/${pf}" "${_BUILD}/$1/"
-        sed -n '/if \[ \"$ARCH\" = \"\(i.86\|x86_64\)\" \]/{:a;N;/fi$/!ba;N;s/.*\n/case \"\$ARCH\" in\
+        sed -n '/if \[ \"$ARCH\" = \"\(i.86\)\" \]/{:a;N;/fi$/!ba;N;s/.*\n/case \"\$ARCH\" in\
      i?86\) SLKCFLAGS=\"-O2 -march=i586 -mtune=i686\"\
            LIBDIRSUFFIX=\"\"\
            ;;\
@@ -80,7 +81,7 @@ patching_files() {
 move_pkg() {
     [[ -z "$1" ]] && exit 1
     [[ ! -d "${_TXZ}/$1" ]] && ( mkdir -p "${_TXZ}/$1" || return 1 )
-    [[ -e "${_TXZ}/$1" ]] && mv /tmp/$2-*.txz "${_TXZ}/$1/"
+    [[ -e "${_TXZ}/$1" ]] && mv ${_TMP}/$2-*.txz "${_TXZ}/$1/"
 }
 
 build() {
