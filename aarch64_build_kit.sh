@@ -8,7 +8,7 @@ THREADS=$(($(grep -c 'processor' /proc/cpuinfo)-2))
 #source "l-packages.conf" || exit 1
 #source "tcl-packages.conf" || exit 1
 #source "d-packages.conf" || exit 1
-source "ap-packages.conf" || exit 1
+#source "ap-packages.conf" || exit 1
 #source "a-packages.conf_" || exit 1
 #source "l.conf" || exit 1
 source "n-packages.conf" || exit 1
@@ -38,13 +38,9 @@ prepare_work_dir() {
 }
 
 fix_default() {
-    [[ -z "$1" ]] && return 1
-    local PATCH_FILES=$(find -type l | grep .SlackBuild)
-    for pf in "${PATCH_FILES}";do
+    for pf in $(find ${_WORK_DIR}/ -maxdepth 1 -type f | grep .SlackBuild);do
         pf=$(basename "$pf")
         echo "$pf"
-        rm "$pf"
-        cp -af "${_SOURCE}/$1/${pf}" "${_BUILD}/$1/"
         sed -n '/if \[ \"$ARCH\" = \"\(i.86\)\" \]/{:a;N;/fi$/!ba;N;s/.*\n/case \"\$ARCH\" in\
      i?86\) SLKCFLAGS=\"-O2 -march=i586 -mtune=i686\"\
            LIBDIRSUFFIX=\"\"\
@@ -58,7 +54,7 @@ fix_default() {
         \*\) SLKCFLAGS=\"-O2\"\
            LIBDIRSUFFIX=\"\"\
            ;;\
-esac\n/};p' -i "${pf}"
+esac\n/};p' -i "${_WORK_DIR}/${pf}"
     done
 }
 
@@ -71,17 +67,16 @@ fix_global() {
 }
 
 patching_files() {
-    [[ -z "$1" ]] && return 1
-    local PATCH_FILES=$(find ../ -type f | grep patch | sed 's#.patch$##')
+    local PATCH_FILES=$(find -maxdepth 1 -type f | grep patch | sed 's#.patch$##')
     local count=1
     for pf in "${PATCH_FILES}";do
-#        pf=$(basename "$pf")
+        pf=$(basename "$pf")
         [[ -z "$pf" ]] && continue
-        echo "$pf"
+        echo "$pf 4"
         patch -p1 --verbose < "${pf}.patch" || return 1
         count=$(($count+1))
     done
-    eval "$2=\$count"
+    eval "$1=\$count"
 }
 
 move_pkg() {
@@ -101,12 +96,14 @@ build() {
 #                removepkg $p
                 remove_work_dir "${_PKG}"
                 prepare_work_dir "${_PKG}"
-                pushd ${_BUILD}/${_PKG}/${_WORK_DIR} 2>&1>/dev/null
+                pushd ${_BUILD}/${_PKG} 2>&1>/dev/null
                 [[ -e .ignore ]] && continue
-                patching_files ${_PKG} STATUS
-                [[ $STATUS == 1 ]] && fix_default ${_PKG}
+                patching_files STATUS
+                [[ $STATUS == 1 ]] && fix_default
 #                fix_global ${p}
+                pushd ${_WORK_DIR} 2>&1>/dev/null
                 ./${p}.SlackBuild 2>&1 | tee ${p}.build.log
+                popd 2>&1>/dev/null
                 if [[ ${PIPESTATUS[0]} == 1 ]];then
                     echo "${_PKG}" 2>&1 >> ${_CWD}/build_error.log
                     continue
