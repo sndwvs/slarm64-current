@@ -5,28 +5,36 @@ THREADS=$(($(grep -c 'processor' /proc/cpuinfo)-2))
 
 #source config.sh || exit 1
 #source "packages-minirootfs.conf" || exit 1
-#source "n-packages.conf_" || exit 1
 #source "l-packages.conf" || exit 1
 #source "tcl-packages.conf" || exit 1
 #source "d-packages.conf" || exit 1
-#source "ap-packages.conf_" || exit 1
-source "a-packages.conf_" || exit 1
+source "ap-packages.conf" || exit 1
+#source "a-packages.conf_" || exit 1
 #source "l.conf" || exit 1
+source "n-packages.conf" || exit 1
+
 
 _BUILD="${_CWD}/slackwarearm64-current/source"
 _TXZ="${_CWD}/slackwarearm64-current/slackware"
 _SOURCE="${_CWD}/slackware64-current/source"
 _TMP="/tmp"
+_WORK_DIR="work"
 
 
-remove_links() {
-    [[ -z "$1" ]] && return 1
-    find "${_BUILD}/$1/" -type l -delete
+remove_work_dir() {
+    [[ ! -z "$1" ]] && rm -rf "${_BUILD}/$1/${_WORK_DIR}"
 }
 
-create_links() {
+prepare_work_dir() {
     [[ -z "$1" ]] && return 1
-    ln -sf "${_SOURCE}/$1/"* "${_BUILD}/$1/"
+    [[ ! -d "${_BUILD}/$1/${_WORK_DIR}" ]] && mkdir "${_BUILD}/$1/${_WORK_DIR}"
+    for f in $(ls "${_SOURCE}/$1/");do
+        if [[ ! -L $f ]];then
+            cp -a "${_SOURCE}/$1/$f" ${_BUILD}/$1/${_WORK_DIR}/$(basename $f)
+        else
+            ln -s "${_SOURCE}/$1/$f" "${_BUILD}/$1/${_WORK_DIR}/$(basename $f)"
+        fi
+    done
 }
 
 fix_default() {
@@ -64,14 +72,12 @@ fix_global() {
 
 patching_files() {
     [[ -z "$1" ]] && return 1
-    local PATCH_FILES=$(find -type f | grep patch | sed 's#.patch$##')
+    local PATCH_FILES=$(find ../ -type f | grep patch | sed 's#.patch$##')
     local count=1
     for pf in "${PATCH_FILES}";do
-        pf=$(basename "$pf")
+#        pf=$(basename "$pf")
         [[ -z "$pf" ]] && continue
         echo "$pf"
-        rm "$pf"
-        cp -a "${_SOURCE}/$1/${pf}" "${_BUILD}/$1/"
         patch -p1 --verbose < "${pf}.patch" || return 1
         count=$(($count+1))
     done
@@ -93,13 +99,13 @@ build() {
             p=$(echo ${_PKG} | cut -d '/' -f2)
 #            if [[ ! $(ls ${_INSTALL}/$t/ | grep "$p-") ]];then
 #                removepkg $p
-                remove_links "${_PKG}"
-                create_links "${_PKG}"
-                pushd ${_BUILD}/${_PKG}/ 2>&1>/dev/null
+                remove_work_dir "${_PKG}"
+                prepare_work_dir "${_PKG}"
+                pushd ${_BUILD}/${_PKG}/${_WORK_DIR} 2>&1>/dev/null
                 [[ -e .ignore ]] && continue
                 patching_files ${_PKG} STATUS
                 [[ $STATUS == 1 ]] && fix_default ${_PKG}
-                fix_global ${p}
+#                fix_global ${p}
                 ./${p}.SlackBuild 2>&1 | tee ${p}.build.log
                 if [[ ${PIPESTATUS[0]} == 1 ]];then
                     echo "${_PKG}" 2>&1 >> ${_CWD}/build_error.log
