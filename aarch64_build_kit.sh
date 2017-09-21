@@ -104,11 +104,11 @@ build() {
 #                fix_global ${p}
                 pushd ${_WORK_DIR} 2>&1>/dev/null
                 ./${p}.SlackBuild 2>&1 | tee ${p}.build.log
-                popd 2>&1>/dev/null
                 if [[ ${PIPESTATUS[0]} == 1 ]];then
                     echo "${_PKG}" 2>&1 >> ${_CWD}/build_error.log
                     continue
                 fi
+                popd 2>&1>/dev/null
                 move_pkg ${t} ${p}
                 installpkg ${_TXZ}/${t}/${p}-*.txz
                 popd 2>&1>/dev/null
