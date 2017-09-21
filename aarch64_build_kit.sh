@@ -63,7 +63,7 @@ fix_global() {
   sed -e "s/\" -j. \"/\" -j$THREADS \"/" \
       -e 's/\(-slackware\)\(-linux.*\s\)/-unknown\2/g' \
       -e 's/\(-slackware\)\(-linux$\)/-unknown\2/g' \
-      -i ${1}.SlackBuild
+      -i ${_WORK_DIR}/${1}.SlackBuild
 }
 
 patching_files() {
@@ -72,8 +72,9 @@ patching_files() {
     for pf in "${PATCH_FILES}";do
         pf=$(basename "$pf")
         [[ -z "$pf" ]] && continue
-        echo "$pf 4"
-        patch -p1 --verbose < "${pf}.patch" || return 1
+        pushd ${_WORK_DIR} 2>&1>/dev/null
+        patch -p1 --verbose < "../${pf}.patch" || return 1
+        popd 2>&1>/dev/null
         count=$(($count+1))
     done
     eval "$1=\$count"
