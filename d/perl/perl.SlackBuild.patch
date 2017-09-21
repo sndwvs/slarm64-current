@@ -1,0 +1,61 @@
+--- a/perl.SlackBuild	2017-09-21 21:07:14.933660562 +0300
++++ b/perl.SlackBuild	2017-09-21 21:13:29.118577119 +0300
+@@ -54,19 +54,20 @@
+ GETTEXT=1.07
+ TERMREADKEY=2.37
+ 
+-if [ "$ARCH" = "i486" ]; then
+-  SLKCFLAGS="-O2 -march=i486 -mcpu=i686"
+-  LIBDIRSUFFIX=""
+-elif [ "$ARCH" = "i586" ]; then
+-  SLKCFLAGS="-O2 -march=i586 -mtune=i686"
+-  LIBDIRSUFFIX=""
+-elif [ "$ARCH" = "s390" ]; then
+-  SLKCFLAGS="-O2"
+-  LIBDIRSUFFIX=""
+-elif [ "$ARCH" = "x86_64" ]; then
+-  SLKCFLAGS="-O2 -fPIC"
+-  LIBDIRSUFFIX="64"
+-fi
++case "$ARCH" in
++     i?86) SLKCFLAGS="-O2 -march=i586 -mtune=i686"
++           LIBDIRSUFFIX=""
++           ;;
++     s390) SLKCFLAGS="-O2"
++           LIBDIRSUFFIX=""
++           ;;
++   x86_64) SLKCFLAGS="-O2 -fPIC"
++           LIBDIRSUFFIX="64"
++           ;;
++  aarch64) SLKCFLAGS="-O2 -fPIC"
++           LIBDIRSUFFIX="64"
++           ;;
++esac
+ 
+ if [ -x /usr/bin/perl ]; then
+   echo "Perl detected."
+@@ -104,14 +105,16 @@
+ #
+ USE_THREADS="-Dusethreads -Duseithreads"
+ 
+-if [ "$ARCH" = "x86_64" ]; then # adopted from "Cross Linux From Scratch"
+-  # Configure must be told to also use lib64:
+-  zcat $CWD/perl.configure.multilib.patch.gz | patch -p1 --verbose || exit 1
+-  # "perl -V" should report that libc is in /lib64
+-  sed -i -e '/libc/s#/lib/#/lib64/#' hints/linux.sh
+-  # make perl use lib64:
+-  echo 'installstyle="lib64/perl5"' >>hints/linux.sh
+-fi
++case "$ARCH" in # adopted from "Cross Linux From Scratch"
++  x86_64|aarch64)
++    # Configure must be told to also use lib64:
++    zcat $CWD/perl.configure.multilib.patch.gz | patch -p1 --verbose || exit 1
++    # "perl -V" should report that libc is in /lib64
++    sed -i -e '/libc/s#/lib/#/lib64/#' hints/linux.sh
++    # make perl use lib64:
++    echo 'installstyle="lib64/perl5"' >>hints/linux.sh
++  ;;
++esac
+ 
+ # We no longer include suidperl.  To quote the INSTALL file:
+ #
