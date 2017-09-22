@@ -1,0 +1,18 @@
+--- a/pssh.SlackBuild	2017-09-23 01:58:01.996842160 +0300
++++ b/pssh.SlackBuild	2017-09-23 01:58:31.185842160 +0300
+@@ -37,11 +37,10 @@
+ 
+ PREFIX=/usr
+ 
+-if [ "$ARCH" = "x86_64" ]; then
+-  LIBDIRSUFFIX="64"
+-else
+-  LIBDIRSUFFIX=""
+-fi
++case "$ARCH" in
++  x86_64|aarch64) LIBDIRSUFFIX="64" ;;
++               *) LIBDIRSUFFIX="" ;;
++esac
+ 
+ CWD=$(pwd)
+ TMP=${TMP:-/tmp}
