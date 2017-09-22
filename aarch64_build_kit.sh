@@ -8,10 +8,10 @@ THREADS=$(($(grep -c 'processor' /proc/cpuinfo)-2))
 #source "l-packages.conf" || exit 1
 #source "tcl-packages.conf" || exit 1
 #source "d-packages.conf" || exit 1
-#source "ap-packages.conf" || exit 1
-#source "a-packages.conf_" || exit 1
-#source "l.conf" || exit 1
-source "n-packages.conf" || exit 1
+##source "ap-packages.conf" || exit 1
+##source "a-packages.conf" || exit 1
+source "l.conf" || exit 1
+#source "n-packages.conf" || exit 1
 
 
 _BUILD="${_CWD}/slackwarearm64-current/source"
@@ -35,6 +35,7 @@ prepare_work_dir() {
             ln -s "${_SOURCE}/$1/$f" "${_BUILD}/$1/${_WORK_DIR}/$(basename $f)"
         fi
     done
+    cp -a ${_BUILD}/$1/*.xz "${_BUILD}/$1/${_WORK_DIR}/"
 }
 
 fix_default() {
@@ -61,9 +62,10 @@ esac\n/};p' -i "${_WORK_DIR}/${pf}"
 fix_global() {
   [[ -z "$1" ]] && return 1
   sed -e "s/\" -j. \"/\" -j$THREADS \"/" \
-      -e 's/\(-slackware\)\(-linux.*\s\)/-unknown\2/g' \
-      -e 's/\(-slackware\)\(-linux$\)/-unknown\2/g' \
       -i ${_WORK_DIR}/${1}.SlackBuild
+#      -e 's/\(-slackware\)\(-linux.*\s\)/-unknown\2/g' \
+#      -e 's/\(-slackware\)\(-linux$\)/-unknown\2/g' \
+#      -i ${_WORK_DIR}/${1}.SlackBuild
 }
 
 patching_files() {
@@ -101,7 +103,7 @@ build() {
                 [[ -e .ignore ]] && continue
                 patching_files STATUS
                 [[ $STATUS == 1 ]] && fix_default
-#                fix_global ${p}
+                fix_global ${p}
                 pushd ${_WORK_DIR} 2>&1>/dev/null
                 ./${p}.SlackBuild 2>&1 | tee ${p}.build.log
                 if [[ ${PIPESTATUS[0]} == 1 ]];then
