@@ -35,7 +35,8 @@ prepare_work_dir() {
             ln -s "${_SOURCE}/$1/$f" "${_BUILD}/$1/${_WORK_DIR}/$(basename $f)"
         fi
     done
-    cp -a ${_BUILD}/$1/*.xz "${_BUILD}/$1/${_WORK_DIR}/"
+    [[ $(ls ${_BUILD}/$1/ | grep .xz) ]] && cp -a ${_BUILD}/$1/*.xz \
+                                                  ${_BUILD}/$1/${_WORK_DIR}/
 }
 
 fix_default() {
