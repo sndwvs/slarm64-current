@@ -1,5 +1,5 @@
---- a/floppy.SlackBuild	2017-09-18 21:34:45.158489405 +0300
-+++ b/floppy.SlackBuild	2017-09-18 21:34:07.060489405 +0300
+--- a/floppy.SlackBuild	2017-09-22 20:44:16.755449991 +0100
++++ b/floppy.SlackBuild	2017-09-22 20:45:30.909450026 +0100
 @@ -34,13 +34,14 @@
    esac
  fi
@@ -22,3 +22,16 @@
  
  CWD=$(pwd)
  TMP=${TMP:-/tmp}
+@@ -54,6 +55,7 @@
+ cd fdutils-$VERSION
+ zcat $CWD/fdutils-5.5-20081027.diff.gz | patch -p1 --verbose --backup --suffix=.orig || exit 1
+ zcat $CWD/fdutils.mediaprm.diff.gz | patch -p1 --verbose --backup --suffix=.orig || exit 1
++xzcat $CWD/fdutils-alt-nodvi.patch.xz | patch -p1 --verbose --backup --suffix=.orig || exit 1
+ sed -i 's|<linux/ext2_fs.h>|<ext2fs/ext2_fs.h>|' src/fdmount.c
+ CFLAGS="$SLKCFLAGS" \
+ ./configure \
+@@ -111,4 +113,3 @@
+ cat $CWD/slack-desc > $PKG/install/slack-desc
+ cd $PKG
+ makepkg -l y -c n $TMP/floppy-$VERSION-$ARCH-$BUILD.txz
+-
