@@ -1,0 +1,37 @@
+--- a/python3.SlackBuild	2017-09-23 18:31:43.688229340 +0300
++++ b/python3.SlackBuild	2017-09-23 18:33:54.705229340 +0300
+@@ -29,7 +29,7 @@
+ BRANCH_VERSION=$(echo $VERSION | cut -f 1,2 -d . )
+ BUILD=${BUILD:-1}
+ 
+-NUMJOBS=${NUMJOBS:-" -j7 "}
++NUMJOBS=${NUMJOBS:-" -j5 "}
+ 
+ # Automatically determine the architecture we're building on:
+ if [ -z "$ARCH" ]; then
+@@ -59,6 +59,8 @@
+   LIBDIRSUFFIX=""
+ elif [ "$ARCH" = "armel" ]; then
+   LIBDIRSUFFIX=""
++elif [ "$ARCH" = "aarch64" ]; then
++  LIBDIRSUFFIX="64"
+ fi
+ 
+ # Location for Python site-packages:
+@@ -75,10 +77,12 @@
+ # We don't want a large libpython*.a.
+ zcat $CWD/python3.no-static-library.diff.gz | patch -p1 --verbose || exit 1
+ 
+-if [ "$ARCH" = "x86_64" ]; then
+-  # Install to lib64 instead of lib.
+-  zcat $CWD/python3.x86_64.diff.gz | patch -p1 --verbose || exit 1
+-fi
++case "$ARCH" in
++  x86_64|aarch64)
++        # Install to lib64 instead of lib.
++        zcat $CWD/python3.x86_64.diff.gz | patch -p1 --verbose || exit 1
++        ;;
++esac
+ 
+ # Fix python3 path in cgi.py.
+ sed -i '1s|^#.*/usr/local/bin/python|#!/usr/bin/python3|' Lib/cgi.py
