@@ -1,0 +1,22 @@
+--- a/qtwebkit/qtwebkit.SlackBuild	2017-09-23 19:59:05.611808950 +0300
++++ b/qtwebkit/qtwebkit.SlackBuild	2017-09-23 20:02:32.280808950 +0300
+@@ -27,7 +27,7 @@
+ VERSION=$(ls qtwebkit-*.tar.?z* | rev | cut -f 3- -d . | cut -f 1 -d - | rev)
+ BUILD=${BUILD:-1}
+ 
+-NUMJOBS=${NUMJOBS:--j7}
++NUMJOBS=${NUMJOBS:--j5}
+ 
+ # Automatically determine the architecture we're building on:
+ MARCH=$( uname -m )
+@@ -64,6 +64,10 @@
+   SLKCFLAGS="-O2 -march=armv7-a -mfpu=vfpv3-d16 -fno-strict-volatile-bitfields"
+   LIBDIRSUFFIX=""
+   WEBKITFLAGS="--no-force-sse2"
++elif [ "$ARCH" = "aarch64" ]; then
++  SLKCFLAGS="-O2"
++  LIBDIRSUFFIX="64"
++  WEBKITFLAGS="--no-force-sse2"
+ else
+   SLKCFLAGS="-O2"
+   LIBDIRSUFFIX=""
