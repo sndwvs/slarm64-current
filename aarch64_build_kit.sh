@@ -8,7 +8,7 @@ THREADS=$(($(grep -c 'processor' /proc/cpuinfo)-2))
 #source "l-packages.conf" || exit 1
 #source "tcl-packages.conf" || exit 1
 #source "d-packages.conf" || exit 1
-##source "ap-packages.conf" || exit 1
+#source "ap-packages.conf" || exit 1
 ##source "a-packages.conf" || exit 1
 source "l.conf" || exit 1
 #source "n-packages.conf" || exit 1
@@ -63,14 +63,13 @@ esac\n/};p' -i "${_WORK_DIR}/${pf}"
 fix_global() {
   [[ -z "$1" ]] && return 1
   sed -e "s/\" -j. \"/\" -j$THREADS \"/" \
+      -e 's/\(-slackware\)\(-linux.*\s\)/-unknown\2/g' \
+      -e 's/\(-slackware\)\(-linux$\)/-unknown\2/g' \
       -i ${_WORK_DIR}/${1}.SlackBuild
-#      -e 's/\(-slackware\)\(-linux.*\s\)/-unknown\2/g' \
-#      -e 's/\(-slackware\)\(-linux$\)/-unknown\2/g' \
-#      -i ${_WORK_DIR}/${1}.SlackBuild
 }
 
 patching_files() {
-    local PATCH_FILES=$(find -maxdepth 1 -type f | grep patch | sed 's#.patch$##')
+    local PATCH_FILES=$(find -maxdepth 1 -type f | grep patch$ | sed 's#.patch##')
     local count=1
     for pf in "${PATCH_FILES}";do
         pf=$(basename "$pf")
@@ -98,10 +97,10 @@ build() {
             p=$(echo ${_PKG} | cut -d '/' -f2)
 #            if [[ ! $(ls ${_INSTALL}/$t/ | grep "$p-") ]];then
 #                removepkg $p
+                [[ -e .ignore ]] && continue
                 remove_work_dir "${_PKG}"
                 prepare_work_dir "${_PKG}"
                 pushd ${_BUILD}/${_PKG} 2>&1>/dev/null
-                [[ -e .ignore ]] && continue
                 patching_files STATUS
                 [[ $STATUS == 1 ]] && fix_default
                 fix_global ${p}
