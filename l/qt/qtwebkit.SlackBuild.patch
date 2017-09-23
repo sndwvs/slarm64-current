@@ -20,3 +20,25 @@
  else
    SLKCFLAGS="-O2"
    LIBDIRSUFFIX=""
+@@ -96,14 +100,20 @@
+  \( -perm 666 -o -perm 664 -o -perm 600 -o -perm 444 -o -perm 440 -o -perm 400 \) \
+  -exec chmod 644 {} \;
+ 
++# Configure & build:
++# For ARM we added:
++# QMAKE_LFLAGS_RELEASE=\"$SLKLDFLAGS\"  QMAKE_CFLAGS_RELEASE=\"$SLKCFLAGS\" QMAKE_CXXFLAGS_RELEASE=\"$SLKLDFLAGS\"
++# DEFINES+=ENABLE_JIT=0 DEFINES+=ENABLE_YARR_JIT=0 DEFINES+=ENABLE_ASSEMBLER=0
++
+ QTDIR="/usr/lib$LIBDIRSUFFIX/qt" \
+ Tools/Scripts/build-webkit \
+   --qt \
++  DEFINES+=ENABLE_JIT=0 DEFINES+=ENABLE_YARR_JIT=0 DEFINES+=ENABLE_ASSEMBLER=0 \
+   --prefix=/usr/lib${LIBDIRSUFFIX}/qt \
+   --release \
+   --no-webkit2 \
+   --makeargs="$NUMJOBS" \
+-  --qmakearg="CONFIG+=production_build QMAKE_CFLAGS=\"$SLKCFLAGS\" QMAKE_CXXFLAGS=\"$SLKCFLAGS\"" \
++  --qmakearg="CONFIG+=production_build QMAKE_LFLAGS_RELEASE=\"$SLKLDFLAGS\" QMAKE_CFLAGS=\"$SLKCFLAGS\" QMAKE_CFLAGS_RELEASE=\"$SLKCFLAGS\" QMAKE_CXXFLAGS_RELEASE=\"$SLKLDFLAGS\" QMAKE_CXXFLAGS=\"$SLKCFLAGS\"" \
+   $WEBKITFLAGS || exit 1
+ 
+ # To add support for WebP images add this to --qmakearg

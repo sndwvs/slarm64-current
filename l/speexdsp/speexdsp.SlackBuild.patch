@@ -1,0 +1,20 @@
+--- a/speexdsp.SlackBuild	2017-09-23 22:00:42.759401076 +0300
++++ b/speexdsp.SlackBuild	2017-09-23 22:04:29.864401076 +0300
+@@ -53,6 +53,9 @@
+ elif [ "$ARCH" = "x86_64" ]; then
+   SLKCFLAGS="-O2 -fPIC"
+   LIBDIRSUFFIX="64"
++elif [ "$ARCH" = "aarch64" ]; then
++  SLKCFLAGS="-O2"
++  LIBDIRSUFFIX="64"
+ else
+   SLKCFLAGS="-O2"
+   LIBDIRSUFFIX=""
+@@ -79,6 +85,7 @@
+   --mandir=/usr/man \
+   --docdir=/usr/doc/$PKGNAM-$VERSION \
+   --enable-static=no \
++  --disable-neon \
+   --build=$ARCH-slackware-linux || exit 1
+ 
+ make $NUMJOBS || make || exit 1
