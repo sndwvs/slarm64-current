@@ -1,0 +1,52 @@
+--- a/glibc.SlackBuild	2017-09-23 13:52:10.889020340 +0100
++++ b/glibc.SlackBuild	2017-09-23 13:57:13.474020340 +0100
+@@ -70,6 +70,10 @@
+     OPTIMIZ="-O3 -fPIC"
+     LIBDIRSUFFIX="64"
+     ;;
++  aarch64)
++    OPTIMIZ="-O3"
++    LIBDIRSUFFIX="64"
++    ;;
+   *)
+     OPTIMIZ="-O3"
+     LIBDIRSUFFIX=""
+@@ -84,6 +88,9 @@
+     # This should be i586 for all 32-bit x86 arch:
+     TARGET=${TARGET:-i586}
+     ;;
++  aarch64)
++    TARGET=${TARGET:-aarch64}
++    ;;
+ esac
+ 
+ # Hand off the $ARCH variable to $SLACKWARE_ARCH to avoid confusing glibc:
+@@ -103,11 +110,14 @@
+ TMP=${TMP:-/glibc-tmp-$(mcookie)}
+ mkdir -p $TMP
+ 
+-NUMJOBS=${NUMJOBS:-" -j7 "}
++NUMJOBS=${NUMJOBS:-" -j5 "}
+ 
+ # This function fixes a doinst.sh file for x86_64.
+ # With thanks to Fred Emmott.
+ fix_doinst() {
++  # ARM uses .so.3:
++  sed -i 's?ld-linux.so.[0-9]?'"$ARMLDLINUXVER"'?g' install/doinst.sh
++
+   if [ "x$LIBDIRSUFFIX" = "x" ]; then
+     return;
+   fi;
+@@ -202,6 +212,12 @@
+ # Clean up leftover CVS directories:
+ find . -type d -name CVS -exec rm -r {} \; 2> /dev/null
+ 
++# Determine version of ld-linux.so
++case $SLACKWARE_ARCH in
++  arm)     export ARMLDLINUXVER="$( grep -A1 "hard-float ABI" sysdeps/unix/sysv/linux/arm/shlib-versions | egrep "^ld=" | awk -F= '{print $2}' )" ;;
++  aarch64) export ARMLDLINUXVER="$( egrep "^ld=" sysdeps/unix/sysv/linux/aarch64/shlib-versions | grep -v "be" | awk -F= '{print $2}' )" ;;
++esac
++
+ # Apply patches; exit if any fail.
+ apply_patches
+ if [ ! $? = 0 ]; then
