@@ -1,0 +1,22 @@
+--- a/x11.SlackBuild	2017-09-25 22:09:44.684013705 +0300
++++ b/x11.SlackBuild	2017-09-25 22:11:33.268013705 +0300
+@@ -72,14 +72,18 @@
+ VERSION=${VERSION:-7.5}
+ BUILD=${BUILD:-1}
+ PKGARCH=$ARCH
+-NUMJOBS=${NUMJOBS:-" -j7 "}
++NUMJOBS=${NUMJOBS:-" -j5 "}
+ 
+ if [ "$ARCH" = "x86_64" ]; then
+   LIBDIRSUFFIX="64"
++elif [ "$ARCH" = "aarch64" ]; then
++  LIBDIRSUFFIX="64"
+ else
+   LIBDIRSUFFIX=""
+ fi
+ 
++xzcat arch.use.flags.patch.xz | patch -p1 --verbose || exit 1
++
+ # Set up a few useful functions:
+ 
+ fix_perms() {
