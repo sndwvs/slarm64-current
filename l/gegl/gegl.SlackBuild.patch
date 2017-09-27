@@ -1,0 +1,26 @@
+--- a/gegl.SlackBuild	2017-09-27 21:21:27.504619209 +0300
++++ b/gegl.SlackBuild	2017-09-27 21:24:06.205619209 +0300
+@@ -50,6 +50,9 @@
+ elif [ "$ARCH" = "x86_64" ]; then
+   SLKCFLAGS="-O2 -fPIC"
+   LIBDIRSUFFIX="64"
++elif [ "$ARCH" = "aarch64" ]; then
++  SLKCFLAGS="-O2"
++  LIBDIRSUFFIX="64"
+ else
+   SLKCFLAGS="-O2"
+   LIBDIRSUFFIX=""
+@@ -68,7 +71,12 @@
+  \( -perm 666 -o -perm 664 -o -perm 600 -o -perm 444 -o -perm 440 -o -perm 400 \) \
+  -exec chmod 644 {} \;
+ 
+-CFLAGS="$SLKCFLAGS" \
++sh autogen.sh
++
++# https://bugzilla.gnome.org/show_bug.cgi?id=655517
++sed -i -e 's/ -shared / -Wl,-O1,--as-needed\0/g' libtool
++
++#CFLAGS="$SLKCFLAGS" \
+ ./configure \
+   --prefix=/usr \
+   --libdir=/usr/lib${LIBDIRSUFFIX} \
