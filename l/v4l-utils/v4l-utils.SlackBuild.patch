@@ -1,0 +1,20 @@
+--- a/v4l-utils.SlackBuild	2017-09-27 22:48:20.238943686 +0300
++++ b/v4l-utils.SlackBuild	2017-09-27 22:54:37.123190949 +0300
+@@ -21,6 +21,7 @@
+ # OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+ # ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ 
++xzcat $(pwd)/*.patch.xz | patch -p1 --verbose || exit 1
+ 
+ PKGNAM=v4l-utils
+ VERSION=${VERSION:-$(echo $PKGNAM-*.tar.?z* | rev | cut -f 3- -d . | cut -f 1 -d - | rev)}
+@@ -51,6 +52,9 @@
+ elif [ "$ARCH" = "x86_64" ]; then
+   SLKCFLAGS="-O2 -fPIC"
+   LIBDIRSUFFIX="64"
++elif [ "$ARCH" = "aarch64" ]; then
++  SLKCFLAGS="-O2"
++  LIBDIRSUFFIX="64"
+ else
+   SLKCFLAGS="-O2"
+   LIBDIRSUFFIX=""
