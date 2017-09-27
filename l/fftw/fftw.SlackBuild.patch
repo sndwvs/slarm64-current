@@ -1,0 +1,33 @@
+--- a/fftw.SlackBuild	2017-09-27 19:50:15.599088919 +0300
++++ b/fftw.SlackBuild	2017-09-27 20:07:45.056597546 +0300
+@@ -54,6 +54,10 @@
+   SLKCFLAGS="-O2 -fPIC"
+   LIBDIRSUFFIX="64"
+   SIMD="--enable-sse2 --enable-avx"
++elif [ "$ARCH" = "aarch64" ]; then
++  SLKCFLAGS="-O2"
++  LIBDIRSUFFIX="64"
++  SIMD=""
+ else
+   SLKCFLAGS="-O2"
+   LIBDIRSUFFIX=""
+@@ -133,6 +137,11 @@
+ make install-strip DESTDIR=$PKG || exit 1
+ make clean
+ 
++#
++# Not for ARM, as we don't have the quadmath library in gcc.
++#    --enable-quad-precision \
++#
++
+ # compile libfftw3q
+ ./configure \
+     --prefix=/usr \
+@@ -146,7 +155,6 @@
+     --disable-static \
+     --enable-threads \
+     --enable-openmp \
+-    --enable-quad-precision \
+     --build=$ARCH-slackware-linux || exit 1
+ 
+ make $NUMJOBS || make || exit 1

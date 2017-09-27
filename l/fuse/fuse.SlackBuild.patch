@@ -1,0 +1,36 @@
+--- a/fuse.SlackBuild	2017-09-27 20:43:54.663597546 +0300
++++ b/fuse.SlackBuild	2017-09-27 20:47:41.491597546 +0300
+@@ -52,6 +52,9 @@
+ elif [ "$ARCH" = "x86_64" ]; then
+   SLKCFLAGS="-O2 -fPIC"
+   LIBDIRSUFFIX="64"
++elif [ "$ARCH" = "aarch64" ]; then
++  SLKCFLAGS="-O2"
++  LIBDIRSUFFIX="64"
+ else
+   SLKCFLAGS="-O2"
+   LIBDIRSUFFIX=""
+@@ -70,6 +73,10 @@
+  \( -perm 666 -o -perm 664 -o -perm 600 -o -perm 444 -o -perm 440 -o -perm 400 \) \
+  -exec chmod 644 {} \;
+ 
++for fp in $CWD/*.patch.xz; do
++  xzcat ${fp} | patch -p1 --verbose || exit 1
++done
++
+ CFLAGS="$SLKCFLAGS" \
+ CXXFLAGS="$SLKCFLAGS" \
+ ./configure \
+@@ -85,6 +92,7 @@
+   --enable-lib \
+   --enable-util \
+   --disable-static \
++  --disable-example \
+   --build=${ARCH}-slackware-linux || exit 1
+ 
+ make $NUMJOBS || make || exit 1
+@@ -139,4 +147,3 @@
+ 
+ cd $PKG
+ /sbin/makepkg -l y -c n $TMP/$PKGNAM-$VERSION-$ARCH-$BUILD.txz
+-
