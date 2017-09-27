@@ -1,0 +1,32 @@
+--- a/libcap.SlackBuild	2017-09-27 22:10:12.943943686 +0300
++++ b/libcap.SlackBuild	2017-09-27 22:23:36.006943686 +0300
+@@ -54,6 +54,9 @@
+ elif [ "$ARCH" = "armel" ]; then
+   SLKCFLAGS="-O2 -march=armv4t"
+   LIBDIRSUFFIX=""
++elif [ "$ARCH" = "aarch64" ]; then
++  SLKCFLAGS="-O2"
++  LIBDIRSUFFIX="64"
+ fi
+ 
+ CWD=$(pwd)
+@@ -76,11 +79,17 @@
+  \( -perm 666 -o -perm 664 -o -perm 600 -o -perm 444 -o -perm 440 -o -perm 400 \) \
+  -exec chmod 644 {} \;
+ 
++# Don't build gperf unconditionally
++# https://forums-web2.gentoo.org/viewtopic-t-1057414.html?sid=df6adbebc274e9dc7f9e9062bff6f98b
++# https://604802.bugs.gentoo.org/attachment.cgi?id=459002
++# Issue with gperf and & libcap:
++sed 's@^BUILD_GPERF@#\0@' -i Make.Rules || exit 1
++
+ # Set the CFLAGS
+ sed -i.orig "s/^\(DEBUG =\).*/\1$SLKCFLAGS/" Make.Rules
+ 
+-make DYNAMIC=yes $NUMJOBS || make DYNAMIC=yes || exit 1
+-make install FAKEROOT=$PKG man_prefix=/usr || exit 1
++make DYNAMIC=yes $NUMJOBS lib=lib${LIBDIRSUFFIX} || make DYNAMIC=yes lib=lib${LIBDIRSUFFIX} || exit 1
++make install FAKEROOT=$PKG man_prefix=/usr lib=/lib${LIBDIRSUFFIX} || exit 1
+ chmod 755 $PKG/lib${LIBDIRSUFFIX}/libcap.so*
+ 
+ find $PKG | xargs file | grep -e "executable" -e "shared object" | grep ELF \
