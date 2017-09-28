@@ -1,0 +1,27 @@
+--- a/herqq.SlackBuild	2017-09-28 22:10:46.338677628 +0300
++++ b/herqq.SlackBuild	2017-09-28 22:19:19.698677628 +0300
+@@ -52,6 +52,9 @@
+ elif [ "$ARCH" = "armv7hl" ]; then
+   SLKCFLAGS="-O2 -march=armv7-a -mfpu=vfpv3-d16"
+   LIBDIRSUFFIX=""
++elif [ "$ARCH" = "aarch64" ]; then
++  SLKCFLAGS="-O2"
++  LIBDIRSUFFIX="64"
+ else
+   SLKCFLAGS="-O2"
+   LIBDIRSUFFIX=""
+@@ -78,6 +81,9 @@
+  \( -perm 666 -o -perm 664 -o -perm 600 -o -perm 444 -o -perm 440 -o -perm 400 \) \
+  -exec chmod 644 {} \;
+ 
++xzcat $CWD/herqq-1.0.0-c++11.patch.xz | patch -p1 --verbose || exit 1
++xzcat $CWD/herqq-1.0.0-qtsoap-library.patch.xz | patch -p1 --verbose || exit 1
++
+ qmake PREFIX=/usr
+ make $NUMJOBS || make || exit 1
+ make install INSTALL_ROOT=$PKG || exit 1
+@@ -95,4 +101,3 @@
+ 
+ cd $PKG
+ /sbin/makepkg -l y -c n $TMP/$PKGNAM-$VERSION-$ARCH-$BUILD.txz
+-
