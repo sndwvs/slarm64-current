@@ -43,7 +43,7 @@ fix_default() {
     for pf in $(find ${_WORK_DIR}/ -maxdepth 1 -type f | grep .SlackBuild);do
         pf=$(basename "$pf")
         echo "$pf"
-        sed -n '/if \[ \"$ARCH\" = \"\(i.86\)\" \]/{:a;N;/fi$/!ba;N;s/.*\n/case \"\$ARCH\" in\
+        sed -n '/^if \[ \"$ARCH\" = \"\(i.86\)\" \]/{:a;N;/^fi$/!ba;N;s/.*\n/case \"\$ARCH\" in\
      i?86\) SLKCFLAGS=\"-O2 -march=i586 -mtune=i686\"\
            LIBDIRSUFFIX=\"\"\
            ;;\
@@ -71,7 +71,7 @@ fix_global() {
 patching_files() {
     local PATCH_FILES=$(find -maxdepth 1 -type f | grep patch$ | sed 's#.patch##')
     local count=1
-    for pf in "${PATCH_FILES}";do
+    for pf in ${PATCH_FILES};do
         pf=$(basename "$pf")
         [[ -z "$pf" ]] && continue
         pushd ${_WORK_DIR} 2>&1>/dev/null
