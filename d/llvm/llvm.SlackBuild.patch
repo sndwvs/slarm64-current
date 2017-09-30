@@ -1,0 +1,54 @@
+--- a/llvm.SlackBuild	2017-09-29 21:53:22.297908236 +0300
++++ b/llvm.SlackBuild	2017-09-30 11:13:27.005250985 +0300
+@@ -27,7 +27,7 @@
+ VERSION=${VERSION:-$(echo llvm-*.tar.xz | rev | cut -f 4- -d . | cut -f 1 -d - | rev)}
+ BUILD=${BUILD:-1}
+ 
+-NUMJOBS=${NUMJOBS:-" -j7 "}
++NUMJOBS=${NUMJOBS:-" -j5 "}
+ 
+ if [ -z "$ARCH" ]; then
+   case "$( uname -m )" in
+@@ -50,6 +50,9 @@
+ elif [ "$ARCH" = "x86_64" ]; then
+   SLKCFLAGS="-O2 -fPIC"
+   LIBDIRSUFFIX="64"
++elif [ "$ARCH" = "aarch64" ]; then
++  SLKCFLAGS="-O2"
++  LIBDIRSUFFIX="64"
+ else
+   SLKCFLAGS="-O2"
+   LIBDIRSUFFIX=""
+@@ -103,13 +106,25 @@
+ # is fixed.
+ zcat $CWD/clang_disable_pgo.patch.gz | patch -d tools/clang/ -p1 --verbose || exit 1
+ 
++xzcat $CWD/disable-llvm-symbolizer-test.patch.xz | patch -p1 --verbose || exit 1
++xzcat $CWD/0001-GCC-compatibility-Ignore-the-fno-plt-flag.patch.xz | patch -d tools/clang -p1 --verbose || exit 1
++xzcat $CWD/0002-Enable-SSP-and-PIE-by-default.patch.xz | patch -d tools/clang -p1 --verbose || exit 1
++
++# Determine whether we should build with gcc or clang.
++# If clang is present (as post boot strap) we'll build with that (as x86 upstream does)
++# otherwise we'll build with gcc.
++CCOMPILER=gcc
++CPPCOMPILER=g++
++which clang > /dev/null 2>&1 && { CCOMPILER=clang ; CPPCOMPILER=clang++ ;}
++echo "Using compiler: $CCOMPILER / $CPPCOMPILER"
++
+ # need to disable assertions to make llvm thread-safe
+ # clang resource dir is a relative path based on the location of the clang binary
+ mkdir build
+ cd build
+   cmake \
+-    -DCMAKE_C_COMPILER="clang" \
+-    -DCMAKE_CXX_COMPILER="clang++" \
++    -DCMAKE_C_COMPILER="$CCOMPILER" \
++    -DCMAKE_CXX_COMPILER="$CPPCOMPILER" \
+     -DCMAKE_C_FLAGS:STRING="$SLKCFLAGS" \
+     -DCMAKE_CXX_FLAGS:STRING="$SLKCFLAGS" \
+     -DCMAKE_INSTALL_PREFIX=/usr \
+@@ -200,4 +215,3 @@
+ 
+ cd $PKG
+ /sbin/makepkg -l y -c n $TMP/$PKGNAM-$VERSION-$ARCH-$BUILD.txz
+-
