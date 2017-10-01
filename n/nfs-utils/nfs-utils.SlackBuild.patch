@@ -1,0 +1,11 @@
+--- a/nfs-utils.SlackBuild	2017-09-30 14:01:42.844852556 +0300
++++ b/nfs-utils.SlackBuild	2017-09-30 14:02:26.392852556 +0300
+@@ -83,6 +83,8 @@
+   \( -perm 666 -o -perm 664 -o -perm 600 -o -perm 444 -o -perm 440 -o -perm 400 \) \
+   -exec chmod 644 {} \;
+ 
++sed -i '/fcntl.h/a#include <stdint.h>' support/nsm/rpc.c
++
+ # No NFSv4 yet -- it requires additional libraries.
+ 
+ CFLAGS="$SLKCFLAGS" \

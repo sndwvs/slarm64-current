@@ -1,0 +1,21 @@
+--- a/htdig.SlackBuild	2017-09-30 22:04:33.351012408 +0300
++++ b/htdig.SlackBuild	2017-09-30 22:15:00.024012408 +0300
+@@ -51,6 +51,9 @@
+ elif [ "$ARCH" = "x86_64" ]; then
+   SLKCFLAGS="-O2 -fPIC"
+   LIBDIRSUFFIX="64"
++elif [ "$ARCH" = "aarch64" ]; then
++  SLKCFLAGS="-O2"
++  LIBDIRSUFFIX="64"
+ else
+   SLKCFLAGS="-O2"
+   LIBDIRSUFFIX=""
+@@ -75,6 +78,8 @@
+ # Fix "common dir" location and add "synonym_dictionary" entry:
+ zcat $CWD/htdig.conf.diff.gz | patch -p1 --verbose || exit 1
+ 
++xzcat $CWD/htdig-3.2.0b6-buildfix.patch.xz | patch -p1 --verbose || exit 1
++
+ # Configure:
+ CFLAGS="$SLKCFLAGS" \
+ CXXFLAGS="$SLKCFLAGS" \

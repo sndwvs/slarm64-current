@@ -1,0 +1,32 @@
+--- a/autofs.SlackBuild	2017-09-30 14:13:28.222852556 +0300
++++ b/autofs.SlackBuild	2017-09-30 14:22:30.232852556 +0300
+@@ -47,6 +47,9 @@
+ elif [ "$ARCH" = "x86_64" ]; then
+   SLKCFLAGS="-O2 -fPIC"
+   LIBDIRSUFFIX="64"
++elif [ "$ARCH" = "aarch64" ]; then
++  SLKCFLAGS="-O2 -fgnu89-inline"
++  LIBDIRSUFFIX="64"
+ else
+   SLKCFLAGS="-O2"
+   LIBDIRSUFFIX=""
+@@ -77,6 +80,7 @@
+ 
+ CFLAGS="$SLKCFLAGS" \
+ CPPFLAGS="$SLKCFLAGS" \
++LDFLAGS="-Wl,-z,now" \
+ ./configure \
+   --prefix=/usr \
+   --mandir=/usr/man \
+@@ -85,6 +89,11 @@
+   --without-sasl \
+   --build=$ARCH-slackware-linux
+ 
++# Nasty hack since adding -fgnu89-inline to CFLAGS is not enough.
++# https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=777787
++sed -i 's?-rdynamic?-rdynamic -fgnu89-inline?g' daemon/Makefile
++sed -i '/LIBS = -ldl/aDAEMON_LDFLAGS += -fgnu89-inline' daemon/Makefile
++
+ make $NUMJOBS || make || exit 1
+ make install DESTDIR=$PKG || exit 1
+ 

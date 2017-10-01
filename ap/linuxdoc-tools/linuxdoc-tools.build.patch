@@ -1,5 +1,5 @@
---- a/linuxdoc-tools.build	2017-09-19 16:46:18.178780653 +0100
-+++ b/linuxdoc-tools.build	2017-09-19 16:46:27.019780653 +0100
+--- a/linuxdoc-tools.build	2017-09-30 23:10:43.364199508 +0300
++++ b/linuxdoc-tools.build	2017-10-01 00:40:10.576674261 +0300
 @@ -40,7 +40,7 @@
             export HOSTTARGET="-gnueabi"
             ;;
@@ -9,3 +9,29 @@
             export HOSTTARGET=""
             ;;
    i586)    export SLKCFLAGS="-O2 -march=i586 -mtune=i686"
+@@ -89,7 +89,8 @@
+   --prefix=/usr \
+   --sysconfdir=/etc \
+   --docdir=/usr/doc/asciidoc-$ASCIIDOCVER \
+-  --mandir=/usr/man || exit 1
++  --mandir=/usr/man \
++  --build=$ARCH-slackware-linux$HOSTTARGET || exit 1
+ 
+ # Install:
+ make install && make docs || exit 1
+@@ -313,6 +314,7 @@
+   --enable-http \
+   --enable-default-catalog=/etc/sgml/catalog \
+   --enable-default-search-path=/usr/share/sgml \
++  --build=$ARCH-slackware-linux$HOSTTARGET \
+   || exit 1
+ 
+ # Build:
+@@ -393,6 +395,7 @@
+   --enable-default-catalog=/etc/sgml/catalog \
+   --enable-default-search-path=/usr/share/sgml \
+   --datadir=/usr/share/sgml/openjade-$OPENJADEVER \
++  --build=$ARCH-slackware-linux$HOSTTARGET \
+   || exit 1
+ 
+ # Build:

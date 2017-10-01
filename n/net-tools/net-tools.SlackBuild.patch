@@ -1,0 +1,28 @@
+--- a/net-tools.SlackBuild	2017-10-01 03:48:55.763997055 +0300
++++ b/net-tools.SlackBuild	2017-10-01 03:50:07.592994496 +0300
+@@ -49,6 +49,8 @@
+   SLKCFLAGS="-O2"
+ elif [ "$ARCH" = "x86_64" ]; then
+   SLKCFLAGS="-O2 -fPIC"
++elif [ "$ARCH" = "aarch64" ]; then
++  SLKCFLAGS="-O2"
+ else
+   SLKCFLAGS="-O2"
+ fi
+@@ -67,6 +69,16 @@
+   \( -perm 666 -o -perm 664 -o -perm 600 -o -perm 444 -o -perm 440 -o -perm 400 \) \
+   -exec chmod 644 {} \;
+ 
++# Patch to fix FTBFS:
++sed -i 's? HAVE_HWSTRIP 1? HAVE_HWSTRIP 0?g' config.h
++# http://lists.linuxfromscratch.org/pipermail/blfs-support/2012-August/070428.html
++find -name "*.c" -o -name "*.h" | while read src; do
++   sed -i "s?<linux/if_ether.h>?<netinet/if_ether.h>?g" $src
++   sed -i "s?<linux/if_tr.h>?<netinet/if_tr.h>?g" $src
++   sed -i "s?<linux/if_fddi.h>?<netinet/if_fddi.h>?g" $src
++   sed -i "s?<netinet/ip.h>?<linux/ip.h>?g" $src
++done
++
+ mkdir -p $PKG/usr/doc/net-tools-$VERSION
+ cp -a COPYING* README* $PKG/usr/doc/net-tools-$VERSION
+ chmod 644 $PKG/usr/doc/net-tools-$VERSION/*

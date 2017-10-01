@@ -1,0 +1,22 @@
+--- a/librevenge.SlackBuild	2017-09-30 12:52:46.477336192 +0300
++++ b/librevenge.SlackBuild	2017-09-30 12:53:58.314336192 +0300
+@@ -50,6 +50,9 @@
+ elif [ "$ARCH" = "armv7hl" ]; then
+   SLKCFLAGS="-O2 -march=armv7-a -mfpu=vfpv3-d16"
+   LIBDIRSUFFIX=""
++elif [ "$ARCH" = "aarch64" ]; then
++  SLKCFLAGS="-O2"
++  LIBDIRSUFFIX="64"
+ else
+   SLKCFLAGS="-O2"
+   LIBDIRSUFFIX=""
+@@ -82,6 +85,9 @@
+   --docdir=/usr/doc/librevenge-$VERSION \
+   --disable-static \
+   --disable-tests \
++  --disable-silent-rules \
++  --disable-static \
++  --disable-werror \
+   --build=$ARCH-slackware-linux
+ 
+ make $NUMJOBS || make || exit 1

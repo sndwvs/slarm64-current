@@ -1,0 +1,12 @@
+--- a/newspost.SlackBuild	2017-10-01 04:07:20.094994496 +0300
++++ b/newspost.SlackBuild	2017-10-01 04:12:41.026994496 +0300
+@@ -53,6 +53,9 @@
+   \( -perm 666 -o -perm 664 -o -perm 600 -o -perm 444 -o -perm 440 -o -perm 400 \) \
+   -exec chmod 644 {} \;
+ 
++xzcat $CWD/newspost-2.1.1-nntp.patch.xz | patch -p1 --verbose || exit 1
++xzcat $CWD/newspost-2.1.1-glibc-2.10.patch.xz | patch -p1 --verbose || exit 1
++
+ make $NUMJOBS || make || exit 1
+ 
+ mkdir -p $PKG/usr/bin

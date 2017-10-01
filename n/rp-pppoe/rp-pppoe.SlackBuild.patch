@@ -1,0 +1,11 @@
+--- a/rp-pppoe.SlackBuild	2017-10-01 06:09:13.184864257 +0300
++++ b/rp-pppoe.SlackBuild	2017-10-01 06:12:05.942864257 +0300
+@@ -63,6 +63,8 @@
+   \( -perm 666 -o -perm 664 -o -perm 600 -o -perm 444 -o -perm 440 -o -perm 400 \) \
+   -exec chmod 644 {} \;
+ 
++xzcat "$CWD/rp-pppoe-3.12-bz#1469960-new-kernel-header.patch.xz" | patch -p2 --verbose || exit 1
++
+ CFLAGS="$SLKCFLAGS" \
+ ./configure \
+   --enable-plugin=/ppp-2.4.4 \

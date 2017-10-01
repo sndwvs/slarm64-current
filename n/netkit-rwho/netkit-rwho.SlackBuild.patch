@@ -1,0 +1,12 @@
+--- a/netkit-rwho.SlackBuild	2017-10-01 04:00:24.092994496 +0300
++++ b/netkit-rwho.SlackBuild	2017-10-01 04:02:12.242994496 +0300
+@@ -47,6 +47,9 @@
+ chown -R root:root .
+ zcat $CWD/netkit-rwho-0.17.diff.gz | patch -p1 || exit
+ zcat $CWD/rwhod_getloadavg.diff.gz | patch -p0 || exit
++for f in *.patch.xz; do
++  xzcat $CWD/${f} | patch -p1 || exit
++done
+ ./configure --prefix=/usr
+ make || exit 1
+ cd rwho
