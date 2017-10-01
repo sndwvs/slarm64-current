@@ -1,0 +1,33 @@
+--- a/mesa.SlackBuild	2017-10-01 07:58:41.395769910 +0300
++++ b/mesa.SlackBuild	2017-10-01 20:37:19.766974926 +0300
+@@ -28,8 +28,8 @@
+ NUMJOBS=${NUMJOBS:--j7}
+ 
+ # Be sure this list is up-to-date:
+-DRI_DRIVERS="i915,i965,nouveau,r200,radeon,swrast"
+-GALLIUM_DRIVERS="nouveau,r300,r600,svga,radeonsi,swrast,virgl"
++DRI_DRIVERS="nouveau,swrast"
++GALLIUM_DRIVERS="nouveau,swrast,virgl,vc4"
+ EGL_PLATFORMS="drm,x11"
+ 
+ if [ -z "$ARCH" ]; then
+@@ -54,6 +54,10 @@
+   SLKCFLAGS="-O2 -fPIC"
+   LIBDIRSUFFIX="64"
+   VULKAN=" --with-vulkan-drivers=intel,radeon "
++elif [ "$ARCH" = "aarch64" ]; then
++  SLKCFLAGS="-O2"
++  LIBDIRSUFFIX="64"
++#  VULKAN=" --with-vulkan-drivers=intel,radeon "
+ else
+   SLKCFLAGS="-O2"
+   LIBDIRSUFFIX=""
+@@ -129,8 +133,6 @@
+   --enable-gles1 \
+   --enable-gles2 \
+   --enable-vdpau \
+-  --enable-opencl \
+-  --enable-opencl-icd \
+   --build=$ARCH-slackware-linux || exit 1
+ 
+ # This is autodetected anyway:

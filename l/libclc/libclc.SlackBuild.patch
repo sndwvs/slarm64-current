@@ -1,0 +1,51 @@
+--- a/libclc.SlackBuild	2017-10-01 17:48:38.662545771 +0300
++++b/ libclc.SlackBuild	2017-10-01 19:27:30.593397746 +0300
+@@ -23,6 +23,12 @@
+ # OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+ # ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ 
++
++# update source from error
++# ./utils/prepare-builtins.cpp:5:10: fatal error: 'llvm/Bitcode/ReaderWriter.h' file not found
++xzcat $(pwd)/libclc-20170929_0c31bd5.patch.xz | patch -p1 --verbose || exit 1
++
++
+ PKGNAM=libclc
+ VERSION=${VERSION:-$(echo $PKGNAM-*.tar.?z* | rev | cut -f 3- -d . | cut -f 1 -d - | rev)}
+ BUILD=${BUILD:-1}
+@@ -53,6 +59,9 @@
+ elif [ "$ARCH" = "armv7hl" ]; then
+   SLKCFLAGS="-O2 -march=armv7-a -mfpu=vfpv3-d16"
+   LIBDIRSUFFIX=""
++elif [ "$ARCH" = "aarch64" ]; then
++  SLKCFLAGS="-O2"
++  LIBDIRSUFFIX="64"
+ else
+   SLKCFLAGS="-O2"
+   LIBDIRSUFFIX=""
+@@ -75,7 +84,13 @@
+   \( -perm 666 -o -perm 664 -o -perm 600 -o -perm 444 -o -perm 440 -o -perm 400 \) \
+   -exec chmod 644 {} \;
+ 
+-CFLAGS="$SLKCFLAGS -D__extern_always_inline=inline" \
++SLKHEADERDIR=/usr/include/c++/[0-9]* # Otherwise cstddef cannot be found on ARM
++SLKLIBDIR=/usr/lib/gcc/aarch64-slackware-linux/[0-9]*
++SLKHEADER2=/usr/include/c++/[0-9]*/aarch64-slackware-linux/
++SLKHEADER3=/usr/include/llvm/ADT/
++export CFLAGS="$SLKCFLAGS -D__extern_always_inline=inline -B$SLKLIBDIR -L$SLKLIBDIR -I$SLKHEADERDIR -I$SLKHEADER2 -I$SLKHEADER3"
++
++#CFLAGS="$SLKCFLAGS -D__extern_always_inline=inline" \
+ ./configure.py \
+   --prefix=/usr \
+   --libexecdir=/usr/lib$LIBDIRSUFFIX/clc/ \
+@@ -84,6 +99,10 @@
+ find $PKG -print0 | xargs -0 file | grep -e "executable" -e "shared object" | grep ELF \
+   | cut -f 1 -d : | xargs strip --strip-unneeded 2> /dev/null || true
+ 
++# fstack-protector-strong is currently not supported by clang++
++# Taken from Fedora spec:
++sed -i "s/fstack-protector-strong/fstack-protector/" Makefile
++
+ make $NUMJOBS || make || exit 1
+ make install DESTDIR=$PKG || exit 1
+ 
