@@ -1,0 +1,12 @@
+--- a/xine-lib.SlackBuild	2017-10-04 23:01:27.072360397 +0300
++++ a/xine-lib.SlackBuild	2017-10-04 23:02:03.671360397 +0300
+@@ -53,6 +53,9 @@
+   LIBDIRSUFFIX=""
+   # 32bit x86 fails without this... let me know if you have a fix
+   FFARCHOPTS="--disable-asm"
++elif [ "$ARCH" = "aarch64" ]; then
++  LIBDIRSUFFIX="64"
++  FFARCHOPTS="--disable-asm"
+ else
+   LIBDIRSUFFIX=""
+   FFARCHOPTS=""
