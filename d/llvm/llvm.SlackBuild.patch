@@ -1,11 +1,11 @@
---- a/llvm.SlackBuild	2017-09-29 21:53:22.297908236 +0300
-+++ b/llvm.SlackBuild	2017-09-30 11:13:27.005250985 +0300
+--- a/llvm.SlackBuild	2017-10-05 18:08:26.261203197 +0100
++++ b/llvm.SlackBuild	2017-10-06 16:52:20.480074982 +0100
 @@ -27,7 +27,7 @@
  VERSION=${VERSION:-$(echo llvm-*.tar.xz | rev | cut -f 4- -d . | cut -f 1 -d - | rev)}
  BUILD=${BUILD:-1}
  
 -NUMJOBS=${NUMJOBS:-" -j7 "}
-+NUMJOBS=${NUMJOBS:-" -j5 "}
++NUMJOBS=${NUMJOBS:-" -j6 "}
  
  if [ -z "$ARCH" ]; then
    case "$( uname -m )" in
@@ -14,18 +14,51 @@
    SLKCFLAGS="-O2 -fPIC"
    LIBDIRSUFFIX="64"
 +elif [ "$ARCH" = "aarch64" ]; then
-+  SLKCFLAGS="-O2"
++  SLKCFLAGS="-O2 -fPIC -std=c++0x -Wall -Wp,-D_FORTIFY_SOURCE=2 -fexceptions -fstack-protector-strong --param=ssp-buffer-size=4 -fuse-ld=gold"
 +  LIBDIRSUFFIX="64"
  else
    SLKCFLAGS="-O2"
    LIBDIRSUFFIX=""
-@@ -103,13 +106,25 @@
+@@ -103,13 +106,58 @@
  # is fixed.
  zcat $CWD/clang_disable_pgo.patch.gz | patch -d tools/clang/ -p1 --verbose || exit 1
  
-+xzcat $CWD/disable-llvm-symbolizer-test.patch.xz | patch -p1 --verbose || exit 1
-+xzcat $CWD/0001-GCC-compatibility-Ignore-the-fno-plt-flag.patch.xz | patch -d tools/clang -p1 --verbose || exit 1
-+xzcat $CWD/0002-Enable-SSP-and-PIE-by-default.patch.xz | patch -d tools/clang -p1 --verbose || exit 1
++# Apply patches:
++for i in \
++  silent-gold-test.diff.xz \
++  declare_clear_cache.diff.xz \
++  do-not-fail-on-unexpected-pass.diff.xz \
++  silent-more-tests.diff.xz \
++  silent-MCJIIT-tests.diff.xz \
++  silent-test-failing-codeverage.diff.xz \
++  disable-path-test-failing.diff.xz \
++  ; do xzcat $CWD/$i | patch -p1 --verbose || exit 1
++done
++
++xzcat disable-error-xray.diff.xz | patch -d projects -p1 --verbose || exit 1
++
++( cd tools
++  for i in \
++    23-strlcpy_strlcat_warning_removed.diff.xz \
++    27-fix_clang_stdint.diff.xz \
++    26-set-correct-float-abi.diff.xz \
++    unwind-chain-inclusion.diff.xz \
++    atomic_library_1.diff.xz \
++    atomic_library_2.diff.xz \
++    removeduplicatedeclaration.diff.xz \
++    fix-clang-path-and-build.diff.xz \
++    disable-display-PASS-UNSUPPORTED-XFAIL.diff.xz \
++    lldb-disable-swig-error.diff.xz \
++  ; do xzcat $CWD/$i | patch -p1 --verbose || exit 1
++  done
++  cd ..
++) || exit 1
++
++if [[ $ARCH = "aarch64" ]]; then
++    SLKCONFARGS="-DCOMPILER_RT_BUILD_BUILTINS=OFF \
++                 -DLLVM_HOST_TRIPLE=$ARCH-slackware-linux \
++                 -DCMAKE_VERBOSE_MAKEFILE:BOOL=ON"
++fi
 +
 +# Determine whether we should build with gcc or clang.
 +# If clang is present (as post boot strap) we'll build with that (as x86 upstream does)
@@ -47,7 +80,15 @@
      -DCMAKE_C_FLAGS:STRING="$SLKCFLAGS" \
      -DCMAKE_CXX_FLAGS:STRING="$SLKCFLAGS" \
      -DCMAKE_INSTALL_PREFIX=/usr \
-@@ -200,4 +215,3 @@
+@@ -123,6 +171,7 @@
+     -DLLVM_ENABLE_ASSERTIONS=OFF \
+     -DLLVM_BINUTILS_INCDIR=/usr/include \
+     -DCLANG_RESOURCE_DIR="../lib${LIBDIRSUFFIX}/clang/${VERSION}" \
++    $SLKCONFARGS \
+     .. || exit 1
+ 
+   # breaks with one of the patches above. Maybe revisit later
+@@ -200,4 +249,3 @@
  
  cd $PKG
  /sbin/makepkg -l y -c n $TMP/$PKGNAM-$VERSION-$ARCH-$BUILD.txz
