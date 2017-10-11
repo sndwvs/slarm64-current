@@ -11,11 +11,14 @@ THREADS=$(($(grep -c 'processor' /proc/cpuinfo)-2))
 #source "ap-packages.conf" || exit 1
 ##source "a-packages.conf" || exit 1
 source "l.conf" || exit 1
+#source "xap.conf" || exit 1
+#source "xfce.conf" || exit 1
 #source "n-packages.conf" || exit 1
+#source "x-packages.conf" || exit 1
 
 
-_BUILD="${_CWD}/slackwarearm64-current/source"
-_TXZ="${_CWD}/slackwarearm64-current/slackware"
+_BUILD="${_CWD}/slarm64-current/source"
+_TXZ="${_CWD}/slarm64-current/slackware"
 _SOURCE="${_CWD}/slackware64-current/source"
 _TMP="/tmp"
 _WORK_DIR="work"
