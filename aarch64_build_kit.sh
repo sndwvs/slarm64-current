@@ -31,6 +31,13 @@ remove_work_dir() {
 prepare_work_dir() {
     [[ -z "$1" ]] && return 1
     [[ ! -d "${_BUILD}/$1/${_WORK_DIR}" ]] && mkdir "${_BUILD}/$1/${_WORK_DIR}"
+
+    # if new packages copy all
+    if [[ -e ${_BUILD}/$1/.new ]]; then
+        cp -a ${_BUILD}/$1/* ${_BUILD}/$1/${_WORK_DIR}/
+        return 1
+    fi
+
     for f in $(ls "${_SOURCE}/$1/");do
         if [[ ! -L $f ]];then
             cp -a "${_SOURCE}/$1/$f" ${_BUILD}/$1/${_WORK_DIR}/$(basename $f)
