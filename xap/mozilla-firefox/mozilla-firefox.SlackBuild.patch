@@ -1,0 +1,125 @@
+--- a/mozilla-firefox.SlackBuild	2017-10-08 18:04:22.742663172 +0300
++++ b/mozilla-firefox.SlackBuild	2017-10-09 20:43:04.428937223 +0300
+@@ -100,6 +100,10 @@
+   SLKCFLAGS="-O2 -march=armv4t"
+   LIBDIRSUFFIX=""
+   OPTIMIZE=" --enable-optimize=-O1 "
++elif [ "$ARCH" = "aarch64" ]; then
++  SLKCFLAGS="-O2"
++  LIBDIRSUFFIX="64"
++  OPTIMIZE=" --enable-optimize=-O1 "
+ else
+   SLKCFLAGS="-O2"
+   LIBDIRSUFFIX=""
+@@ -175,8 +179,83 @@
+   \( -perm 666 -o -perm 664 -o -perm 600 -o -perm 444 -o -perm 440 -o -perm 400 \) \
+   -exec chmod 644 {} \;
+ 
++# https://bugzilla.mozilla.org/show_bug.cgi?id=1314968
++xzcat $CWD/wifi-disentangle.patch.xz | patch -p1 --verbose || exit 1
++xzcat $CWD/wifi-fix-interface.patch.xz | patch -p1 --verbose || exit 1
++
++# https://bugzilla.mozilla.org/show_bug.cgi?id=1384062
++xzcat $CWD/0001-Bug-1384062-Make-SystemResourceMonitor.stop-more-res.patch.xz | patch -p1 --verbose || exit 1
++
++# https://bugzilla.mozilla.org/show_bug.cgi?id=1382942
++xzcat $CWD/no-plt.diff.xz | patch -p1 --verbose || exit 1
++
++# https://bugzilla.mozilla.org/show_bug.cgi?id=1400175
++xzcat $CWD/plugin-crash.diff.xz | patch -p1 --verbose || exit 1
++
++# https://bugzilla.mozilla.org/show_bug.cgi?id=1385667
++# https://bugzilla.mozilla.org/show_bug.cgi?id=1394149
++xzcat $CWD/glibc-2.26-fix.diff.xz | patch -p1 --verbose || exit 1
++
++# ---
++#xzcat $CWD/clip-ft-glyph.diff.xz | patch -p1 --verbose || exit 1
++#xzcat $CWD/glibc-2.26-fix.diff.xz | patch -p1 --verbose || exit 1
++#xzcat $CWD/harmony-fix.diff.xz | patch -p1 --verbose || exit 1
++#xzcat $CWD/no-crmf.diff.xz | patch -p1 --verbose || exit 1
++#xzcat $CWD/wifi-disentangle.patch.xz | patch -p1 --verbose || exit 1
++#xzcat $CWD/wifi-fix-interface.patch.xz | patch -p1 --verbose || exit 1
++# ---
++
++# ---
++# https://bugzilla.redhat.com/show_bug.cgi?id=814879#c3
++#xzcat $CWD/xulrunner-24.0-jemalloc-ppc.patch.xz | patch -p1 --verbose || exit 1
++#xzcat $CWD/firefox-build-prbool.patch.xz | patch -p1 --verbose || exit 1
++
++# Also fixes s390x: https://bugzilla.mozilla.org/show_bug.cgi?id=1376268
++#xzcat $CWD/build-big-endian.patch.xz | patch -p1 --verbose || exit 1
++#xzcat $CWD/fedora-build.patch.xz | patch -p1 --verbose || exit 1
++#xzcat $CWD/build-ppc64-s390x-curl.patch.xz | patch -p1 --verbose || exit 1
++#xzcat $CWD/build-rust-ppc64le.patch.xz | patch -p1 --verbose || exit 1
++
++# Always feel lucky for unsupported platforms:
++# https://bugzilla.mozilla.org/show_bug.cgi?id=1347128
++#xzcat $CWD/build-jit-atomic-always-lucky.patch.xz | patch -p1 --verbose || exit 1
++#xzcat $CWD/mozilla-build-arm.patch.xz | patch -p1 --verbose || exit 1
++
++# ARM run-time patch
++#xzcat $CWD/rhbz-1354671.patch.xz | patch -p1 --verbose || exit 1
++#xzcat $CWD/rhbz-1497932.patch.xz | patch -p1 --verbose || exit 1
++#xzcat $CWD/mozilla-1196777.patch.xz | patch -p1 --verbose || exit 1
++#xzcat $CWD/mozilla-256180.patch.xz | patch -p1 --verbose || exit 1
++#xzcat $CWD/mozilla-1353817.patch.xz | patch -p1 --verbose || exit 1
++#xzcat $CWD/mozilla-1405267.patch.xz | patch -p1 --verbose || exit 1
++
++# Debian extension patch
++#xzcat $CWD/amozilla-440908.patch.xz | patch -p1 --verbose || exit 1
++
++# Patch for big endian platforms only
++#xzcat $CWD/build-icu-big-endian.patch.xz | patch -p1 --verbose || exit 1
++#xzcat $CWD/build-missing-xlocale-h.patch.xz | patch -p2 --verbose || exit 1
++# ---
++
++
+ # Our building options, in a configure-like display ;)
+ OPTIONS="\
++  --enable-system-ffi \
++  --enable-system-sqlite \
++  --enable-pie \
++  --disable-eme \
++  --disable-crashreporter \
++  --disable-updater \
++  --disable-gconf \
++  --disable-elf-hack \
++  --with-system-libvpx \
++  --without-system-icu \
++  --disable-system-cairo \
++  --disable-stylo \
++  --disable-webrtc \
++  --host=$ARCH-slackware-linux \
++  --target=$ARCH-slackware-linux \
++  \
+   --enable-official-branding \
+   --prefix=/usr \
+   --libdir=/usr/lib${LIBDIRSUFFIX} \
+@@ -212,12 +291,21 @@
+     browser/installer/package-manifest.in || exit 1
+ fi
+ 
++SLKCFLAGS="$SLKCFLAGS -pipe -fstack-protector -Wformat -fexceptions -fPIC -Wl,-z,relro -Wl,-z,now"
++SLKCXXFLAGS="$SLKCFLAGS"
++SLKCPPFLAGS="" ## this needs to be compiled with -O to use this
++SLKLDFLAGS=" -Wl,--as-needed -Wl,--no-keep-memory -Wl,--stats"
++
+ export MOZILLA_OFFICIAL="1"
+ export BUILD_OFFICIAL="1"
+ export MOZ_PHOENIX="1"
+ export MOZ_PACKAGE_JSSHELL="1"
++export LDFLAGS="$SLKLDFLAGS"
++export MOZ_LINK_FLAGS="$SLKLDFLAGS"
++export MOZ_OPT_FLAGS="$SLKCFLAGS"
+ export CFLAGS="$SLKCFLAGS"
+-export CXXFLAGS="$SLKCFLAGS"
++export CXXFLAGS="$SLKCXXFLAGS"
++export CPPFLAGS="$SLKCPPFLAGS"
+ export MOZ_MAKE_FLAGS="$NUMJOBS"
+ 
+ # Clear some variables that could break the build
+@@ -323,4 +411,3 @@
+ else
+   /sbin/makepkg -l y -c n $TMP/mozilla-firefox-$VERSION-$ARCH-${BUILD}_$MOZLOCALIZE.txz
+ fi
+-
