@@ -1,0 +1,30 @@
+--- a/rust.SlackBuild	2017-10-05 18:15:50.439219565 +0300
++++ b/rust.SlackBuild	2017-10-12 17:52:14.503716997 +0300
+@@ -73,6 +73,9 @@
+ elif [ "$ARCH" = "armv7hl" ]; then
+   SLKCFLAGS="-O2 -march=armv7-a -mfpu=vfpv3-d16"
+   LIBDIRSUFFIX=""
++elif [ "$ARCH" = "aarch64" ]; then
++  SLKCFLAGS="-O2"
++  LIBDIRSUFFIX="64"
+ else
+   SLKCFLAGS="-O2"
+   LIBDIRSUFFIX=""
+@@ -136,10 +139,14 @@
+  \( -perm 666 -o -perm 664 -o -perm 640 -o -perm 600 -o -perm 444 \
+   -o -perm 440 -o -perm 400 \) -exec chmod 644 {} \;
+ 
+-export RUSTFLAGS="$RUSTFLAGS -C link-args=-lffi"
++xzcat $CWD/rust-1.19.0-43297-configure-debuginfo.patch.xz | patch -p1 --verbose || exit 1
++xzcat $CWD/rust-1.20.0-44203-exclude-compiler-rt-test.patch.xz | patch -p1 --verbose || exit 1
++
++#export RUSTFLAGS="$RUSTFLAGS -C link-args=-lffi"
++export RUSTFLAGS="$RUSTFLAGS -C link-args=-Wl,-z,relro,-z,now"
+ 
+-CC=clang \
+-CXX=clang++ \
++#CC=clang \
++#CXX=clang++ \
+ CFLAGS="$SLKCFLAGS" \
+ CXXFLAGS="$SLKCFLAGS" \
+ python x.py build --verbose || exit 1

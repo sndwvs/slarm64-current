@@ -1,0 +1,13 @@
+--- a/ninja.SlackBuild	2017-10-14 19:09:48.429801609 +0300
++++ b/ninja.SlackBuild	2017-10-14 19:10:33.945801609 +0300
+@@ -55,6 +55,10 @@
+   SLKCFLAGS="-O3 -march=armv7-a -mfpu=vfpv3-d16"
+   SLKLDFLAGS=""
+   LIBDIRSUFFIX=""
++elif [ "$ARCH" = "aarch64" ]; then
++  SLKCFLAGS="-O2"
++  SLKLDFLAGS="-L/usr/lib64"
++  LIBDIRSUFFIX="64"
+ else
+   SLKCFLAGS="-O2"
+   SLKLDFLAGS=""
