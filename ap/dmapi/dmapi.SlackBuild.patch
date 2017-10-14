@@ -16,3 +16,26 @@
  
  CWD=$(pwd)
  TMP=${TMP:-/tmp}
+@@ -61,6 +60,7 @@
+ 
+ # Thanks, Debian
+ zcat $CWD/bug799162.patch.gz | patch -p1 --verbose || exit 1
++xzcat $CWD/no-getdents-aarch64.diff.xz | patch -p1 --verbose || exit 1
+ 
+ # Make sure you have the same version of autoconf as the
+ # developers did...  ;-)
+@@ -75,7 +75,8 @@
+   --libexecdir=/usr/lib${LIBDIRSUFFIX} \
+   --includedir=/usr/include \
+   --mandir=/usr/man \
+-  --datadir=/usr/share || exit 1
++  --datadir=/usr/share \
++  --build=$ARCH-slackware-linux || exit 1
+ 
+ make || exit 1
+ make install DESTDIR=$PKG
+@@ -118,4 +119,3 @@
+ 
+ cd $PKG
+ /sbin/makepkg -l y -c n $TMP/dmapi-$(echo $VERSION | tr - _ )-$ARCH-$BUILD.txz
+-
