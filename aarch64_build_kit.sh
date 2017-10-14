@@ -34,7 +34,7 @@ prepare_work_dir() {
 
     # if new packages copy all
     if [[ -e ${_BUILD}/$1/.new ]]; then
-        cp -a ${_BUILD}/$1/* ${_BUILD}/$1/${_WORK_DIR}/
+        cp -a $(ls | ${_BUILD}/$1/ | grep -vP '^work$' ${_BUILD}/$1/${_WORK_DIR}/
         return 1
     fi
 
