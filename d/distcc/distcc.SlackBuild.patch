@@ -1,0 +1,12 @@
+--- a/distcc.SlackBuild	2017-10-16 00:52:54.675491887 +0300
++++ b/distcc.SlackBuild	2017-10-16 00:54:28.937491887 +0300
+@@ -62,7 +62,8 @@
+   --without-gnome \
+   --without-avahi \
+   --disable-Werror \
+-  --target=$ARCH-slackware-linux
++  --target=$ARCH-slackware-linux \
++  --build=$ARCH-slackware-linux
+ 
+ make $NUMJOBS || make || exit 1
+ make install DESTDIR=$PKG docdir=/usr/doc/distcc-$VERSION || exit 1
