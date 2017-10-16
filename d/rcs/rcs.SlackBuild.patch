@@ -1,0 +1,27 @@
+--- a/rcs.SlackBuild	2017-10-16 11:56:35.944412315 +0300
++++ b/rcs.SlackBuild	2017-10-16 11:57:45.253412315 +0300
+@@ -59,6 +59,10 @@
+ elif [ "$ARCH" = "armv7hl" ]; then
+   SLKCFLAGS="-O3 -march=armv7-a -mfpu=vfpv3-d16"
+   LIBDIRSUFFIX=""
++elif [ "$ARCH" = "aarch64" ]; then
++  SLKCFLAGS="-O2"
++  LIBDIRSUFFIX="64"
++
+ else
+   SLKCFLAGS="-O2"
+   LIBDIRSUFFIX=""
+@@ -83,6 +87,8 @@
+   \( -perm 666 -o -perm 664 -o -perm 600 -o -perm 444 -o -perm 440 -o -perm 400 \) \
+   -exec chmod 644 {} \;
+ 
++xzcat $CWD/upstream-260704a916.diff.xz | patch -p1 --verbose || exit 1
++
+ # Configure:
+ CFLAGS="$SLKCFLAGS" \
+ ./configure \
+@@ -145,4 +151,3 @@
+ 
+ cd $PKG
+ /sbin/makepkg -l y -c n $TMP/$PKGNAM-$VERSION-$ARCH-$BUILD.txz
+-
