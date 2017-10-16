@@ -1,0 +1,25 @@
+--- a/gnu-efi.SlackBuild	2017-10-16 14:31:19.629348219 +0300
++++ b/gnu-efi.SlackBuild	2017-10-16 14:35:13.903348219 +0300
+@@ -48,6 +48,9 @@
+ elif [ "$ARCH" = "x86_64" ]; then
+   SLKCFLAGS="-O2 -fPIC"
+   LIBDIRSUFFIX="64"
++elif [ "$ARCH" = "aarch64" ]; then
++  SLKCFLAGS="-O2"
++  LIBDIRSUFFIX="64"
+ else
+   SLKCFLAGS="-O2"
+   LIBDIRSUFFIX=""
+@@ -65,10 +68,10 @@
+ sed -i "s,/usr/local,/usr,g" Make.defaults
+ 
+ make CPPFLAGS="$SLKCFLAGS" || exit 1
+-make CPPFLAGS="$SLKCFLAGS" install INSTALLROOT=$PKG || exit
++make CPPFLAGS="$SLKCFLAGS" install INSTALLROOT=$PKG PREFIX="/usr" LIBDIR="/usr/lib${LIBDIRSUFFIX}" || exit
+ 
+ # Fix install locations:
+-mv $PKG/usr/lib $PKG/usr/lib${LIBDIRSUFFIX}
++#mv $PKG/usr/lib $PKG/usr/lib${LIBDIRSUFFIX}
+ mkdir $PKG/usr/lib${LIBDIRSUFFIX}/gnuefi
+ mv $PKG/usr/lib${LIBDIRSUFFIX}/*.lds $PKG/usr/lib${LIBDIRSUFFIX}/gnuefi
+ mv $PKG/usr/lib${LIBDIRSUFFIX}/crt0*.o $PKG/usr/lib${LIBDIRSUFFIX}/gnuefi
