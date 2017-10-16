@@ -1,0 +1,166 @@
+#!/bin/bash
+
+# clisp.SlackBuild
+# Heavily based on the original Slackware build scripts,
+# Modified by Stuart Winter <mozes@slackware.com>
+# 19-Jul-2004
+
+# Record toolchain & other info for the build log:
+slackbuildinfo
+
+ulimit -s unlimited
+
+# Paths to skeleton port's source & real Slackware source tree:
+export CWD=$SLACKSOURCE/$PKGSERIES/$PKGNAM
+export PORTCWD=$PWD
+
+# Temporary build locations:
+export TMPBUILD=$TMP/build-$PKGNAM
+export PKG=$TMP/package-$PKGNAM
+mkpkgdirs # Delete & re-create temporary directories then cd into $TMPBUILD
+
+# Unset them from the defaults set by the slackdev script.
+# With the soft float port, clisp was broken for a long time and the whole
+# lot was quite fragile.  If in the hard float port we can set the CFLAGS then
+# we can try at a later date once we get clisp built.
+unset SLKCFLAGS
+
+# Determine the CFLAGS for the known architectures:
+#case $ARCH in
+#   arm)     export SLKCFLAGS="-O0"
+#            export LIBDIRSUFFIX=""
+#            ;;
+#   *)       export SLKCFLAGS="-O0"
+#esac
+
+# Bundled libraries:
+#FFCALLVER=20120424cvs
+FFCALLVER=1.12
+
+######################### Build ffcall ####################################
+function build_ffcall() {
+# Build ffcall - needed for --dynamic-ffi with clisp.
+cd $TMPBUILD
+
+# This source & patch set are taken from Fedora.
+#tar xvvf $CWD/ffcall-$FFCALLVER.tar.?z* || exit 1
+#cd ffcall* || exit 1
+tar xvvf $PORTCWD/sources/ffcall-[0-9]*.tar.?z* || exit 1
+cd libffcall* || exit 1
+slackhousekeeping
+auto_apply_patch $PORTCWD/sources/ffcall-arm.patch.xz || exit 1
+auto_apply_patch $PORTCWD/sources/ffcall-trampoline.patch.xz || exit 1
+
+# Remove prebuilt object files:
+find . -name "*.o" | xargs rm -f
+
+# Configure:
+CFLAGS="$SLKCFLAGS -fPIC -DMAP_VARIABLE=2" \
+./configure \
+   --prefix=/usr \
+   --libdir=/usr/lib${LIBDIRSUFFIX} \
+   --mandir=/usr/man \
+   --enable-shared \
+   --enable-static \
+   --build=${SLK_ARCH_BUILDTARGET} || exit 1
+
+# Don't do anymore than 1 parallel build - it breaks.
+make || exit 1
+make install DESTDIR=$PKG
+# We need ffcall installed in order to build clisp:
+make install
+
+# Don't need this:
+rm -f $PKG/usr/lib/*.la
+
+# Move docs around:
+mkdir -pm755 $PKG/usr/doc/clisp-$VERSION/ffcall-$FFCALLVER
+install -vpm644 README NEWS COPYING \
+                $PKG/usr/doc/clisp-$VERSION/ffcall-$FFCALLVER
+mv -f $PKG/usr/share/html/* $PKG/usr/doc/clisp-$VERSION/ffcall-$FFCALLVER
+rmdir $PKG/usr/share/html/
+rmdir $PKG/usr/share/
+}
+
+######################### Build clisp ####################################
+
+function build_clisp () {
+# Extract source:
+cd $TMPBUILD
+#tar xvvf $CWD/clisp-$VERSION.tar.?z* || exit 1
+tar xvvf $PORTCWD/sources/$PKGNAM-$VERSION*.tar.xz
+cd $PKGNAM* || exit 1
+slackhousekeeping
+
+# Apply patches:
+#tar xf $PORTCWD/sources/clisp*debian*z
+for pf in \
+  clisp-arm.patch.xz \
+  clisp-db.patch.xz \
+  clisp-format.patch.xz \
+  clisp-libsvm.patch.xz \
+  clisp-linux.patch.xz \
+  ; do auto_apply_patch $PORTCWD/sources/$pf || exit 1
+done
+
+# Stop using distcc:
+export PATH=$( echo $PATH | sed -e 's?/tmp/DISTCC:??g' )
+unset NUMJOBS
+
+# Fix for compiling with readline-7.x:
+zcat $CWD/clisp-2.49-readline-7.0-rl_readline_state.patch.gz | patch -p1 --verbose || exit 1
+
+# Configure:
+export CFLAGS="$SLKCFLAGS -Wa,--noexecstack"
+export LDFLAGS="$SLKCFLAGS -Wl,-z,noexecstack"
+FORCE_UNSAFE_CONFIGURE=1 \
+./configure \
+   --cbc builddir \
+   --prefix=/usr \
+   --mandir=/usr/man \
+   --libdir=/usr/lib${LIBDIRSUFFIX} \
+   --docdir=/usr/doc/clisp-$VERSION \
+   --with-module=asdf \
+   --with-module=berkeley-db \
+   --with-module=bindings/glibc \
+   --with-module=clx/new-clx \
+   --with-module=dbus \
+   --with-module=gdbm \
+   --with-module=gtk2 \
+   --with-module=pcre \
+   --with-module=rawsock \
+   --with-module=zlib || exit 1
+
+#   --with-dynamic-ffi \
+#   --with-dynamic-modules \
+
+# Build:
+make -C builddir || exit 1
+
+# Install into package:
+make -C builddir install DESTDIR=$PKG || exit 1
+
+# Move docs around:
+#mv $PKG/usr/share/doc/clisp/* $PKG/usr/doc/clisp-$VERSION
+rm -r $PKG/usr/share/doc
+mv $PKG/usr/share/man $PKG/usr/man
+}
+
+# Build:
+build_ffcall
+build_clisp
+
+# If necessary, start the fakeroot server so we can set file/dir ownerships:
+start_fakeroot
+
+# Apply generic Slackware packaging policies:
+cd $PKG
+slackstripall   # strip all .a archives and all ELFs
+slackgzpages -i # compress man & info pages and delete usr/info/dir
+slackslack      # chown -R root:root, chmod -R og-w, slackchown, slack644docs
+slackdesc       # install slack-desc and doinst.sh
+slackmp         # run makepkg -l y -c n
+
+# Perform any final checks on the package:
+cd $PKG
+slackhlinks     # search for any hard links

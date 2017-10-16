@@ -1,0 +1,71 @@
+--- a/seamonkey.SlackBuild	2017-10-14 07:24:08.044557770 +0300
++++ b/seamonkey.SlackBuild	2017-10-14 16:04:06.445184500 +0300
+@@ -41,6 +41,9 @@
+ elif [ "$ARCH" = "x86_64" ]; then
+   LIBDIRSUFFIX="64"
+   OPTIMIZE_FLAG="-O1"
++elif [ "$ARCH" = "aarch64" ]; then
++  LIBDIRSUFFIX="64"
++  OPTIMIZE_FLAG="-O2"
+ else
+   LIBDIRSUFFIX=""
+   OPTIMIZE_FLAG="-O1"
+@@ -88,6 +91,21 @@
+ rm -rf seamonkey-unpack
+ cd seamonkey-${TARBALLVER} || exit 1
+ 
++# Apply patches for ARM:
++# All from Fedora:
++xzcat $CWD/xulrunner-27.0-build-arm.patch.xz | sed 's?/mozilla-release/?/mozilla/?g' | patch -p1 --verbose || exit 1
++xzcat $CWD/skia-build-neon-aarch64.patch.xz | patch -p1 --verbose || exit 1
++
++pushd mozilla
++xzcat $CWD/firefox-48-mozilla-256180.patch.xz | patch -p1 --verbose || exit 1
++xzcat $CWD/firefox-49-mozilla-revert-1148544.patch.xz | patch -p1 --verbose || exit 1
++xzcat $CWD/firefox-50-mozilla-440908.patch.xz | patch -p1 --verbose || exit 1
++xzcat $CWD/firefox-51-build-prbool.patch.xz | patch -p1 --verbose || exit 1
++xzcat $CWD/firefox-51-mozilla-1005640.patch.xz | patch -p1 --verbose || exit 1
++xzcat $CWD/firefox-51-mozilla-1321579.patch.xz | patch -p1 --verbose || exit 1
++xzcat $CWD/seamonkey-2.46-exthandler.patch.xz | patch -p1 --verbose || exit 1
++popd
++
+ # Retain GTK+ v2 scrolling behavior:
+ zcat $CWD/sm.ui.scrollToClick.diff.gz | patch -p1 --verbose || exit 1
+ 
+@@ -106,6 +124,14 @@
+   --prefix=/usr \
+   --libdir=/usr/lib${LIBDIRSUFFIX} \
+   --enable-optimize=$OPTIMIZE_FLAG \
++  \
++  --disable-elf-hack \
++  --enable-system-sqlite \
++  --with-system-libvpx \
++  --enable-system-ffi \
++  --disable-stylo \
++  --disable-webrtc \
++  \
+   --enable-cpp-rtti \
+   --enable-default-toolkit=cairo-gtk3 \
+   --enable-startup-notification \
+@@ -127,11 +153,20 @@
+   --enable-application=suite \
+   --with-pthreads \
+   --host=$ARCH-slackware-linux \
+-  --target=$ARCH-slackware-linux"
++  --target=$ARCH-slackware-linux \
++  "
++
++export SLKCFLAGS="$SLKCFLAGS -g -Wformat -fexceptions -fPIC -Wl,-z,relro -Wl,-z,now"
++export SLKLDFLAGS="-Wl,--no-as-needed -Wl,--no-keep-memory"
+ 
+ export BUILD_OFFICIAL=1
+ export MOZILLA_OFFICIAL=1
+ export MOZ_MAKE_FLAGS="$NUMJOBS"
++export MOZ_LINK_FLAGS="$SLKLDFLAGS"
++export LDFLAGS="$SLKLDFLAGS"
++export MOZ_OPT_FLAGS="$SLKCFLAGS"
++export CFLAGS="$SLKCFLAGS"
++export CXXFLAGS="$SLKCFLAGS -fno-delete-null-pointer-checks"
+ 
+ # Clear some variables that could break the build
+ unset DBUS_SESSION_BUS_ADDRESS ORBIT_SOCKETDIR SESSION_MANAGER \
