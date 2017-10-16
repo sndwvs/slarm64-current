@@ -23,12 +23,6 @@
 # OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 # ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-
-# update source from error
-# ./utils/prepare-builtins.cpp:5:10: fatal error: 'llvm/Bitcode/ReaderWriter.h' file not found
-xzcat $(pwd)/libclc-20170929_0c31bd5.patch.xz | patch -p1 --verbose || exit 1
-
-
 PKGNAM=libclc
 VERSION=${VERSION:-$(echo $PKGNAM-*.tar.?z* | rev | cut -f 3- -d . | cut -f 1 -d - | rev)}
 BUILD=${BUILD:-1}
@@ -85,12 +79,11 @@ find . \
   -exec chmod 644 {} \;
 
 SLKHEADERDIR=/usr/include/c++/[0-9]* # Otherwise cstddef cannot be found on ARM
-SLKLIBDIR=/usr/lib/gcc/aarch64-slackware-linux/[0-9]*
-SLKHEADER2=/usr/include/c++/[0-9]*/aarch64-slackware-linux/
+SLKLIBDIR=/usr/lib/gcc/$ARCH-slackware-linux/[0-9]*
+SLKHEADER2=/usr/include/c++/[0-9]*/$ARCH-slackware-linux/
 SLKHEADER3=/usr/include/llvm/ADT/
 export CFLAGS="$SLKCFLAGS -D__extern_always_inline=inline -B$SLKLIBDIR -L$SLKLIBDIR -I$SLKHEADERDIR -I$SLKHEADER2 -I$SLKHEADER3"
 
-#CFLAGS="$SLKCFLAGS -D__extern_always_inline=inline" \
 ./configure.py \
   --prefix=/usr \
   --libexecdir=/usr/lib$LIBDIRSUFFIX/clc/ \
