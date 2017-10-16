@@ -1,0 +1,65 @@
+#!/bin/bash
+CWD=$(pwd)
+
+NAME="kernel-headers"
+VERSION=${VERSION:-4.13.7}
+BUILD="1"
+SOURCE="http://www.kernel.org/pub/linux/kernel/v4.x/linux-$VERSION.tar.xz"
+
+
+# Automatically determine the architecture we're building on:
+MARCH=$( uname -m )
+if [ -z "$ARCH" ]; then
+  case "$MARCH" in
+    i?86)    export ARCH=x86 ;;
+    arm*)    export ARCH=arm ;;
+ aarch64)    export ARCH=arm64 ;;
+    # Unless $ARCH is already set, use uname -m for all other archs:
+    *)       export ARCH=$MARCH ;;
+  esac
+fi
+
+wget $SOURCE
+
+# Establishment tmp directory for
+TMP=${TMP:-/tmp}
+PKG=$TMP/package-$NAME
+rm -rf $PKG
+mkdir -p $PKG
+
+# Delete a directory previous build / create new and change rights
+cd /tmp
+rm -rf $NAME-$VERSION
+rm -rf linux-$VERSION
+tar xvf $CWD/linux-$VERSION.tar.?z* || exit 1
+cd linux-$VERSION
+chown -R root:root .
+find . \
+ \( -perm 777 -o -perm 775 -o -perm 711 -o -perm 555 -o -perm 511 \) \
+ -exec chmod 755 {} \; -o \
+ \( -perm 666 -o -perm 664 -o -perm 600 -o -perm 444 -o -perm 440 -o -perm 400 \) \
+ -exec chmod 644 {} \;
+
+make ARCH=$ARCH mrproper
+make ARCH=$ARCH headers_check
+make INSTALL_HDR_PATH="$PKG/usr/" ARCH=$ARCH V=0 headers_install
+
+# clean-up unnecessary files generated during install
+find "$PKG" \( -name .install -or -name ..install.cmd \) -delete
+
+# 04-Jan-2010
+# No longer shipped with Slackware's kernel-headers package because
+# it's included within l/glibc.
+# http://patchwork.kernel.org/patch/38102/
+rm -rfv $PKG/usr/include/scsi/scsi.h
+# and apparently include/drm Linux kernel headers rather than
+# libdrm headers causes problems building mesa/xorg.
+rm -rfv $PKG/usr/include/drm
+
+# Description and installation script
+mkdir -p $PKG/install
+cat $CWD/slack-desc > $PKG/install/slack-desc
+
+# Package creation
+cd $PKG
+makepkg -l y -c n $TMP/${NAME}-${VERSION}-${ARCH}-${BUILD}.txz
