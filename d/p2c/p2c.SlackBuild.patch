@@ -1,0 +1,22 @@
+--- a/p2c.SlackBuild	2017-10-16 11:42:08.048704202 +0300
++++ a/p2c.SlackBuild	2017-10-16 11:42:31.801704202 +0300
+@@ -50,6 +50,9 @@
+ elif [ "$ARCH" = "x86_64" ]; then
+   SLKCFLAGS="-O2 -fPIC"
+   LIBDIRSUFFIX="64"
++elif [ "$ARCH" = "aarch64" ]; then
++  SLKCFLAGS="-O2"
++  LIBDIRSUFFIX="64"
+ else
+   SLKCFLAGS="-O2"
+   LIBDIRSUFFIX=""
+@@ -88,6 +91,9 @@
+         $( grep -lr '/lib' * )
+ 
+ cd src
++
++sed -i 's#getline#xgetline#' *.c *.hdrs
++
+ make OPT="$SLKCFLAGS" || exit 1
+ make p2cc
+ 
