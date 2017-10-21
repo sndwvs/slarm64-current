@@ -1,0 +1,7 @@
+# kdesdk-kioslaves no longer builds with svn, so we patch it
+#
+# http://bear.alienbase.nl/cgit/ktown/plain/kde/patch/kdesdk-kioslaves/svn19.patch
+# https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=799525
+#
+xzcat $CWD/patch/kdesdk-kioslaves/svn19.patch.xz | patch -p1 --verbose || { touch ${SLACK_KDE_BUILD_DIR}/${PKGNAME}.failed ; continue ; }
+

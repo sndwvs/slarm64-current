@@ -1,0 +1,11 @@
+--- a/calligra-l10n.SlackBuild	2016-03-09 23:38:18.000000000 +0200
++++ b/calligra-l10n.SlackBuild	2017-10-21 15:10:19.366779304 +0300
+@@ -52,6 +52,8 @@
+     export SLKCFLAGS="-O2 -fPIC"
+   elif [ "$ARCH" = "armv7hl" ]; then
+     export SLKCFLAGS="-O2 -march=armv7-a -mfpu=vfpv3-d16"
++  elif [ "$ARCH" = "aarch64" ]; then
++    export SLKCFLAGS="-O2"
+   fi
+ fi
+ 

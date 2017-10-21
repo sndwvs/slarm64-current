@@ -21,8 +21,8 @@
 #  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
-VERSION=2.49.20161111
-DIRNAME=2.49.20161111
+VERSION=9c43d428
+DIRNAME=9c43d428
 BUILD=${BUILD:-1}
 
 # Bundled libraries:
@@ -48,7 +48,7 @@ elif [ "$ARCH" = "x86_64" ]; then
   SLKCFLAGS="-O2 -fPIC"
   LIBDIRSUFFIX="64"
 elif [ "$ARCH" = "aarch64" ]; then
-  SLKCFLAGS="-O2"
+  SLKCFLAGS="-O0"
   LIBDIRSUFFIX="64"
 else
   SLKCFLAGS="-O2"
@@ -64,46 +64,7 @@ PKG=$TMP/package-clisp
 rm -rf $PKG
 mkdir -p $TMP $PKG
 
-#=================================================================
-# Build ffcall - needed for --dynamic-ffi with clisp.
-cd $TMP
-rm -rf libffcall*
-tar xvf $CWD/libffcall-$FFCALLVER.tar.?z* || exit 1
-cd libffcall* || exit 1
 
-chown -R root:root .
-find . \
-  \( -perm 777 -o -perm 775 -o -perm 711 -o -perm 555 -o -perm 511 \) \
-  -exec chmod 755 {} \; -o \
-  \( -perm 666 -o -perm 664 -o -perm 600 -o -perm 444 -o -perm 440 -o -perm 400 \) \
-  -exec chmod 644 {} \;
-
-[ "$ARCH" = "x86_64" ] && CONFIGFLAG="--with-pic"
-
-CFLAGS="$SLKCFLAGS" \
-./configure \
-  --prefix=/usr \
-  --libdir=/usr/lib${LIBDIRSUFFIX} \
-  --mandir=/usr/man \
-  $CONFIGFLAG \
-  --build=$ARCH-slackware-linux || exit 1
-
-make $NUMJOBS || make || exit 1
-
-make install DESTDIR=$PKG || exit 1
-# We need ffcall installed in order to build clisp:
-make install
-
-# Don't need this:
-rm -f $PKG/usr/lib${LIBDIRSUFFIX}/*.la
-
-# Move docs around:
-mkdir -pm755 $PKG/usr/doc/clisp-$VERSION/ffcall-$FFCALLVER
-install -vpm644 README NEWS COPYING \
-  $PKG/usr/doc/clisp-$VERSION/ffcall-$FFCALLVER
-mv -f $PKG/usr/share/html/* $PKG/usr/doc/clisp-$VERSION/ffcall-$FFCALLVER
-rmdir $PKG/usr/share/html/
-rmdir $PKG/usr/share/
 
 #=================================================================
  
@@ -119,60 +80,74 @@ find . \
   \( -perm 666 -o -perm 664 -o -perm 600 -o -perm 444 -o -perm 440 -o -perm 400 \) \
   -exec chmod 644 {} \;
 
-# Fix for compiling with readline-7.x:
-zcat $CWD/clisp-2.49-readline-7.0-rl_readline_state.patch.gz | patch -p1 --verbose || exit 1
+cat $CWD/clisp-2.49-personality.patch | patch -p1 --verbose || exit 1
+# PATCH-FIX-OPENSUSE Fix crash on Ia64
+cat $CWD/clisp-2.39-ia64-wooh.dif | patch -p1 --verbose || exit 1
+# PATCH-EXTEND-OPENSUSE Help (new) CLX to work out of the box
+cat $CWD/clisp-2.39-clx.dif | patch -p1 --verbose || exit 1
+# PATCH-EXTEND-OPENSUSE Make sure to be able to use MYCLFAGS
+cat $CWD/clisp-2.49-configure.dif | patch -p1 --verbose || exit 1
+# PATCH-FIX-OPENSUSE Make sure to use initialized token on garbage collection
+cat $CWD/clisp-2.49-gctoken.dif | patch -p1 --verbose || exit 1
+# PATCH-FEATURE-OPENSUSE Make CLX demos usable at runtime
+cat $CWD/clisp-2.49-clx_demos.dif | patch -p1 --verbose || exit 1
+# PATCH-EXTEND-OPENSUSE Enable postgresql SSL feature
+cat $CWD/clisp-2.49-postgresql.dif | patch -p1 --verbose || exit 1
+# PATCH-FIX-OPENSUSE Do not use rpath but rpath-link
+cat $CWD/clisp-2.49-rpath.dif | patch -p1 --verbose || exit 1
+# PATCH-FIX-OPENSUSE Correct path for header for System V IPC system calls
+cat $CWD/clisp-linux.patch | patch -p1 --verbose || exit 1
+# PATCH-EXTEND-UPSTREAM Make armv7l work
+cat $CWD/clisp-arm.patch | patch -p0 --verbose || exit 1
+cat $CWD/clisp-link.dif | patch -p0 --verbose || exit 1
+cat $CWD/clisp-db6.diff | patch -p1 --verbose || exit 1
+
+# Overwrite stack size limit (hopefully a soft limit only)
+ulimit -Ss unlimited || true
+ulimit -Hs unlimited || true
+unset LC_CTYPE
+LANG=POSIX
+LC_ALL=POSIX
+export LANG LC_ALL
 
 # I'll be unsafe if I want to:
 export FORCE_UNSAFE_CONFIGURE=1
 
-CFLAGS="$SLKCFLAGS" \
+CC="gcc -g ${SLKCFLAGS} -falign-functions=4 -fno-strict-aliasing -fPIC -pipe"
+SLKCFLAGS="${SLKCFLAGS} -Wno-unused -Wno-uninitialized"
+export CC
+#export CFLAGS
+export CFLAGS="$SLKCFLAGS -Wa,--noexecstack"
+export LDFLAGS="$SLKCFLAGS -Wl,-z,noexecstack"
+
 ./configure \
+  --cbc build \
   --prefix=/usr \
+  --exec-prefix=/usr \
   --libdir=/usr/lib${LIBDIRSUFFIX} \
   --mandir=/usr/man \
   --docdir=/usr/doc/clisp-$VERSION \
+  --fsstnd=slackware \
+  --with-readline \
+  --with-dynamic-modules \
+  --with-gettext \
   --with-module=asdf \
-  --with-module=berkeley-db \
-  --with-module=bindings/glibc \
-  --with-module=clx/new-clx \
+  --with-module=editor \
   --with-module=dbus \
+  --with-module=queens \
   --with-module=gdbm \
   --with-module=gtk2 \
   --with-module=pcre \
   --with-module=rawsock \
   --with-module=zlib \
-  --cbc with-gcc-wall \
-  --with-dynamic-ffi \
+  --with-module=bindings/glibc \
+  --with-module=clx/new-clx \
+  --with-module=berkeley-db \
   --build=$ARCH-slackware-linux || exit 1
 
-cd with-gcc-wall
-./makemake \
-  --with-dynamic-ffi  \
-  --prefix=/usr \
-  --libdir=/usr/lib${LIBDIRSUFFIX} \
-  --with-module=asdf \
-  --with-module=berkeley-db \
-  --with-module=bindings/glibc \
-  --with-module=clx/new-clx \
-  --with-module=dbus \
-  --with-module=gdbm \
-  --with-module=gtk2 \
-  --with-module=pcre \
-  --with-module=rawsock \
-  --with-module=zlib \
-  --srcdir=../src \
-  > Makefile
-make config.lisp
-make init
-make allc
-make $NUMJOBS lisp.run
-make interpreted.mem
-make halfcompiled.mem
-make lispinit.mem
-make manual
-make modular
-
-make install DESTDIR=$PKG || exit 1
+make -C build || exit 1
+#make $NUMJOBS -C build check || exit 1
+make install -C build DESTDIR=$PKG || exit 1
 
 # Strip stuff:
 find $PKG | xargs file | grep -e "executable" -e "shared object" \

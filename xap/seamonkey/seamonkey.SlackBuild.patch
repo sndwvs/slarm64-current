@@ -10,14 +10,13 @@
  else
    LIBDIRSUFFIX=""
    OPTIMIZE_FLAG="-O1"
-@@ -88,6 +91,21 @@
+@@ -88,6 +91,20 @@
  rm -rf seamonkey-unpack
  cd seamonkey-${TARBALLVER} || exit 1
  
 +# Apply patches for ARM:
 +# All from Fedora:
 +xzcat $CWD/xulrunner-27.0-build-arm.patch.xz | sed 's?/mozilla-release/?/mozilla/?g' | patch -p1 --verbose || exit 1
-+xzcat $CWD/skia-build-neon-aarch64.patch.xz | patch -p1 --verbose || exit 1
 +
 +pushd mozilla
 +xzcat $CWD/firefox-48-mozilla-256180.patch.xz | patch -p1 --verbose || exit 1
@@ -26,13 +25,13 @@
 +xzcat $CWD/firefox-51-build-prbool.patch.xz | patch -p1 --verbose || exit 1
 +xzcat $CWD/firefox-51-mozilla-1005640.patch.xz | patch -p1 --verbose || exit 1
 +xzcat $CWD/firefox-51-mozilla-1321579.patch.xz | patch -p1 --verbose || exit 1
-+xzcat $CWD/seamonkey-2.46-exthandler.patch.xz | patch -p1 --verbose || exit 1
++xzcat $CWD/seamonkey-2.46-exthandler.patch.xz | sed 's?/comm-release/?/?g' | patch -p2 --verbose || exit 1
 +popd
 +
  # Retain GTK+ v2 scrolling behavior:
  zcat $CWD/sm.ui.scrollToClick.diff.gz | patch -p1 --verbose || exit 1
  
-@@ -106,6 +124,14 @@
+@@ -106,6 +123,16 @@
    --prefix=/usr \
    --libdir=/usr/lib${LIBDIRSUFFIX} \
    --enable-optimize=$OPTIMIZE_FLAG \
@@ -41,13 +40,15 @@
 +  --enable-system-sqlite \
 +  --with-system-libvpx \
 +  --enable-system-ffi \
++  --without-system-icu \
++  --disable-system-cairo \
 +  --disable-stylo \
 +  --disable-webrtc \
 +  \
    --enable-cpp-rtti \
    --enable-default-toolkit=cairo-gtk3 \
    --enable-startup-notification \
-@@ -127,11 +153,20 @@
+@@ -127,11 +154,20 @@
    --enable-application=suite \
    --with-pthreads \
    --host=$ARCH-slackware-linux \

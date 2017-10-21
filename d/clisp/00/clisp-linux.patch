@@ -1,0 +1,19 @@
+--- a/modules/bindings/glibc/linux.lisp
++++ b/modules/bindings/glibc/linux.lisp
+@@ -294,6 +294,8 @@
+ ;; for robust mutexes
+ (def-c-const EOWNERDEAD (:documentation "Owner died")) ; 130
+ (def-c-const ENOTRECOVERABLE (:documentation "State not recoverable")) ; 131
++(def-c-const ERFKILL (:documentation "Operation not possible due to RF-kill")) ; 132
++(def-c-const EHWPOISON (:documentation "Memory page has hardware error")) ; 133
+ 
+ ; -------------------------- <bits/errno.h> -----------------------------------
+ 
+@@ -649,7 +651,6 @@
+ (def-call-out calloc (:arguments (nmemb size_t) (size size_t))
+   (:return-type c-pointer))
+ (def-call-out free (:arguments (ptr c-pointer)) (:return-type nil))
+-(def-call-out cfree (:arguments (ptr c-pointer)) (:return-type nil))
+ (def-call-out valloc (:arguments (size size_t)) (:return-type c-pointer))
+ 
+ (def-call-out abort (:arguments) (:return-type nil))
