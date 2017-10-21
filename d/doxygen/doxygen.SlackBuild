@@ -70,7 +70,13 @@ find . \
   \( -perm 666 -o -perm 664 -o -perm 600 -o -perm 444 -o -perm 440 -o -perm 400 \) \
   -exec chmod 644 {} \;
 
-xzcat $CWD/doxygen-segfault.patch.xz | patch -Np1 --verbose || exit 1
+# upstream patches
+xzcat $CWD/doxygen-xmlgen-regression.patch.xz | patch -Np1 --verbose || exit 1
+xzcat $CWD/doxygen-1.8.13-#775493.patch.xz | patch -Np1 --verbose || exit 1
+xzcat $CWD/doxygen-1.8.13-#776988.patch.xz | patch -Np1 --verbose || exit 1
+xzcat $CWD/doxygen-1.8.13-verticl_bar_latex.patch.xz | patch -Np1 --verbose || exit 1
+xzcat $CWD/doxygen-1.8.13-C#-property-initializer-parsing.patch.xz | patch -Np1 --verbose || exit 1
+xzcat $CWD/doxygen-1.8.13-non-reachable-links.patch.xz | patch -Np1 --verbose || exit 1
 
 # Convert into UTF-8:
 iconv --from=ISO-8859-1 --to=UTF-8 LANGUAGE.HOWTO > LANGUAGE.HOWTO.new
