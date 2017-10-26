@@ -97,12 +97,13 @@ xzcat $CWD/xulrunner-27.0-build-arm.patch.xz | sed 's?/mozilla-release/?/mozilla
 
 pushd mozilla
 xzcat $CWD/firefox-48-mozilla-256180.patch.xz | patch -p1 --verbose || exit 1
-xzcat $CWD/firefox-49-mozilla-revert-1148544.patch.xz | patch -p1 --verbose || exit 1
+xzcat $CWD/firefox-52-mozilla-revert-1148544.patch.xz | patch -p1 --verbose || exit 1
 xzcat $CWD/firefox-50-mozilla-440908.patch.xz | patch -p1 --verbose || exit 1
-xzcat $CWD/firefox-51-build-prbool.patch.xz | patch -p1 --verbose || exit 1
+xzcat $CWD/firefox-52-build-prbool.patch.xz | patch -p1 --verbose || exit 1
 xzcat $CWD/firefox-51-mozilla-1005640.patch.xz | patch -p1 --verbose || exit 1
 xzcat $CWD/firefox-51-mozilla-1321579.patch.xz | patch -p1 --verbose || exit 1
 xzcat $CWD/seamonkey-2.46-exthandler.patch.xz | sed 's?/comm-release/?/?g' | patch -p2 --verbose || exit 1
+xzcat $CWD/firefox-52-rhbz-1451055.patch.xz | patch -p1 --verbose || exit 1
 popd
 
 # Retain GTK+ v2 scrolling behavior:
@@ -129,7 +130,7 @@ OPTIONS="\
   --with-system-libvpx \
   --enable-system-ffi \
   --without-system-icu \
-  --disable-system-cairo \
+  --enable-system-cairo \
   --disable-stylo \
   --disable-webrtc \
   \
