@@ -10,7 +10,8 @@ THREADS=$(($(grep -c 'processor' /proc/cpuinfo)-2))
 #source "d-packages.conf" || exit 1
 #source "ap-packages.conf" || exit 1
 ##source "a-packages.conf" || exit 1
-source "l.conf" || exit 1
+#source "l.conf" || exit 1
+source "pkg" || exit 1
 #source "xap.conf" || exit 1
 #source "xfce.conf" || exit 1
 #source "n-packages.conf" || exit 1
@@ -124,7 +125,7 @@ build() {
                 fi
                 popd 2>&1>/dev/null
                 move_pkg ${t} ${p}
-                installpkg ${_TXZ}/${t}/${p}-*.txz
+                upgradepkg --install-new --reinstall ${_TXZ}/${t}/${p}-*.txz
                 popd 2>&1>/dev/null
 #            fi
         fi
