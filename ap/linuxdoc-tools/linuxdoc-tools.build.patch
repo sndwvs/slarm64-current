@@ -1,15 +1,6 @@
---- a/linuxdoc-tools.build	2017-09-30 23:10:43.364199508 +0300
-+++ b/linuxdoc-tools.build	2017-10-01 00:40:10.576674261 +0300
-@@ -40,7 +40,7 @@
-            export HOSTTARGET="-gnueabi"
-            ;;
-   aarch64) export SLKCFLAGS="-O2"
--           export LIBDIRSUFFIX=""
-+           export LIBDIRSUFFIX="64"
-            export HOSTTARGET=""
-            ;;
-   i586)    export SLKCFLAGS="-O2 -march=i586 -mtune=i686"
-@@ -89,7 +89,8 @@
+--- a/linuxdoc-tools.build	2017-11-18 01:05:11.076547593 +0200
++++ b/linuxdoc-tools.build	2017-11-18 01:09:46.713547593 +0200
+@@ -102,7 +102,8 @@
    --prefix=/usr \
    --sysconfdir=/etc \
    --docdir=/usr/doc/asciidoc-$ASCIIDOCVER \
@@ -19,7 +10,7 @@
  
  # Install:
  make install && make docs || exit 1
-@@ -313,6 +314,7 @@
+@@ -326,6 +327,7 @@
    --enable-http \
    --enable-default-catalog=/etc/sgml/catalog \
    --enable-default-search-path=/usr/share/sgml \
@@ -27,7 +18,7 @@
    || exit 1
  
  # Build:
-@@ -393,6 +395,7 @@
+@@ -406,6 +408,7 @@
    --enable-default-catalog=/etc/sgml/catalog \
    --enable-default-search-path=/usr/share/sgml \
    --datadir=/usr/share/sgml/openjade-$OPENJADEVER \

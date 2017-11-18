@@ -20,17 +20,17 @@
 +xzcat $CWD/wifi-fix-interface.patch.xz | patch -p1 --verbose || exit 1
 +
 +# https://bugzilla.mozilla.org/show_bug.cgi?id=1384062
-+xzcat $CWD/0001-Bug-1384062-Make-SystemResourceMonitor.stop-more-res.patch.xz | patch -p1 --verbose || exit 1
++#xzcat $CWD/0001-Bug-1384062-Make-SystemResourceMonitor.stop-more-res.patch.xz | patch -p1 --verbose || exit 1
 +
 +# https://bugzilla.mozilla.org/show_bug.cgi?id=1382942
 +xzcat $CWD/no-plt.diff.xz | patch -p1 --verbose || exit 1
 +
 +# https://bugzilla.mozilla.org/show_bug.cgi?id=1400175
-+xzcat $CWD/plugin-crash.diff.xz | patch -p1 --verbose || exit 1
++#xzcat $CWD/plugin-crash.diff.xz | patch -p1 --verbose || exit 1
 +
 +# https://bugzilla.mozilla.org/show_bug.cgi?id=1385667
 +# https://bugzilla.mozilla.org/show_bug.cgi?id=1394149
-+xzcat $CWD/glibc-2.26-fix.diff.xz | patch -p1 --verbose || exit 1
++#xzcat $CWD/glibc-2.26-fix.diff.xz | patch -p1 --verbose || exit 1
 +
 +# ---
 +#xzcat $CWD/clip-ft-glyph.diff.xz | patch -p1 --verbose || exit 1

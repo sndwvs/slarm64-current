@@ -1,0 +1,12 @@
+--- a/samba.SlackBuild	2017-11-17 23:20:34.343335990 +0200
++++ b/samba.SlackBuild	2017-11-17 23:21:47.473335990 +0200
+@@ -50,6 +50,9 @@
+   elif [ "$ARCH" = "x86_64" ]; then
+     SLKCFLAGS="-O2 -fPIC"
+     LIBDIRSUFFIX="64"
++  elif [ "$ARCH" = "aarch64" ]; then
++    SLKCFLAGS="-O2"
++    LIBDIRSUFFIX="64"
+   else
+     SLKCFLAGS="-O2"
+     LIBDIRSUFFIX=""
