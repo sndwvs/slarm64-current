@@ -1,5 +1,5 @@
---- a/cyrus-sasl.SlackBuild	2017-11-17 21:44:25.879736598 +0200
-+++ b/cyrus-sasl.SlackBuild	2017-11-17 21:45:53.334736598 +0200
+--- a/cyrus-sasl.SlackBuild	2017-11-30 22:28:31.646167435 +0200
++++ b/cyrus-sasl.SlackBuild	2017-11-30 22:29:58.461167435 +0200
 @@ -47,6 +47,9 @@
  elif [ "$ARCH" = "x86_64" ]; then
    SLKCFLAGS="-O2 -fPIC"
@@ -10,13 +10,13 @@
  else
    SLKCFLAGS="-O2"
    LIBDIRSUFFIX=""
-@@ -81,7 +84,8 @@
-   --without-ldap \
+@@ -82,7 +85,8 @@
    --with-saslauthd \
    --with-gdbm \
+   --with-devrandom=/dev/urandom \
 -  --with-dblib=gdbm || exit 1
 +  --with-dblib=gdbm \
-+  --build=$ARCH-slackware-linux || exit 1
++  --build=$ARCH-slackware-linux || exit
  
  # How stupid that I need to specify 'sasldir' again for 'make' or else you get
  # the warning "Plugins are being installed into /usr/lib/sasl2, but the library
