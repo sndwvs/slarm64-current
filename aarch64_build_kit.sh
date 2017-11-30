@@ -110,7 +110,7 @@ build() {
             p=$(echo ${_PKG} | cut -d '/' -f2)
 #            if [[ ! $(ls ${_INSTALL}/$t/ | grep "$p-") ]];then
 #                removepkg $p
-                [[ -e .ignore ]] && continue
+                [[ -e ${_BUILD}/${_PKG}/.ignore ]] && continue
                 remove_work_dir "${_PKG}"
                 prepare_work_dir "${_PKG}"
                 pushd ${_BUILD}/${_PKG} 2>&1>/dev/null
