@@ -1,0 +1,29 @@
+--- a/mariadb.SlackBuild	2017-12-01 02:40:32.545044631 +0000
++++ b/mariadb.SlackBuild	2017-12-01 16:19:00.690937729 +0000
+@@ -26,6 +26,8 @@
+ # MariaDB conversion by:  Heinz Wiesinger <pprkut@liwjatan.at>
+ # Also maintained by:  Patrick Volkerding <volkerdi@slackware.com>
+ 
++# disable mroonga storage engine (doesn't build on ARM)
++
+ PKGNAM=mariadb
+ VERSION=${VERSION:-$(echo ${PKGNAM}-*.tar.?z* | rev | cut -f 3- -d . | cut -f 1 -d - | rev)}
+ BUILD=${BUILD:-1}
+@@ -74,6 +76,9 @@
+ elif [ "$ARCH" = "x86_64" ]; then
+   SLKCFLAGS="-O2 -fPIC"
+   LIBDIRSUFFIX="64"
++elif [ "$ARCH" = "aarch64" ]; then
++  SLKCFLAGS="-O2 -fPIC"
++  LIBDIRSUFFIX="64"
+ fi
+ 
+ rm -rf $PKG
+@@ -127,6 +132,7 @@
+   -DCONC_WITH_SSL=ON \
+   -DUSE_ARIA_FOR_TMP_TABLES=ON \
+   -DAWS_SDK_EXTERNAL_PROJECT=OFF \
++  -DWITHOUT_MROONGA_STORAGE_ENGINE=1 \
+   .. || exit 1
+ 
+ # doesn't currently compile
