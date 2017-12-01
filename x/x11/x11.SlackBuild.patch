@@ -1,5 +1,5 @@
---- a/x11.SlackBuild	2017-10-01 23:32:56.364747191 +0300
-+++ b/x11.SlackBuild	2017-10-01 23:37:37.036747191 +0300
+--- a/x11.SlackBuild	2017-04-15 16:00:24.000000000 +0100
++++ b/x11.SlackBuild	2017-12-01 03:06:47.611802081 +0000
 @@ -76,10 +76,21 @@
  
  if [ "$ARCH" = "x86_64" ]; then
@@ -11,8 +11,8 @@
  fi
  
 +# add build aarch64
-+xzcat arch.use.flags.patch.xz | patch -p1 --verbose || exit 1
-+xzcat package-blacklist.patch.xz | patch -p1 --verbose || exit 1
++[[ ! $(xzcat arch.use.flags.patch.xz | patch -p1 --batch --dry-run -N | grep previously) ]] && ( xzcat arch.use.flags.patch.xz | patch -p1 --verbose || exit 1 )
++[[ ! $(xzcat package-blacklist.patch.xz | patch -p1 --batch --dry-run -N | grep previously) ]] && ( xzcat package-blacklist.patch.xz | patch -p1 --verbose || exit 1 )
 +
 +# fix build arch
 +sed  -e 's/\(-slackware\)\(-linux.*\s\)/-unknown\2/g' \

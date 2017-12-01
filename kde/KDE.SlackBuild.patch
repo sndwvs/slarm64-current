@@ -5,7 +5,7 @@
  TMP=${TMP:-/tmp}
  
 +# add build from aarch64
-+xzcat KDE.options.patch.xz | patch -p1 --verbose || exit 1
++[[ ! $(xzcat KDE.options.patch.xz | patch -p1 --batch --dry-run -N | grep previously) ]] && ( xzcat KDE.options.patch.xz | patch -p1 --verbose || exit 1 )
 +
  # Set up a few useful functions:
  
