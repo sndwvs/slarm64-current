@@ -1,11 +1,11 @@
---- a/qtwebkit/qtwebkit.SlackBuild	2017-09-23 19:59:05.611808950 +0300
-+++ b/qtwebkit/qtwebkit.SlackBuild	2017-09-23 20:02:32.280808950 +0300
+--- a/qtwebkit/qtwebkit.SlackBuild	2017-12-10 06:50:14.900181275 +0000
++++ b/qtwebkit/qtwebkit.SlackBuild	2017-12-10 15:39:25.398195105 +0000
 @@ -27,7 +27,7 @@
  VERSION=$(ls qtwebkit-*.tar.?z* | rev | cut -f 3- -d . | cut -f 1 -d - | rev)
  BUILD=${BUILD:-1}
  
 -NUMJOBS=${NUMJOBS:--j7}
-+NUMJOBS=${NUMJOBS:--j5}
++NUMJOBS=${NUMJOBS:--j3}
  
  # Automatically determine the architecture we're building on:
  MARCH=$( uname -m )
@@ -14,13 +14,13 @@
    LIBDIRSUFFIX=""
    WEBKITFLAGS="--no-force-sse2"
 +elif [ "$ARCH" = "aarch64" ]; then
-+  SLKCFLAGS="-O2"
++  SLKCFLAGS="-O2 -fstack-protector-strong -Wformat -Werror=format-security -fno-strict-volatile-bitfields -D_FORTIFY_SOURCE=2"
 +  LIBDIRSUFFIX="64"
 +  WEBKITFLAGS="--no-force-sse2"
  else
    SLKCFLAGS="-O2"
    LIBDIRSUFFIX=""
-@@ -96,14 +100,20 @@
+@@ -96,14 +100,22 @@
   \( -perm 666 -o -perm 664 -o -perm 600 -o -perm 444 -o -perm 440 -o -perm 400 \) \
   -exec chmod 644 {} \;
  
@@ -28,6 +28,8 @@
 +# For ARM we added:
 +# QMAKE_LFLAGS_RELEASE=\"$SLKLDFLAGS\"  QMAKE_CFLAGS_RELEASE=\"$SLKCFLAGS\" QMAKE_CXXFLAGS_RELEASE=\"$SLKLDFLAGS\"
 +# DEFINES+=ENABLE_JIT=0 DEFINES+=ENABLE_YARR_JIT=0 DEFINES+=ENABLE_ASSEMBLER=0
++
++export SLKLDFLAGS="-Wl,-z,relro -Wl,--as-needed"
 +
  QTDIR="/usr/lib$LIBDIRSUFFIX/qt" \
  Tools/Scripts/build-webkit \

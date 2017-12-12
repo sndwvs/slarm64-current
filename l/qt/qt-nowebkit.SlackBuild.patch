@@ -1,30 +1,35 @@
---- a/qt-nowebkit.SlackBuild	2017-09-23 19:54:58.541808950 +0300
-+++ b/qt-nowebkit.SlackBuild	2017-09-23 19:56:44.976808950 +0300
-@@ -43,7 +43,7 @@
- VERSION=$(ls qt-*.tar.?z* | rev | cut -f 3- -d . | cut -f 1 -d - | rev)
- BUILD=${BUILD:-7}
- 
--NUMJOBS=${NUMJOBS:--j7}
-+NUMJOBS=${NUMJOBS:--j5}
- 
- # Automatically determine the architecture we're building on:
- MARCH=$( uname -m )
+--- a/qt-nowebkit.SlackBuild	2017-12-09 23:36:57.922014593 +0000
++++ b/qt-nowebkit.SlackBuild	2017-12-10 18:04:50.518189757 +0000
 @@ -75,6 +75,9 @@
    # http://bazaar.launchpad.net/~linaro-toolchain-dev/gcc-linaro/4.6/revision/106731
    SLKCFLAGS="-O2 -march=armv7-a -mfpu=vfpv3-d16 -fno-strict-volatile-bitfields"
    LIBDIRSUFFIX=""
 +elif [ "$ARCH" = "aarch64" ]; then
-+  SLKCFLAGS="-O2"
++  SLKCFLAGS="-O2 -fno-strict-volatile-bitfields"
 +  LIBDIRSUFFIX="64"
  else
    SLKCFLAGS="-O2"
    LIBDIRSUFFIX=""
-@@ -143,6 +146,8 @@
- # Increase entity limit:
- zcat $CWD/qt.QTBUG-35459.diff.gz | patch -p1 --verbose || exit 1
+@@ -146,14 +149,20 @@
+ # Don't emit a misleading icu4c debug error:
+ zcat $CWD/qt.icu4c.nodebug.diff.gz | patch -p1 --verbose || exit 1
  
 +xzcat $CWD/qt-aarch64.patch.xz | patch -p1 --verbose || exit 1
++
++echo "QMAKE_CXXFLAGS += -std=gnu++98" >> src/3rdparty/javascriptcore/JavaScriptCore/JavaScriptCore.pri
++echo "QMAKE_CXXFLAGS += -std=gnu++98" >> src/3rdparty/webkit/Source/JavaScriptCore/JavaScriptCore.pri
++echo "QMAKE_CXXFLAGS += -std=gnu++98" >> src/plugins/accessible/qaccessiblebase.pri
 +
  # All other distros I checked build with -no-webkit. But this has the downside of
  # breaking the build when QtWebKit is present on the build system and some things
  # (assistant for one) are built without support for QtWebKit. So let's go with
+ # -webkit and remove the built files later from the package. -HW
+ 
+ export CFLAGS="$SLKCFLAGS"
+-export CXXFLAGS="$SLKCFLAGS -std=gnu++98"
+-export OPENSOURCE_CXXFLAGS="$SLKCFLAGS -std=gnu++98"
++export CXXFLAGS="$SLKCFLAGS"
++export OPENSOURCE_CXXFLAGS="$SLKCFLAGS"
+ ./configure \
+   -confirm-license \
+   -opensource \
