@@ -1,6 +1,6 @@
---- a/x11.SlackBuild	2017-04-15 16:00:24.000000000 +0100
-+++ b/x11.SlackBuild	2017-12-01 03:06:47.611802081 +0000
-@@ -76,10 +76,21 @@
+--- a/x11.SlackBuild	2017-12-18 20:49:10.669249806 +0000
++++ b/x11.SlackBuild	2017-12-18 20:53:26.514530314 +0000
+@@ -76,10 +76,22 @@
  
  if [ "$ARCH" = "x86_64" ]; then
    LIBDIRSUFFIX="64"
@@ -13,6 +13,7 @@
 +# add build aarch64
 +[[ ! $(xzcat arch.use.flags.patch.xz | patch -p1 --batch --dry-run -N | grep previously) ]] && ( xzcat arch.use.flags.patch.xz | patch -p1 --verbose || exit 1 )
 +[[ ! $(xzcat package-blacklist.patch.xz | patch -p1 --batch --dry-run -N | grep previously) ]] && ( xzcat package-blacklist.patch.xz | patch -p1 --verbose || exit 1 )
++[[ ! $(xzcat modularize.patch.xz | patch -p1 --batch --dry-run -N | grep previously) ]] && ( xzcat modularize.patch.xz | patch -p1 --verbose || exit 1 )
 +
 +# fix build arch
 +sed  -e 's/\(-slackware\)\(-linux.*\s\)/-unknown\2/g' \
