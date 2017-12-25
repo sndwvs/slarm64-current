@@ -1,0 +1,24 @@
+--- a/icu4c.SlackBuild	2017-12-25 17:06:55.676093698 +0200
++++ b/icu4c.SlackBuild	2017-12-25 17:08:25.780093698 +0200
+@@ -53,6 +53,9 @@
+ elif [ "$ARCH" = "x86_64" ]; then
+   SLKCFLAGS="-O2 -fPIC"
+   LIBDIRSUFFIX="64"
++elif [ "$ARCH" = "aarch64" ]; then
++  SLKCFLAGS="-O2"
++  LIBDIRSUFFIX="64"
+ else
+   SLKCFLAGS="-O2"
+   LIBDIRSUFFIX=""
+@@ -72,8 +75,10 @@
+   -o -perm 400 \) -exec chmod 644 {} \;
+ 
+ cd source/
++  CC=gcc \
++  CXX=g++ \
+   CFLAGS="$SLKCFLAGS" \
+-  CXXFLAGS="$SLKCFLAGS" \
++  CXXFLAGS="$SLKCFLAGS -std=c++11" \
+   ./configure \
+     --prefix=/usr \
+     --libdir=/usr/lib${LIBDIRSUFFIX} \
