@@ -2,7 +2,7 @@
 CWD=$(pwd)
 
 NAME="kernel-headers"
-VERSION=${VERSION:-4.14.12}
+VERSION=${VERSION:-4.14.13}
 BUILD="1"
 SOURCE="http://www.kernel.org/pub/linux/kernel/v4.x/linux-$VERSION.tar.xz"
 
