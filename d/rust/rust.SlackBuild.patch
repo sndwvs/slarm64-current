@@ -1,26 +1,8 @@
---- a/rust.SlackBuild	2017-10-05 18:15:50.439219565 +0300
-+++ b/rust.SlackBuild	2017-10-12 17:52:14.503716997 +0300
-@@ -23,13 +23,13 @@
- 
- PKGNAM=rust
- SRCNAM="${PKGNAM}c"
--VERSION=${VERSION:-1.20.0}
-+VERSION=${VERSION:-1.21.0}
- BUILD=${BUILD:-1}
- 
- # Bootstrap variables (not kept updated for latest Rust):
--RSTAGE0_VERSION=${RSTAGE0_VERSION:-1.18.0}
--RSTAGE0_DIR=${RSTAGE0_DIR:-2017-06-08}
--CSTAGE0_VERSION=${CSTAGE0_VERSION:-0.19.0}
-+RSTAGE0_VERSION=${RSTAGE0_VERSION:-1.21.0}
-+RSTAGE0_DIR=${RSTAGE0_DIR:-2017-10-12}
-+CSTAGE0_VERSION=${CSTAGE0_VERSION:-0.22.0}
- CSTAGE0_DIR=${CSTAGE0_DIR:-$RSTAGE0_DIR}
- 
- # Automatically determine the architecture we're building on:
-@@ -73,6 +73,9 @@
+--- a/rust.SlackBuild	2018-01-07 00:17:56.000000000 +0200
++++ b/rust.SlackBuild	2018-01-23 01:12:05.942091514 +0200
+@@ -113,6 +113,9 @@
  elif [ "$ARCH" = "armv7hl" ]; then
-   SLKCFLAGS="-O2 -march=armv7-a -mfpu=vfpv3-d16"
+   SLKCFLAGS=""
    LIBDIRSUFFIX=""
 +elif [ "$ARCH" = "aarch64" ]; then
 +  SLKCFLAGS="-O2"
@@ -28,20 +10,33 @@
  else
    SLKCFLAGS="-O2"
    LIBDIRSUFFIX=""
-@@ -136,10 +139,13 @@
+@@ -175,6 +178,9 @@
+ 
+ [target.armv7-unknown-linux-gnueabihf]
+ llvm-config = "/usr/bin/llvm-config"
++
++[target.aarch64-unknown-linux-gnu]
++llvm-config = "/usr/bin/llvm-config"
+ EOF
+ 
+ if [ "$LOCAL_BOOTSTRAP" = "yes" ] ; then
+@@ -188,6 +194,8 @@
   \( -perm 666 -o -perm 664 -o -perm 640 -o -perm 600 -o -perm 444 \
    -o -perm 440 -o -perm 400 \) -exec chmod 644 {} \;
  
--export RUSTFLAGS="$RUSTFLAGS -C link-args=-lffi"
-+xzcat $CWD/0001-librustc_llvm-build-Force-link-against-libffi.patch.xz | patch -p1 --verbose || exit 1
-+
-+#export RUSTFLAGS="$RUSTFLAGS -C link-args=-lffi"
 +export RUSTFLAGS="$RUSTFLAGS -C link-args=-Wl,-z,relro,-z,now"
++
+ export PKG_CONFIG_ALLOW_CROSS=1
  
--CC=clang \
--CXX=clang++ \
-+#CC=clang \
-+#CXX=clang++ \
- CFLAGS="$SLKCFLAGS" \
- CXXFLAGS="$SLKCFLAGS" \
- python x.py build --verbose || exit 1
+ if [ "$BARCH" = "i586" ] ; then
+@@ -212,8 +220,8 @@
+ else
+   # README.md says gcc 4.7 / clang 3.x or later needed
+   # but building fails for me with GCC 5.3 from slackware 14.2
+-  CC=clang \
+-  CXX=clang++ \
++#  CC=clang \
++#  CXX=clang++ \
+   CFLAGS="$SLKCFLAGS" \
+   CXXFLAGS="$SLKCFLAGS" \
+   python x.py dist  || exit 1
