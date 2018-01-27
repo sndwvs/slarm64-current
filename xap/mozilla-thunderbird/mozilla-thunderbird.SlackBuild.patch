@@ -1,5 +1,5 @@
---- a/mozilla-thunderbird.SlackBuild	2017-10-14 04:25:49.085679012 +0100
-+++ b/mozilla-thunderbird.SlackBuild	2017-10-14 04:58:47.381557770 +0100
+--- a/mozilla-thunderbird.SlackBuild	2018-01-26 20:17:25.486262108 +0200
++++ b/mozilla-thunderbird.SlackBuild	2018-01-26 20:18:14.579262108 +0200
 @@ -60,6 +60,10 @@
    SLKCFLAGS="-march=armv4 -mtune=xscale"
    LIBDIRSUFFIX=""
@@ -11,13 +11,10 @@
  else
    SLKCFLAGS=""
    LIBDIRSUFFIX=""
-@@ -137,8 +141,32 @@
+@@ -137,8 +141,29 @@
    \( -perm 666 -o -perm 664 -o -perm 600 -o -perm 444 -o -perm 440 -o -perm 400 \) \
    -exec chmod 644 {} \;
  
-+# https://bugzilla.mozilla.org/show_bug.cgi?id=1314968
-+xzcat $CWD/fix-wifi-scanner.diff.xz | patch -d mozilla -Np1 --verbose || exit 1
-+
 +# https://bugzilla.mozilla.org/show_bug.cgi?id=1371991
 +xzcat $CWD/no-crmf.diff.xz | patch -Np1 --verbose || exit 1
 +
@@ -27,7 +24,7 @@
 +
 +# https://bugs.archlinux.org/task/53890
 +xzcat $CWD/0001-Bug-1338655-Don-t-try-to-build-mp4parse-bindings.-r-.patch.xz | patch -d mozilla -Np1 --verbose || exit 1
-+  
++
  # Our building options, in a configure-like display ;)
  OPTIONS="\
 +  --enable-extensions=default \
@@ -44,7 +41,7 @@
    --enable-official-branding \
    --prefix=/usr \
    --libdir=/usr/lib${LIBDIRSUFFIX} \
-@@ -175,6 +203,10 @@
+@@ -175,6 +200,10 @@
      mail/installer/package-manifest.in || exit 1
  fi
  
