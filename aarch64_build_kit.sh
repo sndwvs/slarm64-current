@@ -78,7 +78,7 @@ fix_global() {
   sed -e "s/\" -j. \"/\" -j$THREADS \"/" \
       -e 's/\(-slackware\)\(-linux.*\s\)/-unknown\2/g' \
       -e 's/\(-slackware\)\(-linux$\)/-unknown\2/g' \
-      -i ${_WORK_DIR}/${1}.SlackBuild
+      -i ${1}.SlackBuild
 }
 
 patching_files() {
@@ -116,8 +116,9 @@ build() {
                 pushd ${_BUILD}/${_PKG} 2>&1>/dev/null
                 patching_files STATUS
                 [[ $STATUS == 1 ]] && fix_default
-                fix_global ${p}
                 pushd ${_WORK_DIR} 2>&1>/dev/null
+                ./${p}.SlackBuild 2>&1 | tee ${p}.build.log
+                [[ ${PIPESTATUS[0]} == 1 ]] && fix_global ${p}
                 ./${p}.SlackBuild 2>&1 | tee ${p}.build.log
                 if [[ ${PIPESTATUS[0]} == 1 ]];then
                     echo "${_PKG}" 2>&1 >> ${_CWD}/build_error.log
