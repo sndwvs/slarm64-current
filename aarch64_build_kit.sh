@@ -118,9 +118,11 @@ build() {
                 [[ $STATUS == 1 ]] && fix_default
                 pushd ${_WORK_DIR} 2>&1>/dev/null
                 ./${p}.SlackBuild 2>&1 | tee ${p}.build.log
-                [[ ${PIPESTATUS[0]} == 1 ]] && fix_global ${p}
-                ./${p}.SlackBuild 2>&1 | tee ${p}.build.log
-                if [[ ${PIPESTATUS[0]} == 1 ]];then
+                if [[ ${PIPESTATUS[0]} == 1 ]]; then
+                    fix_global ${p}
+                    ./${p}.SlackBuild 2>&1 | tee ${p}.build.log
+                fi
+                if [[ ${PIPESTATUS[0]} == 1 ]]; then
                     echo "${_PKG}" 2>&1 >> ${_CWD}/build_error.log
                     continue
                 fi
