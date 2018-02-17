@@ -19,7 +19,7 @@ if [ -z "$ARCH" ]; then
   esac
 fi
 
-wget $SOURCE
+wget -c $SOURCE
 
 # Establishment tmp directory for
 TMP=${TMP:-/tmp}

@@ -1,0 +1,10 @@
+--- a/strace.SlackBuild	2018-02-17 22:45:11.482725005 +0200
++++ b/strace.SlackBuild	2018-02-17 22:46:20.017725005 +0200
+@@ -68,6 +68,7 @@
+ ./configure \
+   --prefix=/usr \
+   --mandir=/usr/man \
++  --enable-mpers=check \
+   --build=$ARCH-slackware-linux || exit 1
+ 
+ make $NUMJOBS || make || exit 1
