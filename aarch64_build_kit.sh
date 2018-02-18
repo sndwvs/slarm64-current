@@ -104,6 +104,7 @@ move_pkg() {
 build() {
     for _PKG in $PKG_LIST;do
         if [[ ! $(echo "${_PKG}" | grep "^#") ]];then
+            ERROR=0
 #            echo "${_PKG}"
             [[ ! -d ${_BUILD}/${_PKG} ]] && ( mkdir -p ${_BUILD}/${_PKG} || return 1 )
             t=$(echo ${_PKG} | cut -d '/' -f1)
@@ -118,11 +119,10 @@ build() {
                 [[ $STATUS == 1 ]] && fix_default
                 pushd ${_WORK_DIR} 2>&1>/dev/null
                 ./${p}.SlackBuild 2>&1 | tee ${p}.build.log
-                if [[ ${PIPESTATUS[0]} == 1 ]]; then
-                    fix_global ${p}
-                    ./${p}.SlackBuild 2>&1 | tee ${p}.build.log
-                fi
-                if [[ ${PIPESTATUS[0]} == 1 ]]; then
+                [[ ${PIPESTATUS[0]} == 1 ]] && ERROR=1
+                [[ ${ERROR} == 1 ]] && fix_global ${p}
+                [[ ${ERROR} == 1 ]] && ./${p}.SlackBuild 2>&1 | tee ${p}.build.log
+                if [[ ${PIPESTATUS[0]} == 1 && ${ERROR} == 1 ]]; then
                     echo "${_PKG}" 2>&1 >> ${_CWD}/build_error.log
                     continue
                 fi
