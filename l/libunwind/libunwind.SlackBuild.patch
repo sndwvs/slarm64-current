@@ -1,5 +1,5 @@
---- a/libunwind.SlackBuild	2018-01-23 18:23:13.440286024 +0000
-+++ b/libunwind.SlackBuild	2018-01-23 18:23:32.048286024 +0000
+--- a/libunwind.SlackBuild	2018-03-02 19:28:31.973895743 +0200
++++ b/libunwind.SlackBuild	2018-03-02 19:29:25.336895743 +0200
 @@ -53,6 +53,9 @@
  elif [ "$ARCH" = "armv7hl" ]; then
    SLKCFLAGS="-O3 -march=armv7-a -mfpu=vfpv3-d16"
