@@ -1,5 +1,5 @@
---- a/mozilla-nss.SlackBuild	2017-09-23 09:19:45.285895420 +0100
-+++ b/mozilla-nss.SlackBuild	2017-09-23 09:20:11.784895420 +0100
+--- a/mozilla-nss.SlackBuild	2018-03-02 22:28:19.182451837 +0200
++++ b/mozilla-nss.SlackBuild	2018-03-02 22:28:54.033451837 +0200
 @@ -50,6 +50,10 @@
  elif [ "$ARCH" = "armv7hl" ]; then
    SLKCFLAGS="-O2 -march=armv7-a -mfpu=vfpv3-d16"
@@ -11,3 +11,13 @@
  else
    SLKCFLAGS="-O2"
    LIBDIRSUFFIX=""
+@@ -93,6 +97,9 @@
+ export NSS_USE_SYSTEM_SQLITE=1
+ export NSS_ENABLE_ECC=1
+ cd nss
++  # Bug 1432455
++  # "make" build fails on AArch64 due to missing Hacl_Poly1305_64.o
++  xzcat $CWD/nss-build-hacl-poly1305-aarch64.patch.xz | patch -Np1 --verbose || exit 1
+   # Seems parallel build does not work with this.
+   #make $NUMJOBS nss_build_all export
+   make nss_build_all export || exit 1
