@@ -1,0 +1,25 @@
+--- a/libclc.SlackBuild	2018-03-10 11:30:55.663639180 +0000
++++ b/libclc.SlackBuild	2018-03-10 11:37:35.897639370 +0000
+@@ -53,6 +53,9 @@
+ elif [ "$ARCH" = "armv7hl" ]; then
+   SLKCFLAGS="-O2 -march=armv7-a -mfpu=vfpv3-d16"
+   LIBDIRSUFFIX=""
++elif [ "$ARCH" = "aarch64" ]; then
++  SLKCFLAGS="-O2"
++  LIBDIRSUFFIX="64"
+ else
+   SLKCFLAGS="-O2"
+   LIBDIRSUFFIX=""
+@@ -75,9 +78,12 @@
+   \( -perm 666 -o -perm 664 -o -perm 600 -o -perm 444 -o -perm 440 -o -perm 400 \) \
+   -exec chmod 644 {} \;
+ 
++export CC=gcc CXX=g++
++
+ CFLAGS="$SLKCFLAGS -D__extern_always_inline=inline" \
+ ./configure.py \
+   --prefix=/usr \
++  --with-cxx-compiler=${CXX} \
+   --libexecdir=/usr/lib$LIBDIRSUFFIX/clc/ \
+   --pkgconfigdir=/usr/lib$LIBDIRSUFFIX/pkgconfig/ || exit 1
+ 
