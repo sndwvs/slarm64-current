@@ -1,9 +1,9 @@
---- a/mozilla-firefox.SlackBuild	2017-11-27 13:50:54.967117363 +0200
-+++ b/mozilla-firefox.SlackBuild	2017-11-27 13:49:21.369117363 +0200
+--- a/mozilla-firefox.SlackBuild	2018-03-14 20:36:46.315867471 +0200
++++ b/mozilla-firefox.SlackBuild	2018-03-14 20:40:57.314867471 +0200
 @@ -100,6 +100,10 @@
    SLKCFLAGS="-O2 -march=armv4t"
    LIBDIRSUFFIX=""
-   OPTIMIZE=" --enable-optimize=-O1 "
+   OPTIMIZE=${OPTIMIZE:-"-O1"}
 +elif [ "$ARCH" = "aarch64" ]; then
 +  SLKCFLAGS="-O1"
 +  LIBDIRSUFFIX="64"
@@ -11,7 +11,7 @@
  else
    SLKCFLAGS="-O2"
    LIBDIRSUFFIX=""
-@@ -175,8 +179,34 @@
+@@ -183,8 +187,33 @@
    \( -perm 666 -o -perm 664 -o -perm 600 -o -perm 444 -o -perm 440 -o -perm 400 \) \
    -exec chmod 644 {} \;
  
@@ -34,7 +34,6 @@
 +  --disable-crashreporter \
 +  --disable-updater \
 +  --disable-gconf \
-+  --disable-elf-hack \
 +  --with-system-libvpx \
 +  --without-system-icu \
 +  --disable-system-cairo \
@@ -46,7 +45,7 @@
    --enable-official-branding \
    --prefix=/usr \
    --libdir=/usr/lib${LIBDIRSUFFIX} \
-@@ -212,12 +242,21 @@
+@@ -219,12 +248,21 @@
      browser/installer/package-manifest.in || exit 1
  fi
  
@@ -69,7 +68,7 @@
  export MOZ_MAKE_FLAGS="$NUMJOBS"
  
  # Clear some variables that could break the build
-@@ -240,6 +279,12 @@
+@@ -251,6 +289,12 @@
  # Write in it the options above
  for option in $OPTIONS; do echo "ac_add_options $option" >> .mozconfig; done
  
@@ -82,8 +81,3 @@
  # https://developer.mozilla.org/en-US/docs/Building_with_Profile-Guided_Optimization
  # Thanks to ArchLinux and Gentoo for the additional hints.
  if [ "$PGO" = "yes" ]; then
-@@ -323,4 +368,3 @@
- else
-   /sbin/makepkg -l y -c n $TMP/mozilla-firefox-$VERSION-$ARCH-${BUILD}_$MOZLOCALIZE.txz
- fi
--
