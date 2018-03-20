@@ -1,5 +1,5 @@
---- a/llvm.SlackBuild	2017-12-23 12:33:22.819227755 +0000
-+++ b/llvm.SlackBuild	2017-12-23 12:40:38.399227963 +0000
+--- a/llvm.SlackBuild	2018-03-11 15:36:20.264685219 +0200
++++ b/llvm.SlackBuild	2018-03-11 15:43:44.058685219 +0200
 @@ -50,6 +50,9 @@
  elif [ "$ARCH" = "x86_64" ]; then
    SLKCFLAGS="-O2 -fPIC"
@@ -10,17 +10,15 @@
  else
    SLKCFLAGS="-O2"
    LIBDIRSUFFIX=""
-@@ -109,13 +112,26 @@
+@@ -109,13 +112,24 @@
  # is fixed.
- zcat $CWD/clang_disable_pgo.patch.gz | patch -d tools/clang/ -p1 --verbose || exit 1
+ zcat $CWD/clang_disable_pgo.patch.gz | patch -p1 --verbose || exit 1
  
-+# Disable test that fails when compiled as PIE
-+# https://bugs.llvm.org/show_bug.cgi?id=31870
-+xzcat $CWD/disable-llvm-symbolizer-test.patch.xz | patch -Np1 --verbose || exit 1
-+
-+# Enable SSP and PIE by default
-+xzcat $CWD/0001-GCC-compatibility-Ignore-the-fno-plt-flag.patch.xz | patch -Np1 -d tools/clang/ --verbose || exit 1
-+xzcat $CWD/0002-Enable-SSP-and-PIE-by-default.patch.xz | patch -Np1 -d tools/clang/ --verbose || exit 1
++# FIXME: Symbol versioning breaks some unittests when statically linking
++# libstdc++, so we disable it for now.
++xzcat $CWD/0001-Revert-Add-a-linker-script-to-version-LLVM-symbols.patch.xz | patch -Np1 --verbose || exit 1
++xzcat $CWD/0001-DebugInfo-Discard-invalid-DBG_VALUE-instructions-in-.patch.xz | patch -Np1 --verbose || exit 1
++xzcat $CWD/0001-Fixup-for-rL326769-RegState-Debug-is-being-truncated.patch.xz | patch -Np1 --verbose || exit 1
 +
 +CCOMPILER=gcc
 +CPPCOMPILER=g++
