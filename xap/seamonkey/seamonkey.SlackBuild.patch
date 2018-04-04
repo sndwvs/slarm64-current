@@ -1,16 +1,16 @@
---- a/seamonkey.SlackBuild	2017-10-14 07:24:08.044557770 +0300
-+++ b/seamonkey.SlackBuild	2017-10-25 20:38:15.917249981 +0300
-@@ -41,6 +41,9 @@
+--- a/seamonkey.SlackBuild	2018-04-04 22:30:26.772463980 +0300
++++ b/seamonkey.SlackBuild	2018-04-04 22:35:45.185463980 +0300
+@@ -56,6 +56,9 @@
  elif [ "$ARCH" = "x86_64" ]; then
    LIBDIRSUFFIX="64"
-   OPTIMIZE_FLAG="-O1"
+   OPTIMIZE_FLAG=${OPTIMIZE_FLAG:-"-O1"}
 +elif [ "$ARCH" = "aarch64" ]; then
 +  LIBDIRSUFFIX="64"
-+  OPTIMIZE_FLAG="-O2"
++  OPTIMIZE_FLAG=${OPTIMIZE_FLAG:-"-O1"}
  else
    LIBDIRSUFFIX=""
-   OPTIMIZE_FLAG="-O1"
-@@ -88,6 +91,21 @@
+   OPTIMIZE_FLAG=${OPTIMIZE_FLAG:-"-O1"}
+@@ -102,6 +105,21 @@
  rm -rf seamonkey-unpack
  cd seamonkey-${TARBALLVER} || exit 1
  
@@ -32,12 +32,11 @@
  # Retain GTK+ v2 scrolling behavior:
  zcat $CWD/sm.ui.scrollToClick.diff.gz | patch -p1 --verbose || exit 1
  
-@@ -106,6 +124,16 @@
+@@ -119,6 +137,15 @@
+ OPTIONS="\
    --prefix=/usr \
    --libdir=/usr/lib${LIBDIRSUFFIX} \
-   --enable-optimize=$OPTIMIZE_FLAG \
 +  \
-+  --disable-elf-hack \
 +  --enable-system-sqlite \
 +  --with-system-libvpx \
 +  --enable-system-ffi \
@@ -49,7 +48,7 @@
    --enable-cpp-rtti \
    --enable-default-toolkit=cairo-gtk3 \
    --enable-startup-notification \
-@@ -127,11 +155,20 @@
+@@ -140,11 +167,20 @@
    --enable-application=suite \
    --with-pthreads \
    --host=$ARCH-slackware-linux \
