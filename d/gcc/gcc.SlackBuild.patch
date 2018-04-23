@@ -1,15 +1,6 @@
---- a/gcc.SlackBuild	2017-09-20 17:54:58.390362749 +0100
-+++ b/gcc.SlackBuild	2017-09-20 18:02:06.589362953 +0100
-@@ -57,7 +57,7 @@
- BUILD=${BUILD:-1}
- 
- # How many jobs to run in parallel:
--NUMJOBS=" -j 7 "
-+NUMJOBS=" -j 4 "
- 
- # Automatically determine the architecture we're building on:
- if [ -z "$ARCH" ]; then
-@@ -98,6 +98,10 @@
+--- a/gcc.SlackBuild	2018-04-23 17:27:12.429104534 +0100
++++ /bgcc.SlackBuild	2018-04-23 17:53:09.034105277 +0100
+@@ -114,6 +114,10 @@
    SLKCFLAGS="-O3 -march=armv7-a -mfpu=vfpv3-d16"
    LIBDIRSUFFIX=""
    LIB_ARCH=armv7hl
@@ -20,7 +11,7 @@
  else
    SLKCFLAGS="-O2"
    LIBDIRSUFFIX=""
-@@ -119,11 +123,11 @@
+@@ -133,11 +137,11 @@
  # These are the directories to build other packages in:
  PKG2=$TMP/package-gcc-g++
  PKG3=$TMP/package-gcc-gfortran
@@ -33,8 +24,8 @@
 +#PKG9=$TMP/package-gcc-brig
  
  # Clear the build locations:
- if [ -d $TMP ]; then
-@@ -136,11 +140,11 @@
+ rm -rf $PKG{1,2,3,4,6,8,9}
+@@ -148,11 +152,11 @@
  cat $CWD/slack-desc.gcc > $PKG1/install/slack-desc
  cat $CWD/slack-desc.gcc-g++ > $PKG2/install/slack-desc
  cat $CWD/slack-desc.gcc-gfortran > $PKG3/install/slack-desc
@@ -47,8 +38,8 @@
 +#cat $CWD/slack-desc.gcc-brig > $PKG9/install/slack-desc
  
  cd $TMP
- tar xvf $CWD/gcc-$VERSION.tar.xz || exit 1
-@@ -191,16 +195,16 @@
+ rm -rf gcc-$VERSION
+@@ -204,16 +208,16 @@
        fi
      )
  
@@ -75,7 +66,7 @@
  
      mkdir -p $PKG6/usr/doc/gcc-${VERSION}/gcc/objc
      ( cd objc || exit 0
-@@ -225,13 +229,13 @@
+@@ -238,13 +242,13 @@
        $PKG8/usr/doc/gcc-${VERSION}/gcc/go
      )
  
@@ -96,7 +87,7 @@
  
    ) || exit 1
  
-@@ -243,13 +247,13 @@
+@@ -256,13 +260,13 @@
      fi
    )
  
@@ -117,7 +108,7 @@
  
    mkdir -p $PKG1/usr/doc/gcc-${VERSION}/libgomp
    ( cd libgomp || exit 0
-@@ -295,12 +299,14 @@
+@@ -308,12 +312,14 @@
    # Correct me if my take on this is wrong.
    #  --with-cpu=$ARCH 
   
@@ -126,18 +117,19 @@
 -  else
 -    GCC_ARCHOPTS="--disable-multilib"
 -  fi
+- 
 +#  if [ "$ARCH" != "x86_64" ]; then
 +#    GCC_ARCHOPTS="--with-arch=$ARCH"
 +#  else
 +#    GCC_ARCHOPTS="--disable-multilib"
 +#  fi
-  
++
 +  [[ "$ARCH" == aarch64 ]] && GCC_ARCHOPTS="--disable-multilib"
 +
-   # NOTE:  For Slackware 15.0, look into removing --with-default-libstdcxx-abi=gcc4-compatible,
-   # which will then require rebuilding all C++ libraries.  That is, if there's any benefit.
- 
-@@ -312,7 +318,7 @@
+   CFLAGS="$SLKCFLAGS" \
+   CXXFLAGS="$SLKCFLAGS" \
+   ../gcc-$VERSION/configure --prefix=/usr \
+@@ -322,7 +328,7 @@
       --infodir=/usr/info \
       --enable-shared \
       --enable-bootstrap \
@@ -146,29 +138,29 @@
       --enable-threads=posix \
       --enable-checking=release \
       --enable-objc-gc \
-@@ -338,15 +344,15 @@
+@@ -348,15 +354,15 @@
    # Include all debugging info (for now):
-   make $NUMJOBS bootstrap;
+   make $NUMJOBS bootstrap || exit 1
  
 -  ( cd gcc
--    make $NUMJOBS gnatlib GNATLIBCFLAGS="$SLKCFLAGS"
+-    make $NUMJOBS gnatlib GNATLIBCFLAGS="$SLKCFLAGS" || exit 1
 +#  ( cd gcc
-+#    make $NUMJOBS gnatlib GNATLIBCFLAGS="$SLKCFLAGS"
++#    make $NUMJOBS gnatlib GNATLIBCFLAGS="$SLKCFLAGS" || exit 1
      # This wants a shared -ladd2line?
-     #make gnatlib-shared
+     #make gnatlib-shared || exit 1
      
 -    CFLAGS="$SLKCFLAGS" \
 -    CXXFLAGS="$SLKCFLAGS" \
--    make $NUMJOBS gnattools
--  )
+-    make $NUMJOBS gnattools || exit 1
+-  ) || exit 1
 +#    CFLAGS="$SLKCFLAGS" \
 +#    CXXFLAGS="$SLKCFLAGS" \
-+#    make $NUMJOBS gnattools
-+#  )
-   make info
++#    make $NUMJOBS gnattools || exit 1
++#  ) || exit 1
+   make info || exit 1
  
    # Set GCCCHECK=something to run the tests
-@@ -493,18 +499,18 @@
+@@ -507,18 +513,18 @@
  )
  
  # gcc-gnat:
@@ -199,7 +191,7 @@
  
  # gcc-objc:
  ( cd $PKG6
-@@ -547,14 +553,14 @@
+@@ -562,14 +568,14 @@
  ) || exit 1
  
  # gcc-brig:
@@ -222,7 +214,7 @@
  
  # Generate packages:
  ( cd $PKG1
-@@ -563,14 +569,14 @@
+@@ -578,14 +584,14 @@
    makepkg -l y -c n $TMP/gcc-g++-$VERSION-$ARCH-$BUILD.txz )
  ( cd $PKG3
    makepkg -l y -c n $TMP/gcc-gfortran-$VERSION-$ARCH-$BUILD.txz )
