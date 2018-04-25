@@ -1,6 +1,6 @@
---- a/sdl.SlackBuild	2017-09-28 22:20:46.605677628 +0300
-+++ b/sdl.SlackBuild	2017-09-28 22:23:05.258677628 +0300
-@@ -49,6 +49,9 @@
+--- a/sdl.SlackBuild	2018-04-25 20:38:58.364505365 +0300
++++ b/sdl.SlackBuild	2018-04-25 20:41:55.203102982 +0300
+@@ -60,6 +60,9 @@
  elif [ "$ARCH" = "x86_64" ]; then
    SLKCFLAGS="-O2 -fPIC"
    LIBDIRSUFFIX="64"
@@ -10,29 +10,29 @@
  else
    SLKCFLAGS="-O2"
    LIBDIRSUFFIX=""
-@@ -86,7 +89,9 @@
+@@ -96,7 +99,9 @@
    --disable-esd \
    --enable-shared=yes \
    --enable-static=no \
--  --disable-x11-shared
+-  --disable-x11-shared || exit 1
 +  --disable-x11-shared \
 +  --host=$ARCH-slackware-linux \
-+  --build=$ARCH-slackware-linux
++  --build=$ARCH-slackware-linux || exit 1
  
  make $NUMJOBS || make || exit 1
  
-@@ -126,7 +131,9 @@
+@@ -138,7 +143,9 @@
    --enable-static=no \
    --enable-jpg-shared=no \
    --enable-png-shared=no \
--  --enable-tif-shared=no
+-  --enable-tif-shared=no || exit 1
 +  --enable-tif-shared=no \
 +  --host=$ARCH-slackware-linux \
-+  --build=$ARCH-slackware-linux
++  --build=$ARCH-slackware-linux || exit 1
  
  make $NUMJOBS || make || exit 1
  make install DESTDIR=$PKG || exit 1
-@@ -153,7 +160,9 @@
+@@ -165,7 +172,9 @@
    --libdir=/usr/local/lib${LIBDIRSUFFIX} \
    --with-pic \
    --enable-shared=no \
@@ -43,36 +43,36 @@
    make $NUMJOBS || make || exit 1
    make install || exit 1
  ) || exit 1
-@@ -172,7 +181,9 @@
+@@ -184,7 +193,9 @@
    --mandir=/usr/man \
    --enable-music-mod \
    --enable-shared=yes \
--  --enable-static=no
+-  --enable-static=no || exit 1
 +  --enable-static=no \
 +  --host=$ARCH-slackware-linux \
-+  --build=$ARCH-slackware-linux
++  --build=$ARCH-slackware-linux || exit 1
  
  make $NUMJOBS || make || exit 1
  make install DESTDIR=$PKG || exit 1
-@@ -203,7 +214,9 @@
+@@ -215,7 +226,9 @@
    --libdir=/usr/lib${LIBDIRSUFFIX} \
    --mandir=/usr/man \
    --enable-shared=yes \
--  --enable-static=no
+-  --enable-static=no || exit 1
 +  --enable-static=no \
 +  --host=$ARCH-slackware-linux \
-+  --build=$ARCH-slackware-linux
++  --build=$ARCH-slackware-linux || exit 1
  
  make $NUMJOBS || make || exit 1
  make install DESTDIR=$PKG || exit 1
-@@ -235,7 +248,9 @@
+@@ -247,7 +260,9 @@
    --libdir=/usr/lib${LIBDIRSUFFIX} \
    --mandir=/usr/man \
    --enable-shared=yes \
--  --enable-static=no
+-  --enable-static=no || exit 1
 +  --enable-static=no \
 +  --host=$ARCH-slackware-linux \
-+  --build=$ARCH-slackware-linux
++  --build=$ARCH-slackware-linux || exit 1
  
  make $NUMJOBS || make || exit 1
  make install DESTDIR=$PKG || exit 1
