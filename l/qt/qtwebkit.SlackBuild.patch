@@ -1,16 +1,7 @@
---- a/qtwebkit/qtwebkit.SlackBuild	2017-12-10 06:50:14.900181275 +0000
-+++ b/qtwebkit/qtwebkit.SlackBuild	2017-12-10 15:39:25.398195105 +0000
-@@ -27,7 +27,7 @@
- VERSION=$(ls qtwebkit-*.tar.?z* | rev | cut -f 3- -d . | cut -f 1 -d - | rev)
- BUILD=${BUILD:-1}
- 
--NUMJOBS=${NUMJOBS:--j7}
-+NUMJOBS=${NUMJOBS:--j3}
- 
- # Automatically determine the architecture we're building on:
- MARCH=$( uname -m )
-@@ -64,6 +64,10 @@
-   SLKCFLAGS="-O2 -march=armv7-a -mfpu=vfpv3-d16 -fno-strict-volatile-bitfields"
+--- a/qtwebkit/qtwebkit.SlackBuild	2018-04-25 21:21:06.776373865 +0300
++++ b/qtwebkit/qtwebkit.SlackBuild	2018-04-25 21:23:44.062256255 +0300
+@@ -66,6 +66,10 @@
+   SLKCFLAGS="-O2 -march=armv7-a -mfpu=vfpv3-d16 -fno-strict-volatile-bitfields -std=gnu++98 -fpermissive -fno-delete-null-pointer-checks"
    LIBDIRSUFFIX=""
    WEBKITFLAGS="--no-force-sse2"
 +elif [ "$ARCH" = "aarch64" ]; then
@@ -18,9 +9,9 @@
 +  LIBDIRSUFFIX="64"
 +  WEBKITFLAGS="--no-force-sse2"
  else
-   SLKCFLAGS="-O2"
+   SLKCFLAGS="-O2 -std=gnu++98 -fpermissive -fno-delete-null-pointer-checks"
    LIBDIRSUFFIX=""
-@@ -96,14 +100,22 @@
+@@ -97,14 +101,22 @@
   \( -perm 666 -o -perm 664 -o -perm 600 -o -perm 444 -o -perm 440 -o -perm 400 \) \
   -exec chmod 644 {} \;
  

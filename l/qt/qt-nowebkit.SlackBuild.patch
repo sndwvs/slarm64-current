@@ -1,6 +1,6 @@
---- a/qt-nowebkit.SlackBuild	2017-12-09 23:36:57.922014593 +0000
-+++ b/qt-nowebkit.SlackBuild	2017-12-10 18:04:50.518189757 +0000
-@@ -75,6 +75,9 @@
+--- a/qt-nowebkit.SlackBuild	2018-04-13 05:50:30.000000000 +0300
++++ b/qt-nowebkit.SlackBuild	2018-04-25 21:19:12.501912084 +0300
+@@ -85,6 +85,9 @@
    # http://bazaar.launchpad.net/~linaro-toolchain-dev/gcc-linaro/4.6/revision/106731
    SLKCFLAGS="-O2 -march=armv7-a -mfpu=vfpv3-d16 -fno-strict-volatile-bitfields"
    LIBDIRSUFFIX=""
@@ -10,9 +10,9 @@
  else
    SLKCFLAGS="-O2"
    LIBDIRSUFFIX=""
-@@ -146,14 +149,20 @@
- # Don't emit a misleading icu4c debug error:
- zcat $CWD/qt.icu4c.nodebug.diff.gz | patch -p1 --verbose || exit 1
+@@ -162,14 +165,20 @@
+ # that uses them with that C++ standard:
+ zcat $CWD/qt.icu59.c++11.diff.gz | patch -p1 --verbose || exit 1
  
 +xzcat $CWD/qt-aarch64.patch.xz | patch -p1 --verbose || exit 1
 +
@@ -26,10 +26,10 @@
  # -webkit and remove the built files later from the package. -HW
  
  export CFLAGS="$SLKCFLAGS"
--export CXXFLAGS="$SLKCFLAGS -std=gnu++98"
--export OPENSOURCE_CXXFLAGS="$SLKCFLAGS -std=gnu++98"
-+export CXXFLAGS="$SLKCFLAGS"
-+export OPENSOURCE_CXXFLAGS="$SLKCFLAGS"
+-export CXXFLAGS="$SLKCFLAGS -std=gnu++98 -fpermissive -fno-delete-null-pointer-checks"
+-export OPENSOURCE_CXXFLAGS="$SLKCFLAGS -std=gnu++98 -fpermissive -fno-delete-null-pointer-checks"
++export CXXFLAGS="$SLKCFLAGS -fpermissive -fno-delete-null-pointer-checks"
++export OPENSOURCE_CXXFLAGS="$SLKCFLAGS -fpermissive -fno-delete-null-pointer-checks"
  ./configure \
    -confirm-license \
    -opensource \
