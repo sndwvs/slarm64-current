@@ -1,13 +1,29 @@
---- a/kbd.SlackBuild	2017-10-15 00:39:15.889236255 +0300
-+++ b/kbd.SlackBuild	2017-10-15 00:39:52.196236255 +0300
-@@ -104,7 +104,9 @@
+--- a/kbd.SlackBuild	2018-04-28 12:56:37.058932608 +0300
++++ b/kbd.SlackBuild	2018-04-28 13:01:49.631308799 +0300
+@@ -113,7 +113,8 @@
     --mandir=/usr/man \
     --docdir=/usr/doc/$PKGNAM-$VERSION \
     --datadir=/usr/share/kbd \
 -   --enable-nls || exit 1
 +   --enable-nls \
-+   --build=$ARCH-slackware-linux \
-+   || exit 1
++   --build=$ARCH-slackware-linux || exit 1
  
  # Build:
  make $NUMJOBS || exit 1
+@@ -127,10 +128,12 @@
+   cd usr/bin ; ln -vsf ../../bin/loadkeys . )
+ 
+ # Build/install resizecons:
+-( cd src
+-  make resizecons || exit 1
+-  cp resizecons $PKG/usr/bin
+-) || exit 1
++if [[ $ARCH = x86_64 ]]; then
++    ( cd src
++      make resizecons || exit 1
++      cp resizecons $PKG/usr/bin
++    ) || exit 1
++fi
+ 
+ # ro_win.map.gz is useless
+ rm -fv $PKG/usr/share/kbd/keymaps/i386/qwerty/ro_win.map.gz
