@@ -1,0 +1,1 @@
+zcat $CWD/patch/ksirk/ksirk.signedchar.patch.gz | patch -p1 --verbose || { touch ${SLACK_KDE_BUILD_DIR}/${PKGNAME}.failed ; continue ; }
