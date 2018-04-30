@@ -1,6 +1,6 @@
---- a/etc.SlackBuild	2017-09-18 21:10:24.310285943 +0100
-+++ b/etc.SlackBuild	2017-09-18 21:11:36.964285978 +0100
-@@ -45,9 +45,9 @@
+--- a/etc.SlackBuild	2018-04-30 22:21:28.240046514 +0100
++++ b/etc.SlackBuild	2018-04-30 22:22:41.144046549 +0100
+@@ -55,9 +55,9 @@
  # Fix for ARCH:
  sed -i -e "s#/i586-slackware-linux#/${ARCH}-slackware-linux#" etc/ld.so.conf.new
  # Fix paths if lib64 is needed:
@@ -10,6 +10,6 @@
 +case "$ARCH" in
 +  x86_64|aarch64) sed -i -e "s#/lib#/lib64#" etc/ld.so.conf.new ;;
 +esac
- cp -a $CWD/termcap-BSD.gz etc/termcap-BSD.gz
- gzip -d --force etc/termcap-BSD.gz
- chown root:root etc/termcap-BSD
+ zcat $CWD/nsswitch.conf.gz > $PKG/etc/nsswitch.conf.new
+ 
+ mkdir -p $PKG/install
