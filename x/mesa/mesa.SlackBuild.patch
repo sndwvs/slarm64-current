@@ -1,5 +1,5 @@
---- a/mesa.SlackBuild	2018-05-01 12:39:54.909073444 +0300
-+++ b/mesa.SlackBuild	2018-05-01 12:42:31.724905567 +0300
+--- a/mesa.SlackBuild	2018-05-01 20:21:45.050983631 +0300
++++ b/mesa.SlackBuild	2018-05-01 20:21:58.636766594 +0300
 @@ -30,8 +30,8 @@
  NUMJOBS=${NUMJOBS:--j7}
  
@@ -22,15 +22,7 @@
  else
    SLKCFLAGS="-O2"
    LIBDIRSUFFIX=""
-@@ -107,6 +111,7 @@
- autoreconf -fi
- 
- CFLAGS="$SLKCFLAGS" \
-+CXXFLAGS="$SLKCFLAGS -D_GLIBCXX_USE_CXX11_ABI=0" \
- ./configure \
-   --prefix=/usr \
-   --sysconfdir=/etc \
-@@ -134,8 +139,6 @@
+@@ -134,8 +138,6 @@
    --enable-gles1 \
    --enable-gles2 \
    --enable-vdpau \
