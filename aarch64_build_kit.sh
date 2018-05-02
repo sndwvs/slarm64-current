@@ -3,14 +3,11 @@
 _CWD=$(pwd)
 THREADS=$(($(grep -c 'processor' /proc/cpuinfo)-2))
 
-#source config.sh || exit 1
-#source "packages-minirootfs.conf" || exit 1
 #source "l-packages.conf" || exit 1
 #source "tcl-packages.conf" || exit 1
 #source "d-packages.conf" || exit 1
 #source "ap-packages.conf" || exit 1
 ##source "a-packages.conf" || exit 1
-#source "l.conf" || exit 1
 source "pkg" || exit 1
 #source "xap.conf" || exit 1
 #source "xfce.conf" || exit 1
@@ -120,6 +117,7 @@ build() {
                 pushd ${_WORK_DIR} 2>&1>/dev/null
                 ./${p}.SlackBuild 2>&1 | tee ${p}.build.log
                 [[ ${PIPESTATUS[0]} == 1 ]] && ERROR=1
+                [[ ${ERROR} == 1 ]] && mv ${p}.build.log ${p}.build.log.1
                 [[ ${ERROR} == 1 ]] && fix_global ${p}
                 [[ ${ERROR} == 1 ]] && ./${p}.SlackBuild 2>&1 | tee ${p}.build.log
                 if [[ ${PIPESTATUS[0]} == 1 && ${ERROR} == 1 ]]; then
