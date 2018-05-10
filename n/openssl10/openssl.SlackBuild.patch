@@ -1,6 +1,6 @@
---- a/openssl.SlackBuild	2018-05-06 21:32:17.264000477 +0100
-+++ b/openssl.SlackBuild	2018-05-10 17:15:30.192194487 +0100
-@@ -82,6 +82,8 @@
+--- a/openssl10.SlackBuild	2018-05-08 22:05:33.339257414 +0300
++++ b/openssl10.SlackBuild	2018-05-10 18:41:07.815009375 +0300
+@@ -86,6 +86,8 @@
    LIBDIRSUFFIX=""
  elif [ "$ARCH" = "x86_64" ]; then
    LIBDIRSUFFIX="64"
@@ -9,12 +9,11 @@
  fi
  
  # OpenSSL has a (nasty?) habit of bumping the internal version number with
-@@ -137,6 +139,9 @@
-  no-sse2 \
+@@ -137,6 +139,8 @@
+  no-weak-ssl-ciphers \
   shared
  
 +sed -i "s/^LIBDIR=lib$/LIBDIR=lib${LIBDIRSUFFIX}/" Makefile
-+sed -i "s/lib\/engines/lib${LIBDIRSUFFIX}\/engines/" Makefile
 +
  make $NUMJOBS depend || make depend || exit 1
  
