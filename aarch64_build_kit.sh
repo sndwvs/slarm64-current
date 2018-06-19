@@ -16,7 +16,7 @@ source "pkg" || exit 1
 
 
 _BUILD="${_CWD}/slarm64-current/source"
-_TXZ="${_CWD}/slarm64-current/slackware"
+_TXZ="${_CWD}/slarm64-current/slarm64"
 _SOURCE="${_CWD}/slackware64-current/source"
 _TMP="/tmp"
 _WORK_DIR="work"
