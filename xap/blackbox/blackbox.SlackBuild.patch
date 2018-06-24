@@ -1,6 +1,6 @@
---- a/blackbox.SlackBuild	2017-10-04 19:15:07.713241960 +0300
-+++ b/blackbox.SlackBuild	2017-10-04 19:20:07.958241960 +0300
-@@ -56,6 +56,9 @@
+--- a/blackbox.SlackBuild	2018-06-22 22:33:31.819628973 +0100
++++ b/blackbox.SlackBuild	2018-06-24 18:01:08.804120884 +0100
+@@ -68,6 +68,9 @@
    arm)    export SLKCFLAGS="-O2 -march=armv4t"
            export LIBDIRSUFFIX="" 
            export ARCHQUADLET="-gnueabi" ;;
@@ -10,13 +10,3 @@
    *)      export SLKCFLAGS="-O2"
            export LIBDIRSUFFIX=""
            export ARCHQUADLET="" ;;
-@@ -87,6 +90,9 @@
- # Build fix for libX11-1.5+
- zcat $CWD/textpropertytostring-unconditional.diff.gz | patch --verbose -p1 || exit 1
- 
-+# fix requires libbt
-+xzcat $CWD/pkgconfig-requires-private.diff.xz | patch --verbose -p1 || exit 1
-+
- # Configure:
- CFLAGS="$SLKCFLAGS" \
- ./configure \
