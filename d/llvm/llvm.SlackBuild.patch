@@ -1,6 +1,6 @@
---- a/llvm.SlackBuild	2018-03-11 15:36:20.264685219 +0200
-+++ b/llvm.SlackBuild	2018-03-11 15:43:44.058685219 +0200
-@@ -50,6 +50,9 @@
+--- a/llvm.SlackBuild	2018-07-07 19:11:30.880098612 +0100
++++ b/llvm.SlackBuild	2018-07-08 15:20:20.801317024 +0100
+@@ -59,6 +59,9 @@
  elif [ "$ARCH" = "x86_64" ]; then
    SLKCFLAGS="-O2 -fPIC"
    LIBDIRSUFFIX="64"
@@ -10,16 +10,10 @@
  else
    SLKCFLAGS="-O2"
    LIBDIRSUFFIX=""
-@@ -109,13 +112,24 @@
+@@ -118,13 +121,18 @@
  # is fixed.
  zcat $CWD/clang_disable_pgo.patch.gz | patch -p1 --verbose || exit 1
  
-+# FIXME: Symbol versioning breaks some unittests when statically linking
-+# libstdc++, so we disable it for now.
-+xzcat $CWD/0001-Revert-Add-a-linker-script-to-version-LLVM-symbols.patch.xz | patch -Np1 --verbose || exit 1
-+xzcat $CWD/0001-DebugInfo-Discard-invalid-DBG_VALUE-instructions-in-.patch.xz | patch -Np1 --verbose || exit 1
-+xzcat $CWD/0001-Fixup-for-rL326769-RegState-Debug-is-being-truncated.patch.xz | patch -Np1 --verbose || exit 1
-+
 +CCOMPILER=gcc
 +CPPCOMPILER=g++
 +which clang > /dev/null 2>&1 && { CCOMPILER=clang ; CPPCOMPILER=clang++ ;}
