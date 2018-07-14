@@ -1,6 +1,6 @@
---- a/rust.SlackBuild	2018-01-07 00:17:56.000000000 +0200
-+++ b/rust.SlackBuild	2018-01-23 01:12:05.942091514 +0200
-@@ -113,6 +113,9 @@
+--- a/rust.SlackBuild	2018-07-11 10:19:08.504001248 +0300
++++ b/rust.SlackBuild	2018-07-14 09:33:59.294340785 +0300
+@@ -126,6 +126,9 @@
  elif [ "$ARCH" = "armv7hl" ]; then
    SLKCFLAGS=""
    LIBDIRSUFFIX=""
@@ -10,7 +10,7 @@
  else
    SLKCFLAGS="-O2"
    LIBDIRSUFFIX=""
-@@ -175,6 +178,9 @@
+@@ -198,6 +201,9 @@
  
  [target.armv7-unknown-linux-gnueabihf]
  llvm-config = "/usr/bin/llvm-config"
@@ -18,18 +18,9 @@
 +[target.aarch64-unknown-linux-gnu]
 +llvm-config = "/usr/bin/llvm-config"
  EOF
+ fi
  
- if [ "$LOCAL_BOOTSTRAP" = "yes" ] ; then
-@@ -188,6 +194,8 @@
-  \( -perm 666 -o -perm 664 -o -perm 640 -o -perm 600 -o -perm 444 \
-   -o -perm 440 -o -perm 400 \) -exec chmod 644 {} \;
- 
-+export RUSTFLAGS="$RUSTFLAGS -C link-args=-Wl,-z,relro,-z,now"
-+
- export PKG_CONFIG_ALLOW_CROSS=1
- 
- if [ "$BARCH" = "i586" ] ; then
-@@ -212,8 +220,8 @@
+@@ -236,8 +242,8 @@
  else
    # README.md says gcc 4.7 / clang 3.x or later needed
    # but building fails for me with GCC 5.3 from slackware 14.2
