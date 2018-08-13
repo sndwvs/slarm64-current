@@ -1,39 +1,25 @@
---- a/mozilla-thunderbird.SlackBuild	2018-01-26 20:17:25.486262108 +0200
-+++ b/mozilla-thunderbird.SlackBuild	2018-01-26 20:18:14.579262108 +0200
-@@ -60,6 +60,10 @@
+--- a/mozilla-thunderbird.SlackBuild	2018-08-11 01:31:29.100615723 +0100
++++ b/mozilla-thunderbird.SlackBuild	2018-08-13 18:08:03.305484133 +0100
+@@ -87,6 +87,10 @@
    SLKCFLAGS="-march=armv4 -mtune=xscale"
    LIBDIRSUFFIX=""
-   OPTIMIZE=" --enable-optimize=-O1 "
+   OPTIMIZE=${OPTIMIZE:-"-O1"}
 +elif [ "$ARCH" = "aarch64" ]; then
 +  SLKCFLAGS=""
 +  LIBDIRSUFFIX="64"
-+  OPTIMIZE=" --enable-optimize=-O1 "
++  OPTIMIZE=${OPTIMIZE:-"-O1"}
  else
    SLKCFLAGS=""
    LIBDIRSUFFIX=""
-@@ -137,8 +141,29 @@
-   \( -perm 666 -o -perm 664 -o -perm 600 -o -perm 444 -o -perm 440 -o -perm 400 \) \
-   -exec chmod 644 {} \;
+@@ -194,6 +198,15 @@
  
-+# https://bugzilla.mozilla.org/show_bug.cgi?id=1371991
-+xzcat $CWD/no-crmf.diff.xz | patch -Np1 --verbose || exit 1
-+
-+# https://bugzilla.mozilla.org/show_bug.cgi?id=1385667
-+# https://bugzilla.mozilla.org/show_bug.cgi?id=1394149
-+xzcat $CWD/glibc-2.26-fix.diff,xz | patch -d mozilla/toolkit/crashreporter/google-breakpad/src/client -Np4 --verbose || exit 1
-+
-+# https://bugs.archlinux.org/task/53890
-+xzcat $CWD/0001-Bug-1338655-Don-t-try-to-build-mp4parse-bindings.-r-.patch.xz | patch -d mozilla -Np1 --verbose || exit 1
-+
  # Our building options, in a configure-like display ;)
  OPTIONS="\
 +  --enable-extensions=default \
-+  --disable-elf-hack \
 +  --enable-system-ffi \
 +  --enable-pie \
 +  --disable-eme \
 +  --disable-gconf \
-+  --disable-elf-hack \
 +  --with-system-libvpx \
 +  --disable-stylo \
 +  --disable-webrtc \
@@ -41,7 +27,7 @@
    --enable-official-branding \
    --prefix=/usr \
    --libdir=/usr/lib${LIBDIRSUFFIX} \
-@@ -175,6 +200,10 @@
+@@ -228,6 +241,10 @@
      mail/installer/package-manifest.in || exit 1
  fi
  
