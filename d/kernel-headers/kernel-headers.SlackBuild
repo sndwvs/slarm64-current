@@ -2,7 +2,7 @@
 CWD=$(pwd)
 
 NAME="kernel-headers"
-VERSION=${VERSION:-4.14.62}
+VERSION=${VERSION:-4.14.64}
 BUILD="1"
 SOURCE="http://www.kernel.org/pub/linux/kernel/v4.x/linux-$VERSION.tar.xz"
 
@@ -28,7 +28,7 @@ rm -rf $PKG
 mkdir -p $PKG
 
 # Delete a directory previous build / create new and change rights
-cd /tmp
+cd $TMP
 rm -rf $NAME-$VERSION
 rm -rf linux-$VERSION
 tar xvf $CWD/linux-$VERSION.tar.?z* || exit 1
