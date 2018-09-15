@@ -7,7 +7,6 @@ if [[ -z "$1" || ! -d "$1" ]]; then
 fi
 
 DIR="$1"
-CWD=$(pwd)
 DISTR="slarm64"
 FILELIST=${FILELIST:-FILE_LIST}
 PACKAGES="PACKAGES.TXT"
@@ -35,14 +34,17 @@ gen_filelist() {
   # Argument #1 : full path to a directory
   # Argument #2 : output filename
 
-  DIR=$1
-  LISTFILE=$2
+  local DIR=$1
+  local LISTFILE=$2
 
   get_data UPDATE_DATE
 
-  ( cd ${DIR}
-    rm -f ${CWD}/${LISTFILE}
-    cat <<EOT > ${CWD}/${LISTFILE}
+  pushd $DIR 2>&1>/dev/null
+
+  # shrink file
+  > ${LISTFILE}
+
+  cat <<EOT > ${LISTFILE}
 $UPDATE_DATE
 
 Here is the file list for this directory.  If you are using a 
@@ -51,8 +53,8 @@ subdirectories, please have the archive administrator refresh
 the mirror.
 
 EOT
-    find -L . $PRUNES -print | sort | xargs ls -ld --time-style=long-iso >> ${CWD}/${LISTFILE}
-  )
+    find -L . $PRUNES -print | sort | xargs ls -ld --time-style=long-iso >> ${LISTFILE}
+  popd 2>&1>/dev/null
 }
 
 
@@ -67,11 +69,11 @@ gen_file_packages() {
   local _DIR=$(basename $DIR)
 
   # shrink file
-  [[ -f ${CWD}/${PACKAGES} ]] && > ${CWD}/${PACKAGES}
+  > ${PACKAGES}
 
   get_data UPDATE_DATE
 
-  PKGS=$( find -L . -name '*.txz' $PRUNES -type f -print | sort -t'/' -k3)
+  PKGS=$( find -L . $PRUNES -type f -name '*.txz' -print | sort -t'/' -k3)
 
   for PKG in $PKGS; do
     LOCATION="./${_DIR}"$(echo $PKG | rev | cut -f2- -d '/' | rev | sed "s/^.*\(\/.*\)$/\1/")
@@ -79,7 +81,7 @@ gen_file_packages() {
     SIZE=$(du -s $PKG | cut -f 1)
     USIZE=$(xz --robot --list $PKG | awk '/^totals/{printf("%i"), $5/1024}')
 
-    cat <<EOT >> ${CWD}/${PACKAGES}
+    cat <<EOT >> ${PACKAGES}
 
 PACKAGE NAME:  $NAME
 PACKAGE LOCATION:  $LOCATION
@@ -87,13 +89,11 @@ PACKAGE SIZE (compressed):  $SIZE K
 PACKAGE SIZE (uncompressed):  $USIZE K
 PACKAGE DESCRIPTION:
 EOT
-    cat $PKG | tar xJOf - install/slack-desc | sed -n '/^#/d;/:/p' >> ${CWD}/${PACKAGES}
+    cat $PKG | tar xJOf - install/slack-desc | sed -n '/^#/d;/:/p' >> ${PACKAGES}
   done
 
-  popd 2>&1>/dev/null
-
-  SIZE=$(grep '(compressed):' ${CWD}/${PACKAGES} | awk '{SUM += $4} END {printf("%i"), SUM/1024}')
-  USIZE=$(grep '(uncompressed):' ${CWD}/${PACKAGES} | awk '{SUM += $4} END {printf("%i"), SUM/1024}')
+  SIZE=$(grep '(compressed):' ${PACKAGES} | awk '{SUM += $4} END {printf("%i"), SUM/1024}')
+  USIZE=$(grep '(uncompressed):' ${PACKAGES} | awk '{SUM += $4} END {printf("%i"), SUM/1024}')
 
   read -r -d '' HEAD << EOT
 $PACKAGES;  $UPDATE_DATE
@@ -105,7 +105,9 @@ Total size of all packages (compressed):  $SIZE MB
 Total size of all packages (uncompressed):  $USIZE MB
 EOT
 
-  awk -i inplace -v p="\n$HEAD\n" 'BEGINFILE{print p}{print}' ${CWD}/${PACKAGES}
+  awk -i inplace -v p="\n$HEAD\n" 'BEGINFILE{print p}{print}' ${PACKAGES}
+
+  popd 2>&1>/dev/null
 }
 
 
@@ -117,9 +119,10 @@ gen_file_checksums() {
 
   pushd $DIR 2>&1>/dev/null
 
-  [[ -e ${CWD}/$CHECKSUMS ]] && rm -f ${CWD}/$CHECKSUMS
+  # shrink file
+  > $CHECKSUMS
 
-  cat <<EOT >> ${CWD}/${CHECKSUMS}
+  cat <<EOT >> ${CHECKSUMS}
 These are the MD5 message digests for the files in this directory.
 If you want to test your files, use 'md5sum' and compare the values to
 the ones listed here.
@@ -134,7 +137,7 @@ tail +13 CHECKSUMS.md5 | md5sum -c --quiet - | less
 MD5 message digest                Filename
 EOT
 
-  find -L . $PRUNES -type f -print | sort | xargs md5sum >> ${CWD}/${CHECKSUMS}
+  find -L . $PRUNES -type f -print | sort | xargs md5sum >> ${CHECKSUMS}
 
   popd 2>&1>/dev/null
 }
@@ -148,15 +151,16 @@ EOT
 for d in $DIR/*;do
   if [[ -d ${d} ]]; then
     echo "generate for $d"
-    gen_filelist ${d} $FILELIST
     if [[ $(echo ${d} | grep $DISTR$) ]]; then
         gen_file_packages ${d}
-        > $DIR/$PACKAGES
-        ln -fs $DIR/$PACKAGES -r ${d}/$PACKAGES
+        cp ${d}/$PACKAGES $DIR/$PACKAGES
+        ln -sf $DIR/$PACKAGES -r ${d}/$PACKAGES
     fi
+    gen_filelist ${d} $FILELIST
     gen_file_checksums ${d}
   fi
 done
 
 # base distro directory
 gen_filelist $DIR "FILELIST.TXT"
+gen_file_checksums $DIR
