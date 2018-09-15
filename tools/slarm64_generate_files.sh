@@ -7,12 +7,21 @@ if [[ -z "$1" || ! -d "$1" ]]; then
 fi
 
 DIR="$1"
+CWD=$(pwd)
 DISTR="slarm64"
 FILELIST=${FILELIST:-FILELIST.TXT}
+EXCLUDES=".git"
+
+
+PRUNES=""
+for substr in $EXCLUDES ; do
+    PRUNES="${PRUNES} -name ${substr} -prune -o -true"
+done
 
 
 
 
+### gen_data
 get_data() {
     local _DATE=$(LANG=C date -u)
     eval "$1=\${_DATE}"
@@ -30,8 +39,8 @@ gen_filelist() {
   get_data UPDATE_DATE
 
   ( cd ${DIR}
-    rm -f ${LISTFILE}
-    cat <<EOT > ${LISTFILE}
+    rm -f ${CWD}/${LISTFILE}
+    cat <<EOT > ${CWD}/${LISTFILE}
 $UPDATE_DATE
 
 Here is the file list for this directory.  If you are using a 
@@ -40,7 +49,7 @@ subdirectories, please have the archive administrator refresh
 the mirror.
 
 EOT
-    find -L . -print | sort | xargs ls -ld --time-style=long-iso >> ${LISTFILE}
+    find -L . $PRUNES -print | sort | xargs ls -ld --time-style=long-iso >> ${CWD}/${LISTFILE}
   )
 }
 
@@ -49,7 +58,6 @@ EOT
 gen_file_packages() {
   # Argument #1 : full path to a directory
 
-  CWD=$(pwd)
   local DIR=$1
 
   pushd $DIR 2>&1>/dev/null
@@ -62,7 +70,7 @@ gen_file_packages() {
 
   get_data UPDATE_DATE
 
-  PKGS=$( find -L . -type f -name '*.txz' -print | sort -t'/' -k3)
+  PKGS=$( find -L . -type f -name '*.txz' $PRUNES -print | sort -t'/' -k3)
 
   for PKG in $PKGS; do
     LOCATION="./${_DIR}"$(echo $PKG | rev | cut -f2- -d '/' | rev | sed "s/^.*\(\/.*\)$/\1/")
@@ -99,6 +107,6 @@ EOT
     awk -i inplace -v p="\n$HEAD\n" 'BEGINFILE{print p}{print}' ${CWD}/${FILE_PACKAGES}
 }
 
-gen_file_packages $DIR
-#gen_filelist $DIR $FILELIST
+#gen_file_packages $DIR
+gen_filelist $DIR $FILELIST
 
