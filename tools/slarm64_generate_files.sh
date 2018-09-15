@@ -9,7 +9,7 @@ fi
 DIR="$1"
 CWD=$(pwd)
 DISTR="slarm64"
-FILELIST=${FILELIST:-FILELIST.TXT}
+FILELIST=${FILELIST:-FILE_LIST}
 PACKAGES="PACKAGES.TXT"
 CHECKSUMS="CHECKSUMS.md5"
 EXCLUDES=".git"
@@ -71,7 +71,7 @@ gen_file_packages() {
 
   get_data UPDATE_DATE
 
-  PKGS=$( find -L . -type f -name '*.txz' $PRUNES -print | sort -t'/' -k3)
+  PKGS=$( find -L . -name '*.txz' $PRUNES -type f -print | sort -t'/' -k3)
 
   for PKG in $PKGS; do
     LOCATION="./${_DIR}"$(echo $PKG | rev | cut -f2- -d '/' | rev | sed "s/^.*\(\/.*\)$/\1/")
@@ -117,7 +117,7 @@ gen_file_checksums() {
 
   pushd $DIR 2>&1>/dev/null
 
-  [[ -e $CHECKSUMS ]] && rm -f ${CWD}/$CHECKSUMS
+  [[ -e ${CWD}/$CHECKSUMS ]] && rm -f ${CWD}/$CHECKSUMS
 
   cat <<EOT >> ${CWD}/${CHECKSUMS}
 These are the MD5 message digests for the files in this directory.
@@ -143,5 +143,20 @@ EOT
 
 #gen_file_packages $DIR
 #gen_filelist $DIR $FILELIST
-gen_file_checksums $DIR
+#gen_file_checksums $DIR
 
+for d in $DIR/*;do
+  if [[ -d ${d} ]]; then
+    echo "generate for $d"
+    gen_filelist ${d} $FILELIST
+    if [[ $(echo ${d} | grep $DISTR$) ]]; then
+        gen_file_packages ${d}
+        > $DIR/$PACKAGES
+        ln -fs $DIR/$PACKAGES -r ${d}/$PACKAGES
+    fi
+    gen_file_checksums ${d}
+  fi
+done
+
+# base distro directory
+gen_filelist $DIR "FILELIST.TXT"
