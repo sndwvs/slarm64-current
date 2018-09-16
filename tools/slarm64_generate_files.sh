@@ -11,7 +11,7 @@ DISTR="slarm64"
 FILELIST=${FILELIST:-FILE_LIST}
 PACKAGES="PACKAGES.TXT"
 CHECKSUMS="CHECKSUMS.md5"
-EXCLUDES=".git"
+EXCLUDES=".git .gitignore"
 
 
 PRUNES=""
@@ -150,7 +150,7 @@ EOT
 
 for d in $DIR/*;do
   if [[ -d ${d} ]]; then
-    echo "generate for $d"
+    echo "generate for $(basename $d)"
     if [[ $(echo ${d} | grep $DISTR$) ]]; then
         gen_file_packages ${d}
         cp ${d}/$PACKAGES $DIR/$PACKAGES
