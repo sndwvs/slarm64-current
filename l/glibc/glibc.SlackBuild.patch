@@ -1,6 +1,6 @@
---- a/glibc.SlackBuild	2017-10-29 17:41:27.931525032 +0200
-+++ b/glibc.SlackBuild	2017-10-29 19:51:04.931417545 +0200
-@@ -70,6 +70,10 @@
+--- a/glibc.SlackBuild	2018-08-04 01:01:18.344067714 +0300
++++ b/glibc.SlackBuild	2018-09-23 13:15:17.050781031 +0300
+@@ -95,6 +95,10 @@
      OPTIMIZ="-O3 -fPIC"
      LIBDIRSUFFIX="64"
      ;;
@@ -11,7 +11,7 @@
    *)
      OPTIMIZ="-O3"
      LIBDIRSUFFIX=""
-@@ -84,6 +88,9 @@
+@@ -109,6 +113,9 @@
      # This should be i586 for all 32-bit x86 arch:
      TARGET=${TARGET:-i586}
      ;;
@@ -21,7 +21,7 @@
  esac
  
  # Hand off the $ARCH variable to $SLACKWARE_ARCH to avoid confusing glibc:
-@@ -108,6 +115,9 @@
+@@ -130,6 +137,9 @@
  # This function fixes a doinst.sh file for x86_64.
  # With thanks to Fred Emmott.
  fix_doinst() {
@@ -31,7 +31,7 @@
    if [ "x$LIBDIRSUFFIX" = "x" ]; then
      return;
    fi;
-@@ -121,6 +131,11 @@
+@@ -143,6 +153,12 @@
    if [ "$SLACKWARE_ARCH" = "x86_64" ]; then
      sed -i 's#ld-linux.so.2#ld-linux-x86-64.so.2#' install/doinst.sh
    fi
@@ -39,11 +39,12 @@
 +  if [ "$SLACKWARE_ARCH" = "aarch64" ]; then
 +    sed -i "/# Install NPTL glibc libraries:/i ( cd lib ; ln -sf ../lib${LIBDIRSUFFIX}/incoming/ld-${VERSION}.so $ARMLDLINUXVER )\n" install/doinst.sh
 +    sed -i "/# Now, get rid of the temporary directory/i \\\n( cd lib ; ln -sf ../lib${LIBDIRSUFFIX}/ld-${VERSION}.so $ARMLDLINUXVER )\n" install/doinst.sh
++    sed -i "/# More links:/,${/cd lib ;.*$ARMLDLINUXVER/s/^/#/}" install/doinst.sh
 +  fi
  }
  
  # This is a patch function to put all glibc patches in the build script
-@@ -205,6 +220,12 @@
+@@ -213,6 +229,12 @@
  # Clean up leftover CVS directories:
  find . -type d -name CVS -exec rm -r {} \; 2> /dev/null
  
