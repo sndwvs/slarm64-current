@@ -1,5 +1,5 @@
---- a/glibc.SlackBuild	2018-08-04 01:01:18.344067714 +0300
-+++ b/glibc.SlackBuild	2018-09-23 13:15:17.050781031 +0300
+--- a/glibc.SlackBuild	2018-09-24 20:56:30.052061375 +0300
++++ b/glibc.SlackBuild	2018-09-24 21:00:57.141810996 +0300
 @@ -95,6 +95,10 @@
      OPTIMIZ="-O3 -fPIC"
      LIBDIRSUFFIX="64"
@@ -31,7 +31,7 @@
    if [ "x$LIBDIRSUFFIX" = "x" ]; then
      return;
    fi;
-@@ -143,6 +153,12 @@
+@@ -143,6 +153,11 @@
    if [ "$SLACKWARE_ARCH" = "x86_64" ]; then
      sed -i 's#ld-linux.so.2#ld-linux-x86-64.so.2#' install/doinst.sh
    fi
@@ -39,12 +39,11 @@
 +  if [ "$SLACKWARE_ARCH" = "aarch64" ]; then
 +    sed -i "/# Install NPTL glibc libraries:/i ( cd lib ; ln -sf ../lib${LIBDIRSUFFIX}/incoming/ld-${VERSION}.so $ARMLDLINUXVER )\n" install/doinst.sh
 +    sed -i "/# Now, get rid of the temporary directory/i \\\n( cd lib ; ln -sf ../lib${LIBDIRSUFFIX}/ld-${VERSION}.so $ARMLDLINUXVER )\n" install/doinst.sh
-+    sed -i "/# More links:/,${/cd lib ;.*$ARMLDLINUXVER/s/^/#/}" install/doinst.sh
 +  fi
  }
  
  # This is a patch function to put all glibc patches in the build script
-@@ -213,6 +229,12 @@
+@@ -213,6 +228,12 @@
  # Clean up leftover CVS directories:
  find . -type d -name CVS -exec rm -r {} \; 2> /dev/null
  
@@ -57,3 +56,21 @@
  # Apply patches; exit if any fail.
  apply_patches
  if [ ! $? = 0 ]; then
+@@ -427,7 +448,7 @@
+ # Call the function to fix doinst.sh where $LIBDIRSUFFIX is needed:
+ fix_doinst
+ # Only scrub the links in /lib{,64} that will be created by ldconfig:
+-find lib${LIBDIRSUFFIX} -type l -exec rm {} \;
++find lib{,${LIBDIRSUFFIX}} -type l -exec rm {} \;
+ # Build the package:
+ makepkg -l y -c n $TMP/glibc-solibs-$VERSION-$SLACKWARE_ARCH-$BUILD.txz
+ 
+@@ -440,7 +461,7 @@
+ chown -R root:root etc
+ chmod 755 etc/profile.d/*
+ # Only scrub the links in /lib{,64} that will be created by ldconfig:
+-find lib${LIBDIRSUFFIX} -type l -exec rm {} \;
++find lib{,${LIBDIRSUFFIX}} -type l -exec rm {} \;
+ mkdir install
+ cp -a $CWD/slack-desc.glibc install/slack-desc
+ cp -a $CWD/doinst.sh-glibc install/doinst.sh
