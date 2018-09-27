@@ -25,7 +25,7 @@
  
 +# https://bugs.llvm.org/show_bug.cgi?id=37668
 +# Failed to build the latest LLVM 7.0 code on AARCH64 due to the _Float16 related issue
-+xzcat failed-to-build-the-LLVM-7.0-code-on-AARCH64-due-to-the-_Float16-related-issue.patch.xz | patch -p1 --verbose || exit 1
++xzcat $CWD/failed-to-build-the-LLVM-7.0-code-on-AARCH64-due-to-the-_Float16-related-issue.patch.xz | patch -p1 --verbose || exit 1
 +
 +export SLKCFLAGS="$SLKCFLAGS -fPIC -Wall -Wp,-D_FORTIFY_SOURCE=2 -fpermissive -fexceptions -fstack-protector-strong --param=ssp-buffer-size=4 -fuse-ld=gold"
 +export SLKCONFARGS="-DLLVM_HOST_TRIPLE=$ARCH-slackware-linux \
