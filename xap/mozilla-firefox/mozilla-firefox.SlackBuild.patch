@@ -1,5 +1,5 @@
---- mozilla-firefox.SlackBuild.orig	2018-09-21 21:16:18.347186612 +0300
-+++ mozilla-firefox.SlackBuild	2018-09-27 21:44:55.371764391 +0300
+--- a/mozilla-firefox.SlackBuild	2018-09-21 21:16:18.347186612 +0300
++++ b/mozilla-firefox.SlackBuild	2018-09-27 21:44:55.371764391 +0300
 @@ -82,6 +82,10 @@
    SLKLDFLAGS=" -Wl,--as-needed -Wl,--reduce-memory-overheads -Wl,--no-keep-memory -Wl,--stats"
    export LDFLAGS="$SLKLDFLAGS"
