@@ -42,7 +42,7 @@
 -    -DCMAKE_CXX_COMPILER="clang++" \
 +    \
 +    $SLKCONFARGS \
-+    \  
++    \
 +    -DCMAKE_C_COMPILER="$CCOMPILER" \
 +    -DCMAKE_CXX_COMPILER="$CPPCOMPILER" \
      -DCMAKE_C_FLAGS:STRING="$SLKCFLAGS" \
