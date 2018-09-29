@@ -3,6 +3,13 @@
 _CWD=$(pwd)
 THREADS=$(($(grep -c 'processor' /proc/cpuinfo)-2))
 
+export CPPFLAGS="-D_FORTIFY_SOURCE=2"
+export CFLAGS="-O2 -pipe -fstack-protector-strong -fno-plt"
+export CXXFLAGS="-O2 -pipe -fstack-protector-strong -fno-plt"
+export LDFLAGS="-Wl,-O1,--sort-common,--as-needed,-z,relro,-z,now"
+
+
+
 #source "l-packages.conf" || exit 1
 #source "tcl-packages.conf" || exit 1
 #source "d-packages.conf" || exit 1
