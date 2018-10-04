@@ -1,0 +1,29 @@
+--- a/slackpkg.SlackBuild	2018-10-04 17:41:44.170470531 +0100
++++ b/slackpkg.SlackBuild	2018-10-04 18:06:23.278205375 +0100
+@@ -142,8 +142,26 @@
+   zcat $CWD/0006-Mention-possible-stale-mirror-if-CHECKSUMS.md5-gpg-v.patch.gz | patch -p2 --verbose || exit 1
+ ) || exit 1
+ 
++# support aarch64
++( cd $PKG/etc/slackpkg
++  xzcat $CWD/0013-slackpkg.conf.new.patch.xz | patch -p1 --verbose || exit 1
++) || exit 1
++( cd $PKG/usr/libexec/slackpkg
++  xzcat $CWD/0010-add-support-aarch64-core-functions.patch.xz | patch -p2 --verbose || exit 1
++) || exit 1
++( cd $PKG/usr/doc/slackpkg-$VERSION
++  xzcat $CWD/0011-mirrors-aarch64.sample.patch.xz | patch -p1 --verbose || exit 1
++) || exit 1
++
++
+ mkdir -p $PKG/install
+ zcat $CWD/doinst.sh.gz | sed -e "s/@VERSION@/$VERSION/g" > $PKG/install/doinst.sh
++
++# support aarch64
++( cd $PKG/install
++  xzcat $CWD/0012-doinst.sh.patch.xz | patch -p1 --verbose || exit 1
++) || exit 1
++
+ cat $CWD/slack-desc > $PKG/install/slack-desc
+ 
+ cd $PKG
