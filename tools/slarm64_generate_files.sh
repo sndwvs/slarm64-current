@@ -11,7 +11,9 @@ DISTR="slarm64"
 FILELIST=${FILELIST:-FILE_LIST}
 PACKAGES="PACKAGES.TXT"
 CHECKSUMS="CHECKSUMS.md5"
+MANIFEST="MANIFEST"
 EXCLUDES=".git .gitignore"
+COMPRES="xz"
 
 
 PRUNES=""
@@ -26,6 +28,24 @@ done
 get_data() {
     local _DATE=$(LANG=C date -u)
     eval "$1=\${_DATE}"
+}
+
+
+### gen_manifest
+gen_manifest() {
+  # Argument #1 : full path to a package
+  local PKG="$1"
+
+  cat <<EOT >> ${MANIFEST}
+++========================================
+||
+||   Package:  ${PKG}
+||
+++========================================
+EOT
+
+  $COMPRES -dc ${PKG} | tar -tvvf - >> ${MANIFEST}
+  echo -e "\n" >> ${MANIFEST}
 }
 
 
@@ -69,7 +89,7 @@ gen_file_packages() {
   local _DIR=$(basename $DIR)
 
   # shrink file
-  > ${PACKAGES}
+  > ${PACKAGES} > ${MANIFEST}
 
   get_data UPDATE_DATE
 
@@ -79,7 +99,7 @@ gen_file_packages() {
     LOCATION="./${_DIR}"$(echo $PKG | rev | cut -f2- -d '/' | rev | sed "s/^.*\(\/.*\)$/\1/")
     NAME=$(basename $PKG)
     SIZE=$(du -s $PKG | cut -f 1)
-    USIZE=$(xz --robot --list $PKG | awk '/^totals/{printf("%i"), $5/1024}')
+    USIZE=$($COMPRES --robot --list $PKG | awk '/^totals/{printf("%i"), $5/1024}')
 
     cat <<EOT >> ${PACKAGES}
 
@@ -89,7 +109,10 @@ PACKAGE SIZE (compressed):  $SIZE K
 PACKAGE SIZE (uncompressed):  $USIZE K
 PACKAGE DESCRIPTION:
 EOT
-    cat $PKG | tar xJOf - install/slack-desc | sed -n '/^#/d;/:/p' >> ${PACKAGES}
+     $COMPRES -dc ${PKG} | tar xOf - install/slack-desc | sed -n '/^#/d;/:/p' >> ${PACKAGES}
+     
+     # manifest creation
+     gen_manifest $PKG
   done
 
   SIZE=$(grep '(compressed):' ${PACKAGES} | awk '{SUM += $4} END {printf("%i"), SUM/1024}')
