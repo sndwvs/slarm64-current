@@ -1,13 +1,8 @@
 #!/bin/bash
 
-
-if [[ -z "$1" || ! -d "$1" ]]; then
-    echo "Required argument '$1' must be a directory!"
-    exit 1
-fi
-
-DIR="$1"
-DISTR="slarm64"
+DISTR=${DISTR:-slarm64}
+DISTR_ROOT=${DISTR_ROOT:-/mnt/data/shares/linux/slackware/${DISTR}-current/}
+DISTR_OWNER=${DISTR_OWNER:-$DISTR}
 FILELIST=${FILELIST:-FILE_LIST}
 PACKAGES="PACKAGES.TXT"
 CHECKSUMS="CHECKSUMS.md5"
@@ -21,6 +16,10 @@ for substr in $EXCLUDES ; do
     PRUNES="${PRUNES} -name ${substr} -prune -o -true"
 done
 
+read -ers -p "Enter your GPG passphrase: "
+echo -e ""
+GPG_PASS=$REPLY
+REPLY=""
 
 
 
@@ -28,6 +27,21 @@ done
 get_data() {
     local _DATE=$(LANG=C date -u)
     eval "$1=\${_DATE}"
+}
+
+
+### gen_gpg
+gen_gpg() {
+  # Argument #1 : full path to a package
+  local PKG="$1"
+  local ASCFILE="${PKG}.asc"
+
+  [[ -e "${ASCFILE}" ]] && rm "${ASCFILE}"
+  
+  #gpg2 --use-agent -bas -u "$DISTR_OWNER" --batch --quiet $1
+  echo "${GPG_PASS}" | gpg2 -bas -u "$DISTR_OWNER" --passphrase-fd 0 --batch --quiet "${PKG}"
+
+  return $?
 }
 
 
@@ -113,6 +127,8 @@ EOT
      
      # manifest creation
      gen_manifest $PKG
+     # gpg creation
+     gen_gpg $PKG
   done
 
   SIZE=$(grep '(compressed):' ${PACKAGES} | awk '{SUM += $4} END {printf("%i"), SUM/1024}')
@@ -129,6 +145,9 @@ Total size of all packages (uncompressed):  $USIZE MB
 EOT
 
   awk -i inplace -v p="\n$HEAD\n" 'BEGINFILE{print p}{print}' ${PACKAGES}
+
+  # manifest compression
+  [[ -e ${MANIFEST} ]] && rm -f ${MANIFEST}.bz2 && bzip2 ${MANIFEST}
 
   popd 2>&1>/dev/null
 }
@@ -162,6 +181,9 @@ EOT
 
   find -L . $PRUNES -type f -print | sort | xargs md5sum >> ${CHECKSUMS}
 
+  # gpg creation
+  gen_gpg ${CHECKSUMS}
+     
   popd 2>&1>/dev/null
 }
 
@@ -171,13 +193,13 @@ EOT
 #gen_filelist $DIR $FILELIST
 #gen_file_checksums $DIR
 
-for d in $DIR/*;do
+for d in $DISTR_ROOT/*;do
   if [[ -d ${d} ]]; then
     echo "generate for $(basename $d)"
     if [[ $(echo ${d} | grep $DISTR$) ]]; then
         gen_file_packages ${d}
         cp ${d}/$PACKAGES $DIR/$PACKAGES
-        ln -sf $DIR/$PACKAGES -r ${d}/$PACKAGES
+        ln -sf $DISTR_ROOT/$PACKAGES -r ${d}/$PACKAGES
     fi
     gen_filelist ${d} $FILELIST
     gen_file_checksums ${d}
@@ -185,5 +207,8 @@ for d in $DIR/*;do
 done
 
 # base distro directory
-gen_filelist $DIR "FILELIST.TXT"
-gen_file_checksums $DIR
+gen_filelist $DISTR_ROOT "FILELIST.TXT"
+gen_file_checksums $DISTR_ROOT
+
+# clean
+GPG_PASS=""
