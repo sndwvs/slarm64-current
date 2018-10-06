@@ -1,5 +1,7 @@
 #!/bin/bash
 
+export LANG=C
+
 DISTR=${DISTR:-slarm64}
 DISTR_ROOT=${DISTR_ROOT:-/mnt/data/shares/linux/slackware/${DISTR}-current/}
 DISTR_OWNER=${DISTR_OWNER:-$DISTR}
@@ -9,6 +11,7 @@ CHECKSUMS="CHECKSUMS.md5"
 MANIFEST="MANIFEST"
 EXCLUDES=".git .gitignore"
 COMPRES="xz"
+GPG="gpg2"
 
 
 PRUNES=""
@@ -21,12 +24,21 @@ echo -e ""
 GPG_PASS=$REPLY
 REPLY=""
 
+if [[ ! -e ${DISTR_ROOT}/GPG-KEY ]]; then
+  echo "create a \"GPG-KEY\" file in '$DISTR_ROOT',"
+  echo "add information about the public key for '$DISTR_OWNER'."
+  $GPG --list-keys "$DISTR_OWNER" > ${DISTR_ROOT}/GPG-KEY
+  $GPG -a --export "$DISTR_OWNER" >> ${DISTR_ROOT}/GPG-KEY
+  chmod 444 ${DISTR_ROOT}/GPG-KEY
+fi
+
+
 
 
 ### gen_data
 get_data() {
-    local _DATE=$(LANG=C date -u)
-    eval "$1=\${_DATE}"
+  local _DATE=$(LANG=C date -u)
+  eval "$1=\${_DATE}"
 }
 
 
@@ -38,8 +50,8 @@ gen_gpg() {
 
   [[ -e "${ASCFILE}" ]] && rm "${ASCFILE}"
   
-  #gpg2 --use-agent -bas -u "$DISTR_OWNER" --batch --quiet "${PKG}"
-  echo "${GPG_PASS}" | gpg2 -bas -u "$DISTR_OWNER" --passphrase-fd 0 --batch --quiet "${PKG}"
+  #$GPG --use-agent -bas -u "$DISTR_OWNER" --batch --quiet "${PKG}"
+  echo "${GPG_PASS}" | $GPG -bas -u "$DISTR_OWNER" --passphrase-fd 0 --batch --quiet "${PKG}"
 
   return $?
 }
