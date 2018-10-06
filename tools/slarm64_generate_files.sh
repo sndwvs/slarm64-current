@@ -38,7 +38,7 @@ gen_gpg() {
 
   [[ -e "${ASCFILE}" ]] && rm "${ASCFILE}"
   
-  #gpg2 --use-agent -bas -u "$DISTR_OWNER" --batch --quiet $1
+  #gpg2 --use-agent -bas -u "$DISTR_OWNER" --batch --quiet "${PKG}"
   echo "${GPG_PASS}" | gpg2 -bas -u "$DISTR_OWNER" --passphrase-fd 0 --batch --quiet "${PKG}"
 
   return $?
@@ -189,16 +189,13 @@ EOT
 
 
 
-#gen_file_packages $DIR
-#gen_filelist $DIR $FILELIST
-#gen_file_checksums $DIR
 
 for d in $DISTR_ROOT/*;do
   if [[ -d ${d} ]]; then
     echo "generate for $(basename $d)"
     if [[ $(echo ${d} | grep $DISTR$) ]]; then
         gen_file_packages ${d}
-        cp ${d}/$PACKAGES $DIR/$PACKAGES
+        cp ${d}/$PACKAGES $DISTR_ROOT/$PACKAGES
         ln -sf $DISTR_ROOT/$PACKAGES -r ${d}/$PACKAGES
     fi
     gen_filelist ${d} $FILELIST
