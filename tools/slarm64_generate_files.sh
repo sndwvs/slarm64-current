@@ -48,7 +48,7 @@ gen_gpg() {
   local PKG="$1"
   local ASCFILE="${PKG}.asc"
 
-  [[ -e "${ASCFILE}" ]] && rm "${ASCFILE}"
+  [[ -e "${ASCFILE}" ]] && rm -f "${ASCFILE}"
   
   #$GPG --use-agent -bas -u "$DISTR_OWNER" --batch --quiet "${PKG}"
   echo "${GPG_PASS}" | $GPG -bas -u "$DISTR_OWNER" --passphrase-fd 0 --batch --quiet "${PKG}"
