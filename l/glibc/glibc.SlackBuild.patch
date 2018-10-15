@@ -1,5 +1,5 @@
---- a/glibc.SlackBuild	2018-09-24 20:56:30.052061375 +0300
-+++ b/glibc.SlackBuild	2018-09-24 21:00:57.141810996 +0300
+--- a/glibc.SlackBuild	2018-08-03 23:01:18.344067714 +0100
++++ b/glibc.SlackBuild	2018-10-15 13:53:26.436951606 +0100
 @@ -95,6 +95,10 @@
      OPTIMIZ="-O3 -fPIC"
      LIBDIRSUFFIX="64"
@@ -56,7 +56,17 @@
  # Apply patches; exit if any fail.
  apply_patches
  if [ ! $? = 0 ]; then
-@@ -427,7 +448,7 @@
+@@ -241,6 +262,9 @@
+   --with-tls \
+   --with-__thread \
+   --without-cvs \
++  --enable-multi-arch \
++  libc_cv_rtlddir=/lib${LIBDIRSUFFIX} \
++  libc_cv_slibdir=/lib${LIBDIRSUFFIX} \
+   $TARGET-slackware-linux
+ 
+ make $NUMJOBS || make || exit 1
+@@ -427,7 +451,7 @@
  # Call the function to fix doinst.sh where $LIBDIRSUFFIX is needed:
  fix_doinst
  # Only scrub the links in /lib{,64} that will be created by ldconfig:
@@ -65,7 +75,7 @@
  # Build the package:
  makepkg -l y -c n $TMP/glibc-solibs-$VERSION-$SLACKWARE_ARCH-$BUILD.txz
  
-@@ -440,7 +461,7 @@
+@@ -440,7 +464,7 @@
  chown -R root:root etc
  chmod 755 etc/profile.d/*
  # Only scrub the links in /lib{,64} that will be created by ldconfig:
