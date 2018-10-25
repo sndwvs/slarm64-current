@@ -1,15 +1,6 @@
---- a/python3.SlackBuild	2017-09-23 18:31:43.688229340 +0300
-+++ b/python3.SlackBuild	2017-09-23 18:33:54.705229340 +0300
-@@ -29,7 +29,7 @@
- BRANCH_VERSION=$(echo $VERSION | cut -f 1,2 -d . )
- BUILD=${BUILD:-1}
- 
--NUMJOBS=${NUMJOBS:-" -j7 "}
-+NUMJOBS=${NUMJOBS:-" -j5 "}
- 
- # Automatically determine the architecture we're building on:
- if [ -z "$ARCH" ]; then
-@@ -59,6 +59,8 @@
+--- a/python3.SlackBuild	2018-10-25 15:39:27.118817674 +0100
++++ b/python3.SlackBuild	2018-10-25 15:39:43.529086117 +0100
+@@ -68,6 +68,8 @@
    LIBDIRSUFFIX=""
  elif [ "$ARCH" = "armel" ]; then
    LIBDIRSUFFIX=""
@@ -18,7 +9,7 @@
  fi
  
  # Location for Python site-packages:
-@@ -75,10 +77,12 @@
+@@ -84,10 +86,12 @@
  # We don't want a large libpython*.a.
  zcat $CWD/python3.no-static-library.diff.gz | patch -p1 --verbose || exit 1
  
