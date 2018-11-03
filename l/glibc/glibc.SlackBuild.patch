@@ -1,5 +1,5 @@
---- a/glibc.SlackBuild	2018-08-03 23:01:18.344067714 +0100
-+++ b/glibc.SlackBuild	2018-10-15 13:53:26.436951606 +0100
+--- /mnt/data/shares/linux/slackware/slackware64-current/source/l/glibc/glibc.SlackBuild	2018-08-03 23:01:18.344067714 +0100
++++ glibc.SlackBuild	2018-10-15 16:18:53.397710032 +0100
 @@ -95,6 +95,10 @@
      OPTIMIZ="-O3 -fPIC"
      LIBDIRSUFFIX="64"
@@ -43,7 +43,16 @@
  }
  
  # This is a patch function to put all glibc patches in the build script
-@@ -213,6 +228,12 @@
+@@ -155,6 +170,8 @@
+   zcat $CWD/glibc.ru_RU.CP1251.diff.gz | patch -p1 --verbose || exit 1
+   # Add a C.UTF-8 locale:
+   zcat $CWD/glibc-c-utf8-locale.patch.gz | patch -p1 --verbose || exit 1
++  # aarch64 multilib dirs:
++  xzcat $CWD/glibc-2.28-aarch64-multilib-dirs.patch.xz | patch -p1 --verbose || exit 1
+ }
+ 
+ # This is going to be the initial $DESTDIR:
+@@ -213,6 +230,12 @@
  # Clean up leftover CVS directories:
  find . -type d -name CVS -exec rm -r {} \; 2> /dev/null
  
@@ -56,7 +65,7 @@
  # Apply patches; exit if any fail.
  apply_patches
  if [ ! $? = 0 ]; then
-@@ -241,6 +262,9 @@
+@@ -241,6 +264,9 @@
    --with-tls \
    --with-__thread \
    --without-cvs \
@@ -66,7 +75,7 @@
    $TARGET-slackware-linux
  
  make $NUMJOBS || make || exit 1
-@@ -427,7 +451,7 @@
+@@ -427,7 +453,7 @@
  # Call the function to fix doinst.sh where $LIBDIRSUFFIX is needed:
  fix_doinst
  # Only scrub the links in /lib{,64} that will be created by ldconfig:
@@ -75,7 +84,7 @@
  # Build the package:
  makepkg -l y -c n $TMP/glibc-solibs-$VERSION-$SLACKWARE_ARCH-$BUILD.txz
  
-@@ -440,7 +464,7 @@
+@@ -440,7 +466,7 @@
  chown -R root:root etc
  chmod 755 etc/profile.d/*
  # Only scrub the links in /lib{,64} that will be created by ldconfig:
@@ -84,3 +93,8 @@
  mkdir install
  cp -a $CWD/slack-desc.glibc install/slack-desc
  cp -a $CWD/doinst.sh-glibc install/doinst.sh
+@@ -462,3 +488,4 @@
+ # Done!
+ echo
+ echo "glibc packages built in $TMP!"
++

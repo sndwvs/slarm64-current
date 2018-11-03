@@ -1,0 +1,21 @@
+--- a/iputils.SlackBuild	2017-10-28 16:02:57.473665141 +0300
++++ b/iputils.SlackBuild	2018-11-03 02:11:58.054411826 +0200
+@@ -39,6 +39,8 @@
+   LIBDIRSUFFIX=""
+ elif [ "$ARCH" = "x86_64" ]; then
+   LIBDIRSUFFIX="64"
++elif [ "$ARCH" = "aarch64" ]; then
++  LIBDIRSUFFIX="64"
+ else
+   LIBDIRSUFFIX=""
+ fi
+@@ -64,6 +66,9 @@
+   \( -perm 666 -o -perm 664 -o -perm 600 -o -perm 444 -o -perm 440 -o -perm 400 \) \
+   -exec chmod 644 {} \;
+ 
++# fix perl-sgmls
++sed -i -e 's#sgmlspl#sgmlspl.pl#g' "doc/Makefile"
++
+ make VPATH=/usr/lib${LIBDIRSUFFIX} || exit 1
+ ( cd doc ; make man || exit 1 ) || exit 1
+ 
