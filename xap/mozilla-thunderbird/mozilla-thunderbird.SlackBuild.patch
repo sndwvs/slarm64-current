@@ -1,5 +1,5 @@
---- a/mozilla-thunderbird.SlackBuild	2018-08-11 01:31:29.100615723 +0100
-+++ b/mozilla-thunderbird.SlackBuild	2018-08-13 18:08:03.305484133 +0100
+--- a/mozilla-thunderbird.SlackBuild	2018-10-31 18:53:53.814719980 +0000
++++ b/mozilla-thunderbird.SlackBuild	2018-11-08 19:05:57.409265979 +0000
 @@ -87,6 +87,10 @@
    SLKCFLAGS="-march=armv4 -mtune=xscale"
    LIBDIRSUFFIX=""
@@ -7,34 +7,80 @@
 +elif [ "$ARCH" = "aarch64" ]; then
 +  SLKCFLAGS=""
 +  LIBDIRSUFFIX="64"
-+  OPTIMIZE=${OPTIMIZE:-"-O1"}
++  OPTIMIZE=${OPTIMIZE:-" --enable-optimize='-O1 -fno-schedule-insns'"} ## used to use -O1 -- this is unused. see .mozconfig below
  else
    SLKCFLAGS=""
    LIBDIRSUFFIX=""
-@@ -194,6 +198,15 @@
+@@ -111,6 +115,10 @@
+   SLKLDFLAGS=" -Wl,--as-needed -Wl,--reduce-memory-overheads -Wl,--no-keep-memory -Wl,--stats"
+   export LDFLAGS="$SLKLDFLAGS"
+   export MOZ_LINK_FLAGS="$SLKLDFLAGS"
++elif [ "$ARCH" = "aarch64" ]; then
++  SLKLDFLAGS=" -Wl,--as-needed -Wl,--reduce-memory-overheads -Wl,--no-keep-memory -Wl,--stats"
++  export LDFLAGS="$SLKLDFLAGS"
++  export MOZ_LINK_FLAGS="$SLKLDFLAGS"
+ else
+   # Link using gold.  This also helps prevent running out of memory on 32-bit
+   # systems, and avoids a recurring build failure with GNU ld on other systems.
+@@ -176,6 +184,9 @@
+              # Make firefox compile on ARM platforms lacking neon support:
+              zcat $CWD/mozilla-firefox.xpcom_arm.patch.gz | patch -p1 --verbose || exit 1
+              ;;
++    aarch64) ARCH_CONFIG=" "
++             xzcat $CWD/Bug-1238661---fix-mozillaSignalTrampoline-to-work-.patch.xz | patch -p1 --verbose || exit 1
++             ;;
+     *)       ARCH_CONFIG=" "
+              ;;
+ esac
+@@ -189,6 +200,17 @@
  
  # Our building options, in a configure-like display ;)
  OPTIONS="\
-+  --enable-extensions=default \
++  --enable-rust-simd \
 +  --enable-system-ffi \
++  --enable-system-sqlite \
 +  --enable-pie \
 +  --disable-eme \
++  --disable-updater \
 +  --disable-gconf \
 +  --with-system-libvpx \
-+  --disable-stylo \
-+  --disable-webrtc \
++  --without-system-icu \
++  --disable-system-cairo \
 +  \
    --enable-official-branding \
    --prefix=/usr \
    --libdir=/usr/lib${LIBDIRSUFFIX} \
-@@ -228,6 +241,10 @@
+@@ -223,11 +245,19 @@
      mail/installer/package-manifest.in || exit 1
  fi
  
-+export SLKCFLAGS="$SLKCFLAGS -g -fstack-protector --param=ssp-buffer-size=4 -Wall -O2 -fno-schedule-insns"
-+export SLKCXXFLAGS="$SLKCFLAGS"
-+export LDFLAGS="-Wl,--no-as-needed -Wl,--no-keep-memory"
++SLKCFLAGS="$SLKCFLAGS -pipe -fstack-protector -Wformat -fexceptions -fPIC -Wl,-z,relro -Wl,-z,now"
++SLKCXXFLAGS="$SLKCFLAGS"
++SLKCPPFLAGS="" ## this needs to be compiled with -O to use this
 +
++export LDFLAGS="$SLKLDFLAGS"
++export MOZ_LINK_FLAGS="$SLKLDFLAGS"
++export MOZ_OPT_FLAGS="$SLKCFLAGS"
  export BUILD_OFFICIAL=1
  export MOZILLA_OFFICIAL=1
  export MOZ_PHOENIX=1
+ export CFLAGS="$SLKCFLAGS"
+-export CXXFLAGS="$SLKCFLAGS"
++export CXXFLAGS="$SLKCXXFLAGS"
++export CPPFLAGS="$SLKCPPFLAGS"
+ export MOZ_MAKE_FLAGS="$NUMJOBS"
+ 
+ # Clear some variables that could break the build
+@@ -260,6 +290,12 @@
+ # Add the $OPTIONS above to .mozconfig:
+ for option in $OPTIONS; do echo "ac_add_options $option" >> .mozconfig; done
+ 
++# ARM: see https://bugzilla.redhat.com/show_bug.cgi?id=1426850
++# This isn't added using $SLKCONFARGS because it doesn't cater for things with spaces in:
++# unless I edit the for loop above to use IFS with some other variable.
++# this is easier right now ;-)
++echo 'ac_add_options --enable-optimize="-O1 -fno-schedule-insns"' >> .mozconfig
++
+ # Disable tests on standard build:
+ echo "ac_add_options --disable-tests" >> .mozconfig
+ ./mach build || exit 1
