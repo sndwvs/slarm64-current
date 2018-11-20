@@ -1,0 +1,22 @@
+--- a/mozjs52.SlackBuild	2018-11-20 17:42:00.403130372 +0000
++++ b/mozjs52.SlackBuild	2018-11-20 17:41:40.572868801 +0000
+@@ -62,6 +62,9 @@
+ elif [ "$ARCH" = "x86_64" ]; then
+   SLKCFLAGS="-O2 -fPIC"
+   LIBDIRSUFFIX="64"
++elif [ "$ARCH" = "aarch64" ]; then
++  SLKCFLAGS="-O2"
++  LIBDIRSUFFIX="64"
+ else
+   SLKCFLAGS="-O2"
+   LIBDIRSUFFIX=""
+@@ -117,6 +120,9 @@
+ # We need to do this because patches above touch configure.in:
+ autoconf-2.13
+ 
++# fix global environment
++unset CFLAGS
++unset CXXFLAGS
+ CFLAGS+="$SLKCFLAGS -fno-delete-null-pointer-checks -fno-strict-aliasing -fno-tree-vrp " \
+ CXXFLAGS+="$SLKCFLAGS -fno-delete-null-pointer-checks -fno-strict-aliasing -fno-tree-vrp " \
+ ./configure \
