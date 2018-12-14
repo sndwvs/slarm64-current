@@ -1,12 +1,12 @@
---- a/linuxdoc-tools.build	2018-04-24 16:56:43.562037223 +0100
-+++ b/linuxdoc-tools.build	2018-04-24 17:00:57.346037344 +0100
+--- a/linuxdoc-tools.build	2018-12-14 22:06:06.815047391 +0200
++++ b/linuxdoc-tools.build	2018-12-14 21:28:36.992449138 +0200
 @@ -102,7 +102,8 @@
    --prefix=/usr \
    --sysconfdir=/etc \
    --docdir=/usr/doc/asciidoc-$ASCIIDOCVER \
 -  --mandir=/usr/man || exit 1
 +  --mandir=/usr/man \
-+  --build=$ARCH-slackware-linux$HOSTTARGET || exit 1
++  --build=$ARCH-unknown-linux$HOSTTARGET || exit 1
  
  # Install:
  make install && make docs || exit 1
@@ -14,7 +14,7 @@
    --enable-http \
    --enable-default-catalog=/etc/sgml/catalog \
    --enable-default-search-path=/usr/share/sgml \
-+  --build=$ARCH-slackware-linux$HOSTTARGET \
++  --build=$ARCH-unknown-linux$HOSTTARGET \
    || exit 1
  
  # Build:
@@ -22,7 +22,25 @@
    --enable-default-catalog=/etc/sgml/catalog \
    --enable-default-search-path=/usr/share/sgml \
    --datadir=/usr/share/sgml/openjade-$OPENJADEVER \
-+  --build=$ARCH-slackware-linux$HOSTTARGET \
++  --build=$ARCH-unknown-linux$HOSTTARGET \
    || exit 1
  
  # Build:
+@@ -1016,7 +1019,7 @@
+   --mandir=/usr/man \
+   --disable-scrollkeeper \
+   --enable-build-utils \
+-  --build=$ARCH-slackware-linux$HOSTTARGET || exit 1
++  --build=$ARCH-unknown-linux$HOSTTARGET || exit 1
+ 
+ # No parallel build here because it doesn't work:
+ make || exit 1
+@@ -1141,7 +1144,7 @@
+    --disable-dependency-tracking \
+    --program-transform-name="s/^docbook2/docbook2x-/" \
+    --with-html-xsl \
+-   --build=$ARCH-slackware-linux$HOSTTARGET || exit 1
++   --build=$ARCH-unknown-linux$HOSTTARGET || exit 1
+ 
+ # Build:
+ make || exit 1
