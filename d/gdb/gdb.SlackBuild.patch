@@ -1,16 +1,7 @@
---- a/gdb.SlackBuild	2017-09-21 21:03:35.256660562 +0300
-+++ b/gdb.SlackBuild	2017-09-21 21:04:16.720660562 +0300
-@@ -25,7 +25,7 @@
- VERSION=${VERSION:-$(echo $PKGNAM-*.tar.xz | rev | cut -f 3- -d . | cut -f 1 -d - | rev)}
- BUILD=${BUILD:-1}
- 
--NUMJOBS=${NUMJOBS:-" -j7 "}
-+NUMJOBS=${NUMJOBS:-" -j5 "}
- 
- # Automatically determine the architecture we're building on:
- if [ -z "$ARCH" ]; then
-@@ -37,11 +37,10 @@
-   esac
+--- a/gdb.SlackBuild	2018-12-25 02:57:57.646952614 +0000
++++ b/gdb.SlackBuild	2018-12-25 09:36:04.572647380 +0000
+@@ -46,11 +46,10 @@
+   exit 0
  fi
  
 -if [ "$ARCH" = "x86_64" ]; then
@@ -23,5 +14,5 @@
 +               *) LIBDIRSUFFIX="" ;;
 +esac
  
- CWD=$(pwd)
  TMP=${TMP:-/tmp}
+ PKG=$TMP/package-gdb
