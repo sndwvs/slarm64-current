@@ -1,5 +1,5 @@
 --- a/gdb.SlackBuild	2018-12-25 02:57:57.646952614 +0000
-+++ b/gdb.SlackBuild	2018-12-25 09:36:04.572647380 +0000
++++ b/gdb.SlackBuild	2018-12-25 09:43:52.178479933 +0000
 @@ -46,11 +46,10 @@
    exit 0
  fi
@@ -16,3 +16,13 @@
  
  TMP=${TMP:-/tmp}
  PKG=$TMP/package-gdb
+@@ -80,6 +79,9 @@
+   GUILE_OPTION="--with-guile"
+ fi
+ 
++# fix global environment
++unset CPPFLAGS
++
+ ./configure \
+   --prefix=/usr \
+   --libdir=/usr/lib${LIBDIRSUFFIX} \
