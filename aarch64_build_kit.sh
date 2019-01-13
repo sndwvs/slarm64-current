@@ -1,25 +1,12 @@
 #!/bin/bash
 
 _CWD=$(pwd)
-THREADS=$(($(grep -c 'processor' /proc/cpuinfo)-2))
+THREADS=$(grep -c 'processor' /proc/cpuinfo)
 
 export CPPFLAGS="-D_FORTIFY_SOURCE=2"
 export CFLAGS="-O2 -pipe -fstack-protector-strong -fno-plt"
 export CXXFLAGS="-O2 -pipe -fstack-protector-strong -fno-plt"
 export LDFLAGS="-Wl,-O1,--sort-common,--as-needed,-z,relro,-z,now"
-
-
-
-#source "l-packages.conf" || exit 1
-#source "tcl-packages.conf" || exit 1
-#source "d-packages.conf" || exit 1
-#source "ap-packages.conf" || exit 1
-##source "a-packages.conf" || exit 1
-source "pkg" || exit 1
-#source "xap.conf" || exit 1
-#source "xfce.conf" || exit 1
-#source "n-packages.conf" || exit 1
-#source "x-packages.conf" || exit 1
 
 
 _BUILD="${_CWD}/slarm64-current/source"
@@ -105,8 +92,23 @@ move_pkg() {
     [[ -e "${_TXZ}/$1" ]] && mv ${_TMP}/$2-*.txz "${_TXZ}/$1/"
 }
 
+#----------------------------
+# read packages
+#----------------------------
+read_packages() {
+#    local TYPE="$1"
+    local PKG
+#    PKG=( $(cat $_CWD/build_packages-${TYPE}.conf | grep -v "^#") )
+    PKG=( $(cat $_CWD/build_packages.conf | grep -v "^#") )
+#    eval "$2=\${PKG[*]}"
+    eval "$1=\${PKG[*]}"
+}
+
 build() {
-    for _PKG in $PKG_LIST;do
+    # read packages
+    read_packages PACKAGES
+
+    for _PKG in ${PACKAGES};do
         if [[ ! $(echo "${_PKG}" | grep "^#") ]];then
             ERROR=0
 #            echo "${_PKG}"
