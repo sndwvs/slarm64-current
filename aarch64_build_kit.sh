@@ -121,6 +121,14 @@ build() {
                 remove_work_dir "${_PKG}"
                 prepare_work_dir "${_PKG}"
                 pushd ${_BUILD}/${_PKG} 2>&1>/dev/null
+
+                PKG_SOURCE=$(echo ${_WORK_DIR}/${p}-*.tar.?z)
+                PKG_VERSION=$(echo $PKG_SOURCE | rev | cut -f 3- -d . | cut -f 1 -d - | rev)
+                [[ -e ${_BUILD}/${_PKG}/.rules ]] && source ${_BUILD}/${_PKG}/.rules
+                #echo $PKG_SOURCE >> ${_CWD}/log
+                #echo ${PKG_VERSION} >> ${_CWD}/log
+                #exit
+
                 patching_files STATUS
                 [[ $STATUS == 1 ]] && fix_default
                 pushd ${_WORK_DIR} 2>&1>/dev/null
