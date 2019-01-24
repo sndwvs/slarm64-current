@@ -1,21 +1,11 @@
---- a/lm_sensors.SlackBuild	2017-09-20 22:09:43.165174937 +0300
-+++ b/lm_sensors.SlackBuild	2017-09-20 22:10:26.949174937 +0300
-@@ -35,13 +35,12 @@
-   esac
+--- a/lm_sensors.SlackBuild	2019-01-24 17:21:53.749337373 +0000
++++ b/lm_sensors.SlackBuild	2019-01-24 17:21:06.957201730 +0000
+@@ -46,6 +46,8 @@
+ 
+ if [ "$ARCH" = "x86_64" ]; then
+   LIBDIRSUFFIX="64"
++elif [ "$ARCH" = "aarch64" ]; then
++  LIBDIRSUFFIX="64"
+ else
+   LIBDIRSUFFIX=""
  fi
- 
--if [ "$ARCH" = "x86_64" ]; then
--  LIBDIRSUFFIX="64"
--else
--  LIBDIRSUFFIX=""
--fi
-+case "$ARCH" in
-+  x86_64|aarch64) LIBDIRSUFFIX="64" ;;
-+               *) LIBDIRSUFFIX="" ;;
-+esac
- 
--NUMJOBS=${NUMJOBS:-" -j7 "}
-+NUMJOBS=${NUMJOBS:-" -j5 "}
- 
- CWD=$(pwd)
- TMP=${TMP:-/tmp}
