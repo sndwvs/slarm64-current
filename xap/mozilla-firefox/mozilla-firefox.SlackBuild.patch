@@ -1,28 +1,16 @@
---- a/mozilla-firefox.SlackBuild	2018-09-21 21:16:18.347186612 +0300
-+++ b/mozilla-firefox.SlackBuild	2018-09-27 21:44:55.371764391 +0300
-@@ -82,6 +82,10 @@
-   SLKLDFLAGS=" -Wl,--as-needed -Wl,--reduce-memory-overheads -Wl,--no-keep-memory -Wl,--stats"
-   export LDFLAGS="$SLKLDFLAGS"
-   export MOZ_LINK_FLAGS="$SLKLDFLAGS"
-+elif [ "$ARCH" = "aarch64" ]; then
-+  SLKLDFLAGS=" -Wl,--as-needed -Wl,--reduce-memory-overheads -Wl,--no-keep-memory -Wl,--stats"
-+  export LDFLAGS="$SLKLDFLAGS"
-+  export MOZ_LINK_FLAGS="$SLKLDFLAGS"
- else
-   # Link using gold.  This also helps prevent running out of memory on 32-bit
-   # systems, and avoids a recurring build failure with GNU ld on other systems.
-@@ -145,6 +149,10 @@
-   SLKCFLAGS="-march=armv4t"
+--- a/mozilla-firefox.SlackBuild	2019-02-01 06:36:21.408024839 +0200
++++ b/mozilla-firefox.SlackBuild	2019-02-01 06:38:16.571015072 +0200
+@@ -132,6 +132,9 @@
+ elif [ "$ARCH" = "armel" ]; then
+   SLKCFLAGS="-O2 -march=armv4t"
    LIBDIRSUFFIX=""
-   OPTIMIZE=${OPTIMIZE:-"-O1"}
 +elif [ "$ARCH" = "aarch64" ]; then
-+  SLKCFLAGS="-O1"
++  SLKCFLAGS="-O2"
 +  LIBDIRSUFFIX="64"
-+  OPTIMIZE=" --enable-optimize='-O1 -fno-schedule-insns'" ## used to use -O1 -- this is unused. see .mozconfig below
  else
-   SLKCFLAGS=""
+   SLKCFLAGS="-O2"
    LIBDIRSUFFIX=""
-@@ -220,8 +228,25 @@
+@@ -203,6 +206,8 @@
    \( -perm 666 -o -perm 664 -o -perm 600 -o -perm 444 -o -perm 440 -o -perm 400 \) \
    -exec chmod 644 {} \;
  
@@ -30,56 +18,17 @@
 +
  # Our building options, in a configure-like display ;)
  OPTIONS="\
-+  --enable-system-ffi \
-+  --enable-system-sqlite \
-+  --enable-pie \
-+  --disable-eme \
-+  --disable-crashreporter \
-+  --disable-updater \
-+  --disable-gconf \
-+  --with-system-libvpx \
-+  --without-system-icu \
-+  --disable-system-cairo \
-+  --disable-stylo \
-+  --disable-webrtc \
-+  --host=$ARCH-slackware-linux \
-+  --target=$ARCH-slackware-linux \
-+  \
    --enable-official-branding \
-   --prefix=/usr \
-   --libdir=/usr/lib${LIBDIRSUFFIX} \
-@@ -255,12 +280,21 @@
-     browser/installer/package-manifest.in || exit 1
- fi
- 
-+SLKCFLAGS="$SLKCFLAGS -pipe -fstack-protector -Wformat -fexceptions -fPIC -Wl,-z,relro -Wl,-z,now"
-+SLKCXXFLAGS="$SLKCFLAGS"
-+SLKCPPFLAGS="" ## this needs to be compiled with -O to use this
-+
- export MOZILLA_OFFICIAL="1"
- export BUILD_OFFICIAL="1"
- export MOZ_PHOENIX="1"
- export MOZ_PACKAGE_JSSHELL="1"
-+export LDFLAGS="$SLKLDFLAGS"
-+export MOZ_LINK_FLAGS="$SLKLDFLAGS"
-+export MOZ_OPT_FLAGS="$SLKCFLAGS"
- export CFLAGS="$SLKCFLAGS"
- export CXXFLAGS="$SLKCFLAGS"
-+export CXXFLAGS="$SLKCXXFLAGS"
-+export CPPFLAGS="$SLKCPPFLAGS"
- export MOZ_MAKE_FLAGS="$NUMJOBS"
- 
- # Clear some variables that could break the build
-@@ -296,6 +330,12 @@
- # Add the $OPTIONS above to .mozconfig:
- for option in $OPTIONS; do echo "ac_add_options $option" >> .mozconfig; done
+@@ -257,6 +262,12 @@
+ # needed for PGO.
+ echo ". \$topsrcdir/browser/config/mozconfig" > .mozconfig
  
 +# ARM: see https://bugzilla.redhat.com/show_bug.cgi?id=1426850
 +# This isn't added using $SLKCONFARGS because it doesn't cater for things with spaces in:
 +# unless I edit the for loop above to use IFS with some other variable.
 +# this is easier right now ;-)
-+echo 'ac_add_options --enable-optimize="-O1 -fno-schedule-insns"' >> .mozconfig
++echo 'ac_add_options --enable-optimize="$SLKCFLAGS -fno-schedule-insns"' >> .mozconfig
 +
- # https://developer.mozilla.org/en-US/docs/Building_with_Profile-Guided_Optimization
- # Thanks to ArchLinux and Gentoo for the additional hints.
- if [ "$PGO" = "yes" ]; then
+ # Mozilla devs enforce using an objdir for building
+ # https://developer.mozilla.org/en/Configuring_Build_Options#Building_with_an_objdir
+ mkdir obj

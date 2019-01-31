@@ -1,5 +1,5 @@
---- a/mozilla-thunderbird.SlackBuild	2018-10-31 18:53:53.814719980 +0000
-+++ b/mozilla-thunderbird.SlackBuild	2018-11-08 19:05:57.409265979 +0000
+--- a/mozilla-thunderbird.SlackBuild	2019-02-01 06:39:48.930204777 +0200
++++ b/mozilla-thunderbird.SlackBuild	2019-02-01 06:42:44.216665806 +0200
 @@ -87,6 +87,10 @@
    SLKCFLAGS="-march=armv4 -mtune=xscale"
    LIBDIRSUFFIX=""
@@ -7,71 +7,34 @@
 +elif [ "$ARCH" = "aarch64" ]; then
 +  SLKCFLAGS=""
 +  LIBDIRSUFFIX="64"
-+  OPTIMIZE=${OPTIMIZE:-" --enable-optimize='-O1 -fno-schedule-insns'"} ## used to use -O1 -- this is unused. see .mozconfig below
++  OPTIMIZE=${OPTIMIZE:-"-O1"}
  else
    SLKCFLAGS=""
    LIBDIRSUFFIX=""
-@@ -111,6 +115,10 @@
+@@ -111,6 +115,12 @@
    SLKLDFLAGS=" -Wl,--as-needed -Wl,--reduce-memory-overheads -Wl,--no-keep-memory -Wl,--stats"
    export LDFLAGS="$SLKLDFLAGS"
    export MOZ_LINK_FLAGS="$SLKLDFLAGS"
 +elif [ "$ARCH" = "aarch64" ]; then
++  # This might also help with the linker memory situation on some $ARCH. Feel free
++  # to match any other $ARCH that could benefit from this.
 +  SLKLDFLAGS=" -Wl,--as-needed -Wl,--reduce-memory-overheads -Wl,--no-keep-memory -Wl,--stats"
 +  export LDFLAGS="$SLKLDFLAGS"
 +  export MOZ_LINK_FLAGS="$SLKLDFLAGS"
  else
    # Link using gold.  This also helps prevent running out of memory on 32-bit
    # systems, and avoids a recurring build failure with GNU ld on other systems.
-@@ -176,6 +184,9 @@
+@@ -176,6 +186,9 @@
               # Make firefox compile on ARM platforms lacking neon support:
               zcat $CWD/mozilla-firefox.xpcom_arm.patch.gz | patch -p1 --verbose || exit 1
               ;;
-+    aarch64) ARCH_CONFIG=" "
++    aarch64) ARCH_CONFIG="--disable-elf-hack"
 +             xzcat $CWD/Bug-1238661---fix-mozillaSignalTrampoline-to-work-.patch.xz | patch -p1 --verbose || exit 1
 +             ;;
      *)       ARCH_CONFIG=" "
               ;;
  esac
-@@ -189,6 +200,17 @@
- 
- # Our building options, in a configure-like display ;)
- OPTIONS="\
-+  --enable-rust-simd \
-+  --enable-system-ffi \
-+  --enable-system-sqlite \
-+  --enable-pie \
-+  --disable-eme \
-+  --disable-updater \
-+  --disable-gconf \
-+  --with-system-libvpx \
-+  --without-system-icu \
-+  --disable-system-cairo \
-+  \
-   --enable-official-branding \
-   --prefix=/usr \
-   --libdir=/usr/lib${LIBDIRSUFFIX} \
-@@ -223,11 +245,19 @@
-     mail/installer/package-manifest.in || exit 1
- fi
- 
-+SLKCFLAGS="$SLKCFLAGS -pipe -fstack-protector -Wformat -fexceptions -fPIC -Wl,-z,relro -Wl,-z,now"
-+SLKCXXFLAGS="$SLKCFLAGS"
-+SLKCPPFLAGS="" ## this needs to be compiled with -O to use this
-+
-+export LDFLAGS="$SLKLDFLAGS"
-+export MOZ_LINK_FLAGS="$SLKLDFLAGS"
-+export MOZ_OPT_FLAGS="$SLKCFLAGS"
- export BUILD_OFFICIAL=1
- export MOZILLA_OFFICIAL=1
- export MOZ_PHOENIX=1
- export CFLAGS="$SLKCFLAGS"
--export CXXFLAGS="$SLKCFLAGS"
-+export CXXFLAGS="$SLKCXXFLAGS"
-+export CPPFLAGS="$SLKCPPFLAGS"
- export MOZ_MAKE_FLAGS="$NUMJOBS"
- 
- # Clear some variables that could break the build
-@@ -260,6 +290,12 @@
+@@ -260,6 +273,12 @@
  # Add the $OPTIONS above to .mozconfig:
  for option in $OPTIONS; do echo "ac_add_options $option" >> .mozconfig; done
  
@@ -79,7 +42,7 @@
 +# This isn't added using $SLKCONFARGS because it doesn't cater for things with spaces in:
 +# unless I edit the for loop above to use IFS with some other variable.
 +# this is easier right now ;-)
-+echo 'ac_add_options --enable-optimize="-O1 -fno-schedule-insns"' >> .mozconfig
++echo 'ac_add_options --enable-optimize="${OPTIMIZE} -fno-schedule-insns"' >> .mozconfig
 +
  # Disable tests on standard build:
  echo "ac_add_options --disable-tests" >> .mozconfig
