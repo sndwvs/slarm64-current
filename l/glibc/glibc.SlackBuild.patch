@@ -1,5 +1,5 @@
---- /mnt/data/shares/linux/slackware/slackware64-current/source/l/glibc/glibc.SlackBuild	2018-08-03 23:01:18.344067714 +0100
-+++ glibc.SlackBuild	2018-10-15 16:18:53.397710032 +0100
+--- a/glibc.SlackBuild	2019-02-01 16:48:21.824565250 +0200
++++ b/glibc.SlackBuild	2019-02-01 17:14:55.448156789 +0200
 @@ -95,6 +95,10 @@
      OPTIMIZ="-O3 -fPIC"
      LIBDIRSUFFIX="64"
@@ -43,16 +43,16 @@
  }
  
  # This is a patch function to put all glibc patches in the build script
-@@ -155,6 +170,8 @@
-   zcat $CWD/glibc.ru_RU.CP1251.diff.gz | patch -p1 --verbose || exit 1
-   # Add a C.UTF-8 locale:
+@@ -154,6 +169,8 @@
    zcat $CWD/glibc-c-utf8-locale.patch.gz | patch -p1 --verbose || exit 1
+   # Don't use AM/PM format for date(1). That's just plain crazy.
+   zcat $CWD/glibc-2.29.en_US.no.am.pm.date.format.diff.gz | patch -p1 --verbose || exit 1
 +  # aarch64 multilib dirs:
-+  xzcat $CWD/glibc-2.28-aarch64-multilib-dirs.patch.xz | patch -p1 --verbose || exit 1
++  xzcat $CWD/glibc-2.29-aarch64-multilib-dirs.patch.xz | patch -p1 --verbose || exit 1
  }
  
  # This is going to be the initial $DESTDIR:
-@@ -213,6 +230,12 @@
+@@ -212,6 +229,12 @@
  # Clean up leftover CVS directories:
  find . -type d -name CVS -exec rm -r {} \; 2> /dev/null
  
@@ -65,7 +65,7 @@
  # Apply patches; exit if any fail.
  apply_patches
  if [ ! $? = 0 ]; then
-@@ -241,6 +264,9 @@
+@@ -240,6 +263,9 @@
    --with-tls \
    --with-__thread \
    --without-cvs \
@@ -75,7 +75,7 @@
    $TARGET-slackware-linux
  
  make $NUMJOBS || make || exit 1
-@@ -427,7 +453,7 @@
+@@ -426,7 +452,7 @@
  # Call the function to fix doinst.sh where $LIBDIRSUFFIX is needed:
  fix_doinst
  # Only scrub the links in /lib{,64} that will be created by ldconfig:
@@ -84,7 +84,7 @@
  # Build the package:
  makepkg -l y -c n $TMP/glibc-solibs-$VERSION-$SLACKWARE_ARCH-$BUILD.txz
  
-@@ -440,7 +466,7 @@
+@@ -439,7 +465,7 @@
  chown -R root:root etc
  chmod 755 etc/profile.d/*
  # Only scrub the links in /lib{,64} that will be created by ldconfig:
@@ -93,7 +93,7 @@
  mkdir install
  cp -a $CWD/slack-desc.glibc install/slack-desc
  cp -a $CWD/doinst.sh-glibc install/doinst.sh
-@@ -462,3 +488,4 @@
+@@ -461,3 +487,4 @@
  # Done!
  echo
  echo "glibc packages built in $TMP!"
