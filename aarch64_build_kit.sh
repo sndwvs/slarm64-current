@@ -3,18 +3,19 @@
 _CWD=$(pwd)
 THREADS=$(grep -c 'processor' /proc/cpuinfo)
 
-export CPPFLAGS="-D_FORTIFY_SOURCE=2"
-export CFLAGS="-O2 -pipe -fstack-protector-strong -fno-plt"
-export CXXFLAGS="-O2 -pipe -fstack-protector-strong -fno-plt"
-export LDFLAGS="-Wl,-O1,--sort-common,--as-needed,-z,relro,-z,now"
-
-
 _BUILD="${_CWD}/slarm64-current/source"
 _TXZ="${_CWD}/slarm64-current/slarm64"
 _SOURCE="${_CWD}/slackware64-current/source"
 _TMP="/tmp"
 _WORK_DIR="work"
 
+
+environment() {
+    export CPPFLAGS="-D_FORTIFY_SOURCE=2"
+    export CFLAGS="-O2 -pipe -fstack-protector-strong -fno-plt"
+    export CXXFLAGS="-O2 -pipe -fstack-protector-strong -fno-plt"
+    export LDFLAGS="-Wl,-O1,--sort-common,--as-needed,-z,relro,-z,now"
+}
 
 remove_work_dir() {
     [[ ! -z "$1" ]] && rm -rf "${_BUILD}/$1/${_WORK_DIR}"
@@ -111,6 +112,8 @@ build() {
     for _PKG in ${PACKAGES};do
         if [[ ! $(echo "${_PKG}" | grep "^#") ]];then
             ERROR=0
+            # set global environment
+            environment
 #            echo "${_PKG}"
             [[ ! -d ${_BUILD}/${_PKG} ]] && ( mkdir -p ${_BUILD}/${_PKG} || return 1 )
             t=$(echo ${_PKG} | cut -d '/' -f1)
@@ -128,6 +131,7 @@ build() {
                 #echo $PKG_SOURCE >> ${_CWD}/log
                 #echo ${PKG_VERSION} >> ${_CWD}/log
                 #exit
+                #continue
 
                 patching_files STATUS
                 [[ $STATUS == 1 ]] && fix_default
