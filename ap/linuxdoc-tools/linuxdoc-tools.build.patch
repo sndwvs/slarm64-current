@@ -1,6 +1,6 @@
---- a/linuxdoc-tools.build	2018-12-14 22:06:06.815047391 +0200
-+++ b/linuxdoc-tools.build	2018-12-14 21:28:36.992449138 +0200
-@@ -102,7 +102,8 @@
+--- a/linuxdoc-tools.build	2019-02-05 16:55:28.000000000 +0000
++++ b/linuxdoc-tools.build	2019-02-06 18:38:50.767601088 +0000
+@@ -108,7 +108,8 @@
    --prefix=/usr \
    --sysconfdir=/etc \
    --docdir=/usr/doc/asciidoc-$ASCIIDOCVER \
@@ -9,8 +9,8 @@
 +  --build=$ARCH-unknown-linux$HOSTTARGET || exit 1
  
  # Install:
- make install && make docs || exit 1
-@@ -326,6 +327,7 @@
+ if [ "$1" = "nodocs" ]; then
+@@ -346,6 +347,7 @@
    --enable-http \
    --enable-default-catalog=/etc/sgml/catalog \
    --enable-default-search-path=/usr/share/sgml \
@@ -18,7 +18,7 @@
    || exit 1
  
  # Build:
-@@ -406,6 +408,7 @@
+@@ -426,6 +428,7 @@
    --enable-default-catalog=/etc/sgml/catalog \
    --enable-default-search-path=/usr/share/sgml \
    --datadir=/usr/share/sgml/openjade-$OPENJADEVER \
@@ -26,7 +26,7 @@
    || exit 1
  
  # Build:
-@@ -1016,7 +1019,7 @@
+@@ -1040,7 +1043,7 @@
    --mandir=/usr/man \
    --disable-scrollkeeper \
    --enable-build-utils \
@@ -35,7 +35,7 @@
  
  # No parallel build here because it doesn't work:
  make || exit 1
-@@ -1141,7 +1144,7 @@
+@@ -1168,7 +1171,7 @@
     --disable-dependency-tracking \
     --program-transform-name="s/^docbook2/docbook2x-/" \
     --with-html-xsl \
