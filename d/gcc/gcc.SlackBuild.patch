@@ -1,6 +1,6 @@
---- a/gcc.SlackBuild	2018-06-26 06:50:43.921051408 +0100
-+++ b/gcc.SlackBuild	2018-06-28 11:40:42.725384628 +0100
-@@ -115,6 +115,10 @@
+--- a/gcc.SlackBuild	2019-05-04 12:09:15.718001045 +0300
++++ b/gcc.SlackBuild	2019-05-05 11:48:13.386954906 +0300
+@@ -116,6 +116,10 @@
    SLKCFLAGS="-O3 -march=armv7-a -mfpu=vfpv3-d16"
    LIBDIRSUFFIX=""
    LIB_ARCH=armv7hl
@@ -11,7 +11,7 @@
  else
    SLKCFLAGS="-O2"
    LIBDIRSUFFIX=""
-@@ -139,11 +143,11 @@
+@@ -140,11 +144,11 @@
  # These are the directories to build other packages in:
  PKG2=$TMP/package-gcc-g++
  PKG3=$TMP/package-gcc-gfortran
@@ -22,10 +22,10 @@
  PKG8=$TMP/package-gcc-go
 -PKG9=$TMP/package-gcc-brig
 +#PKG9=$TMP/package-gcc-brig
+ PKG10=$TMP/package-gcc-gdc
  
  # Clear the build locations:
- rm -rf $TMP/gcc.build.lnx
-@@ -155,11 +159,11 @@
+@@ -157,11 +161,11 @@
  cat $CWD/slack-desc.gcc > $PKG1/install/slack-desc
  cat $CWD/slack-desc.gcc-g++ > $PKG2/install/slack-desc
  cat $CWD/slack-desc.gcc-gfortran > $PKG3/install/slack-desc
@@ -36,10 +36,10 @@
  cat $CWD/slack-desc.gcc-go > $PKG8/install/slack-desc
 -cat $CWD/slack-desc.gcc-brig > $PKG9/install/slack-desc
 +#cat $CWD/slack-desc.gcc-brig > $PKG9/install/slack-desc
+ cat $CWD/slack-desc.gcc-gdc > $PKG10/install/slack-desc
  
  ( cd gcc-$SRCVER || exit 1
- 
-@@ -207,16 +211,16 @@
+@@ -210,16 +214,16 @@
        fi
      )
  
@@ -66,7 +66,7 @@
  
      mkdir -p $PKG6/usr/doc/gcc-${VERSION}/gcc/objc
      ( cd objc || exit 0
-@@ -241,13 +245,13 @@
+@@ -244,13 +248,13 @@
        $PKG8/usr/doc/gcc-${VERSION}/gcc/go
      )
  
@@ -85,9 +85,9 @@
 +#      fi
 +#    )
  
-   ) || exit 1
- 
-@@ -259,13 +263,13 @@
+     mkdir -p $PKG10/usr/doc/gcc-${VERSION}/gcc/d
+     ( cd d || exit 0
+@@ -270,13 +274,13 @@
      fi
    )
  
@@ -108,25 +108,25 @@
  
    mkdir -p $PKG1/usr/doc/gcc-${VERSION}/libgomp
    ( cd libgomp || exit 0
-@@ -317,6 +321,8 @@
+@@ -327,6 +331,8 @@
+   else
      GCC_ARCHOPTS="--disable-multilib"
    fi
-  
-+  [[ "$ARCH" == aarch64 ]] && GCC_ARCHOPTS="--disable-multilib"
 +
++  [[ "$ARCH" == aarch64 ]] && GCC_ARCHOPTS="--disable-multilib"
+  
    CFLAGS="$SLKCFLAGS" \
    CXXFLAGS="$SLKCFLAGS" \
-   ../gcc-$SRCVER/configure --prefix=/usr \
-@@ -325,7 +331,7 @@
+@@ -336,7 +342,7 @@
       --infodir=/usr/info \
       --enable-shared \
       --enable-bootstrap \
--     --enable-languages=ada,brig,c,c++,fortran,go,lto,objc \
-+     --enable-languages=c,c++,fortran,go,lto,objc \
+-     --enable-languages=ada,brig,c,c++,d,fortran,go,lto,objc \
++     --enable-languages=c,c++,d,fortran,go,lto,objc \
       --enable-threads=posix \
       --enable-checking=release \
       --enable-objc-gc \
-@@ -355,15 +361,15 @@
+@@ -366,15 +372,15 @@
    # Include all debugging info (for now):
    make $NUMJOBS bootstrap || exit 1
  
@@ -148,7 +148,7 @@
    make info || exit 1
  
    # Set GCCCHECK=something to run the tests
-@@ -514,18 +520,18 @@
+@@ -525,18 +531,18 @@
  )
  
  # gcc-gnat:
@@ -179,7 +179,7 @@
  
  # gcc-objc:
  ( cd $PKG6
-@@ -569,16 +575,16 @@
+@@ -580,16 +586,16 @@
  ) || exit 1
  
  # gcc-brig:
@@ -192,7 +192,7 @@
 -  mv $PKG1/usr/libexec/gcc/$TARGET/$VERSION/brig1 usr/libexec/gcc/$TARGET/$VERSION
 -  mkdir -p usr/man/man1
 -  mv $PKG1/usr/man/man1/gccbrig.1.gz usr/man/man1
--)
+-) || exit 1
 +#( cd $PKG9
 +#  mkdir -p usr/bin
 +#  mv $PKG1/usr/bin/*brig* usr/bin
@@ -202,11 +202,11 @@
 +#  mv $PKG1/usr/libexec/gcc/$TARGET/$VERSION/brig1 usr/libexec/gcc/$TARGET/$VERSION
 +#  mkdir -p usr/man/man1
 +#  mv $PKG1/usr/man/man1/gccbrig.1.gz usr/man/man1
-+#)
++#) || exit 1
  
- # Generate packages:
- ( cd $PKG1
-@@ -587,14 +593,14 @@
+ # gcc-gdc:
+ ( cd $PKG10
+@@ -615,14 +621,14 @@
    makepkg -l y -c n $TMP/gcc-g++-$VERSION-$ARCH-$BUILD.txz )
  ( cd $PKG3
    makepkg -l y -c n $TMP/gcc-gfortran-$VERSION-$ARCH-$BUILD.txz )
@@ -222,6 +222,6 @@
 -  makepkg -l y -c n $TMP/gcc-brig-$VERSION-$ARCH-$BUILD.txz )
 +#( cd $PKG9
 +#  makepkg -l y -c n $TMP/gcc-brig-$VERSION-$ARCH-$BUILD.txz )
+ ( cd $PKG10
+   makepkg -l y -c n $TMP/gcc-gdc-$VERSION-$ARCH-$BUILD.txz )
  
- echo
- echo "Slackware GCC package build complete!"
