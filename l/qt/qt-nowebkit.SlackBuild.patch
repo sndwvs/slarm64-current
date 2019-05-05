@@ -1,5 +1,5 @@
---- a/qt-nowebkit.SlackBuild	2018-04-13 05:50:30.000000000 +0300
-+++ b/qt-nowebkit.SlackBuild	2018-04-25 21:19:12.501912084 +0300
+--- a/qt-nowebkit.SlackBuild	2019-05-05 09:12:00.025050408 +0100
++++ b/qt-nowebkit.SlackBuild	2019-05-05 09:13:57.274658601 +0100
 @@ -85,6 +85,9 @@
    # http://bazaar.launchpad.net/~linaro-toolchain-dev/gcc-linaro/4.6/revision/106731
    SLKCFLAGS="-O2 -march=armv7-a -mfpu=vfpv3-d16 -fno-strict-volatile-bitfields"
@@ -10,12 +10,10 @@
  else
    SLKCFLAGS="-O2"
    LIBDIRSUFFIX=""
-@@ -162,14 +165,20 @@
- # that uses them with that C++ standard:
- zcat $CWD/qt.icu59.c++11.diff.gz | patch -p1 --verbose || exit 1
+@@ -165,14 +168,18 @@
+ #zcat $CWD/patches/qt-everywhere-opensource-src-4.8.0-tp-multilib-optflags.patch.gz | patch -p1 --verbose || exit 1
+ zcat $CWD/patches/qt-everywhere-opensource-src-4.8.7-icu59.patch.gz | patch -p1 --verbose || exit 1
  
-+xzcat $CWD/qt-aarch64.patch.xz | patch -p1 --verbose || exit 1
-+
 +echo "QMAKE_CXXFLAGS += -std=gnu++98" >> src/3rdparty/javascriptcore/JavaScriptCore/JavaScriptCore.pri
 +echo "QMAKE_CXXFLAGS += -std=gnu++98" >> src/3rdparty/webkit/Source/JavaScriptCore/JavaScriptCore.pri
 +echo "QMAKE_CXXFLAGS += -std=gnu++98" >> src/plugins/accessible/qaccessiblebase.pri
