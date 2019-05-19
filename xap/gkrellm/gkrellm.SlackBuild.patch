@@ -1,0 +1,11 @@
+--- a/gkrellm.SlackBuild	2019-05-19 15:02:46.259444582 +0100
++++ b/gkrellm.SlackBuild	2019-05-19 15:05:10.601531971 +0100
+@@ -45,7 +45,7 @@
+   exit 0
+ fi
+ 
+-if [ "$ARCH" = "x86_64" ]; then
++if [ "$ARCH" = "x86_64" -o "$ARCH" = "aarch64" ]; then
+   LIBDIRSUFFIX="64"
+ else
+   LIBDIRSUFFIX=""
