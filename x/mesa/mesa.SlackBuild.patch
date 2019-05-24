@@ -1,7 +1,7 @@
---- a/mesa.SlackBuild	2018-05-01 20:21:45.050983631 +0300
-+++ b/mesa.SlackBuild	2018-05-01 20:21:58.636766594 +0300
+--- a/mesa.SlackBuild	2019-05-10 22:47:05.020783957 +0300
++++ b/mesa.SlackBuild	2019-05-24 18:06:57.547447766 +0300
 @@ -30,8 +30,8 @@
- NUMJOBS=${NUMJOBS:--j7}
+ NUMJOBS=${NUMJOBS:-" -j$(expr $(nproc) + 1) "}
  
  # Be sure this list is up-to-date:
 -DRI_DRIVERS="i915,i965,nouveau,r200,radeon,swrast"
@@ -22,12 +22,3 @@
  else
    SLKCFLAGS="-O2"
    LIBDIRSUFFIX=""
-@@ -134,8 +138,6 @@
-   --enable-gles1 \
-   --enable-gles2 \
-   --enable-vdpau \
--  --enable-opencl \
--  --enable-opencl-icd \
-   --build=$ARCH-slackware-linux || exit 1
- 
- # This is autodetected anyway:
