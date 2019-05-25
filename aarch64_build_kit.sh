@@ -80,7 +80,7 @@ patching_files() {
         pf=$(basename "$pf")
         [[ -z "$pf" ]] && continue
         pushd ${_WORK_DIR} 2>&1>/dev/null
-        patch -p1 --verbose < "../${pf}.patch" || return 1
+        [[ ! $(patch -p1 --batch --dry-run -N -i ../${pf}.patch | grep previously) ]] && ( patch -p1 --verbose -i "../${pf}.patch" || return 1 )
         popd 2>&1>/dev/null
         count=$(($count+1))
     done
@@ -115,9 +115,15 @@ build() {
             # set global environment
             environment
 #            echo "${_PKG}"
-            [[ ! -d ${_BUILD}/${_PKG} ]] && ( mkdir -p ${_BUILD}/${_PKG} || return 1 )
             t=$(echo ${_PKG} | cut -d '/' -f1)
             p=$(echo ${_PKG} | cut -d '/' -f2)
+
+            if [[ $t == kde && -e ${_BUILD}/$t/.rules ]]; then
+                source ${_BUILD}/$t/.rules
+                continue
+            fi
+
+            [[ ! -d ${_BUILD}/${_PKG} ]] && ( mkdir -p ${_BUILD}/${_PKG} || return 1 )
 #            if [[ ! $(ls ${_INSTALL}/$t/ | grep "$p-") ]];then
 #                removepkg $p
                 [[ -e ${_BUILD}/${_PKG}/.ignore ]] && continue
