@@ -1,8 +1,8 @@
---- a/kde.SlackBuild	2018-04-29 00:03:49.113860885 +0300
-+++ b/kde.SlackBuild	2018-04-29 00:04:56.885797628 +0300
-@@ -61,6 +61,9 @@
- cd $(dirname $0) ; CWD=$(pwd)
- TMP=${TMP:-/tmp}
+--- a/kde.SlackBuild	2018-04-28 02:40:00.102865899 +0100
++++ b/kde.SlackBuild	2019-05-26 00:00:30.612255975 +0100
+@@ -71,6 +71,9 @@
+ fi
+ mkdir -p $TMP $SLACK_KDE_BUILD_DIR
  
 +# add build from aarch64
 +[[ ! $(xzcat kde.options.patch.xz | patch -p1 --batch --dry-run -N | grep previously) ]] && ( xzcat kde.options.patch.xz | patch -p1 --verbose || exit 1 )
