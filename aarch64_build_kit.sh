@@ -118,9 +118,21 @@ build() {
             t=$(echo ${_PKG} | cut -d '/' -f1)
             p=$(echo ${_PKG} | cut -d '/' -f2)
 
+            # build kde series
             if [[ $t == kde && -e ${_BUILD}/$t/.rules ]]; then
                 source ${_BUILD}/$t/.rules
                 continue
+            fi
+
+            # build x11 series
+            if [[ $t == x ]]; then
+                X11_PKG_PATH=$(find ${_BUILD}/$t/ -type f -name "${p}-*.?z")
+                X11_MODULE=$(echo ${X11_PKG_PATH} | rev | cut -d '/' -f2 | rev)
+                if [[ ! -z $X11_MODULE ]]; then
+                    x11_root="x11"
+                    source ${_BUILD}/$t/$x11_root/.rules
+                    continue
+                fi
             fi
 
             [[ ! -d ${_BUILD}/${_PKG} ]] && ( mkdir -p ${_BUILD}/${_PKG} || return 1 )
