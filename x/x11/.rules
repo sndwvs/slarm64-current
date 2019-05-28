@@ -1,0 +1,20 @@
+
+rules() {
+    if [[ -z $x11_start_build ]]; then
+        x11_start_build="yes"
+        remove_work_dir "$t/$x11_root"
+        prepare_work_dir "$t/$x11_root"
+    fi
+
+    pushd ${_BUILD}/$t/$x11_root 2>&1>/dev/null
+    patching_files STATUS
+    popd 2>&1>/dev/null
+    pushd ${_BUILD}/$t/$x11_root/${_WORK_DIR} 2>&1>/dev/null
+    ./x11.SlackBuild ${X11_MODULE} ${p} 2>&1 | tee ${p}.build.log
+    [[ ${PIPESTATUS[0]} == 1 ]] && ERROR=1
+    move_pkg ${t} "x11-build/${p}"
+    popd 2>&1>/dev/null
+}
+
+rules
+
