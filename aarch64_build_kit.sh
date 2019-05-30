@@ -128,9 +128,10 @@ build() {
             if [[ $t == x ]]; then
                 X11_PKG_PATH=$(find ${_BUILD}/$t/ -type f -name "${p}-*.?z")
                 X11_MODULE=$(echo ${X11_PKG_PATH} | rev | cut -d '/' -f2 | rev)
-                if [[ ! -z $X11_MODULE ]]; then
+                if [[ ! -z $X11_MODULE && ${X11_PKG_PATH} =~ '/x11/' ]]; then
                     x11_root="x11"
                     source ${_BUILD}/$t/$x11_root/.rules
+                    unset X11_PKG_PATH X11_MODULE
                     continue
                 fi
             fi
