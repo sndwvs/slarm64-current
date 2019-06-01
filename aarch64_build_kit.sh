@@ -90,18 +90,23 @@ patching_files() {
 move_pkg() {
     [[ -z "$1" ]] && exit 1
     [[ ! -d "${_TXZ}/$1" ]] && ( mkdir -p "${_TXZ}/$1" || return 1 )
-    [[ -e "${_TXZ}/$1" ]] && mv ${_TMP}/$2-*.txz "${_TXZ}/$1/"
+    if [[ -e "${_TXZ}/$1" ]]; then
+        for pkg in $(ls ${_TMP}/$2-*.t?z); do
+            if [[ ${pkg} =~ "-solibs-" ]];then
+                mv ${pkg} "${_TXZ}/a/"
+            else
+                mv ${pkg} "${_TXZ}/$1/"
+            fi
+        done
+    fi
 }
 
 #----------------------------
 # read packages
 #----------------------------
 read_packages() {
-#    local TYPE="$1"
     local PKG
-#    PKG=( $(cat $_CWD/build_packages-${TYPE}.conf | grep -v "^#") )
     PKG=( $(cat $_CWD/build_packages.conf | grep -v "^#") )
-#    eval "$2=\${PKG[*]}"
     eval "$1=\${PKG[*]}"
 }
 
@@ -137,38 +142,35 @@ build() {
             fi
 
             [[ ! -d ${_BUILD}/${_PKG} ]] && ( mkdir -p ${_BUILD}/${_PKG} || return 1 )
-#            if [[ ! $(ls ${_INSTALL}/$t/ | grep "$p-") ]];then
-#                removepkg $p
-                [[ -e ${_BUILD}/${_PKG}/.ignore ]] && continue
-                remove_work_dir "${_PKG}"
-                prepare_work_dir "${_PKG}"
-                pushd ${_BUILD}/${_PKG} 2>&1>/dev/null
+            [[ -e ${_BUILD}/${_PKG}/.ignore ]] && continue
+            remove_work_dir "${_PKG}"
+            prepare_work_dir "${_PKG}"
+            pushd ${_BUILD}/${_PKG} 2>&1>/dev/null
 
-                PKG_SOURCE=$(echo ${_WORK_DIR}/${p}-*.tar.?z)
-                PKG_VERSION=$(echo $PKG_SOURCE | rev | cut -f 3- -d . | cut -f 1 -d - | rev)
-                [[ -e ${_BUILD}/${_PKG}/.rules ]] && source ${_BUILD}/${_PKG}/.rules
-                #echo $PKG_SOURCE >> ${_CWD}/log
-                #echo ${PKG_VERSION} >> ${_CWD}/log
-                #exit
-                #continue
+            PKG_SOURCE=$(echo ${_WORK_DIR}/${p}-*.tar.?z)
+            PKG_VERSION=$(echo $PKG_SOURCE | rev | cut -f 3- -d . | cut -f 1 -d - | rev)
+            [[ -e ${_BUILD}/${_PKG}/.rules ]] && source ${_BUILD}/${_PKG}/.rules
+            #echo $PKG_SOURCE >> ${_CWD}/log
+            #echo ${PKG_VERSION} >> ${_CWD}/log
+            #exit
+            #continue
 
-                patching_files STATUS
-                [[ $STATUS == 1 ]] && fix_default
-                pushd ${_WORK_DIR} 2>&1>/dev/null
-                ./${p}.SlackBuild 2>&1 | tee ${p}.build.log
-                [[ ${PIPESTATUS[0]} == 1 ]] && ERROR=1
-                [[ ${ERROR} == 1 ]] && mv ${p}.build.log ${p}.build.log.1
-                [[ ${ERROR} == 1 ]] && fix_global ${p}
-                [[ ${ERROR} == 1 ]] && ./${p}.SlackBuild 2>&1 | tee ${p}.build.log
-                if [[ ${PIPESTATUS[0]} == 1 && ${ERROR} == 1 ]]; then
-                    echo "${_PKG}" 2>&1 >> ${_CWD}/build_error.log
-                    continue
-                fi
-                popd 2>&1>/dev/null
-                move_pkg ${t} ${p}
-                upgradepkg --install-new --reinstall ${_TXZ}/${t}/${p}-*.txz
-                popd 2>&1>/dev/null
-#            fi
+            patching_files STATUS
+            [[ $STATUS == 1 ]] && fix_default
+            pushd ${_WORK_DIR} 2>&1>/dev/null
+            ./${p}.SlackBuild 2>&1 | tee ${p}.build.log
+            [[ ${PIPESTATUS[0]} == 1 ]] && ERROR=1
+            [[ ${ERROR} == 1 ]] && mv ${p}.build.log ${p}.build.log.1
+            [[ ${ERROR} == 1 ]] && fix_global ${p}
+            [[ ${ERROR} == 1 ]] && ./${p}.SlackBuild 2>&1 | tee ${p}.build.log
+            if [[ ${PIPESTATUS[0]} == 1 && ${ERROR} == 1 ]]; then
+                echo "${_PKG}" 2>&1 >> ${_CWD}/build_error.log
+                continue
+            fi
+            popd 2>&1>/dev/null
+            move_pkg ${t} ${p}
+            upgradepkg --install-new --reinstall ${_TXZ}/${t}/${p}-*.txz
+            popd 2>&1>/dev/null
         fi
     done
 }
