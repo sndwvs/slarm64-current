@@ -1,5 +1,5 @@
 --- a/gcc.SlackBuild	2019-05-25 06:53:36.613955757 +0100
-+++ b/gcc.SlackBuild	2019-06-02 12:42:03.107995583 +0100
++++ b/gcc.SlackBuild	2019-06-02 13:07:29.754970973 +0100
 @@ -116,6 +116,10 @@
    SLKCFLAGS="-O3 -march=armv7-a -mfpu=vfpv3-d16"
    LIBDIRSUFFIX=""
@@ -108,7 +108,16 @@
  
    mkdir -p $PKG1/usr/doc/gcc-${VERSION}/libgomp
    ( cd libgomp || exit 0
-@@ -357,7 +361,7 @@
+@@ -348,6 +352,8 @@
+   else
+     GCC_ARCHOPTS="--disable-multilib"
+   fi
++
++  [[ "$ARCH" == "aarch64" ]] && GCC_ARCHOPTS="--enable-multilib"
+  
+   CFLAGS="$SLKCFLAGS" \
+   CXXFLAGS="$SLKCFLAGS" \
+@@ -357,7 +363,7 @@
       --infodir=/usr/info \
       --enable-shared \
       --enable-bootstrap \
@@ -117,7 +126,7 @@
       --enable-threads=posix \
       --enable-checking=release \
       --enable-objc-gc \
-@@ -388,15 +392,15 @@
+@@ -388,15 +394,15 @@
    # Include all debugging info (for now):
    make $NUMJOBS bootstrap || exit 1
  
@@ -139,7 +148,7 @@
    make info || exit 1
  
    # Set GCCCHECK=something to run the tests
-@@ -547,18 +551,18 @@
+@@ -547,18 +553,18 @@
  )
  
  # gcc-gnat:
@@ -170,7 +179,7 @@
  
  # gcc-objc:
  ( cd $PKG6
-@@ -604,16 +608,16 @@
+@@ -604,16 +610,16 @@
  ) || exit 1
  
  # gcc-brig:
@@ -197,7 +206,7 @@
  
  # gcc-gdc:
  ( cd $PKG10
-@@ -639,14 +643,14 @@
+@@ -639,14 +645,14 @@
    makepkg -l y -c n $TMP/gcc-g++-$VERSION-$ARCH-$BUILD.txz )
  ( cd $PKG3
    makepkg -l y -c n $TMP/gcc-gfortran-$VERSION-$ARCH-$BUILD.txz )
