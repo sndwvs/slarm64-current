@@ -1,5 +1,5 @@
---- a/gcc.SlackBuild	2019-05-07 22:33:14.828800075 +0100
-+++ b/gcc.SlackBuild	2019-05-10 16:45:35.488908108 +0100
+--- a/gcc.SlackBuild	2019-06-02 08:16:42.968987420 +0100
++++ b/gcc.SlackBuild	2019-06-02 08:17:24.672917204 +0100
 @@ -116,6 +116,10 @@
    SLKCFLAGS="-O3 -march=armv7-a -mfpu=vfpv3-d16"
    LIBDIRSUFFIX=""
@@ -39,7 +39,7 @@
  cat $CWD/slack-desc.gcc-gdc > $PKG10/install/slack-desc
  
  ( cd gcc-$SRCVER || exit 1
-@@ -213,16 +217,16 @@
+@@ -222,16 +226,16 @@
        fi
      )
  
@@ -66,7 +66,7 @@
  
      mkdir -p $PKG6/usr/doc/gcc-${VERSION}/gcc/objc
      ( cd objc || exit 0
-@@ -256,13 +260,13 @@
+@@ -265,13 +269,13 @@
        $PKG8/usr/doc/gcc-${VERSION}/gcc/go
      )
  
@@ -87,7 +87,7 @@
  
      mkdir -p $PKG10/usr/doc/gcc-${VERSION}/gcc/d
      ( cd d || exit 0
-@@ -282,13 +286,13 @@
+@@ -291,13 +295,13 @@
      fi
    )
  
@@ -108,16 +108,7 @@
  
    mkdir -p $PKG1/usr/doc/gcc-${VERSION}/libgomp
    ( cd libgomp || exit 0
-@@ -339,6 +343,8 @@
-   else
-     GCC_ARCHOPTS="--disable-multilib"
-   fi
-+
-+  [[ "$ARCH" == aarch64 ]] && GCC_ARCHOPTS="--disable-multilib"
-  
-   CFLAGS="$SLKCFLAGS" \
-   CXXFLAGS="$SLKCFLAGS" \
-@@ -348,7 +354,7 @@
+@@ -357,7 +361,7 @@
       --infodir=/usr/info \
       --enable-shared \
       --enable-bootstrap \
@@ -126,7 +117,7 @@
       --enable-threads=posix \
       --enable-checking=release \
       --enable-objc-gc \
-@@ -378,15 +384,15 @@
+@@ -388,15 +392,15 @@
    # Include all debugging info (for now):
    make $NUMJOBS bootstrap || exit 1
  
@@ -148,7 +139,7 @@
    make info || exit 1
  
    # Set GCCCHECK=something to run the tests
-@@ -537,18 +543,18 @@
+@@ -547,18 +551,18 @@
  )
  
  # gcc-gnat:
@@ -179,7 +170,7 @@
  
  # gcc-objc:
  ( cd $PKG6
-@@ -593,16 +599,16 @@
+@@ -604,16 +608,16 @@
  ) || exit 1
  
  # gcc-brig:
@@ -206,7 +197,7 @@
  
  # gcc-gdc:
  ( cd $PKG10
-@@ -628,14 +634,14 @@
+@@ -639,14 +643,14 @@
    makepkg -l y -c n $TMP/gcc-g++-$VERSION-$ARCH-$BUILD.txz )
  ( cd $PKG3
    makepkg -l y -c n $TMP/gcc-gfortran-$VERSION-$ARCH-$BUILD.txz )
