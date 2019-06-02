@@ -7,7 +7,7 @@
 +elif [ "$ARCH" = "aarch64" ]; then
 +  SLKCFLAGS="-O2"
 +  LIBDIRSUFFIX="64"
-+  LIB_ARCH=armv8-a
++  LIB_ARCH=$ARCH
  else
    SLKCFLAGS="-O2"
    LIBDIRSUFFIX=""
