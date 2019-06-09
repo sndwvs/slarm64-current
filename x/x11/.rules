@@ -6,6 +6,11 @@ rules() {
         prepare_work_dir "$t/$x11_root"
     fi
 
+    export CPPFLAGS=""
+    export CFLAGS=""
+    export CXXFLAGS=""
+    export LDFLAGS=""
+
     pushd ${_BUILD}/$t/$x11_root 2>&1>/dev/null
     patching_files STATUS
     popd 2>&1>/dev/null
