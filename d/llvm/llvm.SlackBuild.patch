@@ -1,5 +1,5 @@
---- a/llvm.SlackBuild	2019-03-21 16:58:40.580948958 +0000
-+++ b/llvm.SlackBuild	2019-03-21 16:59:01.265212183 +0000
+--- a/llvm.SlackBuild	2019-06-09 12:40:01.492506323 +0100
++++ b/llvm.SlackBuild	2019-06-09 12:44:38.040650311 +0100
 @@ -59,6 +59,9 @@
  elif [ "$ARCH" = "x86_64" ]; then
    SLKCFLAGS="-O2 -fPIC"
@@ -19,10 +19,13 @@
    zcat $CWD/clang-tools-extra.no.clangd.diff.gz | patch -p1 --verbose --backup --suffix=.orig || exit 1
  fi
  
-@@ -127,13 +130,26 @@
+@@ -127,13 +130,29 @@
  # by building clang with shared libs
  zcat $CWD/n_clang_allow_BUILD_SHARED_LIBRARY.patch.gz | patch -p0 --verbose || exit 1
  
++xzcat $CWD/clang.dynamic.linker.aarch64.patch.xz | patch -p1 --verbose || exit 1
++xzcat $CWD/clang.toolchains.aarch64.triple.patch.xz | patch -p1 --verbose || exit 1
++
 +export SLKCFLAGS="$SLKCFLAGS -fPIC -Wall -Wp,-D_FORTIFY_SOURCE=2 -fpermissive -fexceptions -fstack-protector-strong --param=ssp-buffer-size=4 -fuse-ld=gold"
 +export SLKCONFARGS="-DLLVM_HOST_TRIPLE=$ARCH-slackware-linux \
 +                    -DCMAKE_VERBOSE_MAKEFILE:BOOL=ON"
