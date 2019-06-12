@@ -36,10 +36,10 @@
      sed -i 's#ld-linux.so.2#ld-linux-x86-64.so.2#' install/doinst.sh
    fi
 +
-+  if [ "$SLACKWARE_ARCH" = "aarch64" ]; then
-+    sed -i "/# Install NPTL glibc libraries:/i ( cd lib ; ln -sf ../lib${LIBDIRSUFFIX}/incoming/ld-${VERSION}.so $ARMLDLINUXVER )\n" install/doinst.sh
-+    sed -i "/# Now, get rid of the temporary directory/i \\\n( cd lib ; ln -sf ../lib${LIBDIRSUFFIX}/ld-${VERSION}.so $ARMLDLINUXVER )\n" install/doinst.sh
-+  fi
++#  if [ "$SLACKWARE_ARCH" = "aarch64" ]; then
++#    sed -i "/# Install NPTL glibc libraries:/i ( cd lib ; ln -sf ../lib${LIBDIRSUFFIX}/incoming/ld-${VERSION}.so $ARMLDLINUXVER )\n" install/doinst.sh
++#    sed -i "/# Now, get rid of the temporary directory/i \\\n( cd lib ; ln -sf ../lib${LIBDIRSUFFIX}/ld-${VERSION}.so $ARMLDLINUXVER )\n" install/doinst.sh
++#  fi
  }
  
  # This is a patch function to put all glibc patches in the build script
