@@ -1,5 +1,5 @@
---- a/seamonkey.SlackBuild	2018-04-04 22:30:26.772463980 +0300
-+++ b/seamonkey.SlackBuild	2018-04-04 22:35:45.185463980 +0300
+--- a/seamonkey.SlackBuild	2019-06-15 13:35:05.460916474 +0300
++++ b/seamonkey.SlackBuild	2019-06-15 13:35:21.681154602 +0300
 @@ -56,6 +56,9 @@
  elif [ "$ARCH" = "x86_64" ]; then
    LIBDIRSUFFIX="64"
@@ -10,7 +10,24 @@
  else
    LIBDIRSUFFIX=""
    OPTIMIZE_FLAG=${OPTIMIZE_FLAG:-"-O1"}
-@@ -102,6 +105,21 @@
+@@ -67,12 +70,10 @@
+ export CC=${CC:-"gcc -B$(pwd)/gold"}
+ export CXX=${CXX:-"g++ -B$(pwd)/gold"}
+ 
+-# -Wformat is needed for -Werror=format-security
+-# -Wno-format-overflow bypasses gcc9 build failure
+-# -fno-delete-null-pointer-checks disables gcc6 optimization that
+-# leads to instability
+-export CFLAGS="-Wformat -Wno-format-overflow -fno-delete-null-pointer-checks"
+-export CXXFLAGS="-Wformat -Wno-format-overflow -fno-delete-null-pointer-checks"
++# Keep memory usage as low as possible when linking:
++SLKLDFLAGS=" -Wl,--as-needed -Wl,--no-keep-memory -Wl,--stats"
++export LDFLAGS="$SLKLDFLAGS"
++export MOZ_LINK_FLAGS="$SLKLDFLAGS"
+ 
+ NUMJOBS=${NUMJOBS:-" -j$(expr $(nproc) + 1) "}
+ 
+@@ -109,6 +110,21 @@
  rm -rf seamonkey-unpack
  cd seamonkey-${TARBALLVER} || exit 1
  
@@ -32,7 +49,14 @@
  # Retain GTK+ v2 scrolling behavior:
  zcat $CWD/sm.ui.scrollToClick.diff.gz | patch -p1 --verbose || exit 1
  
-@@ -119,6 +137,15 @@
+@@ -122,10 +138,22 @@
+ 
+ chown -R root:root .
+ 
++# GCC-9 generates some false positives with --Werror=fromat, which prevent building SeaMonkey. Remove this flag with the following command:
++grep -rl -- '-Werror=format' | xargs sed -i 's/error=format/no-&/'
++
+ # Our building options, in a configure-like display ;)
  OPTIONS="\
    --prefix=/usr \
    --libdir=/usr/lib${LIBDIRSUFFIX} \
@@ -48,25 +72,22 @@
    --enable-cpp-rtti \
    --enable-default-toolkit=cairo-gtk3 \
    --enable-startup-notification \
-@@ -140,11 +167,20 @@
+@@ -147,10 +175,15 @@
    --enable-application=suite \
    --with-pthreads \
    --host=$ARCH-slackware-linux \
 -  --target=$ARCH-slackware-linux"
 +  --target=$ARCH-slackware-linux \
 +  "
-+
-+export SLKCFLAGS="$SLKCFLAGS -g -Wformat -fexceptions -fPIC -Wl,-z,relro -Wl,-z,now"
-+export SLKLDFLAGS="-Wl,--no-as-needed -Wl,--no-keep-memory"
  
- export BUILD_OFFICIAL=1
- export MOZILLA_OFFICIAL=1
- export MOZ_MAKE_FLAGS="$NUMJOBS"
-+export MOZ_LINK_FLAGS="$SLKLDFLAGS"
-+export LDFLAGS="$SLKLDFLAGS"
-+export MOZ_OPT_FLAGS="$SLKCFLAGS"
+-export BUILD_OFFICIAL=1
+-export MOZILLA_OFFICIAL=1
++export MOZILLA_OFFICIAL="1"
++export BUILD_OFFICIAL="1"
++export MOZ_PHOENIX="1"
++export MOZ_PACKAGE_JSSHELL="1"
 +export CFLAGS="$SLKCFLAGS"
 +export CXXFLAGS="$SLKCFLAGS -fno-delete-null-pointer-checks"
+ export MOZ_MAKE_FLAGS="$NUMJOBS"
  
  # Clear some variables that could break the build
- unset DBUS_SESSION_BUS_ADDRESS ORBIT_SOCKETDIR SESSION_MANAGER \
