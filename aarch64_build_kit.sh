@@ -93,7 +93,9 @@ move_pkg() {
     if [[ -e "${_TXZ}/$1" ]]; then
         for pkg in $(ls ${_TMP}/$2-*.t?z); do
             if [[ ${pkg} =~ "-solibs-" ]];then
-                mv ${pkg} "${_TXZ}/a/"
+                local SERIES="a"
+                [[ ${pkg} =~ "seamonkey-solibs-" ]] SERIES="l"
+                mv ${pkg} "${_TXZ}/${SERIES}/"
             else
                 mv ${pkg} "${_TXZ}/$1/"
             fi
