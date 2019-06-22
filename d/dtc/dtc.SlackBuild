@@ -74,6 +74,10 @@ make DESTDIR=$PKG SETUP_PREFIX=$PKG/usr PREFIX=/usr LIBDIR=/usr/lib${LIBDIRSUFFI
 # Don't ship .la files:
 rm -f $PKG/{,usr/}lib${LIBDIRSUFFIX}/*.la
 
+# We shouldn't need the development stuff:
+rm -fv $PKG/usr/lib${LIBDIRSUFFIX}/libfdt.a
+rm -rf $PKG/usr/include
+
 # Strip binaries:
 find $PKG | xargs file | grep -e "executable" -e "shared object" \
   | grep ELF | cut -f 1 -d : | xargs strip --strip-unneeded 2> /dev/null
