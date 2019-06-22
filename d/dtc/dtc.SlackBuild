@@ -3,7 +3,7 @@
 CWD=$(pwd)
 
 NAME="dtc"
-VERSION=${VERSION:-1.4.7}
+VERSION=${VERSION:-1.5.0}
 BUILD=${BUILD:-1}
 
 NUMJOBS=${NUMJOBS:-" -j$(grep -c ^processor /proc/cpuinfo 2>/dev/null) "}
