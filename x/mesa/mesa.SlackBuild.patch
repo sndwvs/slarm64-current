@@ -1,24 +1,23 @@
---- a/mesa.SlackBuild	2019-05-10 22:47:05.020783957 +0300
-+++ b/mesa.SlackBuild	2019-05-24 18:06:57.547447766 +0300
+--- a/mesa.SlackBuild	2019-06-26 18:05:20.145560091 +0100
++++ b/mesa.SlackBuild	2019-06-26 18:07:31.711563773 +0100
 @@ -30,8 +30,8 @@
  NUMJOBS=${NUMJOBS:-" -j$(expr $(nproc) + 1) "}
  
  # Be sure this list is up-to-date:
--DRI_DRIVERS="i915,i965,nouveau,r200,radeon,swrast"
--GALLIUM_DRIVERS="nouveau,r300,r600,svga,radeonsi,swrast,virgl"
-+DRI_DRIVERS="nouveau,swrast"
-+GALLIUM_DRIVERS="nouveau,swrast,virgl,vc4"
- EGL_PLATFORMS="drm,x11"
+-DRI_DRIVERS="i915,i965,r100,r200,nouveau"
+-GALLIUM_DRIVERS="nouveau,r300,r600,svga,radeonsi,swrast,virgl,swr,iris"
++DRI_DRIVERS="nouveau"
++GALLIUM_DRIVERS="freedreno,nouveau,swrast,virgl,kmsro,lima,panfrost,v3d,vc4"
  
  if [ -z "$ARCH" ]; then
-@@ -63,6 +63,10 @@
+   case "$( uname -m )" in
+@@ -58,6 +58,9 @@
+ elif [ "$ARCH" = "x86_64" ]; then
    SLKCFLAGS="-O2 -fPIC"
    LIBDIRSUFFIX="64"
-   VULKAN=" --with-vulkan-drivers=intel,radeon "
 +elif [ "$ARCH" = "aarch64" ]; then
 +  SLKCFLAGS="-O2"
 +  LIBDIRSUFFIX="64"
-+#  VULKAN=" --with-vulkan-drivers=intel,radeon "
  else
    SLKCFLAGS="-O2"
    LIBDIRSUFFIX=""
