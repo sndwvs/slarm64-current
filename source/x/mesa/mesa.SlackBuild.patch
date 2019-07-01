@@ -5,7 +5,7 @@
  
  # Be sure this list is up-to-date:
 -DRI_DRIVERS="i915,i965,r100,r200,nouveau"
--GALLIUM_DRIVERS="nouveau,r300,r600,svga,radeonsi,swrast,virgl,swr,iris"
+-GALLIUM_DRIVERS="nouveau,r300,r600,svga,radeonsi,swrast,virgl,iris"
 +DRI_DRIVERS="nouveau"
 +GALLIUM_DRIVERS="freedreno,nouveau,swrast,virgl,kmsro,lima,panfrost,v3d,vc4"
  
