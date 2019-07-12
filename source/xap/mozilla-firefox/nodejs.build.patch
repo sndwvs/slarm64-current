@@ -1,0 +1,12 @@
+--- a/build-deps/nodejs/nodejs.build	2019-07-12 19:38:54.804696096 +0100
++++ b/build-deps/nodejs/nodejs.build	2019-07-12 19:39:14.832998551 +0100
+@@ -51,6 +51,9 @@
+ elif [ "$ARCH" = "armv7hl" ]; then
+   SLKCFLAGS="-O3 -march=armv7-a -mfpu=vfpv3-d16"
+   LIBDIRSUFFIX=""
++elif [ "$ARCH" = "aarch64" ]; then
++  SLKCFLAGS="-O2"
++  LIBDIRSUFFIX="64"
+ else
+   SLKCFLAGS="-O2"
+   LIBDIRSUFFIX=""

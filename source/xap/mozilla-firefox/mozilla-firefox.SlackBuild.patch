@@ -1,5 +1,5 @@
---- a/mozilla-firefox.SlackBuild	2019-02-01 12:35:49.362341369 +0200
-+++ b/mozilla-firefox.SlackBuild	2019-02-01 12:38:30.752978942 +0200
+--- a/mozilla-firefox.SlackBuild	2019-07-09 20:32:46.500240877 +0100
++++ b/mozilla-firefox.SlackBuild	2019-07-12 21:39:07.581630363 +0100
 @@ -132,6 +132,9 @@
  elif [ "$ARCH" = "armel" ]; then
    SLKCFLAGS="-O2 -march=armv4t"
@@ -10,7 +10,7 @@
  else
    SLKCFLAGS="-O2"
    LIBDIRSUFFIX=""
-@@ -203,8 +206,25 @@
+@@ -208,8 +211,13 @@
    \( -perm 666 -o -perm 664 -o -perm 600 -o -perm 444 -o -perm 440 -o -perm 400 \) \
    -exec chmod 644 {} \;
  
@@ -18,25 +18,13 @@
 +
  # Our building options, in a configure-like display ;)
  OPTIONS="\
-+  --enable-system-ffi \
-+  --enable-system-sqlite \
-+  --enable-pie \
-+  --disable-eme \
-+  --disable-crashreporter \
-+  --disable-updater \
-+  --disable-gconf \
-+  --with-system-libvpx \
-+  --without-system-icu \
-+  --disable-system-cairo \
-+  --disable-stylo \
-+  --disable-webrtc \
 +  --host=$ARCH-slackware-linux \
 +  --target=$ARCH-slackware-linux \
 +  \
    --enable-official-branding \
    --prefix=/usr \
    --libdir=/usr/lib${LIBDIRSUFFIX} \
-@@ -279,6 +299,12 @@
+@@ -284,6 +292,12 @@
  # Add the $OPTIONS above to .mozconfig:
  for option in $OPTIONS; do echo "ac_add_options $option" >> .mozconfig; done
  
