@@ -1,3 +1,65 @@
+Sat Jul 20 22:11:38 UTC 2019
+a/xfsprogs-5.1.0-aarch64-1.txz:  Upgraded.
+d/llvm-8.0.1-aarch64-1.txz:  Upgraded.
+l/imagemagick-6.9.10_55-aarch64-1.txz:  Upgraded.
+l/lmdb-0.9.24-aarch64-1.txz:  Upgraded.
+l/zstd-1.4.1-aarch64-1.txz:  Upgraded.
+xfce/Thunar-1.8.8-aarch64-1.txz:  Upgraded.
++--------------------------+
+Fri Jul 19 18:26:45 UTC 2019
+a/aaa_elflibs-15.0-aarch64-9.txz:  Rebuilt.
+ap/lxc-2.0.11_fad08f383-aarch64-1.txz:  Upgraded.
+d/ccache-3.7.2-aarch64-1.txz:  Upgraded.
+l/libsigc++-2.10.2-aarch64-1.txz:  Upgraded.
+n/curl-7.65.3-aarch64-1.txz:  Upgraded.
+n/iputils-20190709-aarch64-1.txz:  Upgraded.
++--------------------------+
+Thu Jul 18 20:46:19 UTC 2019
+a/kernel-firmware-20190717_bf13a71-noarch-1.txz:  Upgraded.
+ap/mpg123-1.25.11-aarch64-1.txz:  Upgraded.
+l/gvfs-1.40.2-aarch64-2.txz:  Rebuilt.
+n/bind-9.14.4-aarch64-1.txz:  Upgraded.
+x/libpciaccess-0.16-aarch64-1.txz:  Upgraded.
+x/xinput-1.6.3-aarch64-1.txz:  Upgraded.
+xap/mozilla-firefox-68.0.1esr-aarch64-1.txz:  Upgraded.
++--------------------------+
+Wed Jul 17 21:57:16 UTC 2019
+ap/moc-2.5.2-aarch64-5.txz:  Rebuilt.
+ap/vim-8.1.1710-aarch64-1.txz:  Upgraded.
+d/cmake-3.15.0-aarch64-1.txz:  Upgraded.
+e/emacs-26.2-aarch64-2.txz:  Rebuilt.
+kde/k3b-2.0.3-aarch64-5.txz:  Rebuilt.
+kde/kfilemetadata-4.14.3-aarch64-5.txz:  Rebuilt.
+kde/nepomuk-core-4.14.3-aarch64-5.txz:  Rebuilt.
+l/alsa-plugins-1.1.9-aarch64-2.txz:  Rebuilt.
+l/ffmpeg-4.1.4-aarch64-1.txz:  Upgraded.
+l/gegl-0.4.16-aarch64-2.txz:  Rebuilt.
+l/gst-plugins-libav-1.16.0-aarch64-2.txz:  Rebuilt.
+l/gvfs-1.40.2-aarch64-1.txz:  Upgraded.
+l/imagemagick-6.9.10_54-aarch64-1.txz:  Upgraded.
+l/libvisual-plugins-0.4.0-aarch64-4.txz:  Rebuilt.
+l/libvpx-1.8.1-aarch64-1.txz:  Upgraded.
+n/curl-7.65.2-aarch64-1.txz:  Upgraded.
+xap/MPlayer-20190717-aarch64-1.txz:  Upgraded.
+xap/audacious-plugins-3.10.1-aarch64-3.txz:  Rebuilt.
+xap/vim-gvim-8.1.1710-aarch64-1.txz:  Upgraded.
+xap/xine-lib-1.2.9-aarch64-5.txz:  Rebuilt.
++--------------------------+
+Wed Jul 17 05:33:01 UTC 2019
+d/cmake-3.14.6-aarch64-1.txz:  Upgraded.
+d/strace-5.2-aarch64-1.txz:  Upgraded.
+d/vala-0.44.6-aarch64-1.txz:  Upgraded.
++--------------------------+
+Mon Jul 15 19:39:59 UTC 2019
+a/e2fsprogs-1.45.3-aarch64-1.txz:  Upgraded.
+x/libICE-1.0.10-aarch64-1.txz:  Upgraded.
+x/setxkbmap-1.3.2-aarch64-1.txz:  Upgraded.
+x/xbacklight-1.2.3-aarch64-1.txz:  Upgraded.
+x/xbiff-1.0.4-aarch64-1.txz:  Upgraded.
+x/xclock-1.0.9-aarch64-1.txz:  Upgraded.
+x/xman-1.1.5-aarch64-1.txz:  Upgraded.
+x/xwininfo-1.1.5-aarch64-1.txz:  Upgraded.
++--------------------------+
 Mon Jul 15 00:26:07 UTC 2019
 a/bzip2-1.0.8-aarch64-1.txz:  Upgraded.
 d/kernel-headers-4.19.59-arm64-1.txz:  Upgraded.
