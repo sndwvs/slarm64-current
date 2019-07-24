@@ -1,0 +1,35 @@
+--- a/htop.SlackBuild	2019-07-24 19:21:02.688675031 +0300
++++ b/htop.SlackBuild	2019-07-24 19:39:02.961063194 +0300
+@@ -24,7 +24,7 @@
+ 
+ PKGNAM=htop
+ VERSION=${VERSION:-$(echo $PKGNAM-*.tar.?z | rev | cut -f 3- -d . | cut -f 1 -d - | rev)}
+-BUILD=${BUILD:-2}
++BUILD=${BUILD:-3}
+ 
+ # Automatically determine the architecture we're building on:
+ if [ -z "$ARCH" ]; then
+@@ -55,6 +55,9 @@
+ elif [ "$ARCH" = "x86_64" ]; then
+   SLKCFLAGS="-O2 -fPIC"
+   LIBDIRSUFFIX="64"
++elif [ "$ARCH" = "aarch64" ]; then
++  SLKCFLAGS="-O2"
++  LIBDIRSUFFIX="64"
+ else
+   SLKCFLAGS="-O2"
+   LIBDIRSUFFIX=""
+@@ -77,6 +80,13 @@
+   \( -perm 666 -o -perm 664 -o -perm 600 -o -perm 444 -o -perm 440 -o -perm 400 \) \
+   -exec chmod 644 {} \;
+ 
++xzcat $CWD/780-fix-option-string.patch.xz | patch -p1 --verbose || exit 1
++xzcat $CWD/avafinger-cpu-monitor.patch.xz | patch -p1 --verbose || exit 1
++xzcat $CWD/cpu-temperatute-from-hwmon.patch.xz | patch -p1 --verbose || exit 1
++xzcat $CWD/fix-linux-process.patch.xz | patch -p1 --verbose || exit 1
++
++NOCONFIGURE=1 ./autogen.sh
++
+ CFLAGS="$SLKCFLAGS" \
+ ./configure \
+   --prefix=/usr \
