@@ -1,3 +1,36 @@
+Thu Aug  1 21:26:28 UTC 2019
+ap/mariadb-10.4.7-aarch64-1.txz:  Upgraded.
+kde/pykde4-4.14.3-aarch64-9.txz:  Rebuilt.
+kde/qtruby-4.14.3-aarch64-10.txz:  Rebuilt.
+kde/smokeqt-4.14.3-aarch64-6.txz:  Rebuilt.
+l/PyQt-4.12.3-aarch64-1.txz:  Upgraded.
+l/QScintilla-2.11.2-aarch64-1.txz:  Upgraded.
+l/sip-4.19.18-aarch64-1.txz:  Upgraded.
+xap/sane-1.0.28-aarch64-1.txz:  Upgraded.
++--------------------------+
+Thu Aug  1 00:20:07 UTC 2019
+ap/vim-8.1.1778-aarch64-1.txz:  Upgraded.
+l/imagemagick-6.9.10_58-aarch64-1.txz:  Upgraded.
+l/python-packaging-19.1-aarch64-1.txz:  Upgraded.
+n/dhcpcd-8.0.2-aarch64-1.txz:  Upgraded.
+xap/vim-gvim-8.1.1778-aarch64-1.txz:  Upgraded.
+xfce/exo-0.12.7-aarch64-1.txz:  Upgraded.
++--------------------------+
+Mon Jul 29 23:17:22 UTC 2019
+a/aaa_elflibs-15.0-aarch64-10.txz:  Rebuilt.
+a/cryptsetup-2.1.0-aarch64-1.txz:  Upgraded.
+a/efivar-20190618_272b216-aarch64-1.txz:  Upgraded.
+a/lvm2-2.03.05-aarch64-1.txz:  Upgraded.
+l/argon2-20190702-aarch64-3.txz:  Rebuilt.
+l/aspell-0.60.7-aarch64-1.txz:  Upgraded.
+l/imagemagick-6.9.10_57-aarch64-1.txz:  Upgraded.
+l/python-docutils-0.15.1-aarch64-1.txz:  Upgraded.
+n/ipset-7.3-aarch64-1.txz:  Upgraded.
+xap/geeqie-1.5-aarch64-1.txz:  Upgraded.
+xfce/garcon-0.6.4-aarch64-1.txz:  Upgraded.
+xfce/thunar-volman-0.9.4-aarch64-1.txz:  Upgraded.
+xfce/tumbler-0.2.6-aarch64-1.txz:  Upgraded.
++--------------------------+
 Mon Jul 29 02:33:59 UTC 2019
 d/kernel-headers-4.19.62-arm64-1.txz:  Upgraded.
 n/s-nail-14.9.14-aarch64-1.txz:  Upgraded.
