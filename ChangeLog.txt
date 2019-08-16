@@ -1,3 +1,51 @@
+Fri Aug 16 19:20:41 UTC 2019
+a/kernel-firmware-20190815_07b925b-noarch-1.txz:  Upgraded.
+ap/cups-2.2.12-aarch64-1.txz:  Upgraded.
+ap/sysstat-12.1.6-aarch64-1.txz:  Upgraded.
+d/kernel-headers-4.19.67-arm64-1.txz:  Upgraded.
+d/rust-1.37.0-aarch64-1.txz:  Upgraded.
+d/slacktrack-2.20-aarch64-1.txz:  Upgraded.
+n/httpd-2.4.41-aarch64-1.txz:  Upgraded.
++--------------------------+
+Thu Aug 15 19:00:16 UTC 2019
+a/bash-5.0.009-aarch64-1.txz:  Upgraded.
+ap/vim-8.1.1847-aarch64-1.txz:  Upgraded.
+d/distcc-3.3.3-aarch64-1.txz:  Upgraded.
+l/elfutils-0.177-aarch64-1.txz:  Upgraded.
+xap/vim-gvim-8.1.1847-aarch64-1.txz:  Upgraded.
++--------------------------+
+Wed Aug 14 22:19:44 UTC 2019
+d/python-setuptools-41.1.0-aarch64-1.txz:  Upgraded.
+l/harfbuzz-2.6.0-aarch64-1.txz:  Upgraded.
+l/readline-8.0.001-aarch64-1.txz:  Upgraded.
+n/nghttp2-1.39.2-aarch64-1.txz:  Upgraded.
+xap/mozilla-firefox-68.0.2esr-aarch64-1.txz:  Upgraded.
+xfce/Thunar-1.8.9-aarch64-1.txz:  Upgraded.
+xfce/tumbler-0.2.7-aarch64-1.txz:  Upgraded.
++--------------------------+
+Wed Aug 14 05:24:55 UTC 2019
+d/gcc-9.2.0-aarch64-1.txz:  Upgraded.
+d/gcc-g++-9.2.0-aarch64-1.txz:  Upgraded.
+d/gcc-gdc-9.2.0-aarch64-1.txz:  Upgraded.
+d/gcc-gfortran-9.2.0-aarch64-1.txz:  Upgraded.
+d/gcc-go-9.2.0-aarch64-1.txz:  Upgraded.
+d/gcc-objc-9.2.0-aarch64-1.txz:  Upgraded.
+d/git-2.22.1-aarch64-1.txz:  Upgraded.
+d/help2man-1.47.11-aarch64-1.txz:  Upgraded.
+d/kernel-headers-4.19.66-arm64-2.txz:  Upgraded.
+d/python-pip-19.2.2-aarch64-1.txz:  Upgraded.
+d/re2c-1.2.1-aarch64-1.txz:  Upgraded.
+l/imagemagick-6.9.10_60-aarch64-1.txz:  Upgraded.
+l/libiodbc-3.52.13-aarch64-1.txz:  Upgraded.
+x/xf86-input-libinput-0.29.0-aarch64-1.txz:  Upgraded.
+x/xrandr-1.5.1-aarch64-1.txz:  Upgraded.
+xap/network-manager-applet-1.8.22-aarch64-2.txz:  Rebuilt.
++--------------------------+
+Sat Aug 10 19:57:17 UTC 2019
+a/xfsprogs-5.2.0-aarch64-1.txz:  Upgraded.
+n/nmap-7.80-aarch64-3.txz:  Rebuilt.
+x/vulkan-sdk-1.1.114.0-aarch64-1.txz:  Upgraded.
++--------------------------+
 Sat Aug 10 04:55:27 UTC 2019
 ap/amp-0.7.6-aarch64-3.txz:  Rebuilt.
 d/doxygen-1.8.16-aarch64-1.txz:  Upgraded.
