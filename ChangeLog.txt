@@ -1,3 +1,57 @@
+Mon Aug 26 01:53:12 UTC 2019
+ap/cups-2.3.0-aarch64-1.txz:  Upgraded.
+ap/nano-4.4-aarch64-1.txz:  Upgraded.
+d/kernel-headers-4.19.68-arm64-1.txz:  Upgraded.
+l/imagemagick-6.9.10_62-aarch64-1.txz:  Upgraded.
+x/mesa-19.1.5-aarch64-1.txz:  Upgraded.
++--------------------------+
+Thu Aug 22 18:57:26 UTC 2019
+a/kernel-firmware-20190821_c0fb3d9-noarch-1.txz:  Upgraded.
+a/xfsprogs-5.2.1-aarch64-1.txz:  Upgraded.
+ap/cups-filters-1.25.3-aarch64-1.txz:  Upgraded.
+d/python-setuptools-41.2.0-aarch64-1.txz:  Upgraded.
+d/swig-4.0.1-aarch64-1.txz:  Upgraded.
+n/bind-9.14.5-aarch64-1.txz:  Upgraded.
+n/dhcpcd-8.0.3-aarch64-1.txz:  Upgraded.
+n/samba-4.10.7-aarch64-1.txz:  Upgraded.
+xap/geeqie-1.5.1-aarch64-1.txz:  Upgraded.
++--------------------------+
+Wed Aug 21 19:21:45 UTC 2019
+a/acpid-2.0.32-aarch64-1.txz:  Upgraded.
+l/tdb-1.4.2-aarch64-1.txz:  Upgraded.
+n/libnftnl-1.1.4-aarch64-1.txz:  Upgraded.
+n/nftables-0.9.2-aarch64-1.txz:  Upgraded.
++--------------------------+
+Wed Aug 21 05:50:41 UTC 2019
+ap/pamixer-1.4-aarch64-3.txz:  Rebuilt.
+kde/calligra-2.9.11-aarch64-31.txz:  Rebuilt.
+kde/step-4.14.3-aarch64-7.txz:  Rebuilt.
+l/akonadi-1.13.0-aarch64-13.txz:  Rebuilt.
+l/boost-1.71.0-aarch64-1.txz:  Upgraded.
+l/gsl-2.6-aarch64-1.txz:  Upgraded.
+l/zstd-1.4.3-aarch64-1.txz:  Upgraded.
+n/getmail-5.14-aarch64-1.txz:  Upgraded.
+x/igt-gpu-tools-1.24-aarch64-3.txz:  Rebuilt.
++--------------------------+
+Mon Aug 19 19:23:23 UTC 2019
+d/ccache-3.7.3-aarch64-1.txz:  Upgraded.
+l/libvisio-0.1.7-aarch64-1.txz:  Upgraded.
+n/bind-9.14.4-aarch64-2.txz:  Rebuilt.
+n/s-nail-14.9.15-aarch64-1.txz:  Upgraded.
+n/whois-5.5.1-aarch64-1.txz:  Upgraded.
+xap/xlockmore-5.58-aarch64-1.txz:  Upgraded.
++--------------------------+
+Sat Aug 17 20:39:30 UTC 2019
+a/cryptsetup-2.2.0-aarch64-1.txz:  Upgraded.
+ap/cups-filters-1.25.2-aarch64-1.txz:  Upgraded.
+d/git-2.23.0-aarch64-1.txz:  Upgraded.
+l/imagemagick-6.9.10_61-aarch64-1.txz:  Upgraded.
+l/netpbm-10.87.01-aarch64-1.txz:  Upgraded.
+xfce/exo-0.12.8-aarch64-1.txz:  Upgraded.
+xfce/thunar-volman-0.9.5-aarch64-1.txz:  Upgraded.
+xfce/xfce4-pulseaudio-plugin-0.4.2-aarch64-1.txz:  Upgraded.
+xfce/xfce4-systemload-plugin-1.2.3-aarch64-1.txz:  Upgraded.
++--------------------------+
 Fri Aug 16 19:20:41 UTC 2019
 a/kernel-firmware-20190815_07b925b-noarch-1.txz:  Upgraded.
 ap/cups-2.2.12-aarch64-1.txz:  Upgraded.
