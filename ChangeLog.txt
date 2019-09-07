@@ -1,3 +1,57 @@
+Fri Sep  6 23:38:03 UTC 2019
+d/kernel-headers-4.19.71-arm64-1.txz:  Upgraded.
++--------------------------+
+Fri Sep  6 20:47:02 UTC 2019
+a/btrfs-progs-5.2.2-aarch64-1.txz:  Upgraded.
+d/kernel-headers-4.19.70-arm64-1.txz:  Upgraded.
+d/mercurial-5.1.1-aarch64-1.txz:  Upgraded.
+l/libjpeg-turbo-2.0.3-aarch64-1.txz:  Upgraded.
+l/talloc-2.3.0-aarch64-1.txz:  Upgraded.
+l/tevent-0.10.1-aarch64-1.txz:  Upgraded.
+n/dhcpcd-8.0.4-aarch64-1.txz:  Upgraded.
+xap/fvwm-2.6.9-aarch64-1.txz:  Upgraded.
++--------------------------+
+Thu Sep  5 22:01:34 UTC 2019
+d/cmake-3.15.3-aarch64-1.txz:  Upgraded.
+n/NetworkManager-1.20.2-aarch64-1.txz:  Upgraded.
+n/links-2.20.1-aarch64-1.txz:  Upgraded.
++--------------------------+
+Wed Sep  4 21:13:39 UTC 2019
+a/kernel-firmware-20190904_6ddb9d9-noarch-1.txz:  Upgraded.
+ap/jove-4.16.0.74-aarch64-1.txz:  Upgraded.
+l/gtk+3-3.24.11-aarch64-1.txz:  Upgraded.
+l/seamonkey-solibs-2.49.5-aarch64-1.txz:  Upgraded.
+x/mesa-19.1.6-aarch64-1.txz:  Upgraded.
+xap/seamonkey-2.49.5-aarch64-1.txz:  Upgraded.
++--------------------------+
+Tue Sep  3 19:30:54 UTC 2019
+l/dbus-python-1.2.10-aarch64-1.txz:  Upgraded.
+l/glib2-2.60.7-aarch64-1.txz:  Upgraded.
+l/librsvg-2.44.15-aarch64-1.txz:  Upgraded.
+l/pyparsing-2.4.2-aarch64-1.txz:  Upgraded.
+n/samba-4.10.8-aarch64-1.txz:  Upgraded.
++--------------------------+
+Mon Sep  2 20:53:21 UTC 2019
+a/logrotate-3.15.1-aarch64-1.txz:  Upgraded.
+l/libnl3-3.5.0-aarch64-1.txz:  Upgraded.
+l/v4l-utils-1.16.7-aarch64-1.txz:  Upgraded.
+xap/mozilla-firefox-68.1.0esr-aarch64-1.txz:  Upgraded.
++--------------------------+
+Sun Sep  1 19:03:23 UTC 2019
+ap/cups-2.3.0-aarch64-2.txz:  Rebuilt.
+ap/cups-filters-1.25.4-aarch64-1.txz:  Upgraded.
+ap/qpdf-9.0.0-aarch64-1.txz:  Upgraded.
+l/imagemagick-6.9.10_63-aarch64-1.txz:  Upgraded.
+l/libogg-1.3.4-aarch64-1.txz:  Upgraded.
+l/mozilla-nss-3.46-aarch64-1.txz:  Upgraded.
++--------------------------+
+Fri Aug 30 18:50:32 UTC 2019
+a/bash-5.0.011-aarch64-1.txz:  Upgraded.
+a/findutils-4.7.0-aarch64-1.txz:  Upgraded.
+ap/squashfs-tools-4.4-aarch64-1.txz:  Upgraded.
+n/irssi-1.2.2-aarch64-1.txz:  Upgraded.
+x/libvdpau-1.3-aarch64-1.txz:  Upgraded.
++--------------------------+
 Thu Aug 29 22:21:17 UTC 2019
 a/kernel-firmware-20190827_7307a29-noarch-1.txz:  Upgraded.
 ap/vim-8.1.1936-aarch64-1.txz:  Upgraded.
