@@ -11,6 +11,7 @@ _WORK_DIR="work"
 
 
 environment() {
+    export LANG=C
     export CPPFLAGS="-D_FORTIFY_SOURCE=2"
     export CFLAGS="-O2 -pipe -fstack-protector-strong -fno-plt"
     export CXXFLAGS="-O2 -pipe -fstack-protector-strong -fno-plt"
@@ -94,7 +95,7 @@ move_pkg() {
         for pkg in $(ls ${_TMP}/$2-*.t?z); do
             if [[ ${pkg} =~ "-solibs-" ]];then
                 local SERIES="a"
-                [[ ${pkg} =~ "seamonkey-solibs-" ]] && SERIES="l"
+                #[[ ${pkg} =~ "seamonkey-solibs-" ]] && SERIES="l"
                 mv ${pkg} "${_TXZ}/${SERIES}/"
             else
                 mv ${pkg} "${_TXZ}/$1/"
