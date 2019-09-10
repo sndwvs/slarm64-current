@@ -1,6 +1,6 @@
---- a/seamonkey.SlackBuild	2019-09-07 11:47:10.137183371 +0100
-+++ b/seamonkey.SlackBuild	2019-09-07 11:47:54.269796657 +0100
-@@ -56,6 +56,9 @@
+--- a/seamonkey.SlackBuild	2019-09-09 17:16:19.821614714 +0100
++++ b/seamonkey.SlackBuild	2019-09-09 17:16:49.490037325 +0100
+@@ -52,6 +52,9 @@
  elif [ "$ARCH" = "x86_64" ]; then
    LIBDIRSUFFIX="64"
    OPTIMIZE_FLAG=${OPTIMIZE_FLAG:-"-O1"}
@@ -10,24 +10,19 @@
  else
    LIBDIRSUFFIX=""
    OPTIMIZE_FLAG=${OPTIMIZE_FLAG:-"-O1"}
-@@ -67,12 +70,10 @@
- export CC=${CC:-"gcc -B$(pwd)/gold"}
- export CXX=${CXX:-"g++ -B$(pwd)/gold"}
+@@ -71,6 +74,11 @@
+ export CFLAGS="-Wformat -Wno-format-overflow -fno-delete-null-pointer-checks -fno-schedule-insns2"
+ export CXXFLAGS="-Wformat -Wno-format-overflow -fno-delete-null-pointer-checks -fno-schedule-insns2 -fno-lifetime-dse -fpermissive"
  
--# -Wformat is needed for -Werror=format-security
--# -Wno-format-overflow bypasses gcc9 build failure
--# -fno-delete-null-pointer-checks disables gcc6 optimization that
--# leads to instability
--export CFLAGS="-Wformat -Wno-format-overflow -fno-delete-null-pointer-checks"
--export CXXFLAGS="-Wformat -Wno-format-overflow -fno-delete-null-pointer-checks -fpermissive"
 +# Keep memory usage as low as possible when linking:
 +SLKLDFLAGS=" -Wl,--as-needed -Wl,--no-keep-memory -Wl,--stats"
 +export LDFLAGS="$SLKLDFLAGS"
 +export MOZ_LINK_FLAGS="$SLKLDFLAGS"
- 
++
  NUMJOBS=${NUMJOBS:-" -j$(expr $(nproc) + 1) "}
  
-@@ -109,6 +110,21 @@
+ TMP=${TMP:-/tmp}
+@@ -106,6 +114,21 @@
  rm -rf seamonkey-unpack
  cd seamonkey-${TARBALLVER} || exit 1
  
@@ -49,7 +44,7 @@
  # Retain GTK+ v2 scrolling behavior:
  zcat $CWD/sm.ui.scrollToClick.diff.gz | patch -p1 --verbose || exit 1
  
-@@ -122,10 +138,32 @@
+@@ -122,10 +145,32 @@
  
  chown -R root:root .
  
@@ -82,10 +77,15 @@
    --enable-cpp-rtti \
    --enable-default-toolkit=cairo-gtk3 \
    --enable-startup-notification \
-@@ -142,15 +180,19 @@
+@@ -142,20 +187,20 @@
    --enable-chrome-format=omni \
    --disable-necko-wifi \
    --enable-extensions=default \
+-  --enable-rust \
+   --enable-js-shell \
+-  --enable-elf-hack \
+   --enable-release \
+   --enable-calendar \
 -  --without-system-nspr \
    --with-system-zlib \
    --enable-application=suite \
@@ -95,14 +95,10 @@
 +  --target=$ARCH-slackware-linux \
 +  "
  
--export BUILD_OFFICIAL=1
--export MOZILLA_OFFICIAL=1
-+export MOZILLA_OFFICIAL="1"
-+export BUILD_OFFICIAL="1"
-+export MOZ_PHOENIX="1"
-+export MOZ_PACKAGE_JSSHELL="1"
-+export CFLAGS="$SLKCFLAGS -fno-delete-null-pointer-checks -fno-lifetime-dse -fno-schedule-insns2"
-+export CXXFLAGS="$SLKCFLAGS -fno-delete-null-pointer-checks -fno-lifetime-dse -fno-schedule-insns2"
+ export BUILD_OFFICIAL=1
+ export MOZILLA_OFFICIAL=1
++export MOZ_PHOENIX=1
++export MOZ_PACKAGE_JSSHELL=1
  export MOZ_MAKE_FLAGS="$NUMJOBS"
  
  # Clear some variables that could break the build
