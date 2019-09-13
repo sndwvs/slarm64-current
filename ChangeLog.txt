@@ -1,3 +1,29 @@
+Thu Sep 12 03:58:53 UTC 2019
+a/glibc-zoneinfo-2019c-noarch-1.txz:  Upgraded.
+a/openssl-solibs-1.1.1d-aarch64-1.txz:  Upgraded.
+a/openssl10-solibs-1.0.2t-aarch64-1.txz:  Upgraded.
+ap/mariadb-10.4.8-aarch64-1.txz:  Upgraded.
+l/netpbm-10.87.02-aarch64-1.txz:  Upgraded.
+n/curl-7.66.0-aarch64-1.txz:  Upgraded.
+n/openssl-1.1.1d-aarch64-1.txz:  Upgraded.
+n/openssl10-1.0.2t-aarch64-1.txz:  Upgraded.
+n/p11-kit-0.23.17-aarch64-1.txz:  Upgraded.
+xap/mozilla-thunderbird-68.1.0-aarch64-1.txz:  Upgraded.
++--------------------------+
+Tue Sep 10 21:28:36 UTC 2019
+a/glibc-solibs-2.30-aarch64-1.txz:  Upgraded.
+a/kernel-firmware-20190909_6c6918a-noarch-1.txz:  Upgraded.
+d/kernel-headers-4.19.72-arm64-1.txz:  Upgraded.
+l/gdk-pixbuf2-2.38.2-aarch64-1.txz:  Upgraded.
+l/glibc-2.30-aarch64-1.txz:  Upgraded.
+l/glibc-i18n-2.30-aarch64-1.txz:  Upgraded.
+l/glibc-profile-2.30-aarch64-1.txz:  Upgraded.
+n/libmilter-8.15.2-aarch64-3.txz:  Rebuilt.
+n/libqmi-1.22.6-aarch64-1.txz:  Upgraded.
+n/postfix-3.4.6-aarch64-2.txz:  Rebuilt.
+n/yptools-2.14-aarch64-12.txz:  Rebuilt.
+xap/blackbox-0.75-aarch64-1.txz:  Upgraded.
++--------------------------+
 Mon Sep  9 05:10:25 UTC 2019
 a/etc-15.0-aarch64-10.txz:  Rebuilt.
 l/imagemagick-6.9.10_64-aarch64-1.txz:  Upgraded.
