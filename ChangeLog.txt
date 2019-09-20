@@ -1,3 +1,15 @@
+Wed Sep 18 23:13:34 UTC 2019
+d/python-2.7.16-aarch64-3.txz:  Rebuilt.
+d/python3-3.7.4-aarch64-2.txz:  Rebuilt.
+n/openobex-1.7.2-aarch64-3.txz:  Rebuilt.
++--------------------------+
+Tue Sep 17 21:01:20 UTC 2019
+a/eudev-3.2.8-aarch64-2.txz:  Rebuilt.
+l/libical-3.0.6-aarch64-1.txz:  Upgraded.
+n/rpcbind-1.2.5-aarch64-2.txz:  Rebuilt.
+x/freeglut-3.2.0-aarch64-1.txz:  Upgraded.
+x/mesa-19.1.7-aarch64-1.txz:  Upgraded.
++--------------------------+
 Mon Sep 16 21:01:05 UTC 2019
 d/kernel-headers-4.19.73-arm64-1.txz:  Upgraded.
 l/expat-2.2.8-aarch64-1.txz:  Upgraded.
