@@ -1,3 +1,23 @@
+Mon Sep 23 22:15:50 UTC 2019
+a/aaa_elflibs-15.0-aarch64-11.txz:  Rebuilt.
+a/kernel-firmware-20190923_417a9c6-noarch-1.txz:  Upgraded.
+d/gcc-9.2.0-aarch64-2.txz:  Rebuilt.
+d/gcc-g++-9.2.0-aarch64-2.txz:  Rebuilt.
+d/gcc-gdc-9.2.0-aarch64-2.txz:  Rebuilt.
+d/gcc-gfortran-9.2.0-aarch64-2.txz:  Rebuilt.
+d/gcc-go-9.2.0-aarch64-2.txz:  Rebuilt.
+d/gcc-objc-9.2.0-aarch64-2.txz:  Rebuilt.
+l/imagemagick-6.9.10_66-aarch64-1.txz:  Upgraded.
+l/isl-0.21-aarch64-1.txz:  Added.
+l/libical-3.0.6-aarch64-2.txz:  Rebuilt.
+l/v4l-utils-1.18.0-aarch64-1.txz:  Upgraded.
+x/xterm-349-aarch64-1.txz:  Upgraded.
++--------------------------+
+Sun Sep 22 19:22:20 UTC 2019
+d/parallel-20190922-noarch-1.txz:  Upgraded.
+n/mutt-1.12.2-aarch64-1.txz:  Upgraded.
+n/postfix-3.4.7-aarch64-1.txz:  Upgraded.
++--------------------------+
 Sat Sep 21 21:27:39 UTC 2019
 d/gdb-8.3.1-x86_64-1.txz:  Upgraded.
 d/kernel-headers-4.19.75-arm64-1.txz:  Upgraded.
