@@ -1,3 +1,31 @@
+Wed Oct  2 19:41:47 UTC 2019
+a/haveged-1.9.8-aarch64-1.txz:  Upgraded.
+ap/screen-4.7.0-aarch64-1.txz:  Upgraded.
+ap/vim-8.1.2108-aarch64-1.txz:  Upgraded.
+d/rust-1.37.0-aarch64-1.txz:  Upgraded.
+l/libcap-ng-0.7.10-aarch64-1.txz:  Upgraded.
+xap/vim-gvim-8.1.2108-aarch64-1.txz:  Upgraded.
++--------------------------+
+Wed Oct  2 06:46:20 UTC 2019
+ap/sysstat-12.1.7-aarch64-1.txz:  Upgraded.
+d/kernel-headers-4.19.76-arm64-1.txz:  Upgraded.
+d/ruby-2.6.5-aarch64-1.txz:  Upgraded.
+l/harfbuzz-2.6.2-aarch64-1.txz:  Upgraded.
+l/libpcap-1.9.1-aarch64-1.txz:  Upgraded.
+n/p11-kit-0.23.18.1-aarch64-1.txz:  Upgraded.
+n/tcpdump-4.9.3-aarch64-1.txz:  Upgraded.
++--------------------------+
+Mon Sep 30 21:08:32 UTC 2019
+d/llvm-9.0.0-aarch64-1.txz:  Upgraded.
+d/vala-0.46.2-aarch64-1.txz:  Upgraded.
+l/imagemagick-6.9.10_67-aarch64-1.txz:  Upgraded.
+n/NetworkManager-1.20.4-aarch64-1.txz:  Upgraded.
+n/gnutls-3.6.10-aarch64-1.txz:  Upgraded.
+x/freeglut-3.2.1-aarch64-1.txz:  Upgraded.
+x/libglvnd-1.1.1-aarch64-2.txz:  Upgraded.
+x/mesa-19.2.0-aarch64-2.txz:  Rebuilt.
++--------------------------+
+Sat Sep 28 19:23:35 UTC 2019
 Sat Sep 28 19:23:35 UTC 2019
 a/f2fs-tools-1.13.0-aarch64-1.txz:  Upgraded.
 ap/rpm-4.15.0-aarch64-1.txz:  Upgraded.
