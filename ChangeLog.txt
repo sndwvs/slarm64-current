@@ -1,8 +1,32 @@
+Sat Oct  5 22:27:59 UTC 2019
+a/kernel-firmware-20191004_7d187ac-noarch-1.txz:  Upgraded.
+ap/sqlite-3.30.0-aarch64-1.txz:  Upgraded.
+d/kernel-headers-4.19.77-arm64-1.txz:  Upgraded.
+l/glib-networking-2.62.1-aarch64-1.txz:  Upgraded.
+l/glib2-2.62.1-aarch64-1.txz:  Upgraded.
+xap/xlockmore-5.59-aarch64-1.txz:  Upgraded.
++--------------------------+
+Fri Oct  4 21:35:49 UTC 2019
+a/pkgtools-15.0-noarch-24.txz:  Rebuilt.
+ap/nano-4.5-aarch64-1.txz:  Upgraded.
+l/gmime-3.2.4-aarch64-1.txz:  Upgraded.
+l/gnu-efi-3.0.10-aarch64-1.txz:  Upgraded.
+l/gtk+3-3.24.12-aarch64-1.txz:  Upgraded.
++--------------------------+
+Thu Oct  3 19:58:15 UTC 2019
+a/hwdata-0.328-noarch-1.txz:  Upgraded.
+ap/powertop-2.11-aarch64-1.txz:  Upgraded.
+d/cmake-3.15.4-aarch64-1.txz:  Upgraded.
+d/mercurial-5.1.2-aarch64-1.txz:  Upgraded.
+l/mozilla-nss-3.46.1-aarch64-1.txz:  Upgraded.
+l/python-pillow-6.2.0-aarch64-1.txz:  Upgraded.
+n/whois-5.5.2-aarch64-1.txz:  Upgraded.
+xap/xpdf-4.02-aarch64-1.txz:  Upgraded.
++--------------------------+
 Wed Oct  2 19:41:47 UTC 2019
 a/haveged-1.9.8-aarch64-1.txz:  Upgraded.
 ap/screen-4.7.0-aarch64-1.txz:  Upgraded.
 ap/vim-8.1.2108-aarch64-1.txz:  Upgraded.
-d/rust-1.37.0-aarch64-1.txz:  Upgraded.
 l/libcap-ng-0.7.10-aarch64-1.txz:  Upgraded.
 xap/vim-gvim-8.1.2108-aarch64-1.txz:  Upgraded.
 +--------------------------+
