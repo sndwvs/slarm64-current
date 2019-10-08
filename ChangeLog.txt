@@ -1,3 +1,30 @@
+Mon Oct  7 23:31:57 UTC 2019
+d/kernel-headers-4.19.78-arm64-1.txz:  Upgraded.
+d/meson-0.52.0-aarch64-1.txz:  Upgraded.
+d/python-setuptools-41.4.0-aarch64-1.txz:  Upgraded.
+l/gvfs-1.42.1-aarch64-1.txz:  Upgraded.
+l/imagemagick-6.9.10_68-aarch64-1.txz:  Upgraded.
+n/autofs-5.1.6-aarch64-1.txz:  Upgraded.
++--------------------------+
+Mon Oct  7 04:41:29 UTC 2019
+a/aaa_elflibs-15.0-aarch64-12.txz:  Rebuilt.
+a/xfsprogs-5.2.1-aarch64-2.txz:  Rebuilt.
+ap/sqlite-3.30.0-aarch64-2.txz:  Rebuilt.
+kde/calligra-2.9.11-aarch64-32.txz:  Rebuilt.
+l/boost-1.71.0-aarch64-2.txz:  Rebuilt.
+l/harfbuzz-2.6.2-aarch64-2.txz:  Rebuilt.
+l/icu4c-65.1-aarch64-1.txz:  Upgraded.
+l/libical-3.0.6-aarch64-3.txz:  Rebuilt.
+l/libvisio-0.1.7-aarch64-2.txz:  Rebuilt.
+l/qt-4.8.7-aarch64-14.txz:  Rebuilt.
+l/raptor2-2.0.15-aarch64-8.txz:  Rebuilt.
+n/dovecot-2.3.7.2-aarch64-2.txz:  Rebuilt.
+n/php-7.3.10-aarch64-2.txz:  Rebuilt.
+n/postfix-3.4.7-aarch64-2.txz:  Rebuilt.
+n/samba-4.11.0-aarch64-1.txz:  Upgraded.
+n/tin-2.4.3-aarch64-3.txz:  Rebuilt.
+t/texlive-2019.190626-aarch64-3.txz:  Rebuilt.
++--------------------------+
 Sat Oct  5 22:27:59 UTC 2019
 a/kernel-firmware-20191004_7d187ac-noarch-1.txz:  Upgraded.
 ap/sqlite-3.30.0-aarch64-1.txz:  Upgraded.
