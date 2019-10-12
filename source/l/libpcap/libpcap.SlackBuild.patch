@@ -1,21 +1,11 @@
---- a/libpcap.SlackBuild	2017-09-23 02:28:31.883842160 +0300
-+++ b/libpcap.SlackBuild	2017-09-23 02:28:56.873842160 +0300
-@@ -34,13 +34,12 @@
-   esac
+--- a/libpcap.SlackBuild	2019-10-03 17:16:23.247032493 +0100
++++ b/libpcap.SlackBuild	2019-10-12 10:11:20.480702435 +0100
+@@ -48,6 +48,8 @@
+ 
+ if [ "$ARCH" = "x86_64" ]; then
+   LIBDIRSUFFIX="64"
++elif [ "$ARCH" = "aarch64" ]; then
++  LIBDIRSUFFIX="64"
+ else
+   LIBDIRSUFFIX=""
  fi
- 
--NUMJOBS=${NUMJOBS:-" -j7 "}
-+NUMJOBS=${NUMJOBS:-" -j5 "}
- 
--if [ "$ARCH" = "x86_64" ]; then
--  LIBDIRSUFFIX="64"
--else
--  LIBDIRSUFFIX=""
--fi
-+case "$ARCH" in
-+  x86_64|aarch64) LIBDIRSUFFIX="64" ;;
-+               *) LIBDIRSUFFIX="" ;;
-+esac
- 
- CWD=$(pwd)
- TMP=${TMP:-/tmp}

@@ -1,21 +1,11 @@
---- a/traceroute.SlackBuild	2017-09-23 02:01:13.591842160 +0300
-+++ b/traceroute.SlackBuild	2017-09-23 02:01:44.623842160 +0300
-@@ -35,13 +35,12 @@
-   esac
+--- a/traceroute.SlackBuild	2019-06-13 03:32:11.683577670 +0100
++++ b/traceroute.SlackBuild	2019-10-12 10:24:04.810295134 +0100
+@@ -48,6 +48,8 @@
+ 
+ if [ "$ARCH" = "x86_64" ]; then
+   LIBDIRSUFFIX=64
++elif [ "$ARCH" = "aarch64" ]; then
++  LIBDIRSUFFIX=64
+ else
+   LIBDIRSUFFIX=
  fi
- 
--NUMJOBS=${NUMJOBS:-" -j7 "}
-+NUMJOBS=${NUMJOBS:-" -j4 "}
- 
--if [ "$ARCH" = "x86_64" ]; then
--  LIBDIRSUFFIX=64
--else
--  LIBDIRSUFFIX=
--fi
-+case "$ARCH" in
-+  x86_64|aarch64) LIBDIRSUFFIX="64" ;;
-+               *) LIBDIRSUFFIX="" ;;
-+esac
- 
- 
- CWD=$(pwd)

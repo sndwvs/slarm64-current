@@ -1,15 +1,6 @@
---- a/libkarma.SlackBuild	2017-09-23 02:22:20.459842160 +0300
-+++ b/libkarma.SlackBuild	2017-09-23 02:24:16.605842160 +0300
-@@ -35,7 +35,7 @@
-   esac
- fi
- 
--NUMJOBS=${NUMJOBS:-" -j7 "}
-+NUMJOBS=${NUMJOBS:-" -j5 "}
- 
- CWD=$(pwd)
- TMP=${TMP:-/tmp}
-@@ -52,6 +52,9 @@
+--- a/libkarma.SlackBuild	2019-10-12 10:00:51.720758754 +0100
++++ b/libkarma.SlackBuild	2019-10-12 10:04:26.915506012 +0100
+@@ -60,6 +60,9 @@
  elif [ "$ARCH" = "x86_64" ]; then
    SLKCFLAGS="-O2 -fPIC"
    LIBDIRSUFFIX="64"
@@ -19,16 +10,12 @@
  fi
  
  cd $TMP
-@@ -71,9 +74,9 @@
- make $NUMJOBS PREFIX=/usr || make PREFIX=/usr || exit 1
- make install PREFIX=$PKG/usr || exit 1
+@@ -81,6 +84,8 @@
  
--if [ "$ARCH" = "x86_64" ]; then
--  mv $PKG/usr/lib $PKG/usr/lib${LIBDIRSUFFIX}
--fi
-+case "$ARCH" in
-+  x86_64|aarch64) mv $PKG/usr/lib $PKG/usr/lib${LIBDIRSUFFIX} ;;
-+esac
+ if [ "$ARCH" = "x86_64" ]; then
+   mv $PKG/usr/lib $PKG/usr/lib${LIBDIRSUFFIX}
++elif [ "$ARCH" = "aarch64" ]; then
++  mv $PKG/usr/lib $PKG/usr/lib${LIBDIRSUFFIX}
+ fi
  rm $PKG/usr/lib${LIBDIRSUFFIX}/*.a
  
- mv $PKG/usr/share/man $PKG/usr

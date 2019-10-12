@@ -1,27 +1,11 @@
---- a/liblastfm.SlackBuild	2017-09-23 02:26:23.870842160 +0300
-+++ b/liblastfm.SlackBuild	2017-09-23 02:27:26.483842160 +0300
-@@ -25,7 +25,7 @@
- PKGNAM="liblastfm"
- VERSION=${VERSION:-$(echo $PKGNAM-*.tar.?z* | rev | cut -f 3- -d . | cut -f 1 -d - | rev)}
- BUILD=${BUILD:-1}
--NUMJOBS=${NUMJOBS:--j6}
-+NUMJOBS=${NUMJOBS:--j5}
+--- a/liblastfm.SlackBuild	2019-10-12 10:07:49.310048584 +0100
++++ b/liblastfm.SlackBuild	2019-10-12 10:08:08.154285363 +0100
+@@ -52,6 +52,8 @@
  
- # Automatically determine the architecture we're building on:
- if [ -z "$ARCH" ]; then
-@@ -41,11 +41,10 @@
- TMP=${TMP:-/tmp}
- PKG=$TMP/package-$PKGNAM
- 
--if [ "$ARCH" = "x86_64" ]; then
--  LIBDIRSUFFIX="64"
--else
--  LIBDIRSUFFIX=""
--fi
-+case "$ARCH" in
-+  x86_64|aarch64) LIBDIRSUFFIX="64" ;;
-+               *) LIBDIRSUFFIX="" ;;
-+esac
- 
- rm -rf $PKG
- mkdir -p $TMP $PKG
+ if [ "$ARCH" = "x86_64" ]; then
+   LIBDIRSUFFIX="64"
++elif [ "$ARCH" = "aarch64" ]; then
++  LIBDIRSUFFIX="64"
+ else
+   LIBDIRSUFFIX=""
+ fi

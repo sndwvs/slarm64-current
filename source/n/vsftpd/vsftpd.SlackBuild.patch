@@ -1,27 +1,11 @@
---- a/vsftpd.SlackBuild	2017-09-23 02:02:54.274842160 +0300
-+++ b/vsftpd.SlackBuild	2017-09-23 02:03:25.002842160 +0300
-@@ -24,7 +24,7 @@
- VERSION=${VERSION:-$(echo ${PKGNAM}-*.tar.gz | rev | cut -f 3- -d . | cut -f 1 -d - | rev)}
- BUILD=${BUILD:-3}
+--- a/vsftpd.SlackBuild	2018-09-18 23:04:14.079104596 +0100
++++ b/vsftpd.SlackBuild	2019-10-12 10:25:47.431573594 +0100
+@@ -48,6 +48,8 @@
  
--NUMJOBS=${NUMJOBS:-" -j7 "}
-+NUMJOBS=${NUMJOBS:-" -j5 "}
- 
- # Automatically determine the architecture we're building on:
- if [ -z "$ARCH" ]; then
-@@ -36,11 +36,10 @@
-   esac
+ if [ "$ARCH" = "x86_64" ]; then
+   LIBDIRSUFFIX="64"
++elif [ "$ARCH" = "aarch64" ]; then
++  LIBDIRSUFFIX="64"
+ else
+   LIBDIRSUFFIX=""
  fi
- 
--if [ "$ARCH" = "x86_64" ]; then
--  LIBDIRSUFFIX="64"
--else
--  LIBDIRSUFFIX=""
--fi
-+case "$ARCH" in
-+  x86_64|aarch64) LIBDIRSUFFIX="64" ;;
-+               *) LIBDIRSUFFIX="" ;;
-+esac
- 
- CWD=$(pwd)
- TMP=${TMP:-/tmp}
