@@ -1,3 +1,32 @@
+Fri Oct 11 21:23:09 UTC 2019
+a/pkgtools-15.0-noarch-25.txz:  Rebuilt.
+ap/sqlite-3.30.1-aarch64-1.txz:  Upgraded.
+d/kernel-headers-4.19.79-arm64-1.txz:  Upgraded.
+l/iso-codes-4.4-noarch-1.txz:  Upgraded.
+l/parted-3.3-aarch64-1.txz:  Upgraded.
+x/xf86-video-amdgpu-19.1.0-aarch64-1.txz:  Upgraded.
+xap/rdesktop-1.9.0-aarch64-1.txz:  Upgraded.
++--------------------------+
+Wed Oct  9 20:33:48 UTC 2019
+d/vala-0.46.3-aarch64-1.txz:  Upgraded.
+l/libsoup-2.68.2-aarch64-1.txz:  Upgraded.
+n/openssh-8.1p1-aarch64-1.txz:  Upgraded.
+x/libXvMC-1.0.12-aarch64-3.txz:  Rebuilt.
+x/libglvnd-1.2.0-aarch64-2.txz:  Rebuilt.
+x/mesa-19.2.1-aarch64-1.txz:  Upgraded.
+xap/network-manager-applet-1.8.24-aarch64-1.txz:  Upgraded.
++--------------------------+
+Tue Oct  8 19:11:03 UTC 2019
+a/kernel-firmware-20191008_aa95e90-noarch-1.txz:  Upgraded.
+ap/cups-filters-1.25.7-aarch64-1.txz:  Upgraded.
+l/at-spi2-atk-2.34.1-aarch64-1.txz:  Upgraded.
+l/dconf-editor-3.34.2-aarch64-1.txz:  Upgraded.
+l/gdk-pixbuf2-2.40.0-aarch64-1.txz:  Upgraded.
+l/librsvg-2.46.1-aarch64-1.txz:  Upgraded.
+l/vte-0.58.1-aarch64-1.txz:  Upgraded.
+n/dovecot-2.3.8-aarch64-1.txz:  Upgraded.
+xap/xpdf-4.02-aarch64-2.txz:  Rebuilt.
++--------------------------+
 Mon Oct  7 23:31:57 UTC 2019
 d/kernel-headers-4.19.78-arm64-1.txz:  Upgraded.
 d/meson-0.52.0-aarch64-1.txz:  Upgraded.
