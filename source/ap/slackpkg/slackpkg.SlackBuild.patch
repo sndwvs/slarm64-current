@@ -9,7 +9,7 @@
 +  xzcat $CWD/0013-slackpkg.conf.new.patch.xz | patch -p1 --verbose || exit 1
 +) || exit 1
 +( cd $PKG/usr/libexec/slackpkg
-+  xzcat $CWD/0010-add-support-aarch64-core-functions.patch.xz | patch -p2 --verbose || exit 1
++  xzcat $CWD/0010-add-support-aarch64-core-functions.patch.xz | patch -p1 --verbose || exit 1
 +) || exit 1
 +( cd $PKG/usr/doc/slackpkg-$VERSION
 +  xzcat $CWD/0011-mirrors-aarch64.sample.patch.xz | patch -p1 --verbose || exit 1
