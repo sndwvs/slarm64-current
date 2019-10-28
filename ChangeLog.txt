@@ -1,3 +1,51 @@
+Mon Oct 28 00:39:04 UTC 2019
+a/btrfs-progs-5.3.1-aarch64-1.txz:  Upgraded.
+a/eudev-3.2.9-aarch64-1.txz:  Upgraded.
+a/kernel-firmware-20191025_340e06e-noarch-1.txz:  Upgraded.
+ap/mpg123-1.25.13-aarch64-1.txz:  Upgraded.
+ap/xorriso-1.5.2-aarch64-1.txz:  Upgraded.
+l/gegl-0.4.18-aarch64-1.txz:  Upgraded.
+l/imagemagick-6.9.10_69-aarch64-1.txz:  Upgraded.
+l/libedit-20191025_3.1-aarch64-1.txz:  Upgraded.
++--------------------------+
+Fri Oct 25 20:48:00 UTC 2019
+l/pycairo-1.18.2-aarch64-1.txz:  Upgraded.
+x/libglvnd-1.2.0-aarch64-3.txz:  Rebuilt.
++--------------------------+
+Fri Oct 25 04:43:47 UTC 2019
+l/gtkmm3-3.24.2-aarch64-1.txz:  Upgraded.
+x/mesa-19.2.2-aarch64-1.txz:  Upgraded.
+xap/fvwm-2.6.9-aarch64-2.txz:  Rebuilt.
++--------------------------+
+Thu Oct 24 17:29:49 UTC 2019
+a/kernel-firmware-20191025_340e06e-noarch-1.txz:  Upgraded.
+a/mcelog-165-aarch64-1.txz:  Upgraded.
+d/python3-3.7.5-aarch64-1.txz:  Upgraded.
++--------------------------+
+Thu Oct 24 04:04:59 UTC 2019
+ap/man-db-2.9.0-aarch64-1.txz:  Upgraded.
+d/ccache-3.7.5-aarch64-1.txz:  Upgraded.
+l/librsvg-2.46.3-aarch64-1.txz:  Upgraded.
+xap/mozilla-thunderbird-68.2.0-aarch64-1.txz:  Upgraded.
++--------------------------+
+Tue Oct 22 18:48:37 UTC 2019
+a/btrfs-progs-5.3-aarch64-1.txz:  Upgraded.
+a/kernel-firmware-20191022_2b016af-noarch-1.txz:  Upgraded.
+d/parallel-20191022-noarch-1.txz:  Upgraded.
+l/glib2-2.62.2-aarch64-1.txz:  Upgraded.
+l/python-pillow-6.2.1-aarch64-1.txz:  Upgraded.
+n/php-7.3.11-aarch64-1.txz:  Upgraded.
+x/xkeyboard-config-2.28-noarch-1.txz:  Upgraded.
+xap/mozilla-firefox-68.2.0esr-aarch64-1.txz:  Upgraded.
++--------------------------+
+Sun Oct 20 19:39:21 UTC 2019
+d/python-2.7.17-aarch64-1.txz:  Upgraded.
+n/proftpd-1.3.6b-aarch64-1.txz:  Upgraded.
++--------------------------+
+Sat Oct 19 19:04:57 UTC 2019
+d/python-pip-19.3.1-aarch64-1.txz:  Upgraded.
+l/mozilla-nss-3.47-aarch64-1.txz:  Upgraded.
++--------------------------+
 Fri Oct 18 21:00:50 UTC 2019
 a/getty-ps-2.1.0b-aarch64-4.txz:  Removed.
 a/lha-114i-aarch64-2.txz:  Removed.
