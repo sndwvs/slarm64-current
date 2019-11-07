@@ -1,3 +1,54 @@
+Wed Nov  6 21:14:40 UTC 2019
+a/cpio-2.13-aarch64-1.txz:  Upgraded.
+ap/hplip-3.19.11-aarch64-1.txz:  Upgraded.
+d/kernel-headers-4.19.82-arm64-1.txz:  Upgraded.
+d/mercurial-5.2-aarch64-1.txz:  Upgraded.
+l/python-six-1.13.0-aarch64-1.txz:  Upgraded.
+l/shared-mime-info-1.15-aarch64-1.txz:  Upgraded.
+l/zstd-1.4.4-aarch64-1.txz:  Upgraded.
+n/ModemManager-1.12.0-aarch64-1.txz:  Upgraded.
+n/NetworkManager-1.20.6-aarch64-1.txz:  Upgraded.
+n/curl-7.67.0-aarch64-1.txz:  Upgraded.
+n/libmbim-1.20.2-aarch64-1.txz:  Upgraded.
+x/mesa-19.2.3-aarch64-1.txz:  Upgraded.
++--------------------------+
+Tue Nov  5 23:32:44 UTC 2019
+a/kernel-firmware-20191104_11bdc57-noarch-1.txz:  Upgraded.
+ap/mariadb-10.4.9-aarch64-1.txz:  Upgraded.
+l/adwaita-icon-theme-3.34.1-noarch-1.txz:  Upgraded.
+x/xkbprint-1.0.5-aarch64-1.txz:  Upgraded.
++--------------------------+
+Mon Nov  4 22:04:17 UTC 2019
+a/hwdata-0.329-noarch-1.txz:  Upgraded.
+d/git-2.24.0-aarch64-1.txz:  Upgraded.
+l/QScintilla-2.11.3-aarch64-1.txz:  Upgraded.
+l/libtiff-4.1.0-aarch64-1.txz:  Upgraded.
+n/ipset-7.4-aarch64-1.txz:  Upgraded.
+x/xterm-350-aarch64-1.txz:  Upgraded.
++--------------------------+
+Sun Nov  3 23:36:43 UTC 2019
+ap/vim-8.1.2250-aarch64-1.txz:  Upgraded.
+l/fuse3-3.8.0-aarch64-1.txz:  Upgraded.
+l/orc-0.4.31-aarch64-1.txz:  Upgraded.
+t/fig2dev-3.2.7b-aarch64-1.txz:  Upgraded.
+x/libglvnd-1.2.0-aarch64-5.txz:  Rebuilt.
+xap/vim-gvim-8.1.2250-aarch64-1.txz:  Upgraded.
+xap/xine-ui-0.99.11-aarch64-1.txz:  Upgraded.
++--------------------------+
+Sat Nov  2 18:52:12 UTC 2019
+a/aaa_terminfo-6.1_20191026-aarch64-1.txz:  Upgraded.
+a/cryptsetup-2.2.2-aarch64-1.txz:  Upgraded.
+a/lvm2-2.03.06-aarch64-1.txz:  Upgraded.
+d/Cython-0.29.14-aarch64-1.txz:  Upgraded.
+l/ncurses-6.1_20191026-aarch64-1.txz:  Upgraded.
+x/xterm-349-aarch64-2.txz:  Rebuilt.
++--------------------------+
+Fri Nov  1 19:35:34 UTC 2019
+l/gcr-3.34.0-aarch64-1.txz:  Upgraded.
+l/gnome-keyring-3.34.0-aarch64-1.txz:  Upgraded.
+n/crda-4.14-aarch64-1.txz:  Upgraded.
+xap/blueman-2.1.1-aarch64-1.txz:  Upgraded.
++--------------------------+
 Thu Oct 31 21:31:50 UTC 2019
 a/kernel-firmware-20191030_9e194c7-noarch-1.txz:  Upgraded.
 d/cmake-3.15.5-aarch64-1.txz:  Upgraded.
