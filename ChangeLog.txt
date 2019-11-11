@@ -1,3 +1,26 @@
+Sun Nov 10 21:12:16 UTC 2019
+a/aaa_elflibs-15.0-aarch64-15.txz:  Rebuilt.
+d/kernel-headers-4.19.83-arm64-1.txz:  Upgraded.
+e/emacs-26.3-aarch64-2.txz:  Rebuilt.
+l/imagemagick-7.0.9_2-aarch64-1.txz:  Upgraded.
+l/qt-4.8.7-aarch64-15.txz:  Rebuilt.
+xap/xine-lib-1.2.9-aarch64-7.txz:  Rebuilt.
+xap/xlockmore-5.59-aarch64-2.txz:  Rebuilt.
++--------------------------+
+Fri Nov  8 23:23:40 UTC 2019
+a/hostname-3.23-aarch64-1.txz:  Upgraded.
+a/kernel-firmware-20191108_f1100dd-noarch-1.txz:  Upgraded.
+ap/mariadb-10.4.10-aarch64-1.txz:  Upgraded.
+kde/kdelibs-4.14.38-aarch64-5.txz:  Rebuilt.
+kde/kdepim-4.14.10-aarch64-5.txz:  Rebuilt.
+kde/kdepimlibs-4.14.10-aarch64-9.txz:  Rebuilt.
+l/adwaita-icon-theme-3.34.3-noarch-1.txz:  Upgraded.
++--------------------------+
+Thu Nov  7 21:35:45 UTC 2019
+l/system-config-printer-1.5.12-aarch64-1.txz:  Upgraded.
+n/sshfs-3.6.0-aarch64-1.txz:  Upgraded.
+xap/mozilla-thunderbird-68.2.2-aarch64-1.txz:  Upgraded.
++--------------------------+
 Wed Nov  6 21:14:40 UTC 2019
 a/cpio-2.13-aarch64-1.txz:  Upgraded.
 ap/hplip-3.19.11-aarch64-1.txz:  Upgraded.
