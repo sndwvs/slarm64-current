@@ -1,5 +1,5 @@
---- a/gcc.SlackBuild	2019-06-06 20:26:38.053789481 +0100
-+++ b/gcc.SlackBuild	2019-06-06 20:29:03.229454760 +0100
+--- a/gcc.SlackBuild	2019-11-12 19:18:53.613224145 +0200
++++ b/gcc.SlackBuild	2019-11-12 19:26:50.530445266 +0200
 @@ -116,6 +116,10 @@
    SLKCFLAGS="-O3 -march=armv7-a -mfpu=vfpv3-d16"
    LIBDIRSUFFIX=""
@@ -25,7 +25,7 @@
  PKG10=$TMP/package-gcc-gdc
  
  # Clear the build locations:
-@@ -157,11 +161,11 @@
+@@ -156,11 +160,11 @@
  cat $CWD/slack-desc.gcc > $PKG1/install/slack-desc
  cat $CWD/slack-desc.gcc-g++ > $PKG2/install/slack-desc
  cat $CWD/slack-desc.gcc-gfortran > $PKG3/install/slack-desc
@@ -38,87 +38,87 @@
 +#cat $CWD/slack-desc.gcc-brig > $PKG9/install/slack-desc
  cat $CWD/slack-desc.gcc-gdc > $PKG10/install/slack-desc
  
- ( cd gcc-$SRCVER || exit 1
-@@ -181,6 +185,9 @@
-   # Fix errors in sv locale:
-   zcat $CWD/patches/gcc.sv.po.diff.gz | patch -p1 --verbose || exit 1
+ cd gcc-$SRCVER || exit 1
+@@ -168,6 +172,9 @@
+ # Smite the fixincludes:
+ zcat $CWD/patches/gcc-no_fixincludes.diff.gz | patch -p1 --verbose --backup --suffix=.orig || exit 1
  
-+  # Redefine dynamic linker for aarch64 from /lib to /lib64:
-+  xzcat $CWD/redefine-dynamic-linker-for-aarch64.patch.xz | patch -p1 --verbose || exit 1
++# Redefine dynamic linker for aarch64 from /lib to /lib64:
++xzcat $CWD/redefine-dynamic-linker-for-aarch64.patch.xz | patch -p1 --verbose || exit 1
 +
-   # Fix perms/owners:
-   chown -R root:root .
-   find . -perm 777 -exec chmod 755 {} \;
-@@ -222,16 +229,16 @@
-       fi
-     )
+ # Fix perms/owners:
+ chown -R root:root .
+ find . \
+@@ -211,16 +218,16 @@
+   fi
+ )
  
--    mkdir -p $PKG4/usr/doc/gcc-${VERSION}/gcc/ada
--    ( cd ada || exit 0
--      cp -a \
--        ChangeLog.tree-ssa \
--      $PKG4/usr/doc/gcc-$VERSION/gcc/ada
--      if [ -r ChangeLog ]; then
--        cat ChangeLog | head -n 1000 > $PKG4/usr/doc/gcc-$VERSION/gcc/ada/ChangeLog
--        touch -r ChangeLog $PKG4/usr/doc/gcc-$VERSION/gcc/ada/ChangeLog
--      fi
--    )
-+#    mkdir -p $PKG4/usr/doc/gcc-${VERSION}/gcc/ada
-+#    ( cd ada || exit 0
-+#      cp -a \
-+#        ChangeLog.tree-ssa \
-+#      $PKG4/usr/doc/gcc-$VERSION/gcc/ada
-+#      if [ -r ChangeLog ]; then
-+#        cat ChangeLog | head -n 1000 > $PKG4/usr/doc/gcc-$VERSION/gcc/ada/ChangeLog
-+#        touch -r ChangeLog $PKG4/usr/doc/gcc-$VERSION/gcc/ada/ChangeLog
-+#      fi
-+#    )
+-mkdir -p $PKG4/usr/doc/gcc-${VERSION}/gcc/ada
+-( cd gcc/ada || exit 0
+-  cp -a \
+-    ChangeLog.tree-ssa \
+-  $PKG4/usr/doc/gcc-$VERSION/gcc/ada
+-  if [ -r ChangeLog ]; then
+-    cat ChangeLog | head -n 1000 > $PKG4/usr/doc/gcc-$VERSION/gcc/ada/ChangeLog
+-    touch -r ChangeLog $PKG4/usr/doc/gcc-$VERSION/gcc/ada/ChangeLog
+-  fi
+-)
++#mkdir -p $PKG4/usr/doc/gcc-${VERSION}/gcc/ada
++#( cd gcc/ada || exit 0
++#  cp -a \
++#    ChangeLog.tree-ssa \
++#  $PKG4/usr/doc/gcc-$VERSION/gcc/ada
++#  if [ -r ChangeLog ]; then
++#    cat ChangeLog | head -n 1000 > $PKG4/usr/doc/gcc-$VERSION/gcc/ada/ChangeLog
++#    touch -r ChangeLog $PKG4/usr/doc/gcc-$VERSION/gcc/ada/ChangeLog
++#  fi
++#)
  
-     mkdir -p $PKG6/usr/doc/gcc-${VERSION}/gcc/objc
-     ( cd objc || exit 0
-@@ -265,13 +272,13 @@
-       $PKG8/usr/doc/gcc-${VERSION}/gcc/go
-     )
+ mkdir -p $PKG6/usr/doc/gcc-${VERSION}/gcc/objc
+ ( cd gcc/objc || exit 0
+@@ -256,13 +263,13 @@
+   $PKG8/usr/doc/gcc-${VERSION}/gcc/go
+ )
  
--    mkdir -p $PKG9/usr/doc/gcc-${VERSION}/gcc/brig
--    ( cd brig || exit 0
--      if [ -r ChangeLog ]; then
--        cat ChangeLog | head -n 1000 > $PKG9/usr/doc/gcc-${VERSION}/gcc/brig/ChangeLog
--        touch -r ChangeLog $PKG9/usr/doc/gcc-${VERSION}/gcc/brig/ChangeLog
--      fi
--    )
-+#    mkdir -p $PKG9/usr/doc/gcc-${VERSION}/gcc/brig
-+#    ( cd brig || exit 0
-+#      if [ -r ChangeLog ]; then
-+#        cat ChangeLog | head -n 1000 > $PKG9/usr/doc/gcc-${VERSION}/gcc/brig/ChangeLog
-+#        touch -r ChangeLog $PKG9/usr/doc/gcc-${VERSION}/gcc/brig/ChangeLog
-+#      fi
-+#    )
+-mkdir -p $PKG9/usr/doc/gcc-${VERSION}/gcc/brig
+-( cd gcc/brig || exit 0
+-  if [ -r ChangeLog ]; then
+-    cat ChangeLog | head -n 1000 > $PKG9/usr/doc/gcc-${VERSION}/gcc/brig/ChangeLog
+-    touch -r ChangeLog $PKG9/usr/doc/gcc-${VERSION}/gcc/brig/ChangeLog
+-  fi
+-)
++#mkdir -p $PKG9/usr/doc/gcc-${VERSION}/gcc/brig
++#( cd gcc/brig || exit 0
++#  if [ -r ChangeLog ]; then
++#    cat ChangeLog | head -n 1000 > $PKG9/usr/doc/gcc-${VERSION}/gcc/brig/ChangeLog
++#    touch -r ChangeLog $PKG9/usr/doc/gcc-${VERSION}/gcc/brig/ChangeLog
++#  fi
++#)
  
-     mkdir -p $PKG10/usr/doc/gcc-${VERSION}/gcc/d
-     ( cd d || exit 0
-@@ -291,13 +298,13 @@
-     fi
-   )
+ mkdir -p $PKG10/usr/doc/gcc-${VERSION}/gcc/d
+ ( cd gcc/d || exit 0
+@@ -280,13 +287,13 @@
+   fi
+ )
  
--  mkdir -p $PKG4/usr/doc/gcc-${VERSION}/libada
--  ( cd libada || exit 0
--    if [ -r ChangeLog ]; then
--      cat ChangeLog | head -n 1000 > $PKG4/usr/doc/gcc-${VERSION}/libada/ChangeLog
--      touch -r ChangeLog $PKG4/usr/doc/gcc-${VERSION}/libada/ChangeLog
--    fi
--  )
-+#  mkdir -p $PKG4/usr/doc/gcc-${VERSION}/libada
-+#  ( cd libada || exit 0
-+#    if [ -r ChangeLog ]; then
-+#      cat ChangeLog | head -n 1000 > $PKG4/usr/doc/gcc-${VERSION}/libada/ChangeLog
-+#      touch -r ChangeLog $PKG4/usr/doc/gcc-${VERSION}/libada/ChangeLog
-+#    fi
-+#  )
+-mkdir -p $PKG4/usr/doc/gcc-${VERSION}/libada
+-( cd libada || exit 0
+-  if [ -r ChangeLog ]; then
+-    cat ChangeLog | head -n 1000 > $PKG4/usr/doc/gcc-${VERSION}/libada/ChangeLog
+-    touch -r ChangeLog $PKG4/usr/doc/gcc-${VERSION}/libada/ChangeLog
+-  fi
+-)
++#mkdir -p $PKG4/usr/doc/gcc-${VERSION}/libada
++#( cd libada || exit 0
++#  if [ -r ChangeLog ]; then
++#    cat ChangeLog | head -n 1000 > $PKG4/usr/doc/gcc-${VERSION}/libada/ChangeLog
++#    touch -r ChangeLog $PKG4/usr/doc/gcc-${VERSION}/libada/ChangeLog
++#  fi
++#)
  
-   mkdir -p $PKG1/usr/doc/gcc-${VERSION}/libgomp
-   ( cd libgomp || exit 0
-@@ -348,6 +355,8 @@
+ mkdir -p $PKG1/usr/doc/gcc-${VERSION}/libgomp
+ ( cd libgomp || exit 0
+@@ -335,6 +342,8 @@
    else
      GCC_ARCHOPTS="--disable-multilib"
    fi
@@ -127,7 +127,7 @@
   
    CFLAGS="$SLKCFLAGS" \
    CXXFLAGS="$SLKCFLAGS" \
-@@ -357,7 +366,7 @@
+@@ -344,7 +353,7 @@
       --infodir=/usr/info \
       --enable-shared \
       --enable-bootstrap \
@@ -136,7 +136,7 @@
       --enable-threads=posix \
       --enable-checking=release \
       --enable-objc-gc \
-@@ -388,15 +397,15 @@
+@@ -376,15 +385,15 @@
    # Include all debugging info (for now):
    make $NUMJOBS bootstrap || exit 1
  
@@ -158,7 +158,7 @@
    make info || exit 1
  
    # Set GCCCHECK=something to run the tests
-@@ -547,18 +556,18 @@
+@@ -535,18 +544,18 @@
  )
  
  # gcc-gnat:
@@ -189,7 +189,7 @@
  
  # gcc-objc:
  ( cd $PKG6
-@@ -604,16 +613,16 @@
+@@ -592,16 +601,16 @@
  ) || exit 1
  
  # gcc-brig:
@@ -216,7 +216,7 @@
  
  # gcc-gdc:
  ( cd $PKG10
-@@ -639,14 +648,14 @@
+@@ -631,14 +640,14 @@
    makepkg -l y -c n $TMP/gcc-g++-$VERSION-$ARCH-$BUILD.txz )
  ( cd $PKG3
    makepkg -l y -c n $TMP/gcc-gfortran-$VERSION-$ARCH-$BUILD.txz )
