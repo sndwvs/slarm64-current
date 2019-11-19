@@ -1,5 +1,5 @@
---- a/rust.SlackBuild	2019-09-28 23:42:56.303921884 +0100
-+++ b/rust.SlackBuild	2019-09-28 23:47:12.834843329 +0100
+--- a/rust.SlackBuild	2019-11-19 18:19:40.031268093 +0000
++++ b/rust.SlackBuild	2019-11-19 18:22:15.617497159 +0000
 @@ -131,6 +131,9 @@
  elif [ "$ARCH" = "armv7hl" ]; then
    SLKCFLAGS=""
@@ -10,7 +10,7 @@
  else
    SLKCFLAGS="-O2"
    LIBDIRSUFFIX=""
-@@ -203,6 +206,9 @@
+@@ -208,6 +211,9 @@
  
  [target.armv7-unknown-linux-gnueabihf]
  llvm-config = "/usr/bin/llvm-config"
@@ -20,20 +20,7 @@
  EOF
  fi
  
-@@ -219,6 +225,12 @@
- 
- export PKG_CONFIG_ALLOW_CROSS=1
- 
-+# Reduce the size of rust-std
-+# https://github.com/rust-lang/rust/pull/64823
-+xzcat $CWD/0001-WIP-minimize-the-rust-std-component.patch.xz | patch -p1 || exit 1
-+# Mask a warning-as-error when rebuilding 1.38 with 1.38
-+xzcat $CWD/rustc-1.38.0-rebuild-bootstrap.patch.xz | patch -p1 || exit 1
-+
- if [ "$BARCH" = "i586" ] ; then
-   # when bootstrapping from i586 (rust already installed), also build a i686
-   # rustlib:
-@@ -241,8 +253,8 @@
+@@ -246,8 +252,8 @@
  else
    # README.md says gcc 4.7 / clang 3.x or later needed
    # but building fails for me with GCC 5.3 from slackware 14.2
