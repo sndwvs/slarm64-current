@@ -1,3 +1,16 @@
+Thu Nov 21 02:24:52 UTC 2019
+n/bind-9.14.8-aarch64-1.txz:  Upgraded.
+x/mesa-19.2.5-aarch64-1.txz:  Upgraded.
++--------------------------+
+Wed Nov 20 23:11:22 UTC 2019
+a/kernel-firmware-20191118_e8a0f4c-noarch-1.txz:  Upgraded.
+ap/man-pages-5.04-noarch-1.txz:  Upgraded.
+d/kernel-headers-4.19.85-arm64-1.txz:  Upgraded.
+l/alsa-lib-1.2.1.1-aarch64-1.txz:  Upgraded.
+l/glib2-2.62.3-aarch64-1.txz:  Upgraded.
+l/mozilla-nss-3.47.1-aarch64-1.txz:  Upgraded.
+xfce/exo-0.12.10-aarch64-1.txz:  Upgraded.
++--------------------------+
 Tue Nov 19 06:15:35 UTC 2019
 d/rust-1.39.0-aarch64-1.txz:  Upgraded.
 +--------------------------+
