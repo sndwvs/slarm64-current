@@ -1,3 +1,8 @@
+Thu Nov 21 22:19:23 UTC 2019
+a/efivar-20191015_ca85d51-aarch64-1.txz:  Upgraded.
+l/libtasn1-4.15.0-aarch64-1.txz:  Upgraded.
+n/php-7.3.12-aarch64-1.txz:  Upgraded.
++--------------------------+
 Thu Nov 21 02:24:52 UTC 2019
 n/bind-9.14.8-aarch64-1.txz:  Upgraded.
 x/mesa-19.2.5-aarch64-1.txz:  Upgraded.
