@@ -1,3 +1,26 @@
+Mon Nov 25 04:16:42 UTC 2019
+a/pkgtools-15.0-noarch-28.txz:  Rebuilt.
+ap/lxc-2.0.11_fad08f383-aarch64-2.txz:  Rebuilt.
+d/kernel-headers-4.19.86-arm64-1.txz:  Upgraded.
+d/python-setuptools-42.0.0-aarch64-1.txz:  Upgraded.
+l/vte-0.58.3-aarch64-1.txz:  Upgraded.
+n/stunnel-5.56-aarch64-1.txz:  Upgraded.
++--------------------------+
+Sat Nov 23 20:34:16 UTC 2019
+a/pkgtools-15.0-noarch-27.txz:  Rebuilt.
+d/parallel-20191122-noarch-1.txz:  Upgraded.
+x/xorg-server-1.20.6-aarch64-1.txz:  Upgraded.
+x/xorg-server-xephyr-1.20.6-aarch64-1.txz:  Upgraded.
+x/xorg-server-xnest-1.20.6-aarch64-1.txz:  Upgraded.
+x/xorg-server-xvfb-1.20.6-aarch64-1.txz:  Upgraded.
++--------------------------+
+Fri Nov 22 22:09:33 UTC 2019
+l/gvfs-1.42.2-aarch64-1.txz:  Upgraded.
+l/pcre2-10.34-aarch64-1.txz:  Upgraded.
+tcl/tcl-8.6.10-aarch64-1.txz:  Upgraded.
+tcl/tk-8.6.10-aarch64-1.txz:  Upgraded.
+x/mesa-19.2.6-aarch64-1.txz:  Upgraded.
++--------------------------+
 Thu Nov 21 22:19:23 UTC 2019
 a/efivar-20191015_ca85d51-aarch64-1.txz:  Upgraded.
 l/libtasn1-4.15.0-aarch64-1.txz:  Upgraded.
