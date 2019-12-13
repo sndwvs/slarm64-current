@@ -1,3 +1,17 @@
+Thu Dec 12 20:40:15 UTC 2019
+ap/hplip-3.19.12-aarch64-1.txz:  Upgraded.
+ap/pamixer-1.4-aarch64-4.txz:  Rebuilt.
+ap/vim-8.2.0000-aarch64-1.txz:  Upgraded.
+d/bison-3.5-aarch64-1.txz:  Upgraded.
+kde/calligra-2.9.11-aarch64-33.txz:  Rebuilt.
+l/akonadi-1.13.0-aarch64-14.txz:  Rebuilt.
+l/boost-1.72.0-aarch64-1.txz:  Upgraded.
+l/libssh-0.9.3-aarch64-1.txz:  Upgraded.
+n/libqmi-1.24.2-aarch64-1.txz:  Upgraded.
+x/compiz-0.8.16.1-aarch64-1.txz:  Upgraded.
+x/mesa-19.3.0-aarch64-1.txz:  Upgraded.
+xap/vim-gvim-8.2.0000-aarch64-1.txz:  Upgraded.
++--------------------------+
 Wed Dec 11 21:03:27 UTC 2019
 ap/mariadb-10.4.11-aarch64-1.txz:  Upgraded.
 d/cmake-3.16.1-aarch64-1.txz:  Upgraded.
