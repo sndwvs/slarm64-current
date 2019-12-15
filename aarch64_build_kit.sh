@@ -17,7 +17,7 @@ environment() {
     local PACKAGE="$2"
 
     export LANG=C
-    export CPPFLAGS="-D_FORTIFYSLACKWARE_SOURCE_PATH2"
+    export CPPFLAGS="-D_FORTIFY_SOURCE=2"
     export CFLAGS="-O2 -pipe -fstack-protector-strong -fno-plt"
     export CXXFLAGS="-O2 -pipe -fstack-protector-strong -fno-plt"
     export LDFLAGS="-Wl,-O1,--sort-common,--as-needed,-z,relro,-z,now"
