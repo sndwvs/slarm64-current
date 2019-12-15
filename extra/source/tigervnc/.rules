@@ -1,0 +1,8 @@
+
+rules() {
+    pushd ${WORK_DIR}/sources 2>&1>/dev/null
+    ( ln -sf ${SLACKWARE_SOURCE_PATH}/${_PKG}/sources/xorg-server* . ) || return 1
+    popd 2>&1>/dev/null
+}
+
+rules

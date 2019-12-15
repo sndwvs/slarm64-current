@@ -1,0 +1,12 @@
+--- a/tigervnc.SlackBuild	2019-12-15 18:03:44.341219269 +0000
++++ b/tigervnc.SlackBuild	2019-12-15 18:03:59.149425845 +0000
+@@ -149,6 +149,9 @@
+   elif [ "$ARCH" = "arm" ]; then
+     SLKCFLAGS="-O2 -march=armv5te"
+     LIBDIRSUFFIX=""
++  elif [ "$ARCH" = "aarch64" ]; then
++    SLKCFLAGS="-O2"
++    LIBDIRSUFFIX="64"
+   else
+     SLKCFLAGS="-O2"
+     LIBDIRSUFFIX=""
