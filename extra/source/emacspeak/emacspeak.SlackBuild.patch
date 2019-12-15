@@ -1,0 +1,13 @@
+--- a/emacspeak.SlackBuild	2019-12-15 19:20:04.064678310 +0000
++++ b/emacspeak.SlackBuild	2019-12-15 19:21:44.506067971 +0000
+@@ -77,6 +77,10 @@
+ # Patch to use Tcl 8.6:
+ zcat $CWD/emacspeak.tcl8.6.diff.gz | patch -p1 || exit 1
+ 
++# FTBFS on ARM:
++( cd servers/linux-outloud
++  grep -lr -- -m32  . | xargs sed -i 's?-m32??g' )
++
+ # Compile the main program against Emacs:
+ make config
+ make emacspeak
