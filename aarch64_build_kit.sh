@@ -173,7 +173,12 @@ build() {
 
             PKG_SOURCE=$(echo ${WORK_DIR}/${p}-*.tar.?z)
             PKG_VERSION=$(echo $PKG_SOURCE | rev | cut -f 3- -d . | cut -f 1 -d - | rev)
+
             [[ -e ${SLARM64_SOURCE_PATH}/${_PKG}/.rules ]] && source ${SLARM64_SOURCE_PATH}/${_PKG}/.rules
+
+            # build extra/aspell-word-lists series
+            [[ ${t} =~ "extra" && ${p} == "aspell-word-lists" ]] && continue
+
             #echo $PKG_SOURCE >> ${BCWD}/log
             #echo ${PKG_VERSION} >> ${BCWD}/log
             #exit
