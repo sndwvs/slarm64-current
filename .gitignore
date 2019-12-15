@@ -1,3 +1,4 @@
+extra/*/*.txz
 slarm64/*
 CHECKSUMS.*
 FILE_LIST

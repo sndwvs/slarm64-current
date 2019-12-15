@@ -3,7 +3,7 @@ rules() {
     if [[ ${p} == vim-gvim ]]; then
         PKG_SOURCE=$(echo ${_WORK_DIR}/vim-*.tar.?z)
         PKG_VERSION=$(echo $PKG_SOURCE | rev | cut -f 3- -d . | cut -f 1 -d - | rev)
-        cp ${_TXZ}/ap/vim-${_VERSION}*.txz ${_TMP}/
+        cp ${PACKAGES_PATH}/ap/vim-${_VERSION}*.txz ${BTMP}/
     fi
 }
 
