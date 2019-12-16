@@ -12,6 +12,7 @@ MANIFEST="MANIFEST"
 EXCLUDES=".git .gitignore"
 COMPRES="xz"
 GPG="gpg2"
+TMP_PKGS=$(mktemp)
 
 
 PRUNES=""
@@ -24,12 +25,12 @@ echo -e ""
 GPG_PASS=$REPLY
 REPLY=""
 
-if [[ ! -e ${DISTR_ROOT}/GPG-KEY ]]; then
+if [[ ! -e ${DISTR_ROOT}GPG-KEY ]]; then
   echo "create a \"GPG-KEY\" file in '$DISTR_ROOT',"
   echo "add information about the public key for '$DISTR_OWNER'."
-  $GPG --list-keys "$DISTR_OWNER" > ${DISTR_ROOT}/GPG-KEY
-  $GPG -a --export "$DISTR_OWNER" >> ${DISTR_ROOT}/GPG-KEY
-  chmod 444 ${DISTR_ROOT}/GPG-KEY
+  $GPG --list-keys "$DISTR_OWNER" > ${DISTR_ROOT}GPG-KEY
+  $GPG -a --export "$DISTR_OWNER" >> ${DISTR_ROOT}GPG-KEY
+  chmod 444 ${DISTR_ROOT}GPG-KEY
 fi
 
 
@@ -42,6 +43,13 @@ get_data() {
 }
 
 
+### get files from a directory
+get_files() {
+    local DIR="$1"
+    find -L ${DIR} $PRUNES -type f -name '*.t?z' -print | sort -t'/' -k3 > $TMP_PKGS
+}
+
+
 ### gen_gpg
 gen_gpg() {
   # Argument #1 : full path to a package
@@ -49,7 +57,7 @@ gen_gpg() {
   local ASCFILE="${PKG}.asc"
 
   [[ -e "${ASCFILE}" ]] && rm -f "${ASCFILE}"
-  
+
   #$GPG --use-agent -bas -u "$DISTR_OWNER" --batch --quiet "${PKG}"
   echo "${GPG_PASS}" | $GPG -bas -u "$DISTR_OWNER" --passphrase-fd 0 --batch --quiet "${PKG}"
 
@@ -60,12 +68,14 @@ gen_gpg() {
 ### gen_manifest
 gen_manifest() {
   # Argument #1 : full path to a package
+  # Argument #2 : short path and name to a package
   local PKG="$1"
+  local NAME="$2"
 
   cat <<EOT >> ${MANIFEST}
 ++========================================
 ||
-||   Package:  ${PKG}
+||   Package:  ${NAME}
 ||
 ++========================================
 EOT
@@ -75,55 +85,27 @@ EOT
 }
 
 
-### gen_filelist
-gen_filelist() {
-  # Argument #1 : full path to a directory
-  # Argument #2 : output filename
-
-  local DIR=$1
-  local LISTFILE=$2
-
-  get_data UPDATE_DATE
-
-  pushd $DIR 2>&1>/dev/null
-
-  # shrink file
-  > ${LISTFILE}
-
-  cat <<EOT > ${LISTFILE}
-$UPDATE_DATE
-
-Here is the file list for this directory.  If you are using a 
-mirror site and find missing or extra files in the disk 
-subdirectories, please have the archive administrator refresh
-the mirror.
-
-EOT
-    find -L . $PRUNES -print | sort | xargs ls -ld --time-style=long-iso >> ${LISTFILE}
-  popd 2>&1>/dev/null
-}
-
-
 ### gen_file_packages
 gen_file_packages() {
   # Argument #1 : full path to a directory
-
-  local DIR=$1
-
-  pushd $DIR 2>&1>/dev/null
-
+  local DIR="$1"
   local _DIR=$(basename $DIR)
+
+  pushd ${DIR} 2>&1>/dev/null
 
   # shrink file
   > ${PACKAGES} > ${MANIFEST}
 
   get_data UPDATE_DATE
 
-  PKGS=$( find -L . $PRUNES -type f -name '*.txz' -print | sort -t'/' -k3)
+  get_files ${DIR}
 
-  for PKG in $PKGS; do
-    LOCATION="./${_DIR}"$(echo $PKG | rev | cut -f2- -d '/' | rev | sed "s/^.*\(\/.*\)$/\1/")
-    NAME=$(basename $PKG)
+  while IFS= read -r line; do
+    PKG=${line}
+    NAME=${line##*/}
+    LOCATION=${line/${DISTR_ROOT}/./}
+    LOCATION=${LOCATION%/*}
+
     SIZE=$(du -s $PKG | cut -f 1)
     USIZE=$($COMPRES --robot --list $PKG | awk '/^totals/{printf("%i"), $5/1024}')
 
@@ -135,13 +117,14 @@ PACKAGE SIZE (compressed):  $SIZE K
 PACKAGE SIZE (uncompressed):  $USIZE K
 PACKAGE DESCRIPTION:
 EOT
-     $COMPRES -dc ${PKG} | tar xOf - install/slack-desc | sed -n '/^#/d;/:/p' >> ${PACKAGES}
-     
+
+    $COMPRES -dc ${PKG} | tar xOf - install/slack-desc | sed -n '/^#/d;/:/p' >> ${PACKAGES}
+
      # manifest creation
-     gen_manifest $PKG
+     gen_manifest $PKG ${line/${DIR}/.}
      # gpg creation
      gen_gpg $PKG
-  done
+  done < "$TMP_PKGS"
 
   SIZE=$(grep '(compressed):' ${PACKAGES} | awk '{SUM += $4} END {printf("%i"), SUM/1024}')
   USIZE=$(grep '(uncompressed):' ${PACKAGES} | awk '{SUM += $4} END {printf("%i"), SUM/1024}')
@@ -160,6 +143,37 @@ EOT
 
   # manifest compression
   [[ -e ${MANIFEST} ]] && rm -f ${MANIFEST}.bz2 && bzip2 ${MANIFEST}
+
+  popd 2>&1>/dev/null
+}
+
+
+### gen_filelist
+gen_filelist() {
+  # Argument #1 : full path to a directory
+  # Argument #2 : output filename
+
+  local DIR="$1"
+  local LISTFILE="$2"
+
+  get_data UPDATE_DATE
+
+  pushd ${DIR} 2>&1>/dev/null
+
+  # shrink file
+  > ${LISTFILE}
+
+  cat <<EOT > ${LISTFILE}
+${UPDATE_DATE}
+
+Here is the file list for this directory.  If you are using a 
+mirror site and find missing or extra files in the disk 
+subdirectories, please have the archive administrator refresh
+the mirror.
+
+EOT
+
+  find -L . ${PRUNES} -print | sort | xargs ls -ld --time-style=long-iso >> ${LISTFILE}
 
   popd 2>&1>/dev/null
 }
@@ -195,29 +209,30 @@ EOT
 
   # gpg creation
   gen_gpg ${CHECKSUMS}
-     
+
   popd 2>&1>/dev/null
 }
 
 
 
 
-for d in $DISTR_ROOT/*;do
-  if [[ -d ${d} ]]; then
-    echo "generate for $(basename $d)"
-    if [[ $(echo ${d} | grep $DISTR$) ]]; then
-        gen_file_packages ${d}
-        cp ${d}/$PACKAGES $DISTR_ROOT/$PACKAGES
-        ln -sf $DISTR_ROOT/$PACKAGES -r ${d}/$PACKAGES
+### main program
+for DIR in $DISTR_ROOT*;do
+  if [[ -d ${DIR} ]]; then
+    echo "generate for $(basename ${DIR})"
+    [[ ! $(basename $DIR) =~ 'source' ]] && gen_file_packages ${DIR}
+    if [[ $(basename $DIR) =~ ${DISTR} ]]; then
+        cp ${DIR}/${PACKAGES} ${DISTR_ROOT}${PACKAGES}
+        ln -sf ${DISTR_ROOT}${PACKAGES} -r ${DIR}/${PACKAGES}
     fi
-    gen_filelist ${d} $FILELIST
-    gen_file_checksums ${d}
+    gen_filelist ${DIR} $FILELIST
+    gen_file_checksums ${DIR}
   fi
 done
 
 # base distro directory
-gen_filelist $DISTR_ROOT "FILELIST.TXT"
-gen_file_checksums $DISTR_ROOT
+gen_filelist ${DISTR_ROOT} "FILELIST.TXT"
+gen_file_checksums ${DISTR_ROOT}
 
 # clean
 GPG_PASS=""
