@@ -1,3 +1,20 @@
+Wed Dec 18 05:01:32 UTC 2019
+a/file-5.38-aarch64-1.txz:  Upgraded.
+d/kernel-headers-5.4.4-arm64-1.txz:  Upgraded.
+n/NetworkManager-1.22.0-aarch64-1.txz:  Upgraded.
+xap/mozilla-thunderbird-68.3.1-aarch64-1.txz:  Upgraded.
++--------------------------+
+Mon Dec 16 23:13:10 UTC 2019
+a/usb_modeswitch-2.5.2-aarch64-2.txz:  Rebuilt.
+l/fuse3-3.9.0-aarch64-2.txz:  Rebuilt.
++--------------------------+
+Mon Dec 16 18:32:04 UTC 2019
+l/libical-3.0.7-aarch64-1.txz:  Upgraded.
+l/talloc-2.3.1-aarch64-1.txz:  Upgraded.
+l/tdb-1.4.3-aarch64-1.txz:  Upgraded.
+l/tevent-0.10.2-aarch64-1.txz:  Upgraded.
+n/samba-4.11.4-aarch64-1.txz:  Upgraded.
++--------------------------+
 Sun Dec 15 18:20:57 UTC 2019
 a/kernel-firmware-20191215_eefb5f7-noarch-1.txz:  Upgraded.
 a/mcelog-167-aarch64-1.txz:  Upgraded.
