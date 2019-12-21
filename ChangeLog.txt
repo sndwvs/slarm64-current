@@ -1,3 +1,34 @@
+Sat Dec 21 21:02:24 UTC 2019
+a/procps-ng-3.3.16-aarch64-2.txz:  Rebuilt.
+a/xfsprogs-5.4.0-aarch64-1.txz:  Upgraded.
+d/kernel-headers-5.4.6-arm64-1.txz:  Upgraded.
+l/QScintilla-2.11.4-aarch64-1.txz:  Upgraded.
+n/dhcpcd-8.1.4-aarch64-1.txz:  Upgraded.
+n/lftp-4.9.0-aarch64-1.txz:  Upgraded.
+xap/hexchat-2.14.3-aarch64-1.txz:  Upgraded.
++--------------------------+
+Sat Dec 21 01:04:26 UTC 2019
+a/aaa_elflibs-15.0-aarch64-17.txz:  Rebuilt.
+a/file-5.38-aarch64-2.txz:  Rebuilt.
+a/kernel-firmware-20191220_6871bff-noarch-1.txz:  Upgraded.
+a/openssl10-solibs-1.0.2u-aarch64-1.txz:  Upgraded.
+d/guile-2.2.6-aarch64-2.txz:  Rebuilt.
+d/llvm-9.0.1-aarch64-1.txz:  Upgraded.
+d/python-2.7.17-aarch64-2.txz:  Rebuilt.
+d/python3-3.7.6-aarch64-1.txz:  Upgraded.
+d/ruby-2.6.5-aarch64-2.txz:  Rebuilt.
+l/glib2-2.62.4-aarch64-2.txz:  Rebuilt.
+l/libffi-3.3-aarch64-1.txz:  Upgraded.
+l/libvpx-1.8.2-aarch64-1.txz:  Upgraded.
+l/pygobject-2.28.7-aarch64-4.txz:  Rebuilt.
+l/pygobject3-3.34.0-aarch64-2.txz:  Rebuilt.
+l/sip-4.19.20-aarch64-1.txz:  Upgraded.
+n/cifs-utils-6.10-aarch64-1.txz:  Upgraded.
+n/dhcpcd-8.1.3-aarch64-1.txz:  Upgraded.
+n/openssl10-1.0.2u-aarch64-1.txz:  Upgraded.
+n/p11-kit-0.23.18.1-aarch64-2.txz:  Rebuilt.
+extra/tigervnc/tigervnc-1.10.1-aarch64-1.txz:  Upgraded.
++--------------------------+
 Thu Dec 19 23:02:54 UTC 2019
 d/cmake-3.16.2-aarch64-1.txz:  Upgraded.
 d/rust-1.40.0-aarch64-1.txz:  Upgraded.
