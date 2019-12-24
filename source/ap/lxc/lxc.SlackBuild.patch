@@ -1,0 +1,29 @@
+--- a/lxc.SlackBuild	2019-12-24 06:49:54.302213478 +0000
++++ b/lxc.SlackBuild	2019-12-24 06:51:52.388002497 +0000
+@@ -57,6 +57,9 @@
+ elif [ "$ARCH" = "x86_64" ]; then
+   SLKCFLAGS="-O2 -fPIC"
+   LIBDIRSUFFIX="64"
++elif [ "$ARCH" = "aarch64" ]; then
++  SLKCFLAGS="-O2"
++  LIBDIRSUFFIX="64"
+ else
+   SLKCFLAGS="-O2"
+   LIBDIRSUFFIX=""
+@@ -82,6 +85,7 @@
+ 
+ # Add the template file:
+ cat $CWD/lxc-slackware.in > templates/lxc-slackware.in
++xzcat $CWD/lxc-slarm64.patch.xz | patch -p1 --verbose || exit 1
+ 
+ # Our python package is not split:
+ sed -i "s|PKG_CHECK_MODULES(\[PYTHONDEV.*||" configure.ac || exit 1
+@@ -126,6 +130,8 @@
+ cp -a $CWD/scripts/*.lxc $PKG/usr/share/lxc/scripts/slackware
+ chown root:root $PKG/usr/share/lxc/scripts/slackware/*
+ chmod 644 $PKG/usr/share/lxc/scripts/slackware/*
++ln -s $PKG/usr/share/lxc/config/slackware.common.conf -r $PKG/usr/share/lxc/config/slarm64.common.conf
++ln -s $PKG/usr/share/lxc/config/slackware.userns.conf -r $PKG/usr/share/lxc/config/slarm64.userns.conf
+ 
+ # Make the default configuration directories and an empty rootfs folder:
+ mkdir -p $PKG/var/lib/lxc $PKG/etc/lxc $PKG/var/lib/rootfs-lxc

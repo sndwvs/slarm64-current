@@ -1,3 +1,12 @@
+Sun Dec 22 19:14:09 UTC 2019
+d/parallel-20191222-noarch-1.txz:  Upgraded.
+l/eigen3-3.2.10-aarch64-3.txz:  Rebuilt.
+l/gobject-introspection-1.62.0-aarch64-3.txz:  Rebuilt.
+l/imagemagick-7.0.9_10-aarch64-1.txz:  Upgraded.
+n/libmbim-1.20.4-aarch64-1.txz:  Upgraded.
+n/libtirpc-1.2.5-aarch64-1.txz:  Upgraded.
+xfce/tumbler-0.2.8-aarch64-1.txz:  Upgraded.
++--------------------------+
 Sat Dec 21 21:02:24 UTC 2019
 a/procps-ng-3.3.16-aarch64-2.txz:  Rebuilt.
 a/xfsprogs-5.4.0-aarch64-1.txz:  Upgraded.
