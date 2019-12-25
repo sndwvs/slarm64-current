@@ -155,7 +155,7 @@ build() {
 
             # build x11 series
             if [[ $t == x ]]; then
-                X11_PKG_PATH=$(find ${SLARM64_SOURCE_PATH}/$t/ -type f -name "${p}-*.?z")
+                X11_PKG_PATH=$(find ${SLACKWARE_SOURCE_PATH}/$t/ -type f -name "${p}-*.?z")
                 X11_MODULE=$(echo ${X11_PKG_PATH} | rev | cut -d '/' -f2 | rev)
                 if [[ ! -z $X11_MODULE && ${X11_PKG_PATH} =~ '/x11/' ]]; then
                     x11_root="x11"
