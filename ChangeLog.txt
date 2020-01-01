@@ -1,3 +1,107 @@
+Tue Dec 31 23:17:20 UTC 2019
+a/ncompress-4.2.4.6-aarch64-1.txz:  Upgraded.
+d/kernel-headers-5.4.7-arm64-1.txz:  Upgraded.
+l/imagemagick-7.0.9_13-aarch64-1.txz:  Upgraded.
+l/libarchive-3.4.1-aarch64-1.txz:  Upgraded.
+l/libjpeg-turbo-2.0.4-aarch64-1.txz:  Upgraded.
+xfce/xfce4-weather-plugin-0.8.11-aarch64-1.txz:  Upgraded.
++--------------------------+
+Tue Dec 31 05:17:04 UTC 2019
+a/kmod-26-aarch64-3.txz:  Rebuilt.
+a/util-linux-2.34-aarch64-2.txz:  Rebuilt.
+ap/hplip-3.19.12-aarch64-2.txz:  Rebuilt.
+ap/ksh93-20191228_5abcbd06-aarch64-1.txz:  Upgraded.
+ap/linuxdoc-tools-0.9.73-aarch64-3.txz:  Rebuilt.
+ap/lxc-2.0.11_fad08f383-aarch64-3.txz:  Rebuilt.
+ap/rpm-4.15.1-aarch64-2.txz:  Rebuilt.
+d/Cython-0.29.14-aarch64-2.txz:  Rebuilt.
+d/clisp-2.50_20191103_c26de7873-aarch64-1.txz:  Upgraded.
+d/distcc-3.3.3-aarch64-2.txz:  Rebuilt.
+d/gdb-8.3.1-aarch64-2.txz:  Rebuilt.
+d/llvm-9.0.1-aarch64-2.txz:  Rebuilt.
+d/meson-0.52.1-aarch64-2.txz:  Rebuilt.
+d/python-pip-19.3.1-aarch64-2.txz:  Rebuilt.
+d/python-setuptools-42.0.2-aarch64-2.txz:  Rebuilt.
+d/python3-3.8.1-aarch64-1.txz:  Upgraded.
+kde/pykde4-4.14.3-aarch64-10.txz:  Rebuilt.
+l/Mako-1.1.0-aarch64-2.txz:  Rebuilt.
+l/PyQt-4.12.3-aarch64-2.txz:  Rebuilt.
+l/QScintilla-2.11.4-aarch64-2.txz:  Rebuilt.
+l/alsa-lib-1.2.1.2-aarch64-2.txz:  Rebuilt.
+l/dbus-python-1.2.14-aarch64-2.txz:  Rebuilt.
+l/gexiv2-0.12.0-aarch64-2.txz:  Rebuilt.
+l/gobject-introspection-1.62.0-aarch64-4.txz:  Rebuilt.
+l/libcaca-0.99.beta19-aarch64-5.txz:  Rebuilt.
+l/libcap-ng-0.7.10-aarch64-2.txz:  Rebuilt.
+l/libproxy-0.4.15-aarch64-4.txz:  Rebuilt.
+l/libwebp-1.0.3-aarch64-2.txz:  Rebuilt.
+l/libwmf-0.2.8.4-aarch64-9.txz:  Rebuilt.
+l/libxml2-2.9.10-aarch64-2.txz:  Rebuilt.
+l/newt-0.52.21-aarch64-2.txz:  Rebuilt.
+l/pycairo-1.18.2-aarch64-2.txz:  Rebuilt.
+l/pycups-1.9.74-aarch64-3.txz:  Rebuilt.
+l/pycurl-7.43.0.3-aarch64-2.txz:  Rebuilt.
+l/pygobject-2.28.7-aarch64-5.txz:  Rebuilt.
+l/pygobject3-3.34.0-aarch64-3.txz:  Rebuilt.
+l/pyparsing-2.4.5-aarch64-2.txz:  Rebuilt.
+l/python-appdirs-1.4.3-aarch64-4.txz:  Rebuilt.
+l/python-certifi-2019.11.28-aarch64-2.txz:  Rebuilt.
+l/python-chardet-3.0.4-aarch64-4.txz:  Rebuilt.
+l/python-docutils-0.15.2-aarch64-2.txz:  Rebuilt.
+l/python-idna-2.8-aarch64-3.txz:  Rebuilt.
+l/python-notify2-0.3.1-aarch64-4.txz:  Rebuilt.
+l/python-packaging-19.2-aarch64-2.txz:  Rebuilt.
+l/python-pillow-6.2.1-aarch64-2.txz:  Rebuilt.
+l/python-ply-3.11-aarch64-2.txz:  Rebuilt.
+l/python-requests-2.22.0-aarch64-2.txz:  Rebuilt.
+l/python-sane-2.8.3-aarch64-4.txz:  Rebuilt.
+l/python-six-1.13.0-aarch64-2.txz:  Rebuilt.
+l/python-urllib3-1.25.7-aarch64-2.txz:  Rebuilt.
+l/sip-4.19.20-aarch64-2.txz:  Rebuilt.
+l/system-config-printer-1.5.12-aarch64-2.txz:  Rebuilt.
+l/talloc-2.3.1-aarch64-2.txz:  Rebuilt.
+l/tdb-1.4.3-aarch64-2.txz:  Rebuilt.
+l/tevent-0.10.2-aarch64-2.txz:  Rebuilt.
+l/urwid-1.0.3-aarch64-5.txz:  Rebuilt.
+l/zstd-1.4.4-aarch64-2.txz:  Rebuilt.
+n/gpgme-1.13.1-aarch64-2.txz:  Rebuilt.
+n/obexftp-0.24.2-aarch64-5.txz:  Rebuilt.
+n/pssh-2.3.1-aarch64-5.txz:  Rebuilt.
+n/s-nail-14.9.16-aarch64-1.txz:  Upgraded.
+n/samba-4.11.4-aarch64-2.txz:  Rebuilt.
+x/pyxdg-0.26-aarch64-2.txz:  Rebuilt.
+x/xcb-proto-1.13-aarch64-4.txz:  Rebuilt.
+xap/blueman-2.1.1-aarch64-2.txz:  Rebuilt.
+xap/hexchat-2.14.3-aarch64-2.txz:  Rebuilt.
++--------------------------+
+Sat Dec 28 20:25:38 UTC 2019
+ap/sysstat-12.3.1-aarch64-1.txz:  Upgraded.
+d/doxygen-1.8.17-aarch64-1.txz:  Upgraded.
+kde/krdc-4.14.3-aarch64-5.txz:  Rebuilt.
+l/libvncserver-0.9.12-aarch64-1.txz:  Upgraded.
++--------------------------+
+Fri Dec 27 22:54:53 UTC 2019
+ap/vim-8.2.0050-aarch64-1.txz:  Upgraded.
+d/kernel-headers-5.4.6-arm64-2.txz:  Rebuilt.
+l/imagemagick-7.0.9_12-aarch64-1.txz:  Upgraded.
+l/libcap-2.29-aarch64-1.txz:  Upgraded.
+xap/vim-gvim-8.2.0050-aarch64-1.txz:  Upgraded.
++--------------------------+
+Wed Dec 25 19:00:02 UTC 2019
+d/ruby-2.7.0-aarch64-1.txz:  Upgraded.
+d/subversion-1.13.0-aarch64-2.txz:  Rebuilt.
+kde/korundum-4.14.3-aarch64-8.txz:  Rebuilt.
+kde/qtruby-4.14.3-aarch64-11.txz:  Rebuilt.
+n/epic5-2.1.1-aarch64-3.txz:  Rebuilt.
+x/libva-2.6.0-aarch64-1.txz:  Upgraded.
+x/libva-utils-2.6.0-aarch64-1.txz:  Upgraded.
++--------------------------+
+Tue Dec 24 18:54:52 UTC 2019
+ap/nano-4.7-aarch64-1.txz:  Upgraded.
+n/NetworkManager-1.22.2-aarch64-1.txz:  Upgraded.
+x/libwacom-1.2-aarch64-1.txz:  Upgraded.
+x/xf86-input-wacom-0.39.0-aarch64-1.txz:  Upgraded.
++--------------------------+
 Sun Dec 22 19:14:09 UTC 2019
 d/parallel-20191222-noarch-1.txz:  Upgraded.
 l/eigen3-3.2.10-aarch64-3.txz:  Rebuilt.
