@@ -1,3 +1,24 @@
+Thu Jan  2 21:15:46 UTC 2020
+a/dialog-1.3_20191210-aarch64-1.txz:  Upgraded.
+a/shadow-4.8-aarch64-2.txz:  Rebuilt.
+ap/lxc-2.0.11_fad08f383-aarch64-4.txz:  Rebuilt.
+d/python-setuptools-44.0.0-aarch64-1.txz:  Upgraded.
+l/libedit-20191231_3.1-aarch64-1.txz:  Upgraded.
+l/python-pillow-7.0.0-aarch64-1.txz:  Upgraded.
++--------------------------+
+Wed Jan  1 20:33:50 UTC 2020
+a/aaa_terminfo-6.1_20191228-aarch64-1.txz:  Upgraded.
+a/smartmontools-7.1-aarch64-1.txz:  Upgraded.
+ap/sudo-1.8.30-aarch64-1.txz:  Upgraded.
+d/python-setuptools-43.0.0-aarch64-1.txz:  Upgraded.
+l/boost-1.72.0-aarch64-2.txz:  Rebuilt.
+l/ffmpeg-4.2.2-aarch64-1.txz:  Upgraded.
+l/ncurses-6.1_20191228-aarch64-1.txz:  Upgraded.
+l/netpbm-10.89.00-aarch64-1.txz:  Upgraded.
+n/epic5-2.1.1-aarch64-4.txz:  Rebuilt.
+n/whois-5.5.4-aarch64-1.txz:  Upgraded.
+x/vulkan-sdk-1.1.130.0-aarch64-1.txz:  Upgraded.
++--------------------------+
 Tue Dec 31 23:17:20 UTC 2019
 a/ncompress-4.2.4.6-aarch64-1.txz:  Upgraded.
 d/kernel-headers-5.4.7-arm64-1.txz:  Upgraded.
