@@ -1,3 +1,19 @@
+Sat Jan  4 22:21:30 UTC 2020
+a/hwdata-0.331-noarch-1.txz:  Upgraded.
+ap/cups-filters-1.26.1-aarch64-1.txz:  Upgraded.
+d/help2man-1.47.12-aarch64-1.txz:  Upgraded.
+d/kernel-headers-5.4.8-arm64-1.txz:  Upgraded.
+l/glib-networking-2.62.3-aarch64-1.txz:  Upgraded.
+l/python-distro-1.4.0-aarch64-1.txz:  Added.
++--------------------------+
+Fri Jan  3 22:41:57 UTC 2020
+a/grep-3.4-aarch64-1.txz:  Upgraded.
+ap/linuxdoc-tools-0.9.73-aarch64-4.txz:  Rebuilt.
+n/dhcpcd-8.1.5-aarch64-1.txz:  Upgraded.
+n/sshfs-3.7.0-aarch64-1.txz:  Upgraded.
+x/libinput-1.15.0-aarch64-1.txz:  Upgraded.
+xap/MPlayer-20200103-aarch64-1.txz:  Upgraded.
++--------------------------+
 Thu Jan  2 21:15:46 UTC 2020
 a/dialog-1.3_20191210-aarch64-1.txz:  Upgraded.
 a/shadow-4.8-aarch64-2.txz:  Rebuilt.
