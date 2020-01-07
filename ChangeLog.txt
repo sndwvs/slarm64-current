@@ -1,3 +1,17 @@
+Mon Jan  6 23:43:17 UTC 2020
+d/ccache-3.7.7-aarch64-1.txz:  Upgraded.
+l/libpsl-0.21.0-aarch64-2.txz:  Rebuilt.
+l/pyparsing-2.4.6-aarch64-1.txz:  Upgraded.
+l/python-packaging-20.0-aarch64-1.txz:  Upgraded.
+l/python-pygments-2.5.2-aarch64-1.txz:  Added.
+n/iputils-20190709-aarch64-2.txz:  Rebuilt.
+x/fonttosfnt-1.1.0-aarch64-1.txz:  Upgraded.
+xap/mozilla-firefox-68.4.0esr-aarch64-1.txz:  Upgraded.
++--------------------------+
+Sun Jan  5 23:29:24 UTC 2020
+l/imagemagick-7.0.9_14-aarch64-1.txz:  Upgraded.
+l/libcap-2.30-aarch64-1.txz:  Upgraded.
++--------------------------+
 Sat Jan  4 22:21:30 UTC 2020
 a/hwdata-0.331-noarch-1.txz:  Upgraded.
 ap/cups-filters-1.26.1-aarch64-1.txz:  Upgraded.
