@@ -1,6 +1,25 @@
---- a/mozilla-firefox.SlackBuild	2019-07-09 20:32:46.500240877 +0100
-+++ b/mozilla-firefox.SlackBuild	2019-07-12 21:39:07.581630363 +0100
-@@ -132,6 +132,9 @@
+--- a/mozilla-firefox.SlackBuild	2020-01-08 20:34:07.477775279 +0000
++++ b/mozilla-firefox.SlackBuild	2020-01-08 20:36:37.211799464 +0000
+@@ -42,6 +42,9 @@
+ # "UnicodeDecodeError: 'ascii' codec can't decode byte 0xe2 in position 36: ordinal not in range(128)"
+ LANG=C
+ 
++# LTO needs more open files
++ulimit -n 4096
++
+ # Add a shell script to start the firefox binary with MOZ_ALLOW_DOWNGRADE=1
+ # to avoid backing up (and disabling) the user profile if a browser downgrade
+ # is detected. We made it fine for years without this feature, and all the
+@@ -89,7 +92,7 @@
+ export CXX=${CXX:-g++}
+ 
+ # Keep memory usage as low as possible when linking:
+-SLKLDFLAGS=" -Wl,--as-needed -Wl,--no-keep-memory -Wl,--stats"
++SLKLDFLAGS=" -Wl,--as-needed -Wl,--reduce-memory-overheads -Wl,--no-keep-memory -Wl,--stats"
+ export LDFLAGS="$SLKLDFLAGS"
+ export MOZ_LINK_FLAGS="$SLKLDFLAGS"
+ 
+@@ -146,6 +149,9 @@
  elif [ "$ARCH" = "armel" ]; then
    SLKCFLAGS="-O2 -march=armv4t"
    LIBDIRSUFFIX=""
@@ -10,11 +29,13 @@
  else
    SLKCFLAGS="-O2"
    LIBDIRSUFFIX=""
-@@ -208,8 +211,13 @@
+@@ -222,8 +228,15 @@
    \( -perm 666 -o -perm 664 -o -perm 600 -o -perm 444 -o -perm 440 -o -perm 400 \) \
-   -exec chmod 644 {} \;
+   -exec chmod 644 {} \+
  
 +xzcat $CWD/Bug-1238661---fix-mozillaSignalTrampoline-to-work-.patch.xz | patch -p1 --verbose || exit 1
++xzcat $CWD/arm.patch.xz | patch -p1 --verbose || exit 1
++xzcat $CWD/build-arm-libopus.patch.xz | patch -p1 --verbose || exit 1
 +
  # Our building options, in a configure-like display ;)
  OPTIONS="\
@@ -24,7 +45,22 @@
    --enable-official-branding \
    --prefix=/usr \
    --libdir=/usr/lib${LIBDIRSUFFIX} \
-@@ -284,6 +292,12 @@
+@@ -231,7 +244,6 @@
+   --enable-alsa \
+   --enable-application=browser \
+   --enable-default-toolkit=cairo-gtk3 \
+-  --enable-linker=gold \
+   --enable-startup-notification \
+   $GOOGLE_API_KEY \
+   --enable-strip \
+@@ -296,9 +308,19 @@
+   echo "ac_add_options --target=i686-pc-linux-gnu" >> .mozconfig
+ fi
+ 
++if [[ $ARCH == "aarch64" ]]; then
++    echo 'ac_add_options --enable-rust-simd' >> .mozconfig
++fi
++
  # Add the $OPTIONS above to .mozconfig:
  for option in $OPTIONS; do echo "ac_add_options $option" >> .mozconfig; done
  

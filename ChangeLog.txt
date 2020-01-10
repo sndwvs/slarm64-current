@@ -1,3 +1,24 @@
+Thu Jan  9 21:57:44 UTC 2020
+d/kernel-headers-5.4.10-arm64-1.txz:  Upgraded.
+x/mesa-19.3.2-aarch64-1.txz:  Upgraded.
++--------------------------+
+Thu Jan  9 07:39:56 UTC 2020
+xap/mozilla-firefox-68.4.1esr-aarch64-1.txz:  Upgraded.
++--------------------------+
+Wed Jan  8 22:14:06 UTC 2020
+a/e2fsprogs-1.45.5-aarch64-1.txz:  Upgraded.
+d/meson-0.53.0-aarch64-1.txz:  Upgraded.
+l/mozilla-nss-3.49-aarch64-1.txz:  Upgraded.
+n/curl-7.68.0-aarch64-1.txz:  Upgraded.
++--------------------------+
+Tue Jan  7 20:32:32 UTC 2020
+a/kernel-firmware-20200107_67d4ff5-noarch-1.txz:  Upgraded.
+ap/zsh-5.7.1-aarch64-2.txz:  Rebuilt.
+d/mercurial-5.2.2-aarch64-1.txz:  Upgraded.
+l/dconf-editor-3.34.3-aarch64-1.txz:  Upgraded.
+l/libidn-1.35-aarch64-2.txz:  Rebuilt.
+l/libwebp-1.1.0-aarch64-1.txz:  Upgraded.
++--------------------------+
 Mon Jan  6 23:43:17 UTC 2020
 d/ccache-3.7.7-aarch64-1.txz:  Upgraded.
 l/libpsl-0.21.0-aarch64-2.txz:  Rebuilt.
