@@ -1,0 +1,51 @@
+--- a/kernel-source.SlackBuild	2020-01-11 15:25:12.215001126 +0200
++++ b/kernel-source.SlackBuild	2020-01-11 15:41:28.661618849 +0200
+@@ -58,23 +58,26 @@
+   if [ "$ARCH" = "x86_64" ]; then
+     CONFIG_SUFFIX=".x64"
+   fi
++  if [ "$ARCH" = "aarch64" ]; then
++    CONFIG_SUFFIX=".arm64"
++  fi
+   if [ -z "${LOCALVERSION}" ]; then
+     if echo $ARCH | grep -q -E "i?86$" ; then
+       # Default to SMP extraversion on 32-bit:
+       LOCALVERSION="-smp"
+     fi
+   fi
+-  if [ -r "$CWD/kernel-configs/config-generic${LOCALVERSION}-${VERSION}$LOCALVERSION${CONFIG_SUFFIX}" ]; then
++  if [ -r "$CWD/kernel-configs/config${LOCALVERSION}-${VERSION}$LOCALVERSION${CONFIG_SUFFIX}" ]; then
+     # Exact match!
+-    KERNEL_CONFIG="config-generic${LOCALVERSION}-${VERSION}${LOCALVERSION}${CONFIG_SUFFIX}"
++    KERNEL_CONFIG="config${LOCALVERSION}-${VERSION}${LOCALVERSION}${CONFIG_SUFFIX}"
+   else # no exact match, so find newest with the same name:
+-    FIND_MATCH="$(/bin/ls -t $CWD/kernel-configs/config-generic${LOCALVERSION}-*${LOCALVERSION}${CONFIG_SUFFIX} 2> /dev/null | head -n 1)"
++    FIND_MATCH="$(/bin/ls -t $CWD/kernel-configs/config${LOCALVERSION}-*${LOCALVERSION}${CONFIG_SUFFIX} 2> /dev/null | head -n 1)"
+     if [ -r "${FIND_MATCH}" ]; then
+       KERNEL_CONFIG="$(basename ${FIND_MATCH})"
+       unset FIND_MATCH
+     else
+       echo "Error: no matching .config file could be found for this kernel. Tried:"
+-      echo "  $CWD/kernel-configs/config-generic${LOCALVERSION}-${VERSION}${LOCALVERSION}${CONFIG_SUFFIX} (not found)" 
++      echo "  $CWD/kernel-configs/config${LOCALVERSION}-${VERSION}${LOCALVERSION}${CONFIG_SUFFIX} (not found)" 
+       exit 1
+     fi 
+   fi
+@@ -142,13 +145,10 @@
+ ( cd $PKG/usr/src/linux-${VERSION}
+   echo "Making oldconfig..."
+   make oldconfig
+-  if [ ! -r $CWD/kernel-configs/config-generic${LOCALVERSION}-${VERSION}${LOCALVERSION}${CONFIG_SUFFIX} ]; then
+-    echo "Saving new .config as: $CWD/kernel-configs/config-generic${LOCALVERSION}-${VERSION}${LOCALVERSION}${CONFIG_SUFFIX}"
+-    cp -a .config $CWD/kernel-configs/config-generic${LOCALVERSION}-${VERSION}${LOCALVERSION}${CONFIG_SUFFIX}
+-  fi
+-  echo "Building kernel and modules (needed before clean for building NVIDIA to work)..."
+-  make ${NUMJOBS} || exit 1
+-  make ${NUMJOBS} modules || exit 1
++  if [ ! -r $CWD/kernel-configs/config${LOCALVERSION}-${VERSION}${LOCALVERSION}${CONFIG_SUFFIX} ]; then
++    echo "Saving new .config as: $CWD/kernel-configs/config${LOCALVERSION}-${VERSION}${LOCALVERSION}${CONFIG_SUFFIX}"
++    cp -a .config $CWD/kernel-configs/config${LOCALVERSION}-${VERSION}${LOCALVERSION}${CONFIG_SUFFIX}
++  fi
+   echo "Cleaning up..."
+   make clean
+   # Make sure header files aren't missing...
