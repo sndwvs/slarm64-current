@@ -97,7 +97,7 @@ patching_files() {
         pf=$(basename "$pf")
         [[ -z "$pf" ]] && continue
         pushd ${WORK_DIR} 2>&1>/dev/null
-        [[ ! $(patch -p1 --batch --dry-run -N -i ../${pf}.patch | grep "which already exists") ]] && ( patch -p1 --verbose -i "../${pf}.patch" || return 1 )
+        [[ ! $(patch -p1 --batch --dry-run -N -i ../${pf}.patch | grep previously) ]] && ( patch -p1 --verbose -i "../${pf}.patch" || return 1 )
         popd 2>&1>/dev/null
         count=$(($count+1))
     done
