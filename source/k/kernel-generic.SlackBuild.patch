@@ -1,5 +1,5 @@
 --- a/kernel-generic.SlackBuild	2020-01-11 17:07:32.304645264 +0200
-+++ b/kernel-generic.SlackBuild	2020-01-11 18:29:39.312156584 +0200
++++ b/kernel-generic.SlackBuild	2020-01-11 20:47:03.624807226 +0200
 @@ -58,6 +58,8 @@
      case "$(uname -m)" in
      i?86) KERNEL_ARCH=x86 ;;
@@ -45,3 +45,16 @@
    # Make symlinks:
    ln -sf System.map-${KERNEL_NAME}${LOCALVERSION}-${VERSION}${LOCALVERSION} $PKG/boot/System.map
    ln -sf config-${KERNEL_NAME}${LOCALVERSION}-${VERSION}${LOCALVERSION}${CONFIG_SUFFIX} $PKG/boot/config
+@@ -142,8 +145,10 @@
+ ) || exit 1
+ 
+ # Fetch the kernel architecture from the source tree:
+-cd ${KERNEL_SOURCE}
+-PACKAGE_ARCH=$(cat kernel/bounds.s | grep -w "\-march=.*" | tr " " "\n" | grep -w "\-march=.*" | cut -f 2 -d = | tr - _)
++if [ -z "${PACKAGE_ARCH}" ]; then
++  cd ${KERNEL_SOURCE}
++  PACKAGE_ARCH=$(uname -m)
++fi
+ 
+ mkdir $PKG/install
+ if [ -r $CWD/slack-desc/slack-desc.kernel-${KERNEL_NAME}${LOCALVERSION}.${PACKAGE_ARCH} ]; then

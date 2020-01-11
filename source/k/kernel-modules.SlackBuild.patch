@@ -18,7 +18,7 @@
 +if [ -z "${PACKAGE_ARCH}" ]; then
 +  cd ${KERNEL_SOURCE}
 +  PACKAGE_ARCH=$(uname -m)
-+f
++fi
      
  # Make the package:
  cd $PKG
