@@ -8,9 +8,7 @@ removed:
 ----------------------------
  a/efibootmgr
  a/elilo
- a/kernel-generic
  a/kernel-huge
- a/kernel-modules
  a/syslinux
 -
  ap/libx86
@@ -22,8 +20,6 @@ removed:
 -
  f/linux-faqs
  f/linux-howtos
--
- k/kernel-source
 -
  l/svgalib
 -

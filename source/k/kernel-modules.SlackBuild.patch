@@ -1,0 +1,24 @@
+--- a/kernel-modules.SlackBuild	2020-01-11 18:42:57.371474678 +0200
++++ b/kernel-modules.SlackBuild	2020-01-11 18:42:48.723523710 +0200
+@@ -65,7 +65,7 @@
+   cd ${KERNEL_SOURCE}
+   make oldconfig 1> /dev/null 2> /dev/null
+   make prepare 1> /dev/null 2> /dev/null
+-  PACKAGE_ARCH=$(cat kernel/bounds.s | grep -w "\-march=.*" | tr " " "\n" | grep -w "\-march=.*" | cut -f 2 -d = | tr - _)
++  PACKAGE_ARCH=$(uname -m)
+   echo "kernel${KERNEL_NAME}-modules${LOCALVERSION}-$(echo ${VERSION} | tr - _)$(echo ${LOCALVERSION} | tr - _)-${PACKAGE_ARCH}-$BUILD.txz"
+   exit 0
+ fi
+@@ -126,8 +126,10 @@
+ cat $CWD/slack-desc/slack-desc.kernel-modules-template | sed "s/%PACKAGE_NAME%/kernel${KERNEL_NAME}-modules${LOCALVERSION}/g" > $PKG/install/slack-desc
+ 
+ # Fetch the kernel architecture from the source tree:
+-cd ${KERNEL_SOURCE}
+-PACKAGE_ARCH=$(cat kernel/bounds.s | grep -w "\-march=.*" | tr " " "\n" | grep -w "\-march=.*" | cut -f 2 -d = | tr - _)
++if [ -z "${PACKAGE_ARCH}" ]; then
++  cd ${KERNEL_SOURCE}
++  PACKAGE_ARCH=$(uname -m)
++f
+     
+ # Make the package:
+ cd $PKG
