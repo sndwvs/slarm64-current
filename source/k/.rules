@@ -13,13 +13,17 @@ rules() {
     ./${p}.SlackBuild 2>&1 | tee ${p}.build.log
     [[ ${PIPESTATUS[0]} == 1 ]] && ERROR=1
     if [[ ${p} == kernel-headers* ]]; then
-        move_pkg "d" ${p}
+        series="d"
+        move_pkg ${series} ${p}
     elif [[ ${p} == kernel-generic* || ${p} == kernel-modules* ]]; then
-        move_pkg "a" ${p}
+        series="a"
+        move_pkg ${series} ${p}
     else
-        move_pkg ${t} ${p}
+        series=${t}
+        move_pkg ${series} ${p}
     fi
-    upgradepkg --install-new --reinstall ${PACKAGES_PATH}/${t}/${p}-*.t?z
+    upgradepkg --install-new --reinstall ${PACKAGES_PATH}/${series}/${p}-*.t?z
+    unset series
     popd 2>&1>/dev/null
 }
 
