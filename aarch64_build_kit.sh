@@ -147,6 +147,12 @@ build() {
             # build extra series
             [[ ${t} == "extra" ]] && _PKG=${_PKG/$t\///}
 
+            # build kernel series
+            if [[ $t == k && -e ${SLARM64_SOURCE_PATH}/$t/.rules ]]; then
+                source ${SLARM64_SOURCE_PATH}/$t/.rules
+                continue
+            fi
+
             # build kde series
             if [[ $t == kde && -e ${SLARM64_SOURCE_PATH}/$t/.rules ]]; then
                 source ${SLARM64_SOURCE_PATH}/$t/.rules
