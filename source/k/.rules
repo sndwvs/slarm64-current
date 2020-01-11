@@ -19,6 +19,7 @@ rules() {
     else
         move_pkg ${t} ${p}
     fi
+    upgradepkg --install-new --reinstall ${PACKAGES_PATH}/${t}/${p}-*.t?z
     popd 2>&1>/dev/null
 }
 
