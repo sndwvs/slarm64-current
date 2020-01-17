@@ -3,7 +3,7 @@
 CWD=$(pwd)
 
 NAME="dtc"
-VERSION=${VERSION:-1.5.0}
+VERSION=${VERSION:-$(echo $NAME-*.tar.?z* | cut -d - -f2 | rev | cut -d . -f3- | rev)}
 BUILD=${BUILD:-1}
 
 NUMJOBS=${NUMJOBS:-" -j$(grep -c ^processor /proc/cpuinfo 2>/dev/null) "}

@@ -1,3 +1,34 @@
+Fri Jan 17 19:03:23 UTC 2020
+a/mtd-utils-2.1.1-aarch64-1.txz:  Upgraded.
+a/vboot-utils-r2450.8d765294-aarch64-1.txz:  Upgraded.
+a/u-boot-tools-vv2020.01-aarch64-1.txz:  Upgraded.
+d/dtc-1.5.1-aarch64-1.txz:  Upgraded.
++--------------------------+
+Thu Jan 16 20:06:13 UTC 2020
+a/sed-4.8-aarch64-1.txz:  Upgraded.
+d/gdb-8.3.1-aarch64-3.txz:  Rebuilt.
+d/guile-3.0.0-aarch64-1.txz:  Upgraded.
+d/make-4.2.1-aarch64-5.txz:  Rebuilt.
+l/libcap-2.31-aarch64-1.txz:  Upgraded.
+l/python-six-1.14.0-aarch64-1.txz:  Upgraded.
+n/gnutls-3.6.11.1-aarch64-2.txz:  Rebuilt.
+n/lftp-4.9.1-aarch64-1.txz:  Upgraded.
+n/libmbim-1.22.0-aarch64-1.txz:  Upgraded.
+n/libqmi-1.24.4-aarch64-1.txz:  Upgraded.
++--------------------------+
+Wed Jan 15 00:15:49 UTC 2020
+a/kernel-generic-5.4.12-aarch64-1.txz:  Upgraded.
+a/kernel-modules-5.4.12-aarch64-1.txz:  Upgraded.
+d/kernel-headers-5.4.12-arm64-1.txz:  Upgraded.
+k/kernel-source-5.4.12-noarch-1.txz:  Upgraded.
++--------------------------+
+Mon Jan 13 19:18:02 UTC 2020
+a/sysvinit-scripts-2.1-noarch-28.txz:  Rebuilt.
+l/babl-0.1.74-aarch64-1.txz:  Upgraded.
+l/imagemagick-7.0.9_16-aarch64-1.txz:  Upgraded.
+l/python-docutils-0.16-aarch64-1.txz:  Upgraded.
+n/mutt-1.13.3-aarch64-1.txz:  Upgraded.
++--------------------------+
 Mon Jan 13 00:11:55 UTC 2020
 a/elvis-2.2_0-aarch64-5.txz:  Rebuilt.
 a/kernel-generic-5.4.11-aarch64-1.txz:  Upgraded.
