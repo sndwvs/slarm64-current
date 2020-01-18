@@ -1,9 +1,9 @@
---- /dev/null	2020-01-09 17:46:56.658592467 +0200
-+++ b/kernel-configs/config-generic-5.4.10.arm64	2020-01-11 16:11:51.403091691 +0200
-@@ -0,0 +1,9454 @@
+--- /dev/null	2020-01-11 08:22:24.376683777 +0000
++++ b/kernel-configs/config-generic-5.4.13.arm64	2020-01-18 08:49:51.253351384 +0000
+@@ -0,0 +1,9450 @@
 +#
 +# Automatically generated file; DO NOT EDIT.
-+# Linux/arm64 5.4.10 Kernel Configuration
++# Linux/arm64 5.4.13 Kernel Configuration
 +#
 +
 +#
@@ -713,6 +713,7 @@
 +CONFIG_HAVE_ARCH_MMAP_RND_BITS=y
 +CONFIG_ARCH_MMAP_RND_BITS=18
 +CONFIG_ARCH_WANT_DEFAULT_TOPDOWN_MMAP_LAYOUT=y
++CONFIG_HAVE_COPY_THREAD_TLS=y
 +CONFIG_CLONE_BACKWARDS=y
 +CONFIG_64BIT_TIME=y
 +CONFIG_HAVE_ARCH_VMAP_STACK=y
@@ -736,14 +737,9 @@
 +CONFIG_PLUGIN_HOSTCC="g++"
 +CONFIG_HAVE_GCC_PLUGINS=y
 +CONFIG_GCC_PLUGINS=y
-+
-+#
-+# GCC plugins
-+#
 +# CONFIG_GCC_PLUGIN_CYC_COMPLEXITY is not set
 +# CONFIG_GCC_PLUGIN_LATENT_ENTROPY is not set
 +# CONFIG_GCC_PLUGIN_RANDSTRUCT is not set
-+# end of GCC plugins
 +# end of General architecture-dependent options
 +
 +CONFIG_RT_MUTEXES=y
