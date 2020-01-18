@@ -1,7 +1,13 @@
+Sat Jan 18 05:13:03 UTC 2020
+a/kernel-generic-5.4.13-aarch64-1.txz:  Upgraded.
+a/kernel-modules-5.4.13-aarch64-1.txz:  Upgraded.
+d/kernel-headers-5.4.13-arm64-1.txz:  Upgraded.
+k/kernel-source-5.4.13-noarch-1.txz:  Upgraded.
++--------------------------+
 Fri Jan 17 19:03:23 UTC 2020
 a/mtd-utils-2.1.1-aarch64-1.txz:  Upgraded.
 a/vboot-utils-r2450.8d765294-aarch64-1.txz:  Upgraded.
-a/u-boot-tools-vv2020.01-aarch64-1.txz:  Upgraded.
+a/u-boot-tools-v2020.01-aarch64-1.txz:  Upgraded.
 d/dtc-1.5.1-aarch64-1.txz:  Upgraded.
 +--------------------------+
 Thu Jan 16 20:06:13 UTC 2020
