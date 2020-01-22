@@ -1,6 +1,6 @@
---- a/samba.SlackBuild	2017-11-17 23:20:34.343335990 +0200
-+++ b/samba.SlackBuild	2017-11-17 23:21:47.473335990 +0200
-@@ -50,6 +50,9 @@
+--- a/samba.SlackBuild	2020-01-22 19:39:58.903160519 +0000
++++ b/samba.SlackBuild	2020-01-22 19:41:16.104212008 +0000
+@@ -52,6 +52,9 @@
    elif [ "$ARCH" = "x86_64" ]; then
      SLKCFLAGS="-O2 -fPIC"
      LIBDIRSUFFIX="64"
@@ -10,3 +10,14 @@
    else
      SLKCFLAGS="-O2"
      LIBDIRSUFFIX=""
+@@ -100,6 +103,10 @@
+   \( -perm 666 -o -perm 664 -o -perm 600 -o -perm 444 -o -perm 440 -o -perm 400 \) \
+   -exec chmod 644 {} \+
+ 
++# https://bugzilla.samba.org/show_bug.cgi?id=14100
++sed -e '/HAVE_STROPTS_H/,+2 d' \
++    -i lib/replace/system/network.h
++
+ # Some of these options could be auto-detected, but declaring them
+ # here doesn't hurt and helps document what features we're trying to
+ # build in.
