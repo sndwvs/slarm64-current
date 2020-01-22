@@ -1,3 +1,33 @@
+Wed Jan 22 00:50:24 UTC 2020
+a/aaa_elflibs-15.0-aarch64-20.txz:  Rebuilt.
+n/krb5-1.17.1-aarch64-1.txz:  Upgraded.
++--------------------------+
+Tue Jan 21 21:23:01 UTC 2020
+a/aaa_elflibs-15.0-aarch64-19.txz:  Rebuilt.
+a/util-linux-2.35-aarch64-1.txz:  Upgraded.
+d/python-pip-20.0.1-aarch64-1.txz:  Upgraded.
+l/Mako-1.1.1-aarch64-1.txz:  Upgraded.
+l/keyutils-1.6.1-aarch64-1.txz:  Upgraded.
+n/krb5-1.17-aarch64-1.txz:  Added.
+n/php-7.4.2-aarch64-1.txz:  Upgraded.
+n/samba-4.11.5-aarch64-1.txz:  Upgraded.
+xap/gparted-1.1.0-aarch64-1.txz:  Upgraded.
++--------------------------+
+Mon Jan 20 22:37:58 UTC 2020
+a/aaa_terminfo-6.1_20200118-aarch64-1.txz:  Upgraded.
+d/make-4.3-aarch64-1.txz:  Upgraded.
+d/python-setuptools-45.1.0-aarch64-1.txz:  Upgraded.
+l/ncurses-6.1_20200118-aarch64-1.txz:  Upgraded.
+n/alpine-2.22-aarch64-1.txz:  Upgraded.
+xap/mozilla-firefox-68.4.2esr-aarch64-1.txz:  Upgraded.
++--------------------------+
+Sun Jan 19 19:31:23 UTC 2020
+ap/mc-4.8.24-aarch64-1.txz:  Upgraded.
+ap/vim-8.2.0131-aarch64-1.txz:  Upgraded.
+d/bison-3.5.1-aarch64-1.txz:  Upgraded.
+l/imagemagick-7.0.9_17-aarch64-1.txz:  Upgraded.
+xap/vim-gvim-8.2.0131-aarch64-1.txz:  Upgraded.
++--------------------------+
 Sat Jan 18 20:48:32 UTC 2020
 l/gegl-0.4.20-aarch64-1.txz:  Upgraded.
 l/gmp-6.2.0-aarch64-1.txz:  Upgraded.
