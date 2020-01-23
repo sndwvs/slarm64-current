@@ -1,3 +1,16 @@
+Wed Jan 22 22:53:32 UTC 2020
+a/kernel-firmware-20200122_1eb2408-noarch-1.txz:  Upgraded.
+a/pciutils-3.6.3-aarch64-1.txz:  Upgraded.
+a/pkgtools-15.0-noarch-30.txz:  Rebuilt.
+d/cmake-3.16.3-aarch64-1.txz:  Upgraded.
+d/distcc-3.3.3-aarch64-3.txz:  Rebuilt.
+d/parallel-20200122-noarch-1.txz:  Upgraded.
+l/python-urllib3-1.25.8-aarch64-1.txz:  Upgraded.
+n/bind-9.14.10-aarch64-1.txz:  Upgraded.
+n/dhcp-4.4.2-aarch64-1.txz:  Upgraded.
+n/p11-kit-0.23.19-aarch64-1.txz:  Upgraded.
+n/php-7.4.2-aarch64-2.txz:  Rebuilt.
++--------------------------+
 Wed Jan 22 00:50:24 UTC 2020
 a/aaa_elflibs-15.0-aarch64-20.txz:  Rebuilt.
 n/krb5-1.17.1-aarch64-1.txz:  Upgraded.
