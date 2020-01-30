@@ -1,3 +1,58 @@
+Thu Jan 30 04:59:13 UTC 2020
+a/kernel-generic-5.4.16-aarch64-1.txz:  Upgraded.
+a/kernel-modules-5.4.16-aarch64-1.txz:  Upgraded.
+ap/linuxdoc-tools-0.9.73-aarch64-5.txz:  Rebuilt.
+d/kernel-headers-5.4.16-arm64-1.txz:  Upgraded.
+k/kernel-source-5.4.16-noarch-1.txz:  Upgraded.
++--------------------------+
+Tue Jan 28 21:39:57 UTC 2020
+ap/mariadb-10.4.12-aarch64-1.txz:  Upgraded.
+l/imagemagick-7.0.9_20-aarch64-1.txz:  Upgraded.
+n/dhcpcd-8.1.6-aarch64-1.txz:  Upgraded.
+n/samba-4.11.6-aarch64-1.txz:  Upgraded.
+x/mesa-19.3.3-aarch64-1.txz:  Upgraded.
++--------------------------+
+Tue Jan 28 03:17:51 UTC 2020
+ap/cups-filters-1.27.0-aarch64-1.txz:  Upgraded.
+ap/qpdf-9.1.1-aarch64-1.txz:  Upgraded.
+ap/sqlite-3.31.1-aarch64-1.txz:  Upgraded.
+d/ninja-1.10.0-aarch64-1.txz:  Upgraded.
+l/imagemagick-7.0.9_19-aarch64-1.txz:  Upgraded.
+n/iproute2-5.5.0-aarch64-1.txz:  Upgraded.
++--------------------------+
+Mon Jan 27 00:48:51 UTC 2020
+a/aaa_elflibs-15.0-aarch64-21.txz:  Rebuilt.
+a/kernel-generic-5.4.15-aarch64-1.txz:  Upgraded.
+a/kernel-modules-5.4.15-aarch64-1.txz:  Upgraded.
+a/pciutils-3.6.4-aarch64-1.txz:  Upgraded.
+a/shadow-4.8.1-aarch64-1.txz:  Upgraded.
+d/check-0.14.0-aarch64-1.txz:  Upgraded.
+d/kernel-headers-5.4.15-arm64-1.txz:  Upgraded.
+d/make-4.2.1-aarch64-5.txz:  Rebuilt.
+d/python-pip-20.0.2-aarch64-1.txz:  Upgraded.
+k/kernel-source-5.4.15-noarch-1.txz:  Upgraded.
+l/imagemagick-7.0.9_18-aarch64-1.txz:  Upgraded.
+l/python-packaging-20.1-aarch64-1.txz:  Upgraded.
+n/php-7.4.2-aarch64-3.txz:  Rebuilt.
++--------------------------+
+Fri Jan 24 22:59:00 UTC 2020
+d/meson-0.53.1-aarch64-1.txz:  Upgraded.
+l/isl-0.22.1-aarch64-1.txz:  Upgraded.
+l/libzip-1.6.0-aarch64-1.txz:  Upgraded.
+l/mozilla-nss-3.49.2-aarch64-1.txz:  Upgraded.
+xap/blueman-2.1.2-aarch64-1.txz:  Upgraded.
+xap/mozilla-thunderbird-68.4.2-aarch64-1.txz:  Upgraded.
++--------------------------+
+Fri Jan 24 00:51:23 UTC 2020
+a/kernel-generic-5.4.14-aarch64-1.txz:  Upgraded.
+a/kernel-modules-5.4.14-aarch64-1.txz:  Upgraded.
+ap/sqlite-3.31.0-aarch64-1.txz:  Upgraded.
+d/kernel-headers-5.4.14-arm64-1.txz:  Upgraded.
+k/kernel-source-5.4.14-noarch-1.txz:  Upgraded.
+n/libtirpc-1.2.5-aarch64-2.txz:  Rebuilt.
+n/nfs-utils-2.4.2-aarch64-2.txz:  Rebuilt.
+n/whois-5.5.5-aarch64-1.txz:  Upgraded.
++--------------------------+
 Wed Jan 22 22:53:32 UTC 2020
 a/kernel-firmware-20200122_1eb2408-noarch-1.txz:  Upgraded.
 a/pciutils-3.6.3-aarch64-1.txz:  Upgraded.

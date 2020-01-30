@@ -1,9 +1,9 @@
 --- /dev/null	2020-01-11 08:22:24.376683777 +0000
-+++ b/kernel-configs/config-generic-5.4.13.arm64	2020-01-18 08:49:51.253351384 +0000
++++ b/kernel-configs/config-generic-5.4.16.arm64	2020-01-30 18:05:44.903959354 +0000
 @@ -0,0 +1,9450 @@
 +#
 +# Automatically generated file; DO NOT EDIT.
-+# Linux/arm64 5.4.13 Kernel Configuration
++# Linux/arm64 5.4.16 Kernel Configuration
 +#
 +
 +#
