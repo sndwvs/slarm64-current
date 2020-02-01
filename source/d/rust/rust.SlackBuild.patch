@@ -1,16 +1,16 @@
---- a/rust.SlackBuild	2019-11-19 18:19:40.031268093 +0000
-+++ b/rust.SlackBuild	2019-11-19 18:22:15.617497159 +0000
-@@ -131,6 +131,9 @@
+--- a/rust.SlackBuild	2020-01-30 18:55:20.108351291 +0000
++++ b/rust.SlackBuild	2020-01-31 22:39:54.223714399 +0000
+@@ -124,6 +124,9 @@
+   LIBDIRSUFFIX="64"
  elif [ "$ARCH" = "armv7hl" ]; then
-   SLKCFLAGS=""
    LIBDIRSUFFIX=""
 +elif [ "$ARCH" = "aarch64" ]; then
 +  SLKCFLAGS="-O2"
 +  LIBDIRSUFFIX="64"
  else
-   SLKCFLAGS="-O2"
    LIBDIRSUFFIX=""
-@@ -208,6 +211,9 @@
+ fi
+@@ -196,6 +199,9 @@
  
  [target.armv7-unknown-linux-gnueabihf]
  llvm-config = "/usr/bin/llvm-config"
@@ -20,14 +20,3 @@
  EOF
  fi
  
-@@ -246,8 +252,8 @@
- else
-   # README.md says gcc 4.7 / clang 3.x or later needed
-   # but building fails for me with GCC 5.3 from slackware 14.2
--  export CC=clang
--  export CXX=clang++
-+#  export CC=clang
-+#  export CXX=clang++
-   CFLAGS="$SLKCFLAGS" \
-   CXXFLAGS="$SLKCFLAGS" \
-   python x.py dist  || exit 1

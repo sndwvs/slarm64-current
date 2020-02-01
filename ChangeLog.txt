@@ -1,3 +1,19 @@
+Fri Jan 31 20:46:25 UTC 2020
+a/util-linux-2.35.1-aarch64-1.txz:  Upgraded.
+a/zerofree-1.1.1-aarch64-1.txz:  Added.
+ap/sudo-1.8.31-aarch64-1.txz:  Upgraded.
+n/NetworkManager-1.22.6-aarch64-1.txz:  Upgraded.
+n/openldap-client-2.4.49-aarch64-1.txz:  Upgraded.
+xfce/Thunar-1.8.11-aarch64-1.txz:  Removed.
+xfce/thunar-1.8.12-aarch64-1.txz:  Added.
++--------------------------+
+Fri Jan 31 03:36:03 UTC 2020
+a/inotify-tools-3.20.2-aarch64-1.txz:  Upgraded.
+d/llvm-9.0.1-aarch64-3.txz:  Rebuilt.
+d/rust-1.41.0-aarch64-1.txz:  Upgraded.
+n/p11-kit-0.23.20-aarch64-1.txz:  Upgraded.
+x/mtdev-1.1.6-aarch64-1.txz:  Upgraded.
++--------------------------+
 Thu Jan 30 04:59:13 UTC 2020
 a/kernel-generic-5.4.16-aarch64-1.txz:  Upgraded.
 a/kernel-modules-5.4.16-aarch64-1.txz:  Upgraded.
