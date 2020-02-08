@@ -70,8 +70,8 @@
  # Call the function to fix doinst.sh where $LIBDIRSUFFIX is needed:
  fix_doinst
  # Only scrub the links in /lib{,64} that will be created by ldconfig:
--find lib${LIBDIRSUFFIX} -type l -exec rm {} \;
-+find lib{,${LIBDIRSUFFIX}} -type l -exec rm {} \;
+-find lib${LIBDIRSUFFIX} -type l -exec rm {} \+
++find lib{,${LIBDIRSUFFIX}} -type l -exec rm {} \+
  # Build the package:
  makepkg -l y -c n $TMP/glibc-solibs-$VERSION-$SLACKWARE_ARCH-$BUILD.txz
  
@@ -79,8 +79,8 @@
  chown -R root:root etc
  chmod 755 etc/profile.d/*
  # Only scrub the links in /lib{,64} that will be created by ldconfig:
--find lib${LIBDIRSUFFIX} -type l -exec rm {} \;
-+find lib{,${LIBDIRSUFFIX}} -type l -exec rm {} \;
+-find lib${LIBDIRSUFFIX} -type l -exec rm {} \+
++find lib{,${LIBDIRSUFFIX}} -type l -exec rm {} \+
  mkdir install
  cp -a $CWD/slack-desc.glibc install/slack-desc
  cp -a $CWD/doinst.sh-glibc install/doinst.sh
