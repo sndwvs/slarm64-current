@@ -1,0 +1,11 @@
+--- a/gdb.SlackBuild	2020-02-08 23:53:54.570482200 +0000
++++ b/gdb.SlackBuild	2020-02-08 23:54:27.166947727 +0000
+@@ -48,6 +48,8 @@
+ 
+ if [ "$ARCH" = "x86_64" ]; then
+   LIBDIRSUFFIX="64"
++elif [ "$ARCH" = "aarch64" ]; then
++  LIBDIRSUFFIX="64"
+ else
+   LIBDIRSUFFIX=""
+ fi
