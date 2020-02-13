@@ -1,6 +1,6 @@
---- a/sdl.SlackBuild	2018-04-25 20:38:58.364505365 +0300
-+++ b/sdl.SlackBuild	2018-04-25 20:41:55.203102982 +0300
-@@ -60,6 +60,9 @@
+--- a/sdl.SlackBuild	2020-02-13 16:45:11.121723443 +0000
++++ b/sdl.SlackBuild	2020-02-13 16:46:42.099012586 +0000
+@@ -61,6 +61,9 @@
  elif [ "$ARCH" = "x86_64" ]; then
    SLKCFLAGS="-O2 -fPIC"
    LIBDIRSUFFIX="64"
@@ -10,7 +10,7 @@
  else
    SLKCFLAGS="-O2"
    LIBDIRSUFFIX=""
-@@ -96,7 +99,9 @@
+@@ -97,7 +100,9 @@
    --disable-esd \
    --enable-shared=yes \
    --enable-static=no \
@@ -21,7 +21,7 @@
  
  make $NUMJOBS || make || exit 1
  
-@@ -138,7 +143,9 @@
+@@ -139,7 +144,9 @@
    --enable-static=no \
    --enable-jpg-shared=no \
    --enable-png-shared=no \
@@ -32,7 +32,7 @@
  
  make $NUMJOBS || make || exit 1
  make install DESTDIR=$PKG || exit 1
-@@ -165,7 +172,9 @@
+@@ -166,7 +173,9 @@
    --libdir=/usr/local/lib${LIBDIRSUFFIX} \
    --with-pic \
    --enable-shared=no \
@@ -43,7 +43,7 @@
    make $NUMJOBS || make || exit 1
    make install || exit 1
  ) || exit 1
-@@ -184,7 +193,9 @@
+@@ -185,7 +194,9 @@
    --mandir=/usr/man \
    --enable-music-mod \
    --enable-shared=yes \
@@ -54,7 +54,7 @@
  
  make $NUMJOBS || make || exit 1
  make install DESTDIR=$PKG || exit 1
-@@ -215,7 +226,9 @@
+@@ -216,7 +227,9 @@
    --libdir=/usr/lib${LIBDIRSUFFIX} \
    --mandir=/usr/man \
    --enable-shared=yes \
@@ -67,6 +67,17 @@
  make install DESTDIR=$PKG || exit 1
 @@ -247,7 +260,9 @@
    --libdir=/usr/lib${LIBDIRSUFFIX} \
+   --mandir=/usr/man \
+   --enable-shared=yes \
+-  --enable-static=no || exit 1
++  --enable-static=no \
++  --host=$ARCH-slackware-linux \
++  --build=$ARCH-slackware-linux || exit 1
+ 
+ make $NUMJOBS || make || exit 1
+ make install DESTDIR=$PKG || exit 1
+@@ -272,7 +287,9 @@
+   --sysconfdir=/etc \
    --mandir=/usr/man \
    --enable-shared=yes \
 -  --enable-static=no || exit 1

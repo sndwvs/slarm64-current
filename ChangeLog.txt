@@ -1,3 +1,33 @@
+Wed Feb 12 21:51:35 UTC 2020
+a/aaa_terminfo-6.2-aarch64-1.txz:  Upgraded.
+d/git-2.25.0-aarch64-2.txz:  Rebuilt.
+d/gnucobol-2.2-aarch64-3.txz:  Rebuilt.
+l/libarchive-3.4.2-aarch64-1.txz:  Upgraded.
+l/ncurses-6.2-aarch64-1.txz:  Upgraded.
+l/sdl-1.2.15-aarch64-8.txz:  Rebuilt.
+n/ModemManager-1.12.6-aarch64-1.txz:  Upgraded.
+n/NetworkManager-1.22.6-aarch64-2.txz:  Rebuilt.
+n/dovecot-2.3.9.3-aarch64-1.txz:  Upgraded.
++--------------------------+
+Wed Feb 12 05:05:50 UTC 2020
+a/kernel-generic-5.4.19-aarch64-1.txz:  Upgraded.
+a/kernel-modules-5.4.19-aarch64-1.txz:  Upgraded.
+a/lvm2-2.03.08-aarch64-1.txz:  Upgraded.
+a/shadow-4.8.1-aarch64-2.txz:  Rebuilt.
+d/kernel-headers-5.4.19-x86-1.txz:  Upgraded.
+k/kernel-source-5.4.19-noarch-1.txz:  Upgraded.
+xap/mozilla-thunderbird-68.5.0-aarch64-1.txz:  Upgraded.
+Tue Feb 11 04:45:36 UTC 2020
+ap/man-pages-5.05-noarch-2.txz:  Rebuilt.
+d/python-setuptools-45.2.0-aarch64-1.txz:  Upgraded.
+n/nfs-utils-2.4.3-aarch64-1.txz:  Upgraded.
+xap/mozilla-firefox-68.5.0esr-aarch64-1.txz:  Upgraded.
++--------------------------+
+Sun Feb  9 23:04:46 UTC 2020
+ap/man-pages-5.05-noarch-1.txz:  Upgraded.
+d/vala-0.46.6-aarch64-1.txz:  Upgraded.
+extra/tigervnc/tigervnc-1.10.1-aarch64-2.txz:  Rebuilt.
++--------------------------+
 Sat Feb  8 21:20:28 UTC 2020
 a/bash-5.0.016-aarch64-1.txz:  Upgraded.
 a/kernel-firmware-20200207_6f89735-noarch-1.txz:  Upgraded.
