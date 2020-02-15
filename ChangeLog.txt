@@ -1,3 +1,27 @@
+Sat Feb 15 02:42:28 UTC 2020
+a/kernel-generic-5.4.20-aarch64-1.txz:  Upgraded.
+a/kernel-modules-5.4.20-aarch64-1.txz:  Upgraded.
+a/shadow-4.8.1-aarch64-3.txz:  Rebuilt.
+a/util-linux-2.35.1-aarch64-3.txz:  Rebuilt.
+d/kernel-headers-5.4.20-arm64-1.txz:  Upgraded.
+k/kernel-source-5.4.20-noarch-1.txz:  Upgraded.
+l/ConsoleKit2-1.2.1-aarch64-2.txz:  Rebuilt.
+l/dconf-editor-3.34.4-aarch64-1.txz:  Upgraded.
+l/libxkbcommon-0.10.0-aarch64-1.txz:  Added.
+l/openal-soft-1.19.1-aarch64-1.txz:  Added.
+l/qt5-5.13.2-aarch64-1.txz:  Added.
+n/openssh-8.2p1-aarch64-1.txz:  Upgraded.
+x/mesa-19.3.4-aarch64-2.txz:  Rebuilt.
++--------------------------+
+Thu Feb 13 20:17:58 UTC 2020
+a/sysvinit-scripts-2.1-noarch-29.txz:  Rebuilt.
+a/util-linux-2.35.1-aarch64-2.txz:  Rebuilt.
+d/bison-3.5.2-aarch64-1.txz:  Upgraded.
+l/pcre-8.44-aarch64-1.txz:  Upgraded.
+l/sdl-1.2.15-aarch64-9.txz:  Rebuilt.
+n/krb5-1.18-aarch64-1.txz:  Upgraded.
+x/mesa-19.3.4-aarch64-1.txz:  Upgraded.
++--------------------------+
 Wed Feb 12 21:51:35 UTC 2020
 a/aaa_terminfo-6.2-aarch64-1.txz:  Upgraded.
 d/git-2.25.0-aarch64-2.txz:  Rebuilt.

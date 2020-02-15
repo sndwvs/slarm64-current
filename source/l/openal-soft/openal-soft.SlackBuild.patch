@@ -1,0 +1,20 @@
+--- a/openal-soft.SlackBuild	2020-02-15 08:31:40.836124215 +0000
++++ b/openal-soft.SlackBuild	2020-02-15 08:32:20.576676660 +0000
+@@ -63,6 +63,9 @@
+ elif [ "$ARCH" = "armv7hl" ]; then
+   SLKCFLAGS="-O3 -march=armv7-a -mfpu=vfpv3-d16"
+   LIBDIRSUFFIX=""
++elif [ "$ARCH" = "aarch64" ]; then
++  SLKCFLAGS="-O2"
++  LIBDIRSUFFIX="64"
+ else
+   SLKCFLAGS="-O2"
+   LIBDIRSUFFIX=""
+@@ -98,6 +101,7 @@
+     -DMAN_INSTALL_DIR=/usr/man \
+     -DSYSCONF_INSTALL_DIR=/etc \
+     -DCMAKE_BUILD_TYPE=Release \
++    -DALSOFT_CPUEXT_NEON=OFF \
+     .. || exit 1
+   make $NUMJOBS || make || exit 1
+   make install DESTDIR=$PKG || exit 1
