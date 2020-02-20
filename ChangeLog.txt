@@ -1,3 +1,60 @@
+Thu Feb 20 04:50:54 UTC 2020
+a/gptfdisk-1.0.5-aarch64-1.txz:  Upgraded.
+a/kernel-firmware-20200219_2277987-noarch-1.txz:  Upgraded.
+a/kernel-generic-5.4.21-aarch64-1.txz:  Upgraded.
+a/kernel-modules-5.4.21-aarch64-1.txz:  Upgraded.
+a/shadow-4.8.1-aarch64-5.txz:  Rebuilt.
+a/util-linux-2.35.1-aarch64-4.txz:  Rebuilt.
+ap/cdparanoia-III_10.2-aarch64-3.txz:  Rebuilt.
+d/kernel-headers-5.4.21-arm64-1.txz:  Upgraded.
+k/kernel-source-5.4.21-noarch-1.txz:  Upgraded.
+l/gegl-0.4.22-aarch64-1.txz:  Upgraded.
+l/glib2-2.62.5-aarch64-1.txz:  Upgraded.
+l/python-requests-2.23.0-aarch64-1.txz:  Upgraded.
+n/NetworkManager-1.22.8-aarch64-1.txz:  Upgraded.
+n/openssh-8.2p1-aarch64-2.txz:  Rebuilt.
+n/php-7.4.3-aarch64-1.txz:  Upgraded.
+x/mesa-20.0.0-aarch64-1.txz:  Upgraded.
+x/wayland-1.18.0-aarch64-1.txz:  Added.
+x/wayland-protocols-1.18-noarch-1.txz:  Added.
+x/xorg-server-1.20.7-aarch64-2.txz:  Rebuilt.
+x/xorg-server-xephyr-1.20.7-aarch64-2.txz:  Rebuilt.
+x/xorg-server-xnest-1.20.7-aarch64-2.txz:  Rebuilt.
+x/xorg-server-xvfb-1.20.7-aarch64-2.txz:  Rebuilt.
+x/xorg-server-xwayland-1.20.7-aarch64-2.txz:  Added.
+xap/gimp-2.10.16-aarch64-1.txz:  Upgraded.
++--------------------------+
+Tue Feb 18 05:20:50 UTC 2020
+l/gtk+3-3.24.14-aarch64-2.txz:  Rebuilt.
+l/imagemagick-7.0.9_24-aarch64-1.txz:  Upgraded.
+n/bind-9.14.10-aarch64-2.txz:  Rebuilt.
+n/tin-2.4.4-aarch64-1.txz:  Upgraded.
+xap/blackbox-0.76-aarch64-1.txz:  Upgraded.
+testing/packages/PAM/libcap-2.32-aarch64-1_pam.txz:  Upgraded.
++--------------------------+
+Mon Feb 17 21:32:15 UTC 2020
+a/shadow-4.8.1-aarch64-4.txz:  Rebuilt.
+ap/cups-filters-1.27.1-aarch64-1.txz:  Upgraded.
+d/git-2.25.1-aarch64-1.txz:  Upgraded.
+l/gtk+3-3.24.14-aarch64-1.txz:  Upgraded.
+l/libcap-2.32-aarch64-1.txz:  Upgraded.
+l/python-idna-2.9-aarch64-1.txz:  Upgraded.
++--------------------------+
+Mon Feb 17 06:03:43 UTC 2020
+ap/ksh93-20200131_e4fea8c5-aarch64-1.txz:  Upgraded.
+ap/zsh-5.8-aarch64-1.txz:  Upgraded.
+l/brotli-1.0.7-aarch64-1.txz:  Added.
+l/gmime-3.2.6-aarch64-1.txz:  Upgraded.
+l/hyphen-2.8.8-aarch64-1.txz:  Added.
+l/openal-soft-1.20.1-aarch64-1.txz:  Upgraded.
+l/qt5-webkit-5.212.0_alpha3-aarch64-1.txz:  Added.
+l/woff2-20180531_a0d0ed7-aarch64-1.txz:  Added.
+n/bluez-5.53-aarch64-1.txz:  Upgraded.
+n/mutt-1.13.4-aarch64-1.txz:  Upgraded.
+n/samba-4.11.6-aarch64-3.txz:  Rebuilt.
+n/socat-1.7.3.4-aarch64-1.txz:  Added.
+n/whois-5.5.6-aarch64-1.txz:  Upgraded.
++--------------------------+
 Sat Feb 15 22:57:25 UTC 2020
 a/libcgroup-0.41-aarch64-6.txz:  Rebuilt.
 ap/mariadb-10.4.12-aarch64-2.txz:  Rebuilt.
