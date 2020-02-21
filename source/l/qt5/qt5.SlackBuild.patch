@@ -1,6 +1,6 @@
---- a/qt5.SlackBuild	2020-02-15 08:05:12.178060484 +0000
-+++ b/qt5.SlackBuild	2020-02-15 08:18:19.955536251 +0000
-@@ -78,6 +78,11 @@
+--- a/qt5.SlackBuild	2020-02-21 18:03:46.641566977 +0000
++++ b/qt5.SlackBuild	2020-02-21 18:04:50.518999057 +0000
+@@ -81,6 +81,11 @@
    SLKCFLAGS="-O2 -march=armv7-a -mfpu=vfpv3-d16 -fno-strict-volatile-bitfields"
    SLKLDFLAGS=""
    LIBDIRSUFFIX=""
@@ -12,8 +12,8 @@
  else
    SLKCFLAGS="-O2"
    SLKLDFLAGS=""
-@@ -150,6 +155,19 @@
-   PACONF=" "
+@@ -153,6 +158,19 @@
+   unset TAG
  fi
  
 +if [ "$ARCH" == "aarch64" ]; then
@@ -32,11 +32,11 @@
  # Use our custom compiler and linker flags:
  sed -e "s|^\(QMAKE_CFLAGS_RELEASE.*\)|\1 ${SLKCFLAGS}|" \
    -i qtbase/mkspecs/common/gcc-base.conf || exit 1
-@@ -202,6 +220,7 @@
-   -webengine-proprietary-codecs \
-   ${PACONF} \
+@@ -217,6 +235,7 @@
+   ${FFMPEG_OPTION} \
+   ${PULSEAUDIO_OPTION} \
    ${RELOCATIONS} \
 +  ${EXTRACONF} \
-   -no-pch \
+   -no-pch
    # No-precompiled-headers is ccache-friendly.
    
