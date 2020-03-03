@@ -1,5 +1,5 @@
---- a/seamonkey.SlackBuild	2019-09-09 17:16:19.821614714 +0100
-+++ b/seamonkey.SlackBuild	2019-09-09 17:16:49.490037325 +0100
+--- a/seamonkey.SlackBuild	2020-03-03 17:40:22.768955499 +0000
++++ b/seamonkey.SlackBuild	2020-03-03 17:45:02.916994103 +0000
 @@ -52,6 +52,9 @@
  elif [ "$ARCH" = "x86_64" ]; then
    LIBDIRSUFFIX="64"
@@ -10,9 +10,9 @@
  else
    LIBDIRSUFFIX=""
    OPTIMIZE_FLAG=${OPTIMIZE_FLAG:-"-O1"}
-@@ -71,6 +74,11 @@
- export CFLAGS="-Wformat -Wno-format-overflow -fno-delete-null-pointer-checks -fno-schedule-insns2"
- export CXXFLAGS="-Wformat -Wno-format-overflow -fno-delete-null-pointer-checks -fno-schedule-insns2 -fno-lifetime-dse -fpermissive"
+@@ -84,6 +87,11 @@
+ # Don't use icecream:
+ PATH=$(echo $PATH | sed "s|/usr/libexec/icecc/bin||g" | tr -s : | sed "s/^://g" | sed "s/:$//g")
  
 +# Keep memory usage as low as possible when linking:
 +SLKLDFLAGS=" -Wl,--as-needed -Wl,--no-keep-memory -Wl,--stats"
@@ -22,49 +22,13 @@
  NUMJOBS=${NUMJOBS:-" -j$(expr $(nproc) + 1) "}
  
  TMP=${TMP:-/tmp}
-@@ -106,6 +114,21 @@
- rm -rf seamonkey-unpack
- cd seamonkey-${TARBALLVER} || exit 1
- 
-+# Apply patches for ARM:
-+# All from Fedora:
-+xzcat $CWD/xulrunner-27.0-build-arm.patch.xz | sed 's?/mozilla-release/?/mozilla/?g' | patch -p1 --verbose || exit 1
-+
-+pushd mozilla
-+xzcat $CWD/firefox-48-mozilla-256180.patch.xz | patch -p1 --verbose || exit 1
-+xzcat $CWD/firefox-52-mozilla-revert-1148544.patch.xz | patch -p1 --verbose || exit 1
-+xzcat $CWD/firefox-50-mozilla-440908.patch.xz | patch -p1 --verbose || exit 1
-+xzcat $CWD/firefox-52-build-prbool.patch.xz | patch -p1 --verbose || exit 1
-+xzcat $CWD/firefox-51-mozilla-1005640.patch.xz | patch -p1 --verbose || exit 1
-+xzcat $CWD/firefox-51-mozilla-1321579.patch.xz | patch -p1 --verbose || exit 1
-+xzcat $CWD/seamonkey-2.46-exthandler.patch.xz | sed 's?/comm-release/?/?g' | patch -p2 --verbose || exit 1
-+xzcat $CWD/firefox-52-rhbz-1451055.patch.xz | patch -p1 --verbose || exit 1
-+popd
-+
- # Retain GTK+ v2 scrolling behavior:
- zcat $CWD/sm.ui.scrollToClick.diff.gz | patch -p1 --verbose || exit 1
- 
-@@ -122,10 +145,32 @@
- 
- chown -R root:root .
- 
-+# GCC-9 generates some false positives with --Werror=fromat, which prevent building SeaMonkey. Remove this flag with the following command:
-+grep -rl -- '-Werror=format' | xargs sed -i 's/error=format/no-&/'
-+
-+# Remove a function definition, which is incompatible with the one in glibc-2.30:
-+sed -i -e '/pid_t gettid/,+3 s@^@//@' mozilla/tools/profiler/core/platform.h
-+
-+# Remove a search for an unneeded library:
-+sed -i '/USE_LIBS/,+2 s/^/#/' mozilla/security/manager/ssl/moz.build
-+
- # Our building options, in a configure-like display ;)
+@@ -144,6 +152,18 @@
  OPTIONS="\
    --prefix=/usr \
    --libdir=/usr/lib${LIBDIRSUFFIX} \
 +  \
 +  --enable-system-sqlite \
 +  --with-system-libvpx \
-+  --with-system-nspr \
 +  --with-system-nss \
 +  --with-system-icu \
 +  --enable-system-cairo \
@@ -77,17 +41,15 @@
    --enable-cpp-rtti \
    --enable-default-toolkit=cairo-gtk3 \
    --enable-startup-notification \
-@@ -142,20 +187,20 @@
-   --enable-chrome-format=omni \
+@@ -160,7 +180,6 @@
    --disable-necko-wifi \
    --enable-extensions=default \
--  --enable-rust \
    --enable-js-shell \
 -  --enable-elf-hack \
    --enable-release \
    --enable-calendar \
--  --without-system-nspr \
-   --with-system-zlib \
+   --without-system-nspr \
+@@ -168,7 +187,8 @@
    --enable-application=suite \
    --with-pthreads \
    --host=$ARCH-slackware-linux \
@@ -97,8 +59,3 @@
  
  export BUILD_OFFICIAL=1
  export MOZILLA_OFFICIAL=1
-+export MOZ_PHOENIX=1
-+export MOZ_PACKAGE_JSSHELL=1
- export MOZ_MAKE_FLAGS="$NUMJOBS"
- 
- # Clear some variables that could break the build
