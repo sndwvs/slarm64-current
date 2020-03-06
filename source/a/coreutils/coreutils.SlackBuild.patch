@@ -1,0 +1,22 @@
+--- a/coreutils.SlackBuild	2020-03-06 19:16:04.846595002 +0000
++++ b/coreutils.SlackBuild	2020-03-06 19:18:01.228300988 +0000
+@@ -64,6 +64,9 @@
+ elif [ "$ARCH" = "armel" ]; then
+   SLKCFLAGS="-O2 -march=armv4t"
+   LIBDIRSUFFIX=""
++elif [ "$ARCH" = "aarch64" ]; then
++  SLKCFLAGS="-O2"
++  LIBDIRSUFFIX="64"
+ else
+   SLKCFLAGS="-O2"
+   LIBDIRSUFFIX=""
+@@ -93,6 +96,9 @@
+ # Revert change to ls quoting style introduced in coreutils-8.25:
+ zcat $CWD/no_ls_quoting.patch.gz | patch -p1 --verbose --backup --suffix=.orig || exit 1
+ 
++# ls: fix compilation failure on aarch64
++xzcat $CWD/coreutils-8.32-ls-aarch64.patch.xz | patch -p1 --verbose --backup --suffix=.orig || exit 1
++
+ # Compilation with glibc version later than 2.3.2 needs the environment
+ # variable DEFAULT_POSIX2_VERSION set to 199209.
+ # Without that line, the coreutils will start complaining about 'obsolete'
