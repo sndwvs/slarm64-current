@@ -1,3 +1,28 @@
+Sat Mar  7 20:25:36 UTC 2020
+l/gobject-introspection-1.64.0-aarch64-1.txz:  Upgraded.
+l/imagemagick-7.0.10_0-aarch64-1.txz:  Upgraded.
+l/libical-3.0.8-aarch64-1.txz:  Upgraded.
+l/librsvg-2.48.0-aarch64-1.txz:  Upgraded.
+l/libsoup-2.70.0-aarch64-1.txz:  Upgraded.
+l/mozilla-nss-3.51-aarch64-1.txz:  Upgraded.
+xap/libnma-1.8.28-aarch64-1.txz:  Added.
+xap/network-manager-applet-1.16.0-aarch64-1.txz:  Upgraded.
++--------------------------+
+Fri Mar  6 22:10:25 UTC 2020
+a/cryptsetup-2.3.0-aarch64-2.txz:  Rebuilt.
+a/sdparm-1.11-aarch64-1.txz:  Upgraded.
+ap/moc-2.5.2-aarch64-6.txz:  Rebuilt.
+l/glib-networking-2.64.0-aarch64-1.txz:  Upgraded.
+l/glib2-2.64.0-aarch64-1.txz:  Upgraded.
+l/gvfs-1.44.0-aarch64-1.txz:  Upgraded.
+l/libnl-1.1.4-aarch64-3.txz:  Rebuilt.
+l/tdb-1.4.3-aarch64-3.txz:  Rebuilt.
+l/tevent-0.10.2-aarch64-3.txz:  Rebuilt.
+n/bind-9.16.0-aarch64-3.txz:  Rebuilt.
+n/dovecot-2.3.10-aarch64-1.txz:  Upgraded.
+n/rp-pppoe-3.13-aarch64-2.txz:  Rebuilt.
+x/libinput-1.15.3-aarch64-1.txz:  Upgraded.
++--------------------------+
 Fri Mar  6 02:45:42 UTC 2020
 a/coreutils-8.32-aarch64-1.txz:  Upgraded.
 a/kernel-generic-5.4.24-aarch64-1.txz:  Upgraded.
