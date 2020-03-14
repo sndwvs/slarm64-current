@@ -1,5 +1,5 @@
---- a/mozilla-firefox.SlackBuild	2020-01-08 20:34:07.477775279 +0000
-+++ b/mozilla-firefox.SlackBuild	2020-01-08 20:36:37.211799464 +0000
+--- a/mozilla-firefox.SlackBuild	2020-03-13 22:50:14.832286264 +0000
++++ b/mozilla-firefox.SlackBuild	2020-03-13 22:49:33.919680746 +0000
 @@ -42,6 +42,9 @@
  # "UnicodeDecodeError: 'ascii' codec can't decode byte 0xe2 in position 36: ordinal not in range(128)"
  LANG=C
@@ -19,7 +19,7 @@
  export LDFLAGS="$SLKLDFLAGS"
  export MOZ_LINK_FLAGS="$SLKLDFLAGS"
  
-@@ -146,6 +149,9 @@
+@@ -142,6 +145,9 @@
  elif [ "$ARCH" = "armel" ]; then
    SLKCFLAGS="-O2 -march=armv4t"
    LIBDIRSUFFIX=""
@@ -29,7 +29,7 @@
  else
    SLKCFLAGS="-O2"
    LIBDIRSUFFIX=""
-@@ -222,8 +228,15 @@
+@@ -218,8 +224,19 @@
    \( -perm 666 -o -perm 664 -o -perm 600 -o -perm 444 -o -perm 440 -o -perm 400 \) \
    -exec chmod 644 {} \+
  
@@ -41,11 +41,15 @@
  OPTIONS="\
 +  --host=$ARCH-slackware-linux \
 +  --target=$ARCH-slackware-linux \
++  --disable-av1 \
++  --disable-gconf \
++  --disable-jemalloc \
++  --disable-webrtc \
 +  \
    --enable-official-branding \
    --prefix=/usr \
    --libdir=/usr/lib${LIBDIRSUFFIX} \
-@@ -231,7 +244,6 @@
+@@ -227,7 +244,6 @@
    --enable-alsa \
    --enable-application=browser \
    --enable-default-toolkit=cairo-gtk3 \
@@ -53,7 +57,7 @@
    --enable-startup-notification \
    $GOOGLE_API_KEY \
    --enable-strip \
-@@ -296,9 +308,19 @@
+@@ -292,9 +308,19 @@
    echo "ac_add_options --target=i686-pc-linux-gnu" >> .mozconfig
  fi
  

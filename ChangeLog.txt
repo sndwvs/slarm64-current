@@ -1,3 +1,55 @@
+Fri Mar 13 20:15:29 UTC 2020
+a/cryptsetup-2.3.1-aarch64-1.txz:  Upgraded.
+a/kernel-firmware-20200309_3b3dd5a-noarch-1.txz:  Upgraded.
+a/kernel-generic-5.4.25-aarch64-1.txz:  Upgraded.
+a/kernel-modules-5.4.25-aarch64-1.txz:  Upgraded.
+ap/ghostscript-9.51-aarch64-1.txz:  Upgraded.
+d/gcc-9.3.0-aarch64-1.txz:  Upgraded.
+d/gcc-g++-9.3.0-aarch64-1.txz:  Upgraded.
+d/gcc-gdc-9.3.0-aarch64-1.txz:  Upgraded.
+d/gcc-gfortran-9.3.0-aarch64-1.txz:  Upgraded.
+d/gcc-go-9.3.0-aarch64-1.txz:  Upgraded.
+d/gcc-objc-9.3.0-aarch64-1.txz:  Upgraded.
+d/kernel-headers-5.4.25-arm64-1.txz:  Upgraded.
+d/libtool-2.4.6-aarch64-13.txz:  Rebuilt.
+d/rust-1.42.0-aarch64-1.txz:  Upgraded.
+d/scons-3.1.2-aarch64-2.txz:  Rebuilt.
+k/kernel-source-5.4.25-noarch-1.txz:  Upgraded.
+l/libuv-1.35.0-aarch64-1.txz:  Upgraded.
+n/NetworkManager-1.22.10-aarch64-1.txz:  Upgraded.
+n/postfix-3.4.10-aarch64-1.txz:  Upgraded.
+xap/blueman-2.1.2-aarch64-2.txz:  Rebuilt.
+xap/mozilla-thunderbird-68.6.0-aarch64-1.txz:  Upgraded.
++--------------------------+
+Wed Mar 11 19:54:51 UTC 2020
+ap/hplip-3.20.3-aarch64-1.txz:  Upgraded.
+d/vala-0.48.1-aarch64-1.txz:  Upgraded.
+l/SDL2-2.0.12-aarch64-1.txz:  Upgraded.
+l/gcr-3.36.0-aarch64-1.txz:  Upgraded.
+l/glib2-2.64.1-aarch64-1.txz:  Upgraded.
+l/gnome-keyring-3.36.0-aarch64-1.txz:  Upgraded.
+l/libsecret-0.20.2-aarch64-1.txz:  Upgraded.
+n/curl-7.69.1-aarch64-1.txz:  Upgraded.
++--------------------------+
+Tue Mar 10 19:53:39 UTC 2020
+d/guile-3.0.1-aarch64-1.txz:  Upgraded.
+l/SDL2-2.0.10-aarch64-2.txz:  Rebuilt.
+l/dconf-0.36.0-aarch64-1.txz:  Upgraded.
+l/dconf-editor-3.36.0-aarch64-1.txz:  Upgraded.
+l/gsettings-desktop-schemas-3.36.0-aarch64-1.txz:  Upgraded.
+l/python-pygments-2.5.2-aarch64-1.txz:  Upgraded.
+n/bind-9.16.0-aarch64-4.txz:  Rebuilt.
+x/liberation-fonts-ttf-2.1.0-noarch-1.txz:  Upgraded.
+xap/mozilla-firefox-68.6.0esr-aarch64-1.txz:  Upgraded.
++--------------------------+
+Sun Mar  8 19:42:26 UTC 2020
+d/bison-3.5.3-aarch64-1.txz:  Upgraded.
+d/python-setuptools-45.3.0-aarch64-1.txz:  Upgraded.
+l/adwaita-icon-theme-3.36.0-noarch-1.txz:  Upgraded.
+l/at-spi2-core-2.36.0-aarch64-1.txz:  Upgraded.
+l/pygobject3-3.36.0-aarch64-1.txz:  Upgraded.
+l/python-pygments-2.6.1-aarch64-1.txz:  Upgraded.
++--------------------------+
 Sat Mar  7 20:25:36 UTC 2020
 l/gobject-introspection-1.64.0-aarch64-1.txz:  Upgraded.
 l/imagemagick-7.0.10_0-aarch64-1.txz:  Upgraded.
