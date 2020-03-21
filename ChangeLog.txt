@@ -1,3 +1,52 @@
+Fri Mar 20 18:58:08 UTC 2020
+a/kernel-firmware-20200320_edf390c-noarch-1.txz:  Upgraded.
+ap/vim-8.2.0418-aarch64-1.txz:  Upgraded.
+d/cmake-3.17.0-aarch64-1.txz:  Upgraded.
+l/fuse3-3.9.1-aarch64-1.txz:  Upgraded.
+x/igt-gpu-tools-1.25-aarch64-1.txz:  Upgraded.
+xap/vim-gvim-8.2.0418-aarch64-1.txz:  Upgraded.
++--------------------------+
+Thu Mar 19 22:01:05 UTC 2020
+ap/ghostscript-9.52-aarch64-1.txz:  Upgraded.
+l/PyQt5-5.13.2-aarch64-1.txz:  Added.
+l/QScintilla-2.11.4-aarch64-3.txz:  Rebuilt.
+l/sip-4.19.21-aarch64-2.txz:  Rebuilt.
+n/gpgme-1.13.1-aarch64-3.txz:  Rebuilt.
++--------------------------+
+Thu Mar 19 01:45:30 UTC 2020
+a/tcsh-6.22.02-aarch64-2.txz:  Rebuilt.
+a/xz-5.2.5-aarch64-1.txz:  Upgraded.
+d/git-2.25.2-aarch64-1.txz:  Upgraded.
+l/glibmm-2.64.1-aarch64-1.txz:  Upgraded.
+n/bind-9.16.1-aarch64-1.txz:  Upgraded.
+n/dovecot-2.3.10-aarch64-2.txz:  Rebuilt.
+x/libinput-1.15.4-aarch64-1.txz:  Upgraded.
+x/mesa-20.0.2-aarch64-1.txz:  Upgraded.
++--------------------------+
+Tue Mar 17 22:11:07 UTC 2020
+a/openssl-solibs-1.1.1e-aarch64-1.txz:  Upgraded.
+d/ccache-3.7.8-aarch64-1.txz:  Upgraded.
+l/glibmm-2.64.0-aarch64-1.txz:  Upgraded.
+n/openssl-1.1.1e-aarch64-1.txz:  Upgraded.
+n/php-7.4.4-aarch64-1.txz:  Upgraded.
++--------------------------+
+Mon Mar 16 21:20:17 UTC 2020
+a/kernel-firmware-20200316_8eb0b28-noarch-1.txz:  Upgraded.
+l/imagemagick-7.0.10_1-aarch64-1.txz:  Upgraded.
+l/qt5-webkit-5.212.0_alpha4-aarch64-1.txz:  Upgraded.
+n/libqmi-1.24.8-aarch64-1.txz:  Upgraded.
+n/postfix-3.5.0-aarch64-1.txz:  Upgraded.
++--------------------------+
+Sun Mar 15 19:50:24 UTC 2020
+a/aaa_elflibs-15.0-aarch64-22.txz:  Rebuilt.
+a/xfsprogs-5.5.0-aarch64-1.txz:  Upgraded.
+ap/sudo-1.8.31p1-aarch64-1.txz:  Upgraded.
+d/help2man-1.47.13-aarch64-1.txz:  Upgraded.
+d/perl-5.30.2-aarch64-1.txz:  Upgraded.
+n/ModemManager-1.12.8-aarch64-1.txz:  Upgraded.
+n/bluez-5.54-aarch64-1.txz:  Upgraded.
+x/vulkan-sdk-1.2.131.2-aarch64-1.txz:  Upgraded.
++--------------------------+
 Fri Mar 13 20:15:29 UTC 2020
 a/cryptsetup-2.3.1-aarch64-1.txz:  Upgraded.
 a/kernel-firmware-20200309_3b3dd5a-noarch-1.txz:  Upgraded.
