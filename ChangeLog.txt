@@ -1,3 +1,27 @@
+Sun Mar 22 19:58:16 UTC 2020
+l/glibmm-2.64.2-aarch64-1.txz:  Upgraded.
+l/imagemagick-7.0.10_2-aarch64-1.txz:  Upgraded.
+l/libcue-2.2.1-aarch64-1.txz:  Added.
+l/libdvdnav-6.1.0-aarch64-1.txz:  Upgraded.
+l/libdvdread-6.1.0-aarch64-1.txz:  Upgraded.
+xap/audacious-4.0-aarch64-1.txz:  Upgraded.
+xap/audacious-plugins-4.0-aarch64-1.txz:  Upgraded.
++--------------------------+
+Sun Mar 22 01:55:55 UTC 2020
+a/kernel-generic-5.4.27-aarch64-1.txz:  Upgraded.
+a/kernel-modules-5.4.27-aarch64-1.txz:  Upgraded.
+a/tcsh-6.22.02-aarch64-3.txz:  Rebuilt.
+ap/cups-filters-1.27.3-aarch64-1.txz:  Upgraded.
+d/automake-1.16.2-noarch-1.txz:  Upgraded.
+d/kernel-headers-5.4.27-arm64-1.txz:  Upgraded.
+d/parallel-20200322-noarch-1.txz:  Upgraded.
+k/kernel-source-5.4.27-noarch-1.txz:  Upgraded.
+l/gmime-3.2.7-aarch64-1.txz:  Upgraded.
+l/pangomm-2.42.1-aarch64-1.txz:  Upgraded.
+n/gnupg2-2.2.20-aarch64-1.txz:  Upgraded.
+xap/xaos-3.7-aarch64-1.txz:  Upgraded.
+xap/xscreensaver-5.44-aarch64-1.txz:  Upgraded.
++--------------------------+
 Fri Mar 20 18:58:08 UTC 2020
 a/kernel-firmware-20200320_edf390c-noarch-1.txz:  Upgraded.
 ap/vim-8.2.0418-aarch64-1.txz:  Upgraded.
