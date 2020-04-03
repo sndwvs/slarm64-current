@@ -1,3 +1,64 @@
+Thu Apr  2 22:13:11 UTC 2020
+a/kernel-generic-5.4.30-aarch64-1.txz:  Upgraded.
+a/kernel-modules-5.4.30-aarch64-1.txz:  Upgraded.
+d/kernel-headers-5.4.30-arm64-1.txz:  Upgraded.
+k/kernel-source-5.4.30-noarch-1.txz:  Upgraded.
+l/atk-2.36.0-aarch64-1.txz:  Upgraded.
+l/libunwind-1.4.0-aarch64-1.txz:  Upgraded.
+n/conntrack-tools-1.4.6-aarch64-1.txz:  Upgraded.
+n/libnetfilter_conntrack-1.0.8-aarch64-1.txz:  Upgraded.
+n/libnftnl-1.1.6-aarch64-1.txz:  Upgraded.
+n/nftables-0.9.4-aarch64-1.txz:  Upgraded.
+x/mesa-20.0.3-aarch64-1.txz:  Upgraded.
+xap/network-manager-applet-1.16.0-aarch64-2.txz:  Rebuilt.
++--------------------------+
+Thu Apr  2 06:07:52 UTC 2020
+a/hwdata-0.334-noarch-1.txz:  Upgraded.
+a/kernel-generic-5.4.29-aarch64-1.txz:  Upgraded.
+a/kernel-modules-5.4.29-aarch64-1.txz:  Upgraded.
+a/pkgtools-15.0-noarch-32.txz:  Rebuilt.
+ap/groff-1.22.4-aarch64-2.txz:  Rebuilt.
+d/gcc-9.3.0-aarch64-2.txz:  Rebuilt.
+d/gcc-g++-9.3.0-aarch64-2.txz:  Rebuilt.
+d/gcc-gdc-9.3.0-aarch64-2.txz:  Rebuilt.
+d/gcc-gfortran-9.3.0-aarch64-2.txz:  Rebuilt.
+d/gcc-go-9.3.0-aarch64-2.txz:  Rebuilt.
+d/gcc-objc-9.3.0-aarch64-2.txz:  Rebuilt.
+d/kernel-headers-5.4.29-arm64-1.txz:  Upgraded.
+d/ruby-2.7.1-aarch64-1.txz:  Upgraded.
+k/kernel-source-5.4.29-noarch-1.txz:  Upgraded.
+l/graphite2-1.3.14-aarch64-1.txz:  Upgraded.
+l/librsvg-2.48.2-aarch64-1.txz:  Upgraded.
+l/utf8proc-2.5.0-aarch64-1.txz:  Upgraded.
+x/libva-2.7.0-aarch64-1.txz:  Upgraded.
+x/libva-utils-2.7.1-aarch64-1.txz:  Upgraded.
++--------------------------+
+Tue Mar 31 19:01:17 UTC 2020
+a/dialog-1.3_20200327-aarch64-1.txz:  Upgraded.
+a/openssl-solibs-1.1.1f-aarch64-1.txz:  Upgraded.
+ap/nano-4.9.1-aarch64-1.txz:  Upgraded.
+l/elfutils-0.179-aarch64-1.txz:  Upgraded.
+n/gnutls-3.6.13-aarch64-1.txz:  Upgraded.
+n/httpd-2.4.43-aarch64-1.txz:  Upgraded.
+n/openssl-1.1.1f-aarch64-1.txz:  Upgraded.
++--------------------------+
+Tue Mar 31 04:00:43 UTC 2020
+a/pkgtools-15.0-noarch-31.txz:  Rebuilt.
+d/meson-0.54.0-aarch64-1.txz:  Upgraded.
++--------------------------+
+Sun Mar 29 23:05:46 UTC 2020
+d/ccache-3.7.9-aarch64-1.txz:  Upgraded.
+d/llvm-10.0.0-aarch64-2.txz:  Rebuilt.
+l/imagemagick-7.0.10_3-aarch64-1.txz:  Upgraded.
+l/netpbm-10.90.00-aarch64-1.txz:  Upgraded.
+n/mutt-1.13.5-aarch64-1.txz:  Upgraded.
+n/nfs-utils-2.4.3-aarch64-2.txz:  Rebuilt.
+x/xorg-server-1.20.8-aarch64-1.txz:  Upgraded.
+x/xorg-server-xephyr-1.20.8-aarch64-1.txz:  Upgraded.
+x/xorg-server-xnest-1.20.8-aarch64-1.txz:  Upgraded.
+x/xorg-server-xvfb-1.20.8-aarch64-1.txz:  Upgraded.
+x/xorg-server-xwayland-1.20.8-aarch64-1.txz:  Upgraded.
++--------------------------+
 Sat Mar 28 05:48:42 UTC 2020
 a/lvm2-2.03.09-aarch64-1.txz:  Upgraded.
 d/guile-3.0.2-aarch64-1.txz:  Upgraded.
