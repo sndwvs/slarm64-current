@@ -1,3 +1,20 @@
+Sat Apr  4 19:22:23 UTC 2020
+ap/sc-7.16-aarch64-8.txz:  Rebuilt.
+ap/sc-im-20200210_862c273-aarch64-1.txz:  Upgraded.
+x/glew-2.2.0-aarch64-1.txz:  Upgraded.
++--------------------------+
+Fri Apr  3 23:07:16 UTC 2020
+ap/lsof-4.93.2-aarch64-2.txz:  Rebuilt.
+ap/sc-7.16-aarch64-7.txz:  Rebuilt.
+d/Cython-0.29.16-aarch64-1.txz:  Upgraded.
+d/mercurial-5.3.2-aarch64-1.txz:  Upgraded.
+l/gtk+3-3.24.17-aarch64-1.txz:  Upgraded.
+n/dhcpcd-8.1.7-aarch64-1.txz:  Upgraded.
+n/iproute2-5.6.0-aarch64-1.txz:  Upgraded.
+x/libdrm-2.4.101-aarch64-1.txz:  Upgraded.
+x/mesa-20.0.4-aarch64-1.txz:  Upgraded.
+xap/mozilla-firefox-68.6.1esr-aarch64-1.txz:  Upgraded.
++--------------------------+
 Thu Apr  2 22:13:11 UTC 2020
 a/kernel-generic-5.4.30-aarch64-1.txz:  Upgraded.
 a/kernel-modules-5.4.30-aarch64-1.txz:  Upgraded.
