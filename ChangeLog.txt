@@ -1,3 +1,36 @@
+Fri Apr 24 18:54:41 UTC 2020
+a/bash-5.0.017-aarch64-1.txz:  Upgraded.
+a/kernel-generic-5.4.35-aarch64-1.txz:  Upgraded.
+a/kernel-modules-5.4.35-aarch64-1.txz:  Upgraded.
+a/mcelog-169-aarch64-1.txz:  Upgraded.
+ap/nvme-cli-1.11.1-aarch64-1.txz:  Upgraded.
+ap/powertop-2.12-aarch64-1.txz:  Upgraded.
+ap/tmux-3.1-aarch64-1.txz:  Upgraded.
+d/kernel-headers-5.4.35-arm64-1.txz:  Upgraded.
+d/parallel-20200422-noarch-1.txz:  Upgraded.
+d/rust-1.43.0-aarch64-1.txz:  Upgraded.
+d/vala-0.48.5-aarch64-1.txz:  Upgraded.
+k/kernel-source-5.4.35-noarch-1.txz:  Upgraded.
+l/gmm-5.4-noarch-1.txz:  Upgraded.
+l/librsvg-2.48.4-aarch64-1.txz:  Upgraded.
+l/sip-4.19.22-aarch64-1.txz:  Upgraded.
+n/dhcpcd-8.1.9-aarch64-1.txz:  Upgraded.
+x/mesa-20.0.5-aarch64-1.txz:  Upgraded.
++--------------------------+
+Wed Apr 22 02:19:37 UTC 2020
+a/kernel-firmware-20200421_78c0348-noarch-1.txz:  Upgraded.
+a/kernel-generic-5.4.34-aarch64-1.txz:  Upgraded.
+a/kernel-modules-5.4.34-aarch64-1.txz:  Upgraded.
+a/openssl-solibs-1.1.1g-aarch64-1.txz:  Upgraded.
+d/git-2.26.2-aarch64-1.txz:  Upgraded.
+d/kernel-headers-5.4.34-arm64-1.txz:  Upgraded.
+d/vala-0.48.4-aarch64-1.txz:  Upgraded.
+k/kernel-source-5.4.34-noarch-1.txz:  Upgraded.
+l/M2Crypto-0.35.2-aarch64-4.txz:  Rebuilt.
+l/netpbm-10.90.01-aarch64-1.txz:  Upgraded.
+n/openssl-1.1.1g-aarch64-1.txz:  Upgraded.
+x/libva-2.7.1-aarch64-1.txz:  Upgraded.
++--------------------------+
 Tue Apr 21 02:45:06 UTC 2020
 d/python-2.7.17-aarch64-2.txz:  Removed.
 d/python2-2.7.18-aarch64-1.txz:  Added.
