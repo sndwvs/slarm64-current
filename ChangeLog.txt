@@ -1,3 +1,18 @@
+Sun Apr 26 03:34:28 UTC 2020
+d/rust-1.43.0-aarch64-2.txz:  Rebuilt.
++--------------------------+
+Sat Apr 25 18:49:34 UTC 2020
+a/glibc-zoneinfo-2020a-noarch-1.txz:  Upgraded.
+a/kernel-firmware-20200424_b2cad6a-noarch-1.txz:  Upgraded.
+ap/vim-8.2.0639-aarch64-1.txz:  Upgraded.
+d/clisp-2.50_20191103_c26de7873-aarch64-2.txz:  Rebuilt.
+d/help2man-1.47.14-aarch64-1.txz:  Upgraded.
+l/PyQt5-5.13.2-aarch64-2.txz:  Rebuilt.
+l/dconf-editor-3.36.2-aarch64-1.txz:  Upgraded.
+l/imagemagick-7.0.10_8-aarch64-1.txz:  Upgraded.
+l/python-enum34-1.1.10-aarch64-1.txz:  Added.
+xap/vim-gvim-8.2.0639-aarch64-1.txz:  Upgraded.
++--------------------------+
 Fri Apr 24 18:54:41 UTC 2020
 a/bash-5.0.017-aarch64-1.txz:  Upgraded.
 a/kernel-generic-5.4.35-aarch64-1.txz:  Upgraded.
