@@ -1,3 +1,22 @@
+Thu Apr 30 04:58:02 UTC 2020
+a/kernel-generic-5.4.36-aarch64-1.txz:  Upgraded.
+a/kernel-modules-5.4.36-aarch64-1.txz:  Upgraded.
+d/kernel-headers-5.4.36-arm64-1.txz:  Upgraded.
+k/kernel-source-5.4.36-noarch-1.txz:  Upgraded.
++--------------------------+
+Wed Apr 29 20:19:12 UTC 2020
+ap/tmux-3.1a-aarch64-1.txz:  Upgraded.
+d/cmake-3.17.2-aarch64-1.txz:  Upgraded.
+n/curl-7.70.0-aarch64-1.txz:  Upgraded.
+n/openldap-client-2.4.50-aarch64-1.txz:  Upgraded.
+xap/audacious-4.0.3-aarch64-1.txz:  Upgraded.
+xap/audacious-plugins-4.0.3-aarch64-1.txz:  Upgraded.
++--------------------------+
+Tue Apr 28 20:18:40 UTC 2020
+ap/cups-2.3.3-aarch64-1.txz:  Upgraded.
+l/imagemagick-7.0.10_10-aarch64-1.txz:  Upgraded.
+n/samba-4.12.2-aarch64-1.txz:  Upgraded.
++--------------------------+
 Mon Apr 27 20:27:30 UTC 2020
 a/mkinitrd-1.4.11-aarch64-15.txz:  Rebuilt.
 d/help2man-1.47.15-aarch64-1.txz:  Upgraded.
