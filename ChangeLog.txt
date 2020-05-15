@@ -1,12 +1,32 @@
+Fri May 15 07:28:15 UTC 2020
+a/aaa_elflibs-15.0-aarch64-23.txz:  Rebuilt.
+a/etc-15.0-aarch64-11.txz:  Rebuilt.
+a/kernel-generic-5.4.41-aarch64-1.txz:  Upgraded.
+a/kernel-huge-5.4.41-aarch64-1.txz:  Upgraded.
+a/kernel-modules-5.4.41-aarch64-1.txz:  Upgraded.
+a/pkgtools-15.0-noarch-33.txz:  Rebuilt.
+ap/hplip-3.20.5-aarch64-1.txz:  Upgraded.
+d/kernel-headers-5.4.41-x86-1.txz:  Upgraded.
+d/python-setuptools-46.3.0-aarch64-1.txz:  Upgraded.
+d/python3-3.8.3-aarch64-1.txz:  Upgraded.
+k/kernel-source-5.4.41-noarch-1.txz:  Upgraded.
+n/openldap-2.4.50-aarch64-1.txz:  Added.
+n/openldap-client-2.4.50-aarch64-1.txz:  Removed.
+x/mesa-20.0.7-aarch64-1.txz:  Upgraded.
++--------------------------+
+Wed May 13 20:01:12 UTC 2020
+l/shared-mime-info-2.0-aarch64-2.txz:  Rebuilt.
+n/ethtool-5.6-aarch64-1.txz:  Upgraded.
++--------------------------+
 Tue May 12 23:49:47 UTC 2020
-ap/mariadb-10.4.13-x86_64-1.txz:  Upgraded.
-ap/sudo-1.9.0-x86_64-1.txz:  Upgraded.
-l/harfbuzz-2.6.6-x86_64-1.txz:  Upgraded.
-l/tidy-html5-5.6.0-x86_64-1.txz:  Added.
-n/epic5-2.1.2-x86_64-1.txz:  Upgraded.
-n/php-7.4.6-x86_64-1.txz:  Upgraded.
-x/libmypaint-1.6.1-x86_64-1.txz:  Upgraded.
-xap/gimp-2.10.18-x86_64-2.txz:  Rebuilt.
+ap/mariadb-10.4.13-aarch64-1.txz:  Upgraded.
+ap/sudo-1.9.0-aarch64-1.txz:  Upgraded.
+l/harfbuzz-2.6.6-aarch64-1.txz:  Upgraded.
+l/tidy-html5-5.6.0-aarch64-1.txz:  Added.
+n/epic5-2.1.2-aarch64-1.txz:  Upgraded.
+n/php-7.4.6-aarch64-1.txz:  Upgraded.
+x/libmypaint-1.6.1-aarch64-1.txz:  Upgraded.
+xap/gimp-2.10.18-aarch64-2.txz:  Rebuilt.
 +--------------------------+
 Mon May 11 19:13:27 UTC 2020
 l/python-appdirs-1.4.4-aarch64-1.txz:  Upgraded.
