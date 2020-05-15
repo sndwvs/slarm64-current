@@ -1,5 +1,5 @@
---- openldap.SlackBuild	2020-05-15 06:14:07.616070631 +0000
-+++ openldap.SlackBuild	2020-05-15 09:19:02.355477348 +0000
+--- a/openldap.SlackBuild	2020-05-15 06:14:07.616070631 +0000
++++ b/openldap.SlackBuild	2020-05-15 09:19:02.355477348 +0000
 @@ -57,6 +57,9 @@
  elif [ "$ARCH" = "s390" ]; then
    SLKCFLAGS="-O2"
