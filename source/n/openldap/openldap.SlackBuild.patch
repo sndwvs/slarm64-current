@@ -1,0 +1,22 @@
+--- openldap.SlackBuild	2020-05-15 06:14:07.616070631 +0000
++++ openldap.SlackBuild	2020-05-15 09:19:02.355477348 +0000
+@@ -57,6 +57,9 @@
+ elif [ "$ARCH" = "s390" ]; then
+   SLKCFLAGS="-O2"
+   LIBDIRSUFFIX=""
++elif [ "$ARCH" = "aarch64" ]; then
++  SLKCFLAGS="-O2"
++  LIBDIRSUFFIX="64"
+ elif [ "$ARCH" = "x86_64" ]; then
+   SLKCFLAGS="-O2 -fPIC"
+   LIBDIRSUFFIX="64"
+@@ -164,6 +167,9 @@
+   --with-tls \
+   \
+   --build=$ARCH-slackware-linux || exit 1
++
++sed -i -e 's/ -shared / -Wl,-O1,--as-needed\0/g' libtool
++
+ make depend
+ make $NUMJOBS || make || exit 1
+ make install DESTDIR=$PKG || exit 1
