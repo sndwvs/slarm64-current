@@ -1,3 +1,52 @@
+Sun May 24 18:35:29 UTC 2020
+ap/nano-4.9.3-aarch64-1.txz:  Upgraded.
+ap/sqlite-3.32.0-aarch64-1.txz:  Upgraded.
+d/gdb-9.2-aarch64-1.txz:  Upgraded.
+d/parallel-20200522-noarch-1.txz:  Upgraded.
+l/imagemagick-7.0.10_14-aarch64-1.txz:  Upgraded.
+l/libgphoto2-2.5.25-aarch64-1.txz:  Upgraded.
+n/libksba-1.4.0-aarch64-1.txz:  Upgraded.
+xfce/thunar-1.8.15-aarch64-1.txz:  Upgraded.
++--------------------------+
+Sat May 23 00:13:54 UTC 2020
+l/libarchive-3.4.3-aarch64-1.txz:  Upgraded.
+l/python-six-1.15.0-aarch64-1.txz:  Upgraded.
+l/zstd-1.4.5-aarch64-1.txz:  Upgraded.
+xap/mozilla-thunderbird-68.8.1-aarch64-1.txz:  Upgraded.
++--------------------------+
+Fri May 22 04:29:34 UTC 2020
+d/Cython-0.29.19-aarch64-1.txz:  Upgraded.
+kde/kde-workspace-4.11.22-aarch64-9.txz:  Rebuilt.
+l/ffmpeg-4.2.3-aarch64-1.txz:  Upgraded.
+l/iso-codes-4.5.0-noarch-1.txz:  Upgraded.
+l/v4l-utils-1.20.0-aarch64-1.txz:  Upgraded.
++--------------------------+
+Wed May 20 23:53:44 UTC 2020
+a/kernel-firmware-20200519_8ba6fa6-noarch-1.txz:  Upgraded.
+a/kernel-generic-5.4.42-aarch64-1.txz:  Upgraded.
+a/kernel-modules-5.4.42-aarch64-1.txz:  Upgraded.
+a/util-linux-2.35.2-aarch64-1.txz:  Upgraded.
+d/kernel-headers-5.4.42-arm64-1.txz:  Upgraded.
+d/python-pip-20.1.1-aarch64-1.txz:  Upgraded.
+k/kernel-source-5.4.42-noarch-1.txz:  Upgraded.
+l/glib2-2.64.3-aarch64-1.txz:  Upgraded.
+l/mozilla-nss-3.52.1-aarch64-1.txz:  Upgraded.
+n/samba-4.12.3-aarch64-1.txz:  Upgraded.
++--------------------------+
+Tue May 19 19:47:49 UTC 2020
+a/shadow-4.8.1-aarch64-8.txz:  Rebuilt.
+l/libexif-0.6.22-aarch64-1.txz:  Upgraded.
+l/oniguruma-6.9.5_rev1-aarch64-2.txz:  Rebuilt.
+l/python-packaging-20.4-aarch64-1.txz:  Upgraded.
+n/bind-9.16.3-aarch64-1.txz:  Upgraded.
+x/fontconfig-2.13.92-aarch64-1.txz:  Upgraded.
+x/xf86-input-libinput-0.30.0-aarch64-1.txz:  Upgraded.
++--------------------------+
+Mon May 18 23:30:26 UTC 2020
+d/Cython-0.29.18-aarch64-1.txz:  Upgraded.
+kde/kde-workspace-4.11.22-aarch64-8.txz:  Rebuilt.
+l/gnu-efi-3.0.12-aarch64-1.txz:  Upgraded.
++--------------------------+
 a/cracklib-2.9.7-aarch64-1.txz:  Added.
 a/kernel-firmware-20200517_f8d32e4-noarch-1.txz:  Upgraded.
 a/libcgroup-0.41-aarch64-7.txz:  Rebuilt.
