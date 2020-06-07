@@ -48,7 +48,7 @@ mark_remove() {
     done
 }
 
-FILES=$(find $PATH_DISTRO -newerct "$(get_last_timestamp)" -regex $FILTER)
+FILES=$(find $PATH_DISTRO -newermt "$(get_last_timestamp)" -regex $FILTER)
 
 for pkg in ${FILES}; do
     echo ${pkg} | sed -e "s:${PATH_DISTRO}\/\|${PREFFIX_DISTRO}\/::g" >> ${WORK_DIR}/new
