@@ -43,8 +43,16 @@ mark_remove() {
         sed -i -e "s:${f}$::g" -e "/^$/d" ${WORK_DIR}/uniq
     done
     for pkg in $(cat ${WORK_DIR}/uniq); do
-        _pkg=$(grep -e $pkg ${PATH_DISTRO}/${CHANGELOG} 2>/dev/null | head -n 1 | cut -d ':' -f 1)
-        [[ ! $(grep -e ${pkg} ${WORK_DIR}/current) && ! -z ${_pkg} ]] && echo ${_pkg} | sed 's:$:\:  Removed\.:' >> ${WORK_DIR}/remove
+        _pkg=$(grep -e $pkg ${PATH_DISTRO}/${CHANGELOG} 2>/dev/null | cut -d ':' -f 1)
+        for f in ${_pkg}; do
+            __pkg=$(echo ${f} | rev | cut -d '-' -f4- | rev)
+            if [[ ${pkg} == ${__pkg} ]]; then
+                 _pkg=${f}
+            else
+                unset _pkg
+            fi
+        done
+        [[ ! $(grep -x ${pkg} ${WORK_DIR}/current) && ! -z ${_pkg} ]] && echo ${_pkg} | sed 's:$:\:  Removed\.:' >> ${WORK_DIR}/remove
     done
 }
 
