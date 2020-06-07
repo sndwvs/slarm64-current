@@ -13,7 +13,7 @@ DELIMITER="+--------------------------+"
 
 get_last_timestamp() {
     TIMESTAMP=$(grep 'UTC' ${PATH_DISTRO}/${CHANGELOG} 2>/dev/null | head -n 1)
-    [[ -z $TIMESTAMP ]] && TIMESTAMP=$(date -u)
+    [[ -z $TIMESTAMP ]] && TIMESTAMP=$(date -u -d '1 hour ago')
     TIMESTAMP=$(date -u --date="$TIMESTAMP" +'%F %X')
     echo $TIMESTAMP
 }
