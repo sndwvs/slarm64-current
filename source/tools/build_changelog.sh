@@ -72,7 +72,7 @@ fi
 
 if [[ -f ${WORK_DIR}/packages ]]; then
     echo "$DELIMITER" >> ${WORK_DIR}/packages
-    echo $(date -u) > ${WORK_DIR}/headers
+    date -u > ${WORK_DIR}/headers
     echo "$(cat ${WORK_DIR}/headers ${WORK_DIR}/packages ${PATH_DISTRO}/${CHANGELOG} 2>/dev/null)" > ${PATH_DISTRO}/${CHANGELOG}
 fi
 
