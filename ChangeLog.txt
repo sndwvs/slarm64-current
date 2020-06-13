@@ -1,3 +1,55 @@
+Fri Jun 12 20:47:47 UTC 2020
+ap/powertop-2.13-aarch64-1.txz:  Upgraded.
+l/elfutils-0.180-aarch64-1.txz:  Upgraded.
+l/fuse3-3.9.2-aarch64-1.txz:  Upgraded.
+n/alpine-2.22.1-aarch64-1.txz:  Upgraded.
++--------------------------+
+Fri Jun 12 16:35:36 UTC 2020
+a/haveged-1.9.10-aarch64-1.txz:  Upgraded.
+ap/alsa-utils-1.2.3-aarch64-2.txz:  Rebuilt.
+d/patchelf-0.11-aarch64-1.txz:  Upgraded.
+l/alsa-lib-1.2.2-aarch64-1.txz:  Upgraded.
++--------------------------+
+Thu Jun 11 17:50:32 UTC 2020
+a/kernel-generic-5.4.46-aarch64-1.txz:  Upgraded.
+a/kernel-modules-5.4.46-aarch64-1.txz:  Upgraded.
+d/kernel-headers-5.4.46-arm64-1.txz:  Upgraded.
+k/kernel-source-5.4.46-noarch-1.txz:  Upgraded.
+l/QScintilla-2.11.5-aarch64-1.txz:  Upgraded.
++--------------------------+
+Thu Jun 11 15:25:51 UTC 2020
+a/kernel-firmware-20200610_887d2a1-noarch-1.txz:  Upgraded.
+ap/man-pages-5.07-noarch-1.txz:  Upgraded.
+d/Cython-0.29.20-aarch64-1.txz:  Upgraded.
+d/swig-4.0.2-aarch64-1.txz:  Upgraded.
+l/netpbm-10.90.04-aarch64-1.txz:  Upgraded.
+x/mesa-20.1.1-aarch64-1.txz:  Upgraded.
++--------------------------+
+Wed Jun 10 17:39:55 UTC 2020
+ap/alsa-utils-1.2.3-aarch64-1.txz:  Upgraded.
+l/PyQt5-5.15.0-aarch64-1.txz:  Upgraded.
+l/alsa-lib-1.2.3-aarch64-1.txz:  Upgraded.
+l/imagemagick-7.0.10_18-aarch64-1.txz:  Upgraded.
+l/sip-4.19.23-aarch64-1.txz:  Upgraded.
+l/xapian-core-1.4.16-aarch64-1.txz:  Upgraded.
+n/php-7.4.7-aarch64-1.txz:  Upgraded.
++--------------------------+
+Tue Jun  9 20:45:36 UTC 2020
+l/babl-0.1.78-aarch64-1.txz:  Upgraded.
+l/gegl-0.4.24-aarch64-1.txz:  Upgraded.
+l/qt5-webkit-5.212.0_alpha4-aarch64-3.txz:  Rebuilt.
+n/libnetfilter_queue-1.0.4-aarch64-1.txz:  Upgraded.
+x/liberation-fonts-ttf-2.1.1-noarch-1.txz:  Upgraded.
+xap/gimp-2.10.20-aarch64-1.txz:  Upgraded.
++--------------------------+
+Mon Jun  8 04:54:28 UTC 2020
+a/kernel-generic-5.4.45-aarch64-1.txz:  Upgraded.
+a/kernel-modules-5.4.45-aarch64-1.txz:  Upgraded.
+d/kernel-headers-5.4.45-arm64-1.txz:  Upgraded.
+k/kernel-source-5.4.45-noarch-1.txz:  Upgraded.
+l/imagemagick-7.0.10_17-aarch64-1.txz:  Upgraded.
+l/python-certifi-2020.4.5.2-aarch64-1.txz:  Upgraded.
++--------------------------+
 Sun Jun  7 15:56:42 UTC 2020
 d/mercurial-5.4.1-aarch64-1.txz:  Upgraded.
 l/libzip-1.7.0-aarch64-1.txz:  Upgraded.

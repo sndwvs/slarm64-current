@@ -38,7 +38,7 @@ mark_new_update() {
 
 mark_remove() {
     find $PATH_DISTRO -regex $FILTER -print | rev | cut -d '-' -f4- | rev | sed -e "s:${PATH_DISTRO}\/\|${PREFFIX_DISTRO}\/::g" > ${WORK_DIR}/current
-    cat "${PATH_DISTRO}/${CHANGELOG}" 2>/dev/null | grep ${FILTER} | rev | cut -d '-' -f4- | rev | sort | uniq >> ${WORK_DIR}/uniq
+    cat "${PATH_DISTRO}/${CHANGELOG}" ${WORK_DIR}/new 2>/dev/null | grep ${FILTER} | rev | cut -d '-' -f4- | rev | sort | uniq >> ${WORK_DIR}/uniq
     for f in $(cat "${PATH_DISTRO}/${CHANGELOG}" 2>/dev/null | grep ${FILTER} | grep Removed | rev | cut -d '-' -f4- | rev); do
         sed -i -e "s:${f}$::g" -e "/^$/d" ${WORK_DIR}/uniq
     done
@@ -56,7 +56,7 @@ mark_remove() {
     done
 }
 
-FILES=$(find $PATH_DISTRO -newermt "$(get_last_timestamp)" -regex $FILTER)
+FILES=$(find $PATH_DISTRO -newerct "$(get_last_timestamp)" -regex $FILTER)
 
 for pkg in ${FILES}; do
     echo ${pkg} | sed -e "s:${PATH_DISTRO}\/\|${PREFFIX_DISTRO}\/::g" >> ${WORK_DIR}/new
