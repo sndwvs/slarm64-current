@@ -1,3 +1,42 @@
+Wed Jun 17 17:34:19 UTC 2020
+a/shadow-4.8.1-aarch64-10.txz:  Rebuilt.
+a/upower-0.9.23-aarch64-5.txz:  Rebuilt.
+ap/hplip-3.20.6-aarch64-1.txz:  Upgraded.
+ap/usbmuxd-20200615_3daa1e9-aarch64-1.txz:  Upgraded.
+d/bison-3.6.4-aarch64-1.txz:  Upgraded.
+d/meson-0.54.3-aarch64-1.txz:  Upgraded.
+d/python-setuptools-47.3.0-aarch64-1.txz:  Upgraded.
+l/ffmpeg-4.3-aarch64-1.txz:  Upgraded.
+l/gvfs-1.44.1-aarch64-2.txz:  Rebuilt.
+l/libgpod-0.8.3-aarch64-7.txz:  Rebuilt.
+l/libimobiledevice-20200615_4791a82-aarch64-1.txz:  Upgraded.
+l/libplist-2.2.0-aarch64-1.txz:  Upgraded.
+l/libusbmuxd-20200615_c7d7d1a-aarch64-1.txz:  Upgraded.
+n/fetchmail-6.4.8-aarch64-1.txz:  Upgraded.
+n/nftables-0.9.6-aarch64-1.txz:  Upgraded.
++--------------------------+
+Mon Jun 15 20:45:50 UTC 2020
+a/file-5.39-aarch64-1.txz:  Upgraded.
+n/mutt-1.14.3-aarch64-1.txz:  Upgraded.
+n/postfix-3.5.3-aarch64-1.txz:  Upgraded.
+x/twm-1.0.11-aarch64-1.txz:  Upgraded.
++--------------------------+
+Sun Jun 14 21:53:31 UTC 2020
+a/haveged-1.9.11-aarch64-1.txz:  Upgraded.
+l/libvncserver-0.9.13-aarch64-1.txz:  Upgraded.
+n/libnetfilter_queue-1.0.5-aarch64-1.txz:  Upgraded.
+x/vulkan-sdk-1.2.141.0-aarch64-1.txz:  Upgraded.
+xap/xlockmore-5.64-aarch64-1.txz:  Upgraded.
++--------------------------+
+Sat Jun 13 22:15:47 UTC 2020
+a/pam-1.4.0-aarch64-1.txz:  Upgraded.
+a/shadow-4.8.1-aarch64-9.txz:  Rebuilt.
+a/sysvinit-scripts-2.1-noarch-32.txz:  Rebuilt.
+a/util-linux-2.35.2-aarch64-2.txz:  Rebuilt.
+l/imagemagick-7.0.10_19-aarch64-1.txz:  Upgraded.
+l/libzip-1.7.1-aarch64-1.txz:  Upgraded.
+n/openssh-8.3p1-aarch64-2.txz:  Rebuilt.
++--------------------------+
 Fri Jun 12 20:47:47 UTC 2020
 ap/powertop-2.13-aarch64-1.txz:  Upgraded.
 l/elfutils-0.180-aarch64-1.txz:  Upgraded.
