@@ -1,3 +1,32 @@
+Fri Jun 19 23:15:13 UTC 2020
+a/haveged-1.9.12-aarch64-1.txz:  Upgraded.
+a/kernel-firmware-20200619_3890db3-noarch-1.txz:  Upgraded.
+a/sysvinit-scripts-2.1-noarch-34.txz:  Rebuilt.
+ap/sudo-1.9.1-aarch64-1.txz:  Upgraded.
+l/alsa-lib-1.2.3.1-aarch64-1.txz:  Upgraded.
+l/desktop-file-utils-0.26-aarch64-1.txz:  Upgraded.
+n/mutt-1.14.4-aarch64-1.txz:  Upgraded.
+x/libinput-1.15.6-aarch64-1.txz:  Upgraded.
+x/xinit-1.4.1-aarch64-2.txz:  Rebuilt.
++--------------------------+
+Fri Jun 19 22:52:47 UTC 2020
+a/kernel-generic-5.4.47-aarch64-1.txz:  Upgraded.
+a/kernel-modules-5.4.47-aarch64-1.txz:  Upgraded.
+a/sysvinit-scripts-2.1-noarch-33.txz:  Rebuilt.
+a/util-linux-2.35.2-aarch64-3.txz:  Rebuilt.
+ap/sqlite-3.32.3-aarch64-1.txz:  Upgraded.
+d/kernel-headers-5.4.47-arm64-1.txz:  Upgraded.
+d/rust-1.44.1-aarch64-1.txz:  Upgraded.
+k/kernel-source-5.4.47-noarch-1.txz:  Upgraded.
+n/bind-9.16.4-aarch64-1.txz:  Upgraded.
++--------------------------+
+Fri Jun 19 15:50:29 UTC 2020
+ap/nvme-cli-1.12-aarch64-1.txz:  Upgraded.
+d/python-setuptools-47.3.1-aarch64-1.txz:  Upgraded.
+l/lcms2-2.11-aarch64-1.txz:  Upgraded.
+l/mozilla-nss-3.53.1-aarch64-1.txz:  Upgraded.
+l/python-requests-2.24.0-aarch64-1.txz:  Upgraded.
++--------------------------+
 Wed Jun 17 17:34:19 UTC 2020
 a/shadow-4.8.1-aarch64-10.txz:  Rebuilt.
 a/upower-0.9.23-aarch64-5.txz:  Rebuilt.
