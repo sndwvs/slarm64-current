@@ -1,3 +1,32 @@
+Wed Jun 24 03:00:02 UTC 2020
+a/kernel-generic-5.4.48-aarch64-1.txz:  Upgraded.
+a/kernel-modules-5.4.48-aarch64-1.txz:  Upgraded.
+ap/neofetch-20200613_5b8eea9-aarch64-1.txz:  Added.
+ap/texinfo-6.7-aarch64-2.txz:  Rebuilt.
+ap/vim-8.2.1039-aarch64-1.txz:  Upgraded.
+d/check-0.15.0-aarch64-1.txz:  Upgraded.
+d/guile-3.0.3-aarch64-1.txz:  Upgraded.
+d/kernel-headers-5.4.48-arm64-1.txz:  Upgraded.
+d/make-4.2.1-aarch64-6.txz:  Rebuilt.
+d/perl-5.32.0-aarch64-1.txz:  Upgraded.
+k/kernel-source-5.4.48-noarch-1.txz:  Upgraded.
+kde/perlkde-4.14.3-aarch64-9.txz:  Rebuilt.
+kde/perlqt-4.14.3-aarch64-10.txz:  Rebuilt.
+l/harfbuzz-2.6.8-aarch64-1.txz:  Upgraded.
+l/imagemagick-7.0.10_20-aarch64-1.txz:  Upgraded.
+l/neon-0.31.2-aarch64-1.txz:  Upgraded.
+l/python-certifi-2020.6.20-aarch64-1.txz:  Upgraded.
+n/alpine-2.23-aarch64-1.txz:  Upgraded.
+n/epic5-2.1.2-aarch64-2.txz:  Rebuilt.
+n/gnutls-3.6.14-aarch64-2.txz:  Rebuilt.
+n/irssi-1.2.2-aarch64-3.txz:  Rebuilt.
+n/libqmi-1.26.0-aarch64-1.txz:  Upgraded.
+n/net-snmp-5.8-aarch64-6.txz:  Rebuilt.
+n/ntp-4.2.8p14-aarch64-2.txz:  Rebuilt.
+xap/hexchat-2.14.3-aarch64-3.txz:  Rebuilt.
+xap/rxvt-unicode-9.22-aarch64-8.txz:  Rebuilt.
+xap/vim-gvim-8.2.1039-aarch64-1.txz:  Upgraded.
++--------------------------+
 Fri Jun 19 23:15:13 UTC 2020
 a/haveged-1.9.12-aarch64-1.txz:  Upgraded.
 a/kernel-firmware-20200619_3890db3-noarch-1.txz:  Upgraded.
