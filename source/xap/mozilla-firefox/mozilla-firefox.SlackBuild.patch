@@ -1,5 +1,5 @@
---- a/mozilla-firefox.SlackBuild	2020-03-13 22:50:14.832286264 +0000
-+++ b/mozilla-firefox.SlackBuild	2020-03-13 22:49:33.919680746 +0000
+--- a/mozilla-firefox.SlackBuild	2020-06-30 17:19:03.583086326 +0000
++++ b/mozilla-firefox.SlackBuild	2020-06-30 17:18:10.414258980 +0000
 @@ -42,6 +42,9 @@
  # "UnicodeDecodeError: 'ascii' codec can't decode byte 0xe2 in position 36: ordinal not in range(128)"
  LANG=C
@@ -29,7 +29,7 @@
  else
    SLKCFLAGS="-O2"
    LIBDIRSUFFIX=""
-@@ -218,8 +224,19 @@
+@@ -218,8 +224,18 @@
    \( -perm 666 -o -perm 664 -o -perm 600 -o -perm 444 -o -perm 440 -o -perm 400 \) \
    -exec chmod 644 {} \+
  
@@ -42,22 +42,22 @@
 +  --host=$ARCH-slackware-linux \
 +  --target=$ARCH-slackware-linux \
 +  --disable-av1 \
-+  --disable-gconf \
 +  --disable-jemalloc \
 +  --disable-webrtc \
 +  \
    --enable-official-branding \
    --prefix=/usr \
    --libdir=/usr/lib${LIBDIRSUFFIX} \
-@@ -227,7 +244,6 @@
+@@ -227,8 +243,6 @@
    --enable-alsa \
    --enable-application=browser \
    --enable-default-toolkit=cairo-gtk3 \
 -  --enable-linker=gold \
-   --enable-startup-notification \
+-  --enable-startup-notification \
    $GOOGLE_API_KEY \
    --enable-strip \
-@@ -292,9 +308,19 @@
+   --enable-cpp-rtti \
+@@ -292,9 +306,19 @@
    echo "ac_add_options --target=i686-pc-linux-gnu" >> .mozconfig
  fi
  
