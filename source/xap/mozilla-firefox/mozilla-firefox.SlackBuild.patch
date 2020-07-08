@@ -1,5 +1,5 @@
---- a/mozilla-firefox.SlackBuild	2020-07-04 03:03:14.995353422 +0000
-+++ b/mozilla-firefox.SlackBuild	2020-07-04 03:03:48.371879797 +0000
+--- a/mozilla-firefox.SlackBuild	2020-07-07 18:07:06.016008523 +0000
++++ b/mozilla-firefox.SlackBuild	2020-07-08 15:14:39.532786348 +0000
 @@ -42,6 +42,9 @@
  # "UnicodeDecodeError: 'ascii' codec can't decode byte 0xe2 in position 36: ordinal not in range(128)"
  LANG=C
@@ -51,7 +51,7 @@
 @@ -227,7 +243,6 @@
    --enable-alsa \
    --enable-application=browser \
-   --enable-default-toolkit=cairo-gtk3 \
+   --enable-default-toolkit=cairo-gtk3-wayland \
 -  --enable-linker=gold \
    $GOOGLE_API_KEY \
    --enable-strip \
