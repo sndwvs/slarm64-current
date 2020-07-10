@@ -1,9 +1,9 @@
---- /dev/null	2020-04-24 13:50:55.761997191 +0000
-+++ b/kernel-configs/config-generic-5.4.36.arm64	2020-04-30 15:48:19.130309528 +0000
+--- /dev/null	2020-07-04 18:47:50.996000020 +0300
++++ b/kernel-configs/config-generic-5.4.51.arm64	2020-07-10 20:41:20.950737486 +0300
 @@ -0,0 +1,9451 @@
 +#
 +# Automatically generated file; DO NOT EDIT.
-+# Linux/arm64 5.4.36 Kernel Configuration
++# Linux/arm64 5.4.51 Kernel Configuration
 +#
 +
 +#
@@ -15,7 +15,6 @@
 +CONFIG_CC_CAN_LINK=y
 +CONFIG_CC_HAS_ASM_GOTO=y
 +CONFIG_CC_HAS_ASM_INLINE=y
-+CONFIG_CC_HAS_WARN_MAYBE_UNINITIALIZED=y
 +CONFIG_IRQ_WORK=y
 +CONFIG_BUILDTIME_EXTABLE_SORT=y
 +CONFIG_THREAD_INFO_IN_TASK=y
@@ -567,6 +566,7 @@
 +# end of EFI (Extensible Firmware Interface) Support
 +
 +CONFIG_EFI_EARLYCON=y
++CONFIG_EFI_CUSTOM_SSDT_OVERLAYS=y
 +# CONFIG_IMX_DSP is not set
 +CONFIG_IMX_SCU=y
 +CONFIG_IMX_SCU_PD=y

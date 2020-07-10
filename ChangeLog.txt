@@ -1,3 +1,20 @@
+Thu Jul  9 16:34:56 UTC 2020
+a/kernel-firmware-20200702_74ac3b5-noarch-1.txz:  Upgraded.
+a/sysvinit-2.97-aarch64-1.txz:  Upgraded.
+n/bind-9.16.5-aarch64-1.txz:  Upgraded.
++--------------------------+
+Thu Jul  9 15:54:37 UTC 2020
+l/alsa-lib-1.2.3.2-aarch64-1.txz:  Upgraded.
+l/dconf-editor-3.36.4-aarch64-1.txz:  Upgraded.
+l/fribidi-1.0.10-aarch64-1.txz:  Upgraded.
+l/libcap-2.38-aarch64-1.txz:  Upgraded.
+n/libgcrypt-1.8.6-aarch64-1.txz:  Upgraded.
+n/php-7.4.8-aarch64-1.txz:  Upgraded.
+n/rsync-3.2.2-aarch64-1.txz:  Upgraded.
+x/xterm-357-aarch64-1.txz:  Upgraded.
+xap/mozilla-firefox-78.0.1esr-aarch64-2.txz:  Rebuilt.
+xap/seamonkey-2.53.3-aarch64-1.txz:  Upgraded.
++--------------------------+
 Mon Jul  6 16:44:10 UTC 2020
 ap/mpg123-1.26.2-aarch64-1.txz:  Upgraded.
 l/imagemagick-7.0.10_23-aarch64-1.txz:  Upgraded.
