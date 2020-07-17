@@ -1,3 +1,52 @@
+Wed Jul 15 21:07:51 UTC 2020
+a/kernel-firmware-20200715_69c7f0b-noarch-1.txz:  Upgraded.
+ap/soma-3.3.5-noarch-1.txz:  Upgraded.
+d/cmake-3.18.0-aarch64-1.txz:  Upgraded.
+l/libzip-1.7.3-aarch64-1.txz:  Upgraded.
++--------------------------+
+Tue Jul 14 19:50:37 UTC 2020
+d/python3-3.8.4-aarch64-1.txz:  Upgraded.
+n/NetworkManager-1.26.0-aarch64-1.txz:  Upgraded.
+n/bridge-utils-1.7-aarch64-1.txz:  Upgraded.
++--------------------------+
+Tue Jul 14 16:19:51 UTC 2020
+a/kernel-firmware-20200714_f39b687-noarch-1.txz:  Upgraded.
+d/meson-0.55.0-aarch64-1.txz:  Upgraded.
+d/python-setuptools-49.2.0-aarch64-1.txz:  Upgraded.
+l/libcap-2.39-aarch64-1.txz:  Upgraded.
+l/libzip-1.7.2-aarch64-1.txz:  Upgraded.
+n/alpine-2.23.2-aarch64-1.txz:  Upgraded.
+n/libmilter-8.16.1-aarch64-1.txz:  Upgraded.
+n/mutt-1.14.6-aarch64-1.txz:  Upgraded.
+x/xterm-358-aarch64-1.txz:  Upgraded.
+extra/xfractint/xfractint-20.04p15-aarch64-1.txz:  Added.
++--------------------------+
+Sat Jul 11 23:05:49 UTC 2020
+a/bash-5.0.018-aarch64-1.txz:  Upgraded.
+d/python-setuptools-49.1.2-aarch64-1.txz:  Upgraded.
+l/ffmpeg-4.3.1-aarch64-1.txz:  Upgraded.
+xap/audacious-4.0.5-aarch64-1.txz:  Upgraded.
+xap/audacious-plugins-4.0.5-aarch64-1.txz:  Upgraded.
++--------------------------+
+Sat Jul 11 06:03:18 UTC 2020
+a/logrotate-3.17.0-aarch64-1.txz:  Upgraded.
+ap/dash-0.5.11.1-aarch64-1.txz:  Upgraded.
+ap/neofetch-20200708_af2c02c-noarch-1.txz:  Upgraded.
+l/mpfr-4.1.0-aarch64-1.txz:  Upgraded.
+n/libmbim-1.24.2-aarch64-1.txz:  Upgraded.
++--------------------------+
+Sat Jul 11 05:58:10 UTC 2020
+a/kernel-generic-5.4.51-aarch64-1.txz:  Upgraded.
+a/kernel-modules-5.4.51-aarch64-1.txz:  Upgraded.
+ap/vim-8.2.1167-aarch64-1.txz:  Upgraded.
+d/Cython-0.29.21-aarch64-1.txz:  Upgraded.
+d/kernel-headers-5.4.51-arm64-1.txz:  Upgraded.
+k/kernel-source-5.4.51-noarch-1.txz:  Upgraded.
+n/gnupg2-2.2.21-aarch64-1.txz:  Upgraded.
+x/mesa-20.1.3-aarch64-1.txz:  Upgraded.
+xap/mozilla-firefox-78.0.2esr-aarch64-1.txz:  Upgraded.
+xap/vim-gvim-8.2.1167-aarch64-1.txz:  Upgraded.
++--------------------------+
 Thu Jul  9 16:34:56 UTC 2020
 a/kernel-firmware-20200702_74ac3b5-noarch-1.txz:  Upgraded.
 a/sysvinit-2.97-aarch64-1.txz:  Upgraded.
