@@ -59,7 +59,7 @@ gen_gpg() {
   [[ -e "${ASCFILE}" ]] && rm -f "${ASCFILE}"
 
   #$GPG --use-agent -bas -u "$DISTR_OWNER" --batch --quiet "${PKG}"
-  echo "${GPG_PASS}" | $GPG -bas -u "$DISTR_OWNER" --passphrase-fd 0 --batch --quiet "${PKG}"
+  echo "${GPG_PASS}" | $GPG --pinentry-mode loopback -bas -u "$DISTR_OWNER" --passphrase-fd 0 --batch --quiet "${PKG}"
 
   return $?
 }

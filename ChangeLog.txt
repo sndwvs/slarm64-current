@@ -1,3 +1,18 @@
+Sat Jul 18 03:43:12 UTC 2020
+ap/mpg123-1.26.3-aarch64-1.txz:  Upgraded.
+n/gpgme-1.14.0-aarch64-1.txz:  Upgraded.
+xap/gnuplot-5.4.0-aarch64-1.txz:  Upgraded.
++--------------------------+
+Sat Jul 18 03:27:03 UTC 2020
+a/kernel-generic-5.4.52-aarch64-1.txz:  Upgraded.
+a/kernel-modules-5.4.52-aarch64-1.txz:  Upgraded.
+d/kernel-headers-5.4.52-arm64-1.txz:  Upgraded.
+d/rust-1.45.0-aarch64-1.txz:  Upgraded.
+k/kernel-source-5.4.52-noarch-1.txz:  Upgraded.
+l/M2Crypto-0.36.0-aarch64-1.txz:  Upgraded.
+x/libevdev-1.9.1-aarch64-1.txz:  Upgraded.
+xap/pan-0.146-aarch64-2.txz:  Rebuilt.
++--------------------------+
 Wed Jul 15 21:07:51 UTC 2020
 a/kernel-firmware-20200715_69c7f0b-noarch-1.txz:  Upgraded.
 ap/soma-3.3.5-noarch-1.txz:  Upgraded.
