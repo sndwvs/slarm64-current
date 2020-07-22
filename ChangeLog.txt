@@ -1,3 +1,15 @@
+Tue Jul 21 15:50:48 UTC 2020
+a/kernel-firmware-20200716_1d1c80b-noarch-1.txz:  Upgraded.
+ap/mc-4.8.25-aarch64-1.txz:  Upgraded.
+d/nasm-2.15.03-aarch64-1.txz:  Upgraded.
+d/scons-4.0.1-aarch64-1.txz:  Upgraded.
+l/imagemagick-7.0.10_24-aarch64-1.txz:  Upgraded.
+l/jasper-2.0.18-aarch64-1.txz:  Upgraded.
+l/libcap-2.40-aarch64-1.txz:  Upgraded.
+l/libpsl-0.21.1-aarch64-2.txz:  Upgraded.
+n/dnsmasq-2.82-aarch64-1.txz:  Upgraded.
+x/xev-1.2.4-aarch64-1.txz:  Upgraded.
++--------------------------+
 Sat Jul 18 03:43:12 UTC 2020
 ap/mpg123-1.26.3-aarch64-1.txz:  Upgraded.
 n/gpgme-1.14.0-aarch64-1.txz:  Upgraded.
