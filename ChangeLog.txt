@@ -1,3 +1,45 @@
+Sat Jul 25 00:58:22 UTC 2020
+ap/vim-8.2.1288-aarch64-1.txz:  Upgraded.
+d/oprofile-1.4.0-aarch64-1.txz:  Upgraded.
+xap/vim-gvim-8.2.1288-aarch64-1.txz:  Upgraded.
+testing/packages/gcc10/gcc-10.2.0-aarch64-1.txz:  Added.
+testing/packages/gcc10/gcc-g++-10.2.0-aarch64-1.txz:  Added.
+testing/packages/gcc10/gcc-gdc-10.2.0-aarch64-1.txz:  Added.
+testing/packages/gcc10/gcc-gfortran-10.2.0-aarch64-1.txz:  Added.
+testing/packages/gcc10/gcc-go-10.2.0-aarch64-1.txz:  Added.
+testing/packages/gcc10/gcc-objc-10.2.0-aarch64-1.txz:  Added.
++--------------------------+
+Fri Jul 24 17:02:24 UTC 2020
+a/util-linux-2.36-aarch64-1.txz:  Upgraded.
+d/check-0.15.1-aarch64-1.txz:  Upgraded.
+d/parallel-20200722-noarch-1.txz:  Upgraded.
+x/mesa-20.1.4-aarch64-1.txz:  Upgraded.
+extra/sendmail/sendmail-8.16.1-aarch64-2.txz:  Rebuilt.
+extra/sendmail/sendmail-cf-8.16.1-noarch-2.txz:  Rebuilt.
++--------------------------+
+Fri Jul 24 15:47:21 UTC 2020
+a/kernel-generic-5.4.53-aarch64-1.txz:  Upgraded.
+a/kernel-modules-5.4.53-aarch64-1.txz:  Upgraded.
+ap/sudo-1.9.2-aarch64-1.txz:  Upgraded.
+d/ccache-3.7.11-aarch64-1.txz:  Upgraded.
+d/kernel-headers-5.4.53-arm64-1.txz:  Upgraded.
+d/llvm-10.0.1-aarch64-1.txz:  Upgraded.
+k/kernel-source-5.4.53-noarch-1.txz:  Upgraded.
+l/libidn-1.36-aarch64-1.txz:  Upgraded.
+l/netpbm-10.91.01-aarch64-1.txz:  Upgraded.
+l/python-urllib3-1.25.10-aarch64-1.txz:  Upgraded.
+xap/xlockmore-5.65-aarch64-1.txz:  Upgraded.
++--------------------------+
+Wed Jul 22 17:04:50 UTC 2020
+a/kernel-firmware-20200721_2b823fc-noarch-1.txz:  Upgraded.
+d/python3-3.8.5-aarch64-1.txz:  Upgraded.
+d/re2c-2.0-aarch64-1.txz:  Upgraded.
+l/farstream-0.2.9-aarch64-1.txz:  Added.
+l/libnice-0.1.17-aarch64-1.txz:  Added.
+n/iptraf-ng-1.2.1-aarch64-1.txz:  Upgraded.
+n/proftpd-1.3.7a-aarch64-1.txz:  Upgraded.
+xap/pidgin-2.14.1-aarch64-1.txz:  Upgraded.
++--------------------------+
 Tue Jul 21 15:50:48 UTC 2020
 a/kernel-firmware-20200716_1d1c80b-noarch-1.txz:  Upgraded.
 ap/mc-4.8.25-aarch64-1.txz:  Upgraded.
