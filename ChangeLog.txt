@@ -1,3 +1,23 @@
+Wed Jul 29 16:21:07 UTC 2020
+a/gettext-0.21-aarch64-1.txz:  Upgraded.
+d/bison-3.7-aarch64-1.txz:  Upgraded.
+d/gettext-tools-0.21-aarch64-1.txz:  Upgraded.
+n/postfix-3.5.6-aarch64-1.txz:  Upgraded.
+xap/mozilla-firefox-78.1.0esr-aarch64-1.txz:  Upgraded.
++--------------------------+
+Sun Jul 26 20:46:49 UTC 2020
+l/boost-1.73.0-aarch64-3.txz:  Rebuilt.
+l/libcap-2.41-aarch64-1.txz:  Upgraded.
+n/libqmi-1.26.2-aarch64-1.txz:  Upgraded.
++--------------------------+
+Sat Jul 25 20:09:46 UTC 2020
+a/minicom-2.7.2-aarch64-1.txz:  Upgraded.
+a/xfsprogs-5.7.0-aarch64-1.txz:  Upgraded.
+l/harfbuzz-2.7.0-aarch64-1.txz:  Upgraded.
+l/mozilla-nss-3.55-aarch64-1.txz:  Upgraded.
+n/postfix-3.5.5-aarch64-1.txz:  Upgraded.
+extra/bash-completion/bash-completion-2.11-noarch-1.txz:  Upgraded.
++--------------------------+
 Sat Jul 25 00:58:22 UTC 2020
 ap/vim-8.2.1288-aarch64-1.txz:  Upgraded.
 d/oprofile-1.4.0-aarch64-1.txz:  Upgraded.
