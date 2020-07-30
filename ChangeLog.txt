@@ -1,3 +1,11 @@
+Wed Jul 29 16:34:33 UTC 2020
+d/git-2.28.0-aarch64-1.txz:  Upgraded.
+e/emacspeak-52.0-aarch64-1.txz:  Added.
+l/espeak-ng-1.50-aarch64-1.txz:  Added.
+l/pcaudiolib-1.1-aarch64-1.txz:  Added.
+l/xxHash-0.8.0-aarch64-1.txz:  Upgraded.
+xap/xaos-4.1-aarch64-1.txz:  Upgraded.
++--------------------------+
 Wed Jul 29 16:21:07 UTC 2020
 a/gettext-0.21-aarch64-1.txz:  Upgraded.
 d/bison-3.7-aarch64-1.txz:  Upgraded.
