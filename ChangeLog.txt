@@ -1,3 +1,20 @@
+Sat Aug  1 20:08:04 UTC 2020
+a/kernel-generic-5.4.55-aarch64-1.txz:  Upgraded.
+a/kernel-modules-5.4.55-aarch64-1.txz:  Upgraded.
+ap/sysstat-12.4.0-aarch64-1.txz:  Upgraded.
+d/cmake-3.18.1-aarch64-1.txz:  Upgraded.
+d/kernel-headers-5.4.55-arm64-1.txz:  Upgraded.
+d/python-pip-20.2-aarch64-1.txz:  Upgraded.
+d/re2c-2.0.1-aarch64-1.txz:  Upgraded.
+d/rust-1.45.1-aarch64-1.txz:  Upgraded.
+k/kernel-source-5.4.55-noarch-1.txz:  Upgraded.
+l/libvpx-1.9.0-aarch64-1.txz:  Upgraded.
+l/mozjs60-60.9.0esr-aarch64-1.txz:  Removed.
+l/mozjs68-68.11.0esr-aarch64-1.txz:  Added.
+l/polkit-0.117-aarch64-1.txz:  Upgraded.
+x/libX11-1.6.10-aarch64-1.txz:  Upgraded.
+xap/mozilla-thunderbird-68.11.0-aarch64-1.txz:  Upgraded.
++--------------------------+
 Thu Jul 30 17:53:45 UTC 2020
 a/kernel-generic-5.4.54-aarch64-1.txz:  Upgraded.
 a/kernel-modules-5.4.54-aarch64-1.txz:  Upgraded.
