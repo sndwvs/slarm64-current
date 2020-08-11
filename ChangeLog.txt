@@ -1,3 +1,69 @@
+Mon Aug 10 14:59:15 UTC 2020
+a/kernel-firmware-20200807_c331aa9-noarch-1.txz:  Upgraded.
+d/check-0.15.2-aarch64-1.txz:  Upgraded.
+d/doxygen-1.8.19-aarch64-1.txz:  Upgraded.
+d/re2c-2.0.2-aarch64-1.txz:  Upgraded.
+d/strace-5.8-aarch64-1.txz:  Upgraded.
+l/fuse3-3.9.3-aarch64-1.txz:  Upgraded.
+l/imagemagick-7.0.10_26-aarch64-1.txz:  Upgraded.
+n/iproute2-5.8.0-aarch64-1.txz:  Upgraded.
+n/pssh-2.3.4-aarch64-1.txz:  Upgraded.
+n/rsync-3.2.3-aarch64-1.txz:  Upgraded.
+x/font-alias-1.0.4-noarch-1.txz:  Upgraded.
+x/font-misc-ethiopic-1.0.4-noarch-1.txz:  Upgraded.
++--------------------------+
+Sat Aug  8 07:09:49 UTC 2020
+a/kernel-generic-5.4.57-aarch64-1.txz:  Upgraded.
+a/kernel-modules-5.4.57-aarch64-1.txz:  Upgraded.
+d/kernel-headers-5.4.57-arm64-1.txz:  Upgraded.
+k/kernel-source-5.4.57-noarch-1.txz:  Upgraded.
++--------------------------+
+Fri Aug  7 16:01:01 UTC 2020
+n/links-2.21-aarch64-1.txz:  Upgraded.
+x/libX11-1.6.11-aarch64-1.txz:  Upgraded.
+x/mesa-20.1.5-aarch64-1.txz:  Upgraded.
++--------------------------+
+Thu Aug  6 15:56:03 UTC 2020
+a/aaa_terminfo-6.2_20200801-aarch64-1.txz:  Upgraded.
+a/hwdata-0.338-noarch-1.txz:  Upgraded.
+l/ncurses-6.2_20200801-aarch64-1.txz:  Upgraded.
+n/ethtool-5.8-aarch64-1.txz:  Upgraded.
+n/httpd-2.4.46-aarch64-1.txz:  Upgraded.
++--------------------------+
+Thu Aug  6 15:22:12 UTC 2020
+ap/vim-8.2.1361-aarch64-1.txz:  Upgraded.
+d/mercurial-5.5-aarch64-1.txz:  Upgraded.
+d/python-pip-20.2.1-aarch64-1.txz:  Upgraded.
+l/gegl-0.4.26-aarch64-1.txz:  Upgraded.
+n/php-7.4.9-aarch64-1.txz:  Upgraded.
+xap/vim-gvim-8.2.1361-aarch64-1.txz:  Upgraded.
++--------------------------+
+Thu Aug  6 14:53:17 UTC 2020
+a/kernel-firmware-20200803_9bc3789-noarch-1.txz:  Upgraded.
+d/rust-1.45.2-aarch64-1.txz:  Upgraded.
+l/babl-0.1.80-aarch64-1.txz:  Upgraded.
+l/lmdb-0.9.25-aarch64-1.txz:  Upgraded.
+l/mozjs68-68.11.0esr-aarch64-2.txz:  Rebuilt.
+n/rsync-3.2.3pre1-aarch64-1.txz:  Upgraded.
+x/libinput-1.16.0-aarch64-1.txz:  Upgraded.
++--------------------------+
+Sun Aug  2 20:04:49 UTC 2020
+d/bison-3.7.1-aarch64-1.txz:  Upgraded.
+d/python-setuptools-49.2.1-aarch64-1.txz:  Upgraded.
+l/libcap-2.42-aarch64-1.txz:  Upgraded.
+x/libX11-1.6.10-aarch64-2.txz:  Rebuilt.
+extra/xfractint/xfractint-20.04p16-aarch64-1.txz:  Upgraded.
++--------------------------+
+Sat Aug  1 21:35:24 UTC 2020
+a/cryptsetup-2.3.3-aarch64-2.txz:  Rebuilt.
+l/imagemagick-7.0.10_25-aarch64-1.txz:  Upgraded.
+l/json-c-0.15_20200726-aarch64-1.txz:  Upgraded.
+l/urwid-1.0.3-aarch64-3.txz:  Removed.
+n/bind-9.16.5-aarch64-2.txz:  Rebuilt.
+x/libmypaint-1.6.1-aarch64-2.txz:  Rebuilt.
+xap/gimp-2.10.20-aarch64-2.txz:  Rebuilt.
+extra/wicd/wicd-1.7.4-aarch64-3.txz:  Removed.
++--------------------------+
 Sat Aug  1 20:08:04 UTC 2020
 a/kernel-generic-5.4.55-aarch64-1.txz:  Upgraded.
 a/kernel-modules-5.4.55-aarch64-1.txz:  Upgraded.
