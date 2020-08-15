@@ -1,3 +1,43 @@
+Sat Aug 15 06:29:13 UTC 2020
+d/python-setuptools-49.6.0-aarch64-1.txz:  Upgraded.
+l/harfbuzz-2.7.1-aarch64-1.txz:  Upgraded.
+l/pango-1.46.0-aarch64-1.txz:  Upgraded.
+n/lftp-4.9.2-aarch64-1.txz:  Upgraded.
+xfce/garcon-0.6.4-aarch64-1.txz:  Upgraded.
+xfce/tumbler-0.2.9-aarch64-1.txz:  Upgraded.
++--------------------------+
+Fri Aug 14 19:33:44 UTC 2020
+a/sysvinit-scripts-2.1-noarch-35.txz:  Rebuilt.
+ap/man-pages-5.08-noarch-1.txz:  Upgraded.
+d/python-setuptools-49.4.0-aarch64-1.txz:  Upgraded.
+x/libinput-1.16.1-aarch64-1.txz:  Upgraded.
+xfce/tumbler-0.3.0-aarch64-1.txz:  Upgraded.
++--------------------------+
+Thu Aug 13 16:22:04 UTC 2020
+ap/nano-5.1-aarch64-1.txz:  Upgraded.
+d/python-pip-20.2.2-aarch64-1.txz:  Upgraded.
+l/lmdb-0.9.26-aarch64-1.txz:  Upgraded.
+n/dovecot-2.3.11.3-aarch64-1.txz:  Upgraded.
+n/openldap-2.4.51-aarch64-1.txz:  Upgraded.
+xfce/garcon-0.7.0-aarch64-1.txz:  Upgraded.
++--------------------------+
+Wed Aug 12 19:42:11 UTC 2020
+a/kernel-generic-5.4.58-aarch64-1.txz:  Upgraded.
+a/kernel-modules-5.4.58-aarch64-1.txz:  Upgraded.
+ap/mariadb-10.5.5-aarch64-1.txz:  Upgraded.
+d/kernel-headers-5.4.58-arm64-1.txz:  Upgraded.
+e/emacs-27.1-aarch64-1.txz:  Upgraded.
+k/kernel-source-5.4.58-noarch-1.txz:  Upgraded.
+l/imagemagick-7.0.10_27-aarch64-1.txz:  Upgraded.
++--------------------------+
+Tue Aug 11 17:28:35 UTC 2020
+a/lvm2-2.03.10-aarch64-1.txz:  Upgraded.
+d/python-setuptools-49.3.1-aarch64-1.txz:  Upgraded.
+d/vala-0.48.9-aarch64-1.txz:  Upgraded.
+l/gtk+3-3.24.22-aarch64-1.txz:  Upgraded.
+l/qca-qt5-2.3.1-aarch64-1.txz:  Added.
+xfce/tumbler-0.2.9-aarch64-1.txz:  Upgraded.
++--------------------------+
 Mon Aug 10 14:59:15 UTC 2020
 a/kernel-firmware-20200807_c331aa9-noarch-1.txz:  Upgraded.
 d/check-0.15.2-aarch64-1.txz:  Upgraded.
