@@ -1,0 +1,31 @@
+--- a/ssr.SlackBuild	2020-08-15 19:04:04.038736541 +0000
++++ b/ssr.SlackBuild	2020-08-16 06:52:35.715845896 +0000
+@@ -56,6 +56,9 @@
+ elif [ "$ARCH" = "s390" ]; then
+   SLKCFLAGS="-O2"
+   LIBDIRSUFFIX=""
++elif [ "$ARCH" = "aarch64" ]; then
++  SLKCFLAGS="-O2"
++  LIBDIRSUFFIX="64"
+ elif [ "$ARCH" = "x86_64" ]; then
+   SLKCFLAGS="-O2 -fPIC"
+   LIBDIRSUFFIX="64"
+@@ -85,6 +88,10 @@
+   \( -perm 666 -o -perm 664 -o -perm 600 -o -perm 444 -o -perm 440 -o -perm 400 \) \
+   -exec chmod 644 {} \+
+ 
++if [[ $ARCH =~ aarch64|arm ]]; then
++    OPTIONS="-DWITH_GLINJECT=FALSE "
++fi
++
+ # Configure, build, and install:
+ mkdir cmake-build
+ cd cmake-build
+@@ -96,6 +103,7 @@
+     -DDOC_INSTALL_DIR="doc" \
+     -DCMAKE_INSTALL_MANDIR=/usr/man \
+     -DWITH_JACK=FALSE \
++    $OPTIONS \
+     .. || exit 1
+   make $NUMJOBS || make || exit 1
+   make install DESTDIR=$PKG || exit 1
