@@ -1,5 +1,5 @@
---- a/mozilla-nss.SlackBuild	2020-06-19 15:38:56.617129758 +0000
-+++ b/mozilla-nss.SlackBuild	2020-06-19 15:41:54.003855425 +0000
+--- a/mozilla-nss.SlackBuild	2020-08-22 17:21:57.628930713 +0000
++++ b/mozilla-nss.SlackBuild	2020-08-22 22:23:22.626536525 +0000
 @@ -60,6 +60,10 @@
  elif [ "$ARCH" = "armv7hl" ]; then
    SLKCFLAGS="-O2 -march=armv7-a -mfpu=vfpv3-d16"
@@ -11,21 +11,17 @@
  else
    SLKCFLAGS="-O2"
    LIBDIRSUFFIX=""
-@@ -68,7 +72,7 @@
- TMP=${TMP:-/tmp}
- PKG=$TMP/package-$PKGNAM
- 
--NUMJOBS=${NUMJOBS:-" -j$(expr $(nproc) + 1) "}
-+NUMJOBS=${NUMJOBS:-" -j $(expr $(nproc) + 1) "}
- 
- rm -rf $PKG
- mkdir -p $TMP $PKG
-@@ -93,6 +97,8 @@
+@@ -92,8 +96,12 @@
+   \( -perm 666 -o -perm 664 -o -perm 600 -o -perm 444 -o -perm 440 -o -perm 400 \) \
    -exec chmod 644 {} \+
  
++if [[ $ARCH == "arch64" ]]; then
++    OPTIONS="-Ddisable_arm32_neon=1 -Ddisable_arm_hw_aes=1 -Ddisable_arm_hw_sha2=1"
++fi
++
  cd nss
-+xzcat $CWD/0001-Don-t-USE_ARM_GCM.patch.xz | patch -p1 --verbose || exit 1
-+xzcat $CWD/0002-fix-armv8_c_lib-dependency.patch.xz | patch -p1 --verbose || exit 1
- ./build.sh -v $NUMJOBS --opt --system-sqlite --enable-libpkix --disable-tests
+-./build.sh -v $NUMJOBS --opt --system-sqlite --enable-libpkix --disable-tests
++./build.sh -v $NUMJOBS --opt --system-sqlite --enable-libpkix --disable-tests $OPTIONS
  cd -
  
+ # Install all the needed stuff to the package dir:

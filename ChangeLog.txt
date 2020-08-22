@@ -1,3 +1,60 @@
+Sat Aug 22 15:49:08 UTC 2020
+a/kernel-generic-5.4.60-aarch64-1.txz:  Upgraded.
+a/kernel-modules-5.4.60-aarch64-1.txz:  Upgraded.
+d/cmake-3.18.2-aarch64-1.txz:  Upgraded.
+d/kernel-headers-5.4.60-arm64-1.txz:  Upgraded.
+d/nasm-2.15.04-aarch64-1.txz:  Upgraded.
+k/kernel-source-5.4.60-noarch-1.txz:  Upgraded.
+l/xapian-core-1.4.17-aarch64-1.txz:  Upgraded.
+n/bind-9.16.6-aarch64-1.txz:  Upgraded.
+n/getmail-6.03-aarch64-1.txz:  Upgraded.
++--------------------------+
+Fri Aug 21 17:13:00 UTC 2020
+l/pango-1.46.1-aarch64-1.txz:  Upgraded.
+n/ModemManager-1.14.2-aarch64-1.txz:  Upgraded.
+n/NetworkManager-1.26.2-aarch64-1.txz:  Upgraded.
+x/libinput-1.16.1-aarch64-2.txz:  Rebuilt.
+x/mesa-20.1.6-aarch64-1.txz:  Upgraded.
++--------------------------+
+Fri Aug 21 16:02:03 UTC 2020
+a/kernel-generic-5.4.59-aarch64-1.txz:  Upgraded.
+a/kernel-modules-5.4.59-aarch64-1.txz:  Upgraded.
+d/kernel-headers-5.4.59-arm64-1.txz:  Upgraded.
+d/ninja-1.10.1-aarch64-1.txz:  Upgraded.
+k/kernel-source-5.4.59-noarch-1.txz:  Upgraded.
+n/curl-7.72.0-aarch64-1.txz:  Upgraded.
+n/p11-kit-0.23.21-aarch64-1.txz:  Upgraded.
++--------------------------+
+Wed Aug 19 16:45:11 UTC 2020
+ap/terminus-font-4.48-noarch-2.txz:  Rebuilt.
+l/glib2-2.64.5-aarch64-1.txz:  Upgraded.
+l/jemalloc-5.2.1-aarch64-1.txz:  Upgraded.
+l/libmpc-1.2.0-aarch64-1.txz:  Upgraded.
+l/pango-1.46.0-aarch64-2.txz:  Rebuilt.
+x/xterm-359-aarch64-1.txz:  Upgraded.
+xap/sane-1.0.30-aarch64-3.txz:  Rebuilt.
++--------------------------+
+Tue Aug 18 16:46:33 UTC 2020
+a/kernel-firmware-20200817_7a30af1-noarch-1.txz:  Upgraded.
+d/meson-0.55.1-aarch64-1.txz:  Upgraded.
+l/imagemagick-7.0.10_28-aarch64-1.txz:  Upgraded.
+l/libcap-2.43-aarch64-1.txz:  Upgraded.
+l/libsndfile-1.0.29-aarch64-1.txz:  Upgraded.
++--------------------------+
+Sun Aug 16 07:03:09 UTC 2020
+ap/hplip-3.20.6-aarch64-2.txz:  Rebuilt.
+ap/pamixer-1.4-aarch64-6.txz:  Rebuilt.
+ap/sqlite-3.33.0-aarch64-1.txz:  Upgraded.
+kde/calligra-2.9.11-aarch64-37.txz:  Rebuilt.
+l/akonadi-1.13.0-aarch64-16.txz:  Rebuilt.
+l/boost-1.74.0-aarch64-1.txz:  Upgraded.
+n/getmail-6.02-aarch64-1.txz:  Upgraded.
+n/net-snmp-5.9-aarch64-1.txz:  Upgraded.
+n/ntp-4.2.8p15-aarch64-2.txz:  Rebuilt.
+n/php-7.4.9-aarch64-2.txz:  Rebuilt.
+xap/sane-1.0.30-aarch64-2.txz:  Rebuilt.
+xap/ssr-0.4.2-aarch64-1.txz:  Added.
++--------------------------+
 Sat Aug 15 06:29:13 UTC 2020
 d/python-setuptools-49.6.0-aarch64-1.txz:  Upgraded.
 l/harfbuzz-2.7.1-aarch64-1.txz:  Upgraded.
