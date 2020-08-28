@@ -1,3 +1,39 @@
+Thu Aug 27 18:40:57 UTC 2020
+a/f2fs-tools-1.14.0-aarch64-1.txz:  Upgraded.
+a/kernel-generic-5.4.61-aarch64-1.txz:  Upgraded.
+a/kernel-modules-5.4.61-aarch64-1.txz:  Upgraded.
+ap/cups-filters-1.28.0-aarch64-1.txz:  Upgraded.
+d/kernel-headers-5.4.61-arm64-1.txz:  Upgraded.
+k/kernel-source-5.4.61-noarch-1.txz:  Upgraded.
++--------------------------+
+Wed Aug 26 15:43:40 UTC 2020
+a/kernel-firmware-20200824_74bd44f-noarch-1.txz:  Upgraded.
+ap/vim-8.2.1522-aarch64-1.txz:  Upgraded.
+l/libuv-1.39.0-aarch64-1.txz:  Upgraded.
+x/libX11-1.6.12-aarch64-1.txz:  Upgraded.
+x/xorg-server-1.20.9-aarch64-1.txz:  Upgraded.
+x/xorg-server-xephyr-1.20.9-aarch64-1.txz:  Upgraded.
+x/xorg-server-xnest-1.20.9-aarch64-1.txz:  Upgraded.
+x/xorg-server-xvfb-1.20.9-aarch64-1.txz:  Upgraded.
+x/xorg-server-xwayland-1.20.9-aarch64-1.txz:  Upgraded.
+xap/vim-gvim-8.2.1522-aarch64-1.txz:  Upgraded.
++--------------------------+
+Wed Aug 26 14:53:50 UTC 2020
+ap/nano-5.2-aarch64-1.txz:  Upgraded.
+d/doxygen-1.8.20-aarch64-1.txz:  Upgraded.
+d/parallel-20200822-noarch-1.txz:  Upgraded.
+l/libcap-ng-0.7.11-aarch64-1.txz:  Upgraded.
+n/libgpg-error-1.39-aarch64-1.txz:  Upgraded.
+n/libqmi-1.26.4-aarch64-1.txz:  Upgraded.
+xap/mozilla-firefox-78.2.0esr-aarch64-1.txz:  Upgraded.
+xap/sane-1.0.31-aarch64-1.txz:  Upgraded.
++--------------------------+
+Sat Aug 22 22:36:46 UTC 2020
+ap/soma-3.3.6-noarch-1.txz:  Upgraded.
+d/re2c-2.0.3-aarch64-1.txz:  Upgraded.
+l/mozilla-nss-3.56-aarch64-1.txz:  Upgraded.
+n/iputils-20200821-aarch64-1.txz:  Upgraded.
++--------------------------+
 Sat Aug 22 15:49:08 UTC 2020
 a/kernel-generic-5.4.60-aarch64-1.txz:  Upgraded.
 a/kernel-modules-5.4.60-aarch64-1.txz:  Upgraded.
