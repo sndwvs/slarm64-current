@@ -1,3 +1,28 @@
+Sun Aug 30 03:15:40 UTC 2020
+ap/dash-0.5.11.2-aarch64-1.txz:  Upgraded.
+ap/htop-3.0.0-aarch64-1.txz:  Upgraded.
+d/patchelf-0.12-aarch64-1.txz:  Upgraded.
+l/harfbuzz-2.7.2-aarch64-1.txz:  Upgraded.
++--------------------------+
+Sat Aug 29 05:33:12 UTC 2020
+x/xorg-server-1.20.9-aarch64-2.txz:  Rebuilt.
+x/xorg-server-xephyr-1.20.9-aarch64-2.txz:  Rebuilt.
+x/xorg-server-xnest-1.20.9-aarch64-2.txz:  Rebuilt.
+x/xorg-server-xvfb-1.20.9-aarch64-2.txz:  Rebuilt.
+x/xorg-server-xwayland-1.20.9-aarch64-2.txz:  Rebuilt.
++--------------------------+
+Sat Aug 29 05:16:56 UTC 2020
+d/nasm-2.15.05-aarch64-1.txz:  Upgraded.
+n/fetchmail-6.4.11-aarch64-1.txz:  Upgraded.
+n/iw-5.8-aarch64-1.txz:  Upgraded.
++--------------------------+
+Sat Aug 29 05:08:11 UTC 2020
+a/kernel-firmware-20200827_7a237c6-noarch-1.txz:  Upgraded.
+ap/cups-filters-1.28.1-aarch64-1.txz:  Upgraded.
+d/rust-1.46.0-aarch64-1.txz:  Upgraded.
+l/brotli-1.0.9-aarch64-1.txz:  Upgraded.
+n/gnupg2-2.2.22-aarch64-1.txz:  Upgraded.
++--------------------------+
 Thu Aug 27 18:40:57 UTC 2020
 a/f2fs-tools-1.14.0-aarch64-1.txz:  Upgraded.
 a/kernel-generic-5.4.61-aarch64-1.txz:  Upgraded.
