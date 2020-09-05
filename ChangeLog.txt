@@ -1,3 +1,38 @@
+Fri Sep  4 20:47:52 UTC 2020
+a/cryptsetup-2.3.4-aarch64-1.txz:  Upgraded.
+l/gtk+3-3.24.23-aarch64-1.txz:  Upgraded.
+n/cifs-utils-6.11-aarch64-1.txz:  Upgraded.
+n/fetchmail-6.4.12-aarch64-1.txz:  Upgraded.
+n/gnutls-3.6.15-aarch64-1.txz:  Upgraded.
++--------------------------+
+Fri Sep  4 18:03:27 UTC 2020
+a/hwdata-0.339-noarch-1.txz:  Upgraded.
+a/kernel-generic-5.4.62-aarch64-1.txz:  Upgraded.
+a/kernel-modules-5.4.62-aarch64-1.txz:  Upgraded.
+ap/htop-3.0.1-aarch64-1.txz:  Upgraded.
+d/kernel-headers-5.4.62-arm64-1.txz:  Upgraded.
+d/python-setuptools-50.1.0-aarch64-1.txz:  Upgraded.
+k/kernel-source-5.4.62-noarch-1.txz:  Upgraded.
+n/gnupg2-2.2.23-aarch64-1.txz:  Upgraded.
+x/mesa-20.1.7-aarch64-1.txz:  Upgraded.
++--------------------------+
+Thu Sep  3 16:34:57 UTC 2020
+a/kernel-firmware-20200901_d5f9eea-noarch-1.txz:  Upgraded.
+d/mercurial-5.5.1-aarch64-1.txz:  Upgraded.
+d/python-setuptools-50.0.3-aarch64-1.txz:  Upgraded.
+l/netpbm-10.91.02-aarch64-1.txz:  Upgraded.
+n/php-7.4.10-aarch64-1.txz:  Upgraded.
+xap/xaos-4.2-aarch64-1.txz:  Upgraded.
++--------------------------+
+Mon Aug 31 22:20:23 UTC 2020
+n/postfix-3.5.7-aarch64-1.txz:  Upgraded.
+x/libwacom-1.5-aarch64-1.txz:  Upgraded.
++--------------------------+
+Mon Aug 31 16:18:52 UTC 2020
+a/mt-st-1.4-aarch64-1.txz:  Upgraded.
+n/mutt-1.14.7-aarch64-1.txz:  Upgraded.
+n/openldap-2.4.52-aarch64-1.txz:  Upgraded.
++--------------------------+
 Sun Aug 30 03:15:40 UTC 2020
 ap/dash-0.5.11.2-aarch64-1.txz:  Upgraded.
 ap/htop-3.0.0-aarch64-1.txz:  Upgraded.
@@ -109,6 +144,7 @@ ap/sqlite-3.33.0-aarch64-1.txz:  Upgraded.
 kde/calligra-2.9.11-aarch64-37.txz:  Rebuilt.
 l/akonadi-1.13.0-aarch64-16.txz:  Rebuilt.
 l/boost-1.74.0-aarch64-1.txz:  Upgraded.
+l/libcroco-0.6.13-aarch64-1.txz:  Removed.
 n/getmail-6.02-aarch64-1.txz:  Upgraded.
 n/net-snmp-5.9-aarch64-1.txz:  Upgraded.
 n/ntp-4.2.8p15-aarch64-2.txz:  Rebuilt.
