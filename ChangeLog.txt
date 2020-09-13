@@ -1,3 +1,66 @@
+Sun Sep 13 05:56:40 UTC 2020
+a/kernel-generic-5.4.65-aarch64-1.txz:  Upgraded.
+a/kernel-modules-5.4.65-aarch64-1.txz:  Upgraded.
+ap/cups-filters-1.28.2-aarch64-1.txz:  Upgraded.
+ap/ghostscript-9.53.0-aarch64-1.txz:  Upgraded.
+d/kernel-headers-5.4.65-arm64-1.txz:  Upgraded.
+d/meson-0.55.3-aarch64-1.txz:  Upgraded.
+d/vala-0.50.0-aarch64-1.txz:  Upgraded.
+k/kernel-source-5.4.65-noarch-1.txz:  Upgraded.
+l/glib2-2.66.0-aarch64-1.txz:  Upgraded.
+l/librsvg-2.50.0-aarch64-1.txz:  Upgraded.
+l/libssh-0.9.5-aarch64-1.txz:  Upgraded.
+l/libxkbcommon-1.0.1-aarch64-1.txz:  Upgraded.
+x/xf86-video-vesa-2.5.0-aarch64-1.txz:  Upgraded.
+x/xorg-server-1.20.9-aarch64-3.txz:  Rebuilt.
+x/xorg-server-xephyr-1.20.9-aarch64-3.txz:  Rebuilt.
+x/xorg-server-xnest-1.20.9-aarch64-3.txz:  Rebuilt.
+x/xorg-server-xvfb-1.20.9-aarch64-3.txz:  Rebuilt.
+x/xorg-server-xwayland-1.20.9-aarch64-3.txz:  Rebuilt.
+xap/mozilla-thunderbird-68.12.0-aarch64-1.txz:  Upgraded.
++--------------------------+
+Fri Sep 11 20:01:13 UTC 2020
+a/kernel-generic-5.4.64-aarch64-1.txz:  Upgraded.
+a/kernel-modules-5.4.64-aarch64-1.txz:  Upgraded.
+ap/vim-8.2.1651-aarch64-1.txz:  Upgraded.
+d/kernel-headers-5.4.64-arm64-1.txz:  Upgraded.
+d/python-pip-20.2.3-aarch64-1.txz:  Upgraded.
+k/kernel-source-5.4.64-noarch-1.txz:  Upgraded.
+l/elfutils-0.181-aarch64-1.txz:  Upgraded.
+l/libcap-ng-0.8-aarch64-1.txz:  Upgraded.
+l/qt5-5.15.1-aarch64-1.txz:  Upgraded.
+xap/vim-gvim-8.2.1651-aarch64-1.txz:  Upgraded.
++--------------------------+
+Wed Sep  9 15:54:30 UTC 2020
+l/gst-plugins-base-1.18.0-aarch64-1.txz:  Upgraded.
+l/gst-plugins-good-1.18.0-aarch64-1.txz:  Upgraded.
+l/gst-plugins-libav-1.18.0-aarch64-1.txz:  Upgraded.
+l/gstreamer-1.18.0-aarch64-1.txz:  Upgraded.
+l/jasper-2.0.20-aarch64-1.txz:  Upgraded.
++--------------------------+
+Tue Sep  8 16:30:06 UTC 2020
+d/bison-3.7.2-aarch64-1.txz:  Upgraded.
+l/imagemagick-7.0.10_29-aarch64-1.txz:  Upgraded.
+l/libxkbcommon-1.0.0-aarch64-1.txz:  Upgraded.
+l/netpbm-10.91.03-aarch64-1.txz:  Upgraded.
+l/pycurl-7.43.0.6-aarch64-1.txz:  Upgraded.
+n/bluez-5.55-aarch64-1.txz:  Upgraded.
+n/mcabber-1.1.1-aarch64-1.txz:  Upgraded.
+n/openldap-2.4.53-aarch64-1.txz:  Upgraded.
++--------------------------+
+Sat Sep  5 23:18:04 UTC 2020
+a/kernel-generic-5.4.63-aarch64-1.txz:  Upgraded.
+a/kernel-modules-5.4.63-aarch64-1.txz:  Upgraded.
+a/xfsprogs-5.8.0-aarch64-1.txz:  Upgraded.
+d/kernel-headers-5.4.63-arm64-1.txz:  Upgraded.
+d/python-setuptools-50.3.0-aarch64-1.txz:  Upgraded.
+d/vala-0.48.10-aarch64-1.txz:  Upgraded.
+k/kernel-source-5.4.63-noarch-1.txz:  Upgraded.
+l/at-spi2-core-2.36.1-aarch64-1.txz:  Upgraded.
++--------------------------+
+Sat Sep  5 02:44:55 UTC 2020
+x/xf86-video-fbdev-r116.4730f13-aarch64-1.txz:  Upgraded.
++--------------------------+
 Fri Sep  4 20:47:52 UTC 2020
 a/cryptsetup-2.3.4-aarch64-1.txz:  Upgraded.
 l/gtk+3-3.24.23-aarch64-1.txz:  Upgraded.
