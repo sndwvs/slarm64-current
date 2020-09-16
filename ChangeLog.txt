@@ -1,3 +1,9 @@
+Tue Sep 15 21:14:58 UTC 2020
+a/kernel-firmware-20200914_71338c2-noarch-1.txz:  Upgraded.
+ap/ghostscript-9.53.1-aarch64-1.txz:  Upgraded.
+l/PyQt5-5.15.1-aarch64-1.txz:  Upgraded.
+l/python-pygments-2.7.0-aarch64-1.txz:  Upgraded.
++--------------------------+
 Sun Sep 13 05:56:40 UTC 2020
 a/kernel-generic-5.4.65-aarch64-1.txz:  Upgraded.
 a/kernel-modules-5.4.65-aarch64-1.txz:  Upgraded.
