@@ -1,3 +1,81 @@
+Fri Oct  9 22:05:48 UTC 2020
+a/glibc-zoneinfo-2020b-noarch-1.txz:  Upgraded.
+l/fuse3-3.10.0-aarch64-1.txz:  Upgraded.
+x/xcb-proto-1.14.1-aarch64-1.txz:  Upgraded.
++--------------------------+
+Fri Oct  9 21:57:41 UTC 2020
+ap/cups-filters-1.28.4-aarch64-1.txz:  Upgraded.
+d/rust-1.47.0-aarch64-1.txz:  Upgraded.
+l/ocl-icd-2.2.13-aarch64-1.txz:  Upgraded.
+n/libqmi-1.26.6-aarch64-1.txz:  Upgraded.
++--------------------------+
+Fri Oct  9 16:00:36 UTC 2020
+a/hwdata-0.340-noarch-1.txz:  Upgraded.
+a/kernel-generic-5.4.70-aarch64-1.txz:  Upgraded.
+a/kernel-modules-5.4.70-aarch64-1.txz:  Upgraded.
+ap/mariadb-10.5.6-aarch64-1.txz:  Upgraded.
+ap/nano-5.3-aarch64-1.txz:  Upgraded.
+d/cmake-3.18.4-aarch64-1.txz:  Upgraded.
+d/kernel-headers-5.4.70-arm64-1.txz:  Upgraded.
+k/kernel-source-5.4.70-noarch-1.txz:  Upgraded.
+l/jasper-2.0.22-aarch64-1.txz:  Upgraded.
+x/libinput-1.16.2-aarch64-1.txz:  Upgraded.
+x/xkeyboard-config-2.31-noarch-1.txz:  Upgraded.
+xap/mozilla-thunderbird-78.3.2-aarch64-1.txz:  Upgraded.
++--------------------------+
+Wed Oct  7 15:18:03 UTC 2020
+ap/vim-8.2.1807-aarch64-1.txz:  Upgraded.
+l/libcap-2.44-aarch64-1.txz:  Upgraded.
+l/pycairo-1.20.0-aarch64-1.txz:  Upgraded.
+xap/vim-gvim-8.2.1807-aarch64-1.txz:  Upgraded.
++--------------------------+
+Tue Oct  6 15:51:17 UTC 2020
+a/kernel-firmware-20201005_58d41d0-noarch-1.txz:  Upgraded.
+l/babl-0.1.82-aarch64-1.txz:  Upgraded.
+l/imagemagick-7.0.10_33-aarch64-1.txz:  Upgraded.
+n/whois-5.5.7-aarch64-1.txz:  Upgraded.
+x/libXaw3dXft-1.6.2h-aarch64-1.txz:  Upgraded.
+xap/gimp-2.10.22-aarch64-1.txz:  Upgraded.
++--------------------------+
+Sat Oct  3 23:01:36 UTC 2020
+d/mercurial-5.5.2-aarch64-1.txz:  Upgraded.
+l/expat-2.2.10-aarch64-1.txz:  Upgraded.
+l/librsvg-2.50.1-aarch64-1.txz:  Upgraded.
+n/iw-5.9-aarch64-1.txz:  Upgraded.
+n/nmap-7.90-aarch64-1.txz:  Upgraded.
++--------------------------+
+Sat Oct  3 08:07:52 UTC 2020
+d/ccache-3.7.12-aarch64-1.txz:  Upgraded.
+d/ruby-2.7.2-aarch64-1.txz:  Upgraded.
+l/mozjs78-78.3.1esr-aarch64-1.txz:  Upgraded.
++--------------------------+
+Sat Oct  3 07:05:40 UTC 2020
+a/kernel-generic-5.4.69-aarch64-1.txz:  Upgraded.
+a/kernel-modules-5.4.69-aarch64-1.txz:  Upgraded.
+ap/ghostscript-9.53.3-aarch64-1.txz:  Upgraded.
+d/kernel-headers-5.4.69-arm64-1.txz:  Upgraded.
+k/kernel-source-5.4.69-noarch-1.txz:  Upgraded.
+l/glib2-2.66.1-aarch64-1.txz:  Upgraded.
+n/libmbim-1.24.4-aarch64-1.txz:  Upgraded.
+xap/mozilla-firefox-78.3.1esr-aarch64-1.txz:  Upgraded.
++--------------------------+
+Thu Oct  1 15:34:47 UTC 2020
+ap/rpm-4.16.0-aarch64-1.txz:  Upgraded.
+l/imagemagick-7.0.10_31-aarch64-1.txz:  Upgraded.
+x/libva-utils-2.9.1-aarch64-1.txz:  Upgraded.
++--------------------------+
+Tue Sep 29 20:05:01 UTC 2020
+n/php-7.4.11-aarch64-1.txz:  Upgraded.
+x/mesa-20.2.0-aarch64-1.txz:  Upgraded.
++--------------------------+
+Tue Sep 29 17:45:44 UTC 2020
+a/grep-3.5-aarch64-1.txz:  Upgraded.
+a/kernel-firmware-20200928_b78a66c-noarch-1.txz:  Upgraded.
+d/autoconf-archive-2019.01.06-noarch-1.txz:  Added.
+d/vala-0.50.1-aarch64-1.txz:  Upgraded.
+l/netpbm-10.92.00-aarch64-1.txz:  Upgraded.
+n/openssh-8.4p1-aarch64-1.txz:  Upgraded.
++--------------------------+
 Sun Sep 27 18:14:15 UTC 2020
 a/kernel-generic-5.4.68-aarch64-1.txz:  Upgraded.
 a/kernel-modules-5.4.68-aarch64-1.txz:  Upgraded.
