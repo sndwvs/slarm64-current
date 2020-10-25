@@ -1,3 +1,22 @@
+Fri Oct 23 21:15:12 UTC 2020
+a/btrfs-progs-5.9-aarch64-1.txz:  Upgraded.
+a/kernel-firmware-20201023_dae4b4c-noarch-1.txz:  Upgraded.
+a/usbutils-013-aarch64-1.txz:  Upgraded.
+ap/vim-8.2.1895-aarch64-1.txz:  Upgraded.
+d/git-2.29.1-aarch64-1.txz:  Upgraded.
+d/parallel-20201022-noarch-1.txz:  Upgraded.
+l/libmpc-1.2.1-aarch64-1.txz:  Upgraded.
+xap/vim-gvim-8.2.1895-aarch64-1.txz:  Upgraded.
++--------------------------+
+Fri Oct 23 06:33:45 UTC 2020
+a/aaa_elflibs-15.0-aarch64-25.txz:  Rebuilt.
+a/less-563-aarch64-1.txz:  Upgraded.
+a/splitvt-1.6.6-aarch64-3.txz:  Rebuilt.
+a/sysvinit-scripts-2.1-noarch-36.txz:  Rebuilt.
+kde/kdelibs-4.14.38-aarch64-8.txz:  Rebuilt.
+n/bind-9.16.8-aarch64-1.txz:  Upgraded.
+n/nfs-utils-2.5.2-aarch64-1.txz:  Upgraded.
++--------------------------+
 Fri Oct 23 05:14:12 UTC 2020
 ap/nvme-cli-1.13-aarch64-1.txz:  Upgraded.
 l/libnice-0.1.18-aarch64-1.txz:  Upgraded.
