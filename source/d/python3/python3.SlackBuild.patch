@@ -14,7 +14,7 @@
  zcat $CWD/python3.no-static-library.diff.gz | patch -p1 --verbose || exit 1
  
 -if [ "$ARCH" = "x86_64" ]; then
-+if [ "$ARCH" = "x86_64" || "$ARCH" = "aarch64" ]; then
++if [[ "$ARCH" = "x86_64" || "$ARCH" = "aarch64" ]]; then
    # Install to lib64 instead of lib.
    zcat $CWD/python.sysconfig.py.x86_64.diff.gz | patch -p1 --verbose || exit 1
    zcat $CWD/python3.distutils.x86_64.diff.gz | patch -p1 --verbose || exit 1
