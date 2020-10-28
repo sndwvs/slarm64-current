@@ -1,3 +1,16 @@
+Tue Oct 27 20:42:03 UTC 2020
+a/glibc-zoneinfo-2020d-noarch-1.txz:  Upgraded.
+l/gst-plugins-base-1.18.1-aarch64-1.txz:  Upgraded.
+l/gst-plugins-good-1.18.1-aarch64-1.txz:  Upgraded.
+l/gst-plugins-libav-1.18.1-aarch64-1.txz:  Upgraded.
+l/gstreamer-1.18.1-aarch64-1.txz:  Upgraded.
+l/lmdb-0.9.27-aarch64-1.txz:  Upgraded.
+n/getmail-6.8-aarch64-1.txz:  Upgraded.
+n/libnftnl-1.1.8-aarch64-1.txz:  Upgraded.
+n/nftables-0.9.7-aarch64-1.txz:  Upgraded.
+n/openldap-2.4.55-aarch64-1.txz:  Upgraded.
+xap/blueman-2.1.4-aarch64-1.txz:  Upgraded.
++--------------------------+
 Mon Oct 26 22:15:59 UTC 2020
 l/libbluray-1.2.1-aarch64-1.txz:  Upgraded.
 n/libassuan-2.5.4-aarch64-1.txz:  Upgraded.
