@@ -1,3 +1,13 @@
+Wed Oct 28 23:09:39 UTC 2020
+a/libblockdev-2.24-aarch64-1.txz:  Added.
+a/libbytesize-2.4-aarch64-1.txz:  Added.
+a/ndctl-70.1-aarch64-1.txz:  Added.
+a/udisks2-2.9.1-aarch64-1.txz:  Upgraded.
+a/volume_key-0.3.12-aarch64-1.txz:  Added.
+ap/qpdf-10.0.2-aarch64-1.txz:  Upgraded.
+n/openvpn-2.5.0-aarch64-1.txz:  Upgraded.
+n/php-7.4.12-aarch64-1.txz:  Upgraded.
++--------------------------+
 Tue Oct 27 20:42:03 UTC 2020
 a/glibc-zoneinfo-2020d-noarch-1.txz:  Upgraded.
 l/gst-plugins-base-1.18.1-aarch64-1.txz:  Upgraded.
