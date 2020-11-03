@@ -1,3 +1,65 @@
+Mon Nov  2 18:33:08 UTC 2020
+a/kernel-generic-5.4.74-aarch64-1.txz:  Upgraded.
+a/kernel-modules-5.4.74-aarch64-1.txz:  Upgraded.
+ap/qpdf-10.0.3-aarch64-1.txz:  Upgraded.
+d/kernel-headers-5.4.74-arm64-1.txz:  Upgraded.
+k/kernel-source-5.4.74-noarch-1.txz:  Upgraded.
+l/elfutils-0.182-aarch64-1.txz:  Upgraded.
+l/imagemagick-7.0.10_35-aarch64-1.txz:  Upgraded.
+n/iptables-1.8.6-aarch64-1.txz:  Upgraded.
++--------------------------+
+Mon Nov  2 15:51:33 UTC 2020
+ap/alsa-utils-1.2.4-aarch64-1.txz:  Upgraded.
+l/alsa-lib-1.2.4-aarch64-1.txz:  Upgraded.
+l/poppler-20.10.0-aarch64-2.txz:  Rebuilt.
++--------------------------+
+Mon Nov  2 15:36:13 UTC 2020
+a/aaa_elflibs-15.0-aarch64-27.txz:  Rebuilt.
+a/xfsprogs-5.9.0-aarch64-2.txz:  Rebuilt.
+ap/sqlite-3.33.0-aarch64-2.txz:  Rebuilt.
+ap/tmux-3.1c-aarch64-1.txz:  Upgraded.
+d/git-2.29.2-aarch64-1.txz:  Upgraded.
+d/meson-0.56.0-aarch64-1.txz:  Upgraded.
+l/boost-1.74.0-aarch64-3.txz:  Rebuilt.
+l/harfbuzz-2.7.2-aarch64-2.txz:  Rebuilt.
+l/icu4c-68.1-aarch64-1.txz:  Upgraded.
+l/libical-3.0.8-aarch64-3.txz:  Rebuilt.
+l/libvisio-0.1.7-aarch64-4.txz:  Rebuilt.
+l/qt5-5.15.1-aarch64-3.txz:  Rebuilt.
+l/qt5-webkit-5.212.0_alpha4-aarch64-4.txz:  Rebuilt.
+l/raptor2-2.0.15-aarch64-10.txz:  Rebuilt.
+l/vte-0.60.3-aarch64-2.txz:  Rebuilt.
+n/dovecot-2.3.11.3-aarch64-2.txz:  Rebuilt.
+n/ipset-7.7-aarch64-1.txz:  Upgraded.
+n/php-7.4.12-aarch64-2.txz:  Rebuilt.
+n/postfix-3.5.7-aarch64-3.txz:  Rebuilt.
+n/samba-4.13.1-aarch64-2.txz:  Rebuilt.
+n/tin-2.4.4-aarch64-3.txz:  Rebuilt.
+t/texlive-2020.200608-aarch64-2.txz:  Rebuilt.
+x/x11-skel-7.7-aarch64-5.txz:  Rebuilt.
+extra/brltty/brltty-6.1-aarch64-3.txz:  Rebuilt.
++--------------------------+
+Fri Oct 30 06:04:03 UTC 2020
+a/aaa_elflibs-15.0-aarch64-26.txz:  Rebuilt.
+a/kernel-generic-5.4.73-aarch64-1.txz:  Upgraded.
+a/kernel-modules-5.4.73-aarch64-1.txz:  Upgraded.
+d/kernel-headers-5.4.73-arm64-1.txz:  Upgraded.
+k/kernel-source-5.4.73-noarch-1.txz:  Upgraded.
+l/LibRaw-0.20.2-aarch64-1.txz:  Upgraded.
+l/exiv2-0.27.3-aarch64-1.txz:  Upgraded.
+l/gegl-0.4.26-aarch64-2.txz:  Rebuilt.
+l/gexiv2-0.12.1-aarch64-1.txz:  Upgraded.
+l/graphene-1.10.2-aarch64-1.txz:  Added.
+l/gst-plugins-base-1.18.1-aarch64-2.txz:  Rebuilt.
+l/ilmbase-2.2.0-aarch64-2.txz:  Removed.
+l/imagemagick-7.0.10_34-aarch64-2.txz:  Rebuilt.
+l/openexr-2.5.3-aarch64-1.txz:  Upgraded.
+l/poppler-20.10.0-aarch64-1.txz:  Upgraded.
+n/samba-4.13.1-aarch64-1.txz:  Upgraded.
+xap/geeqie-1.5.1-aarch64-2.txz:  Rebuilt.
+xap/gimp-2.10.22-aarch64-2.txz:  Rebuilt.
+xap/xlockmore-5.66-aarch64-1.txz:  Upgraded.
++--------------------------+
 Wed Oct 28 23:09:39 UTC 2020
 a/libblockdev-2.24-aarch64-1.txz:  Added.
 a/libbytesize-2.4-aarch64-1.txz:  Added.

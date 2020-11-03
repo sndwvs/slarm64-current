@@ -1,5 +1,5 @@
---- a/qtwebkit/qtwebkit.SlackBuild	2018-04-25 21:21:06.776373865 +0300
-+++ b/qtwebkit/qtwebkit.SlackBuild	2018-04-25 21:23:44.062256255 +0300
+--- a/qtwebkit/qtwebkit.SlackBuild	2019-09-29 23:48:32.140502596 +0000
++++ b/qtwebkit/qtwebkit.SlackBuild	2020-11-02 22:40:14.026609467 +0000
 @@ -66,6 +66,10 @@
    SLKCFLAGS="-O2 -march=armv7-a -mfpu=vfpv3-d16 -fno-strict-volatile-bitfields -std=gnu++98 -fpermissive -fno-delete-null-pointer-checks"
    LIBDIRSUFFIX=""
@@ -11,9 +11,18 @@
  else
    SLKCFLAGS="-O2 -std=gnu++98 -fpermissive -fno-delete-null-pointer-checks"
    LIBDIRSUFFIX=""
-@@ -97,14 +101,22 @@
+@@ -90,6 +94,8 @@
+ # Patch to fix compiling with gcc5:
+ zcat $CWD/qtwebkit.putByIndexBeyondVectorLengthWithArrayStorage.diff.gz | patch -p1 --verbose || exit 1
+ 
++cat $CWD/fixed-generate-header-bison3.7.patch | patch -p1 --verbose || exit 1
++
+ chown -R root:root .
+ find . \
+  \( -perm 777 -o -perm 775 -o -perm 711 -o -perm 555 -o -perm 511 \) \
+@@ -97,14 +103,22 @@
   \( -perm 666 -o -perm 664 -o -perm 600 -o -perm 444 -o -perm 440 -o -perm 400 \) \
-  -exec chmod 644 {} \;
+  -exec chmod 644 {} \+
  
 +# Configure & build:
 +# For ARM we added:
