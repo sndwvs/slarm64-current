@@ -11,15 +11,11 @@ rules() {
     popd 2>&1>/dev/null
     pushd ${SLARM64_SOURCE_PATH}/$t/${WORK_DIR} 2>&1>/dev/null
     for file in modules/* ;do
-        _MODULE=$(sed '/./{H;$!d};x;/'$p'/!d;' $file | grep -oP '(?<=^#\s).*' | grep -vP '[\s\.]' | sed 's#\:$##g' | head -n1)
-        [[ ! -z $_MODULE || $(grep -oP ${p} $file) ]] && break
+        if [[ $(grep -oP "^${p}$" $file) ]]; then
+            _MODULE=${file##*/}:${p}
+            break
+        fi
     done
-    if [[ ! -z ${_MODULE} ]];then
-        _MODULE=${_MODULE}:${p}
-    else
-        _MODULE=${file##*/}:${p}
-    fi
-
     ./kde.SlackBuild ${_MODULE} 2>&1 | tee ${p}.build.log
     if [[ ${PIPESTATUS[0]} == 1 ]]; then
         [[ ${t} =~ (^extra$)|(^testing$) ]] && _PKG="${t}/${_PKG}"
