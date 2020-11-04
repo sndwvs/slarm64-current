@@ -2,6 +2,8 @@ extra/*/*.txz
 extra/*/*.asc
 testing/*/*/*.txz
 testing/*/*/*.asc
+testing/*/*/*/*.txz
+testing/*/*/*/*.asc
 slarm64/*
 CHECKSUMS.*
 FILE_LIST
