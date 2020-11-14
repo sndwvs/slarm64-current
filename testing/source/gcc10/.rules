@@ -1,0 +1,7 @@
+
+rules() {
+    export CPPFLAGS=""
+    p="gcc"
+}
+
+rules

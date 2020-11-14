@@ -1,3 +1,28 @@
+Fri Nov 13 01:03:40 UTC 2020
+d/perl-5.32.0-aarch64-3.txz:  Rebuilt.
+d/rinutils-0.6.0-aarch64-1.txz:  Added.
+l/freecell-solver-6.2.0-aarch64-1.txz:  Added.
+l/libunwind-1.5.0-aarch64-1.txz:  Upgraded.
+l/python-pysol_cards-0.10.1-aarch64-1.txz:  Added.
+l/python-random2-1.0.1-aarch64-1.txz:  Added.
+l/python-requests-2.25.0-aarch64-1.txz:  Upgraded.
+l/python-urllib3-1.26.1-aarch64-1.txz:  Upgraded.
+x/xterm-362-aarch64-1.txz:  Upgraded.
+testing/packages/vtown/kde/kpat-20.08.3-aarch64-1_vtown_1.txz:  Added.
++--------------------------+
+Fri Nov 13 00:37:25 UTC 2020
+a/kernel-generic-5.4.77-aarch64-1.txz:  Upgraded.
+a/kernel-modules-5.4.77-aarch64-1.txz:  Upgraded.
+ap/lsof-4.94.0-aarch64-1.txz:  Upgraded.
+ap/mariadb-10.5.8-aarch64-1.txz:  Upgraded.
+d/gnucobol-3.1-aarch64-1.txz:  Upgraded.
+d/kernel-headers-5.4.77-arm64-1.txz:  Upgraded.
+k/kernel-source-5.4.77-noarch-1.txz:  Upgraded.
+l/python-urllib3-1.26.0-aarch64-1.txz:  Upgraded.
+n/openldap-2.4.56-aarch64-1.txz:  Upgraded.
+testing/packages/vtown/kde/sddm-0.19.0-aarch64-1_vtown_1.txz:  Upgraded.
+xap/mozilla-thunderbird-78.4.3-aarch64-1.txz:  Upgraded.
++--------------------------+
 Thu Nov 12 12:19:09 UTC 2020
 testing/packages/vtown/kde/bluedevil-5.20.3-aarch64-1_vtown_1.txz:  Upgraded.
 testing/packages/vtown/kde/breeze-5.20.3-aarch64-1_vtown_1.txz:  Upgraded.
