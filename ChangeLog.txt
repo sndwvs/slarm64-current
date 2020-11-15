@@ -1,3 +1,26 @@
+Sat Nov 14 17:16:01 UTC 2020
+a/kernel-firmware-20201113_2ea8667-noarch-1.txz:  Upgraded.
+d/gcc-9.3.0-aarch64-3.txz:  Rebuilt.
+d/gcc-g++-9.3.0-aarch64-3.txz:  Rebuilt.
+d/gcc-gdc-9.3.0-aarch64-3.txz:  Rebuilt.
+d/gcc-gfortran-9.3.0-aarch64-3.txz:  Rebuilt.
+d/gcc-go-9.3.0-aarch64-3.txz:  Rebuilt.
+d/gcc-objc-9.3.0-aarch64-3.txz:  Rebuilt.
+l/isl-0.23-aarch64-1.txz:  Upgraded.
+l/python-urllib3-1.26.2-aarch64-1.txz:  Upgraded.
+n/gpgme-1.15.0-aarch64-1.txz:  Upgraded.
+n/openssh-8.4p1-aarch64-3.txz:  Rebuilt.
+n/php-7.4.12-aarch64-3.txz:  Rebuilt.
+xap/xine-lib-1.2.10-aarch64-4.txz:  Rebuilt.
+testing/packages/gcc10/gcc-10.2.0-aarch64-2.txz:  Rebuilt.
+testing/packages/gcc10/gcc-g++-10.2.0-aarch64-2.txz:  Rebuilt.
+testing/packages/gcc10/gcc-gdc-10.2.0-aarch64-2.txz:  Rebuilt.
+testing/packages/gcc10/gcc-gfortran-10.2.0-aarch64-2.txz:  Rebuilt.
+testing/packages/gcc10/gcc-go-10.2.0-aarch64-2.txz:  Rebuilt.
+testing/packages/gcc10/gcc-objc-10.2.0-aarch64-2.txz:  Rebuilt.
+testing/packages/vtown/deps/dvdauthor-0.7.2-aarch64-1_vtown_2.txz:  Rebuilt.
+testing/packages/vtown/kde/digikam-7.1.0-aarch64-1_vtown_2.txz:  Rebuilt.
++--------------------------+
 Fri Nov 13 01:03:40 UTC 2020
 d/perl-5.32.0-aarch64-3.txz:  Rebuilt.
 d/rinutils-0.6.0-aarch64-1.txz:  Added.
