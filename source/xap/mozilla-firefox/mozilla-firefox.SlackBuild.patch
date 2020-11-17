@@ -1,5 +1,5 @@
---- a/mozilla-firefox.SlackBuild	2020-07-07 18:07:06.016008523 +0000
-+++ b/mozilla-firefox.SlackBuild	2020-07-08 15:14:39.532786348 +0000
+--- a/mozilla-firefox.SlackBuild	2020-11-16 19:41:07.777084128 +0000
++++ b/mozilla-firefox.SlackBuild	2020-11-17 00:49:50.595342860 +0000
 @@ -42,6 +42,9 @@
  # "UnicodeDecodeError: 'ascii' codec can't decode byte 0xe2 in position 36: ordinal not in range(128)"
  LANG=C
@@ -10,26 +10,17 @@
  # Add a shell script to start the firefox binary with MOZ_ALLOW_DOWNGRADE=1
  # to avoid backing up (and disabling) the user profile if a browser downgrade
  # is detected. We made it fine for years without this feature, and all the
-@@ -89,7 +92,7 @@
- export CXX=${CXX:-g++}
- 
- # Keep memory usage as low as possible when linking:
--SLKLDFLAGS=" -Wl,--as-needed -Wl,--no-keep-memory -Wl,--stats"
-+SLKLDFLAGS=" -Wl,--as-needed -Wl,--reduce-memory-overheads -Wl,--no-keep-memory -Wl,--stats"
- export LDFLAGS="$SLKLDFLAGS"
- export MOZ_LINK_FLAGS="$SLKLDFLAGS"
- 
-@@ -142,6 +145,9 @@
+@@ -145,6 +148,9 @@
  elif [ "$ARCH" = "armel" ]; then
-   SLKCFLAGS="-O2 -march=armv4t"
+   SLKCFLAGS="-O2 -g0 -march=armv4t"
    LIBDIRSUFFIX=""
 +elif [ "$ARCH" = "aarch64" ]; then
-+  SLKCFLAGS="-O2"
++  SLKCFLAGS="-O2 -g0"
 +  LIBDIRSUFFIX="64"
  else
-   SLKCFLAGS="-O2"
+   SLKCFLAGS="-O2 -g0"
    LIBDIRSUFFIX=""
-@@ -218,8 +224,18 @@
+@@ -221,8 +227,18 @@
    \( -perm 666 -o -perm 664 -o -perm 600 -o -perm 444 -o -perm 440 -o -perm 400 \) \
    -exec chmod 644 {} \+
  
@@ -48,15 +39,7 @@
    --enable-official-branding \
    --prefix=/usr \
    --libdir=/usr/lib${LIBDIRSUFFIX} \
-@@ -227,7 +243,6 @@
-   --enable-alsa \
-   --enable-application=browser \
-   --enable-default-toolkit=cairo-gtk3-wayland \
--  --enable-linker=gold \
-   $GOOGLE_API_KEY \
-   --enable-strip \
-   --enable-cpp-rtti \
-@@ -291,9 +306,19 @@
+@@ -295,9 +311,19 @@
    echo "ac_add_options --target=i686-pc-linux-gnu" >> .mozconfig
  fi
  
@@ -71,7 +54,7 @@
 +# This isn't added using $SLKCONFARGS because it doesn't cater for things with spaces in:
 +# unless I edit the for loop above to use IFS with some other variable.
 +# this is easier right now ;-)
-+echo 'ac_add_options --enable-optimize="-O1 -fno-schedule-insns"' >> .mozconfig
++echo 'ac_add_options --enable-optimize="-O2 -fno-schedule-insns"' >> .mozconfig
 +
  # https://developer.mozilla.org/en-US/docs/Building_with_Profile-Guided_Optimization
  # Thanks to ArchLinux and Gentoo for the additional hints.
