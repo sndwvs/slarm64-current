@@ -1,3 +1,16 @@
+Fri Nov 20 09:44:30 UTC 2020
+a/kernel-generic-5.4.78-aarch64-1.txz:  Upgraded.
+a/kernel-modules-5.4.78-aarch64-1.txz:  Upgraded.
+d/cmake-3.19.0-aarch64-1.txz:  Upgraded.
+d/kernel-headers-5.4.78-arm64-1.txz:  Upgraded.
+k/kernel-source-5.4.78-noarch-1.txz:  Upgraded.
+l/imagemagick-7.0.10_39-aarch64-1.txz:  Upgraded.
+l/libjpeg-turbo-2.0.6-aarch64-1.txz:  Upgraded.
+n/gnupg2-2.2.24-aarch64-1.txz:  Upgraded.
+xap/mozilla-thunderbird-78.5.0-aarch64-1.txz:  Upgraded.
+xap/ssr-0.4.2-aarch64-2.txz:  Rebuilt.
+xfce/thunar-1.8.16-aarch64-1.txz:  Upgraded.
++--------------------------+
 Tue Nov 17 11:50:36 UTC 2020
 a/util-linux-2.36.1-aarch64-1.txz:  Upgraded.
 l/imagemagick-7.0.10_38-aarch64-1.txz:  Upgraded.
