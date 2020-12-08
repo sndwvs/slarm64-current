@@ -1,7 +1,7 @@
 
 rules() {
-    if [[ -z $start_kde5_build ]];then
-        start_kde5_build="yes"
+    if [[ -z $start_kde_build ]];then
+        start_kde_build="yes"
         remove_work_dir "$t"
         prepare_work_dir "$t"
     fi

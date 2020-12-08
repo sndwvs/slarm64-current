@@ -1,5 +1,0 @@
-zcat $CWD/patch/kde-runtime/kde-runtime-4.14.3.nm.diff.gz | patch -p1 --verbose || { touch ${SLACK_KDE_BUILD_DIR}/${PKGNAME}.failed ; continue ; }
-zcat $CWD/patch/kde-runtime/kde-runtime.fix.konqueror.manpage.infopage.display.diff.gz | patch -p1 --verbose || { touch ${SLACK_KDE_BUILD_DIR}/${PKGNAME}.failed ; continue ; }
-zcat $CWD/patch/kde-runtime/kwalletd-4.14.3-CVE-2013-7252.patch.gz | patch -p1 --verbose || { touch ${SLACK_KDE_BUILD_DIR}/${PKGNAME}.failed ; continue ; }
-zcat $CWD/patch/kde-runtime/kwalletd-4.14.3-fix-random-open.patch.gz | patch -p1 --verbose || { touch ${SLACK_KDE_BUILD_DIR}/${PKGNAME}.failed ; continue ; }
-xzcat $CWD/patch/kde-runtime/kde-runtime_gpgme.patch.xz | patch -p1 --verbose || { touch ${SLACK_KDE_BUILD_DIR}/${PKGNAME}.failed ; continue ; }
