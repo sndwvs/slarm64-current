@@ -1,5 +1,5 @@
---- a/seamonkey.SlackBuild	2020-11-15 15:42:30.705757142 +0000
-+++ b/seamonkey.SlackBuild	2020-11-15 15:43:37.391458170 +0000
+--- a/seamonkey.SlackBuild	2020-11-14 20:53:18.674599827 +0000
++++ b/seamonkey.SlackBuild	2020-12-08 20:17:30.866790849 +0000
 @@ -62,6 +62,9 @@
  elif [ "$ARCH" = "x86_64" ]; then
    LIBDIRSUFFIX="64"
@@ -22,7 +22,7 @@
  NUMJOBS=${NUMJOBS:-" -j$(expr $(nproc) + 1) "}
  
  TMP=${TMP:-/tmp}
-@@ -139,6 +147,17 @@
+@@ -139,6 +147,18 @@
  OPTIONS="\
    --prefix=/usr \
    --libdir=/usr/lib${LIBDIRSUFFIX} \
@@ -36,11 +36,12 @@
 +  --with-system-bz2 \
 +  --with-system-jpeg \
 +  --disable-webrtc \
++  --disable-rust-simd \
 +  \
    --enable-cpp-rtti \
    --enable-default-toolkit=cairo-gtk3 \
    --enable-startup-notification \
-@@ -156,7 +175,6 @@
+@@ -156,7 +176,6 @@
    --disable-necko-wifi \
    --enable-extensions=default \
    --enable-js-shell \
@@ -48,7 +49,7 @@
    --enable-release \
    --enable-calendar \
    --without-system-nspr \
-@@ -164,7 +182,8 @@
+@@ -164,7 +183,8 @@
    --enable-application=suite \
    --with-pthreads \
    --host=$ARCH-slackware-linux \
