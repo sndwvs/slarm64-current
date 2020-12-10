@@ -1,0 +1,21 @@
+--- a/sbc.SlackBuild	2019-09-29 23:48:31.454502581 +0000
++++ b/sbc.SlackBuild	2020-12-10 08:53:12.057063380 +0000
+@@ -54,6 +54,9 @@
+ if [ "$ARCH" = "i586" ]; then
+   SLKCFLAGS="-O2 -march=i586 -mtune=i686"
+   LIBDIRSUFFIX=""
++elif [ "$ARCH" = "aarch64" ]; then
++  SLKCFLAGS="-O2"
++  LIBDIRSUFFIX="64"
+ elif [ "$ARCH" = "x86_64" ]; then
+   SLKCFLAGS="-O2 -fPIC"
+   LIBDIRSUFFIX="64"
+@@ -75,6 +78,8 @@
+  \( -perm 666 -o -perm 664 -o -perm 640 -o -perm 600 -o -perm 444 \
+   -o -perm 440 -o -perm 400 \) -exec chmod 644 {} \+
+ 
++xzcat $CWD/0002-Fix-build-on-ARM.patch.xz | patch -p1 --verbose || exit 1
++
+ CFLAGS="$SLKCFLAGS" \
+ CXXFLAGS="$SLKCFLAGS" \
+ ./configure \

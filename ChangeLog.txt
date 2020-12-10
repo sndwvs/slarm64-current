@@ -1,3 +1,23 @@
+Wed Dec  9 09:48:50 UTC 2020
+a/kernel-generic-5.4.82-aarch64-1.txz:  Upgraded.
+a/kernel-modules-5.4.82-aarch64-1.txz:  Upgraded.
+a/openssl-solibs-1.1.1i-aarch64-1.txz:  Upgraded.
+ap/gutenprint-5.3.4-aarch64-1.txz:  Upgraded.
+ap/htop-3.0.3-aarch64-1.txz:  Upgraded.
+d/kernel-headers-5.4.82-arm64-1.txz:  Upgraded.
+d/python3-3.9.1-aarch64-1.txz:  Upgraded.
+k/kernel-source-5.4.82-noarch-1.txz:  Upgraded.
+l/M2Crypto-0.37.1-aarch64-1.txz:  Upgraded.
+l/gdk-pixbuf2-2.42.2-aarch64-1.txz:  Upgraded.
+l/imagemagick-7.0.10_46-aarch64-1.txz:  Upgraded.
+l/mlt-6.24.0-aarch64-1.txz:  Upgraded.
+l/pipewire-0.3.17-aarch64-1.txz:  Upgraded.
+n/openssl-1.1.1i-aarch64-1.txz:  Upgraded.
+x/fcitx-configtool-0.4.10-aarch64-1.txz:  Upgraded.
+x/libgee-0.20.3-aarch64-1.txz:  Upgraded.
+x/marisa-0.2.6-aarch64-1.txz:  Upgraded.
+xap/seamonkey-2.53.5.1-aarch64-1.txz:  Upgraded.
++--------------------------+
 Tue Dec  8 20:11:52 UTC 2020
 a/aaa_elflibs-15.0-aarch64-28.txz:  Rebuilt.
 a/bash-5.1.000-aarch64-1.txz:  Upgraded.
