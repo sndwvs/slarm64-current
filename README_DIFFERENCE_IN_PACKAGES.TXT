@@ -39,7 +39,6 @@ added:
 ----------------------------
  a/mtd-utils
  a/u-boot-tools
- a/vboot-utils
 -
  d/dtc
 -
