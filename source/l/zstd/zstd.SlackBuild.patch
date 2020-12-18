@@ -1,0 +1,13 @@
+--- a/zstd.SlackBuild	2020-12-18 07:55:36.137986391 +0000
++++ b/zstd.SlackBuild	2020-12-18 07:56:03.350616451 +0000
+@@ -63,6 +63,10 @@
+   SLKCFLAGS="-O2 -fPIC"
+   SLKLDFLAGS="-L/usr/lib64"
+   LIBDIRSUFFIX="64"
++elif [ "$ARCH" = "aarch64" ]; then
++  SLKCFLAGS="-O2 -fPIC"
++  SLKLDFLAGS="-L/usr/lib64"
++  LIBDIRSUFFIX="64"
+ elif [ "$ARCH" = "armv7hl" ]; then
+   SLKCFLAGS="-O2 -march=armv7-a -mfpu=vfpv3-d16"
+   SLKLDFLAGS=""
