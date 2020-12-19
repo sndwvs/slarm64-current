@@ -1,3 +1,29 @@
+Fri Dec 18 22:11:13 UTC 2020
+ap/sudo-1.9.4p1-aarch64-1.txz:  Upgraded.
+l/icu4c-68.2-aarch64-1.txz:  Upgraded.
+l/netpbm-10.92.01-aarch64-1.txz:  Upgraded.
+n/ethtool-5.10-aarch64-1.txz:  Upgraded.
+x/libva-utils-2.10.0-aarch64-1.txz:  Upgraded.
++--------------------------+
+Fri Dec 18 08:13:32 UTC 2020
+a/inih-r52-aarch64-1.txz:  Added.
+a/sysklogd-2.1.2-aarch64-2.txz:  Rebuilt.
+a/xfsprogs-5.10.0-aarch64-1.txz:  Upgraded.
+ap/vim-8.2.2151-aarch64-1.txz:  Upgraded.
+l/glib2-2.66.4-aarch64-1.txz:  Upgraded.
+l/imagemagick-7.0.10_50-aarch64-1.txz:  Upgraded.
+l/python-requests-2.25.1-aarch64-1.txz:  Upgraded.
+l/qtkeychain-0.12.0-aarch64-1.txz:  Upgraded.
+l/zstd-1.4.7-aarch64-1.txz:  Upgraded.
+n/bind-9.16.10-aarch64-1.txz:  Upgraded.
+x/libwacom-1.7-aarch64-1.txz:  Upgraded.
+x/xorg-server-1.20.10-aarch64-2.txz:  Rebuilt.
+x/xorg-server-xephyr-1.20.10-aarch64-2.txz:  Rebuilt.
+x/xorg-server-xnest-1.20.10-aarch64-2.txz:  Rebuilt.
+x/xorg-server-xvfb-1.20.10-aarch64-2.txz:  Rebuilt.
+x/xorg-server-xwayland-1.20.10-aarch64-2.txz:  Rebuilt.
+xap/vim-gvim-8.2.2151-aarch64-1.txz:  Upgraded.
++--------------------------+
 Thu Dec 17 10:13:47 UTC 2020
 a/kernel-generic-5.4.84-aarch64-1.txz:  Upgraded.
 a/kernel-modules-5.4.84-aarch64-1.txz:  Upgraded.

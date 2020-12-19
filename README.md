@@ -2,7 +2,7 @@
 
 original project **[slackware.com](ftp://ftp.osuosl.org/pub/slackware/slackware64-current)**  
 in the footsteps **[Stuart Winter](http://slackware.uk/slackwarearm/slackwarearm-current)**  
-binary **aarch64** [packages](http://dl.fail.pp.ua/slackware/slarm64-current)  
+binary **aarch64** [packages](http://dl.slarm64.org/slackware/slarm64-current)  
 
 
 ### description ###
