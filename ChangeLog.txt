@@ -1,3 +1,49 @@
+Sun Dec 27 08:54:12 UTC 2020
+a/glibc-zoneinfo-2020e-noarch-1.txz:  Upgraded.
+a/kernel-generic-5.10.3-aarch64-1.txz:  Upgraded.
+a/kernel-modules-5.10.3-aarch64-1.txz:  Upgraded.
+ap/sysstat-12.5.2-aarch64-1.txz:  Upgraded.
+d/kernel-headers-5.10.3-arm64-1.txz:  Upgraded.
+k/kernel-source-5.10.3-noarch-1.txz:  Upgraded.
+l/imagemagick-7.0.10_53-aarch64-1.txz:  Upgraded.
+l/libusb-1.0.24-aarch64-1.txz:  Upgraded.
++--------------------------+
+Fri Dec 25 22:54:22 UTC 2020
+l/keyutils-1.6.3-aarch64-1.txz:  Upgraded.
+l/pulseaudio-14.0-aarch64-3.txz:  Rebuilt.
+l/system-config-printer-1.5.13-aarch64-1.txz:  Upgraded.
+n/mobile-broadband-provider-info-20201225-aarch64-1.txz:  Upgraded.
++--------------------------+
+Fri Dec 25 12:34:06 UTC 2020
+a/dbus-1.12.20-aarch64-3.txz:  Rebuilt.
+a/udisks-1.0.5-aarch64-6.txz:  Rebuilt.
+a/udisks2-2.9.1-aarch64-2.txz:  Rebuilt.
+ap/cups-2.3.3-aarch64-3.txz:  Rebuilt.
+ap/hplip-3.20.6-aarch64-4.txz:  Rebuilt.
+ap/mpg123-1.26.4-aarch64-1.txz:  Upgraded.
+d/gnucobol-3.1.2-aarch64-1.txz:  Upgraded.
+kde/sddm-0.19.0-aarch64-4.txz:  Rebuilt.
+l/GConf-3.2.6-aarch64-5.txz:  Rebuilt.
+l/accountsservice-0.6.55-aarch64-2.txz:  Rebuilt.
+l/cryptopp-8.3.0-aarch64-1.txz:  Upgraded.
+l/harfbuzz-2.7.3-aarch64-2.txz:  Upgraded.
+l/polkit-0.118-aarch64-3.txz:  Rebuilt.
+l/pulseaudio-14.0-aarch64-2.txz:  Rebuilt.
+l/system-config-printer-1.5.12-aarch64-6.txz:  Rebuilt.
+n/ModemManager-1.14.8-aarch64-2.txz:  Rebuilt.
+n/NetworkManager-1.28.0-aarch64-2.txz:  Rebuilt.
+n/bluez-5.55-aarch64-2.txz:  Rebuilt.
+n/netatalk-3.1.12-aarch64-5.txz:  Rebuilt.
+n/wpa_supplicant-2.9-aarch64-3.txz:  Rebuilt.
+x/mesa-20.3.1-aarch64-2.txz:  Rebuilt.
+xap/blueman-2.1.4-aarch64-3.txz:  Rebuilt.
+xap/xgames-0.3-aarch64-6.txz:  Rebuilt.
+xap/xscreensaver-5.45-aarch64-2.txz:  Rebuilt.
+xap/xsnow-3.1.9-aarch64-1.txz:  Added.
+xfce/mousepad-0.5.1-aarch64-1.txz:  Upgraded.
+xfce/xfce4-screensaver-0.1.11-aarch64-2.txz:  Rebuilt.
+xfce/xfce4-session-4.14.2-aarch64-2.txz:  Rebuilt.
++--------------------------+
 Thu Dec 24 07:07:47 UTC 2020
 a/lilo-24.2-aarch64-10.txz:  Rebuilt.
 a/mkinitrd-1.4.11-aarch64-16.txz:  Rebuilt.
