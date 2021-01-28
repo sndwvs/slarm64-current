@@ -1,0 +1,12 @@
+--- a/sharutils.SlackBuild	2021-01-20 18:13:08.261005844 +0000
++++ b/sharutils.SlackBuild	2021-01-27 17:25:49.783153122 +0000
+@@ -56,6 +56,9 @@
+ elif [ "$ARCH" = "x86_64" ]; then
+   SLKCFLAGS="-O2 -fcommon"
+   LIBDIRSUFFIX="64"
++elif [ "$ARCH" = "aarch64" ]; then
++  SLKCFLAGS="-O2 -fcommon"
++  LIBDIRSUFFIX="64"
+ fi
+ 
+ # Don't use icecream:

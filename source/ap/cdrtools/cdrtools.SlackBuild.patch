@@ -1,0 +1,11 @@
+--- a/cdrtools.SlackBuild	2021-01-20 18:13:12.725005944 +0000
++++ b/cdrtools.SlackBuild	2021-01-27 17:47:26.158583309 +0000
+@@ -66,6 +66,8 @@
+ 
+ zcat $CWD/cdrtools-3.01-fix-20151126-mkisofs-isoinfo.patch.gz | patch -p1 --verbose || exit 1
+ 
++sed -i 's|/opt/schily|/usr|g' DEFAULTS/Defaults.linux
++
+ make -e $NUMJOBS INS_BASE=/usr DEFMANBASE=. || make -e INS_BASE=/usr DEFMANBASE=. || exit 1
+ make -e install INS_BASE=/usr DEFMANBASE=. DESTDIR=$PKG || exit 1
+ 

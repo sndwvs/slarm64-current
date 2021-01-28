@@ -1,0 +1,12 @@
+--- a/jfsutils.SlackBuild	2021-01-20 18:13:07.746005832 +0000
++++ b/jfsutils.SlackBuild	2021-01-27 17:23:03.627085576 +0000
+@@ -51,6 +51,9 @@
+   SLKCFLAGS="-O2 -march=i586 -mtune=i686 -fcommon"
+ elif [ "$ARCH" = "s390" ]; then
+   SLKCFLAGS="-O2 -fcommon"
++elif [ "$ARCH" = "aarch64" ]; then
++  SLKCFLAGS="-O2 -fPIC -fcommon"
++  LIBDIRSUFFIX="64"
+ elif [ "$ARCH" = "x86_64" ]; then
+   SLKCFLAGS="-O2 -fPIC -fcommon"
+ fi

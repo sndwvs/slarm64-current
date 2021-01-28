@@ -1,0 +1,12 @@
+--- a/freeglut.SlackBuild	2021-01-20 20:17:43.553012002 +0200
++++ b/freeglut.SlackBuild	2021-01-27 21:00:14.268996886 +0200
+@@ -61,6 +61,9 @@
+ elif [ "$ARCH" = "x86_64" ]; then
+   SLKCFLAGS="-O2 -fPIC -fcommon"
+   LIBDIRSUFFIX="64"
++elif [ "$ARCH" = "aarch64" ]; then
++  SLKCFLAGS="-O2 -fPIC -fcommon"
++  LIBDIRSUFFIX="64"
+ else
+   SLKCFLAGS="-O2 -fcommon"
+   LIBDIRSUFFIX=""
