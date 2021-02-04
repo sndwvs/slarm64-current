@@ -1,17 +1,21 @@
---- a/gcc.SlackBuild	2019-11-12 19:18:53.613224145 +0200
-+++ b/gcc.SlackBuild	2019-11-12 19:26:50.530445266 +0200
-@@ -116,6 +116,10 @@
+--- a/gcc.SlackBuild	2021-01-20 20:21:12.543016677 +0200
++++ b/gcc.SlackBuild	2021-02-04 14:42:35.793869319 +0200
+@@ -116,6 +116,14 @@
    SLKCFLAGS="-O3 -march=armv7-a -mfpu=vfpv3-d16"
    LIBDIRSUFFIX=""
    LIB_ARCH=armv7hl
 +elif [ "$ARCH" = "aarch64" ]; then
 +  SLKCFLAGS="-O2"
-+  LIBDIRSUFFIX="64"
++  LIBDIRSUFFIX="64 -fPIC"
++  LIB_ARCH=$ARCH
++elif [ "$ARCH" = "riscv64" ]; then
++  SLKCFLAGS="-O2"
++  LIBDIRSUFFIX="64 -fPIC"
 +  LIB_ARCH=$ARCH
  else
    SLKCFLAGS="-O2"
    LIBDIRSUFFIX=""
-@@ -140,11 +144,11 @@
+@@ -140,11 +148,11 @@
  # These are the directories to build other packages in:
  PKG2=$TMP/package-gcc-g++
  PKG3=$TMP/package-gcc-gfortran
@@ -25,7 +29,7 @@
  PKG10=$TMP/package-gcc-gdc
  
  # Clear the build locations:
-@@ -156,11 +160,11 @@
+@@ -156,11 +164,11 @@
  cat $CWD/slack-desc.gcc > $PKG1/install/slack-desc
  cat $CWD/slack-desc.gcc-g++ > $PKG2/install/slack-desc
  cat $CWD/slack-desc.gcc-gfortran > $PKG3/install/slack-desc
@@ -39,17 +43,20 @@
  cat $CWD/slack-desc.gcc-gdc > $PKG10/install/slack-desc
  
  cd gcc-$SRCVER || exit 1
-@@ -168,6 +172,9 @@
- # Smite the fixincludes:
- zcat $CWD/patches/gcc-no_fixincludes.diff.gz | patch -p1 --verbose --backup --suffix=.orig || exit 1
+@@ -171,6 +179,12 @@
+ # Fix a gfortran bug:
+ zcat $CWD/patches/gfortran.deferred-shape-vs-assumed-shape.patch.gz | patch -p0 --verbose --backup --suffix=.orig || exit 1
  
 +# Redefine dynamic linker for aarch64 from /lib to /lib64:
 +xzcat $CWD/redefine-dynamic-linker-for-aarch64.patch.xz | patch -p1 --verbose || exit 1
 +
++# Redefine dynamic linker for riscv64 from /lib to /lib64:
++xzcat $CWD/redefine-dynamic-linker-for-riscv64.patch.xz | patch -p1 --verbose || exit 1
++
  # Fix perms/owners:
  chown -R root:root .
  find . \
-@@ -211,16 +218,16 @@
+@@ -214,16 +228,16 @@
    fi
  )
  
@@ -76,7 +83,7 @@
  
  mkdir -p $PKG6/usr/doc/gcc-${VERSION}/gcc/objc
  ( cd gcc/objc || exit 0
-@@ -256,13 +263,13 @@
+@@ -259,13 +273,13 @@
    $PKG8/usr/doc/gcc-${VERSION}/gcc/go
  )
  
@@ -97,7 +104,7 @@
  
  mkdir -p $PKG10/usr/doc/gcc-${VERSION}/gcc/d
  ( cd gcc/d || exit 0
-@@ -280,13 +287,13 @@
+@@ -283,13 +297,13 @@
    fi
  )
  
@@ -118,7 +125,7 @@
  
  mkdir -p $PKG1/usr/doc/gcc-${VERSION}/libgomp
  ( cd libgomp || exit 0
-@@ -335,6 +342,8 @@
+@@ -338,6 +352,8 @@
    else
      GCC_ARCHOPTS="--disable-multilib"
    fi
@@ -127,7 +134,7 @@
   
    CFLAGS="$SLKCFLAGS" \
    CXXFLAGS="$SLKCFLAGS" \
-@@ -344,7 +353,7 @@
+@@ -347,7 +363,7 @@
       --infodir=/usr/info \
       --enable-shared \
       --enable-bootstrap \
@@ -136,7 +143,7 @@
       --enable-threads=posix \
       --enable-checking=release \
       --enable-objc-gc \
-@@ -376,15 +385,15 @@
+@@ -379,15 +395,15 @@
    # Include all debugging info (for now):
    make $NUMJOBS bootstrap || exit 1
  
@@ -158,7 +165,7 @@
    make info || exit 1
  
    # Set GCCCHECK=something to run the tests
-@@ -535,18 +544,18 @@
+@@ -538,18 +554,18 @@
  )
  
  # gcc-gnat:
@@ -189,7 +196,7 @@
  
  # gcc-objc:
  ( cd $PKG6
-@@ -592,16 +601,16 @@
+@@ -595,16 +611,16 @@
  ) || exit 1
  
  # gcc-brig:
@@ -216,7 +223,7 @@
  
  # gcc-gdc:
  ( cd $PKG10
-@@ -631,14 +640,14 @@
+@@ -636,14 +652,14 @@
    makepkg -l y -c n $TMP/gcc-g++-$VERSION-$ARCH-$BUILD.txz )
  ( cd $PKG3
    makepkg -l y -c n $TMP/gcc-gfortran-$VERSION-$ARCH-$BUILD.txz )
