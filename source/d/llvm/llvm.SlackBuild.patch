@@ -1,21 +1,27 @@
---- a/llvm.SlackBuild	2019-10-02 15:38:48.433972910 +0100
-+++ b/llvm.SlackBuild	2019-10-02 15:40:43.311425782 +0100
-@@ -59,6 +59,9 @@
+--- a/llvm.SlackBuild	2021-01-20 18:13:47.093006713 +0000
++++ b/llvm.SlackBuild	2021-02-04 13:07:15.482742898 +0000
+@@ -59,6 +59,12 @@
  elif [ "$ARCH" = "x86_64" ]; then
    SLKCFLAGS="-O2 -fPIC"
    LIBDIRSUFFIX="64"
 +elif [ "$ARCH" = "aarch64" ]; then
-+  SLKCFLAGS="-O2"
++  SLKCFLAGS="-O2 -fPIC"
++  LIBDIRSUFFIX="64"
++elif [ "$ARCH" = "riscv64" ]; then
++  SLKCFLAGS="-O2 -fPIC"
 +  LIBDIRSUFFIX="64"
  else
    SLKCFLAGS="-O2"
    LIBDIRSUFFIX=""
-@@ -115,6 +118,9 @@
- # Support GCC built for i586-slackware-linux:
- zcat $CWD/clang.toolchains.i586.triple.diff.gz | patch -p1 --verbose || exit 1
+@@ -118,6 +124,12 @@
+ # Hack to fix build with polly. Maybe we should just not use polly... ?
+ zcat $CWD/llvm.polly.hack.diff.gz | patch -p1 --verbose || exit 1
  
 +xzcat $CWD/clang.dynamic.linker.aarch64.patch.xz | patch -p1 --verbose || exit 1
 +xzcat $CWD/clang.toolchains.aarch64.triple.patch.xz | patch -p1 --verbose || exit 1
++
++xzcat $CWD/clang.dynamic.linker.riscv64.patch.xz | patch -p1 --verbose || exit 1
++xzcat $CWD/clang.toolchains.riscv64.triple.patch.xz | patch -p1 --verbose || exit 1
 +
  # As of clang-tools-extra-7.0.0 we get the following error on i586 or i686:
  # CMakeFiles/clangDaemon.dir/Trace.cpp.o:Trace.cpp:function std::unique_ptr<clang::clangd::trace::(anonymous namespace)::JSONTracer::JSONSpan, std::default_delete<clang::clangd::trace::(anonymous namespace)::JSONTracer::JSONSpan> >::~unique_ptr(): error: undefined reference to '__atomic_load_8'
