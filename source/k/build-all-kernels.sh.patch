@@ -1,15 +1,17 @@
---- a/build-all-kernels.sh	2020-01-11 18:54:51.015750198 +0200
-+++ b/build-all-kernels.sh	2020-01-11 19:00:36.594089212 +0200
-@@ -53,6 +53,8 @@
+--- a/build-all-kernels.sh	2019-12-27 22:39:09.034996687 +0000
++++ b/build-all-kernels.sh	2021-02-05 19:28:52.549211368 +0000
+@@ -53,6 +53,10 @@
      RECIPES="x86_64"
    elif uname -m | grep -wq i.86 ; then
      RECIPES="IA32_NO_SMP IA32_SMP"
 +  elif uname -m | grep -wq aarch64 ; then
 +    RECIPES="aarch64"
++  elif uname -m | grep -wq riscv64 ; then
++    RECIPES="riscv64"
    else
      echo "Error: no build recipes available for $(uname -m)"
      exit 1
-@@ -79,6 +81,11 @@
+@@ -79,6 +83,16 @@
      unset CONFIG_SUFFIX
      unset LOCALVERSION
      OUTPUT=${OUTPUT:-${TMP}/output-ia32-${VERSION}}
@@ -18,10 +20,15 @@
 +    CONFIG_SUFFIX=".arm64"
 +    unset LOCALVERSION
 +    OUTPUT=${OUTPUT:-${TMP}/output-aarch64-${VERSION}}
++  elif [ "$recipe" = "riscv64" ]; then
++    # Recipe for riscv64:
++    CONFIG_SUFFIX=".riscv64"
++    unset LOCALVERSION
++    OUTPUT=${OUTPUT:-${TMP}/output-riscv64-${VERSION}}
    else
      echo "Error: recipe ${recipe} not implemented"
      exit 1
-@@ -100,19 +107,6 @@
+@@ -100,19 +114,6 @@
      installpkg ${OUTPUT}/${KERNEL_SOURCE_PACKAGE_NAME} || exit 1
    fi
  

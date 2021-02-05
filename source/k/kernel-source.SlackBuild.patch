@@ -1,16 +1,19 @@
---- a/kernel-source.SlackBuild	2020-01-11 15:25:12.215001126 +0200
-+++ b/kernel-source.SlackBuild	2020-01-11 17:17:37.363450913 +0200
-@@ -58,6 +58,9 @@
+--- a/kernel-source.SlackBuild	2020-06-11 19:56:58.367009336 +0000
++++ b/kernel-source.SlackBuild	2021-02-05 19:17:01.006377107 +0000
+@@ -58,6 +58,12 @@
    if [ "$ARCH" = "x86_64" ]; then
      CONFIG_SUFFIX=".x64"
    fi
 +  if [ "$ARCH" = "aarch64" ]; then
 +    CONFIG_SUFFIX=".arm64"
 +  fi
++  if [ "$ARCH" = "riscv64" ]; then
++    CONFIG_SUFFIX=".riscv64"
++  fi
    if [ -z "${LOCALVERSION}" ]; then
      if echo $ARCH | grep -q -E "i?86$" ; then
        # Default to SMP extraversion on 32-bit:
-@@ -146,9 +149,6 @@
+@@ -146,9 +152,6 @@
      echo "Saving new .config as: $CWD/kernel-configs/config-generic${LOCALVERSION}-${VERSION}${LOCALVERSION}${CONFIG_SUFFIX}"
      cp -a .config $CWD/kernel-configs/config-generic${LOCALVERSION}-${VERSION}${LOCALVERSION}${CONFIG_SUFFIX}
    fi
