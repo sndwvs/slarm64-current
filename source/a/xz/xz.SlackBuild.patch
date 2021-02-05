@@ -1,10 +1,13 @@
---- a/xz.SlackBuild	2017-09-18 23:36:50.412205207 +0300
-+++ b/xz.SlackBuild	2017-09-18 23:37:19.362205207 +0300
-@@ -57,6 +57,9 @@
+--- a/xz.SlackBuild	2021-01-20 18:13:08.563005851 +0000
++++ b/xz.SlackBuild	2021-02-05 19:45:19.438960789 +0000
+@@ -66,6 +66,12 @@
    armel)     SLKCFLAGS="-O2 -march=armv4t"
               LIBDIRSUFFIX=""
               ;;
-+  aarch64)    SLKCFLAGS="-O2"
++  aarch64)   SLKCFLAGS="-O2 -fPIC"
++             LIBDIRSUFFIX="64"
++             ;;
++  riscv64)   SLKCFLAGS="-O2 -fPIC"
 +             LIBDIRSUFFIX="64"
 +             ;;
    *)         SLKCFLAGS="-O2"
