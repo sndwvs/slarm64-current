@@ -1,27 +1,34 @@
---- a/glibc.SlackBuild	2019-06-02 10:25:39.951905923 +0300
-+++ b/glibc.SlackBuild	2019-06-02 10:26:16.192439061 +0300
-@@ -95,6 +95,10 @@
+--- a/glibc.SlackBuild	2021-01-20 20:20:51.003016195 +0200
++++ b/glibc.SlackBuild	2021-02-06 09:10:31.640142778 +0200
+@@ -95,6 +95,14 @@
      OPTIMIZ="-O3 -fPIC"
      LIBDIRSUFFIX="64"
      ;;
 +  aarch64)
-+    OPTIMIZ="-O3"
++    OPTIMIZ="-O3 -fPIC"
++    LIBDIRSUFFIX="64"
++    ;;
++  riscv64)
++    OPTIMIZ="-O3 -fPIC"
 +    LIBDIRSUFFIX="64"
 +    ;;
    *)
      OPTIMIZ="-O3"
      LIBDIRSUFFIX=""
-@@ -109,6 +113,9 @@
+@@ -109,6 +117,12 @@
      # This should be i586 for all 32-bit x86 arch:
      TARGET=${TARGET:-i586}
      ;;
 +  aarch64)
 +    TARGET=${TARGET:-aarch64}
 +    ;;
++  riscv64)
++    TARGET=${TARGET:-riscv64}
++    ;;
  esac
  
  # Hand off the $ARCH variable to $SLACKWARE_ARCH to avoid confusing glibc:
-@@ -130,6 +137,9 @@
+@@ -128,6 +142,9 @@
  # This function fixes a doinst.sh file for x86_64.
  # With thanks to Fred Emmott.
  fix_doinst() {
@@ -31,32 +38,33 @@
    if [ "x$LIBDIRSUFFIX" = "x" ]; then
      return;
    fi;
-@@ -143,6 +153,11 @@
+@@ -141,6 +158,11 @@
    if [ "$SLACKWARE_ARCH" = "x86_64" ]; then
      sed -i 's#ld-linux.so.2#ld-linux-x86-64.so.2#' install/doinst.sh
    fi
 +
-+#  if [ "$SLACKWARE_ARCH" = "aarch64" ]; then
++#  if [ "$SLACKWARE_ARCH" = "aarch64" || "$SLACKWARE_ARCH" = "riscv64" ]; then
 +#    sed -i "/# Install NPTL glibc libraries:/i ( cd lib ; ln -sf ../lib${LIBDIRSUFFIX}/incoming/ld-${VERSION}.so $ARMLDLINUXVER )\n" install/doinst.sh
 +#    sed -i "/# Now, get rid of the temporary directory/i \\\n( cd lib ; ln -sf ../lib${LIBDIRSUFFIX}/ld-${VERSION}.so $ARMLDLINUXVER )\n" install/doinst.sh
 +#  fi
  }
  
  # This is a patch function to put all glibc patches in the build script
-@@ -215,6 +230,12 @@
- # Clean up leftover CVS directories:
- find . -type d -name CVS -exec rm -r {} \; 2> /dev/null
+@@ -202,6 +224,13 @@
+   || tar xvf $CWD/glibc-$CVSVER.tar.gz
+ cd glibc-$CVSVER
  
 +# Determine version of ld-linux.so
 +case $SLACKWARE_ARCH in
 +  arm)     export ARMLDLINUXVER="$( grep -A1 "hard-float ABI" sysdeps/unix/sysv/linux/arm/shlib-versions | egrep "^ld=" | awk -F= '{print $2}' )" ;;
 +  aarch64) export ARMLDLINUXVER="$( egrep "^ld=" sysdeps/unix/sysv/linux/aarch64/shlib-versions | grep -v "be" | awk -F= '{print $2}' )" ;;
++  riscv64) export ARMLDLINUXVER="$( egrep "^ld=" sysdeps/unix/sysv/linux/riscv/shlib-versions | grep -v "4.s" | awk -F= '{print $2}' )" ;;
 +esac
 +
  # Apply patches; exit if any fail.
  apply_patches
  if [ ! $? = 0 ]; then
-@@ -243,6 +264,9 @@
+@@ -238,6 +267,9 @@
    --with-tls \
    --with-__thread \
    --without-cvs \
@@ -65,8 +73,8 @@
 +  libc_cv_slibdir=/lib${LIBDIRSUFFIX} \
    $TARGET-slackware-linux
  
- make $NUMJOBS || make || exit 1
-@@ -431,7 +455,7 @@
+ make $NUMJOBS || exit 1
+@@ -428,7 +460,7 @@
  # Call the function to fix doinst.sh where $LIBDIRSUFFIX is needed:
  fix_doinst
  # Only scrub the links in /lib{,64} that will be created by ldconfig:
@@ -75,7 +83,7 @@
  # Build the package:
  makepkg -l y -c n $TMP/glibc-solibs-$VERSION-$SLACKWARE_ARCH-$BUILD.txz
  
-@@ -444,7 +468,7 @@
+@@ -441,7 +473,7 @@
  chown -R root:root etc
  chmod 755 etc/profile.d/*
  # Only scrub the links in /lib{,64} that will be created by ldconfig:
@@ -84,7 +92,7 @@
  mkdir install
  cp -a $CWD/slack-desc.glibc install/slack-desc
  cp -a $CWD/doinst.sh-glibc install/doinst.sh
-@@ -466,3 +490,4 @@
+@@ -463,3 +495,4 @@
  # Done!
  echo
  echo "glibc packages built in $TMP!"
