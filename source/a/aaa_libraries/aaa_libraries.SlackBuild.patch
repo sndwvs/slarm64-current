@@ -1,0 +1,13 @@
+--- a/aaa_libraries.SlackBuild	2021-02-07 22:22:32.993980917 +0000
++++ b/aaa_libraries.SlackBuild	2021-02-08 10:07:20.788408025 +0000
+@@ -45,6 +45,10 @@
+ 
+ if [ "$ARCH" = "x86_64" ]; then
+   LIBDIRSUFFIX="64"
++elif [ "$ARCH" = "aarch64" ]; then
++  LIBDIRSUFFIX="64"
++elif [ "$ARCH" = "riscv64" ]; then
++  LIBDIRSUFFIX="64"
+ else
+   LIBDIRSUFFIX=""
+ fi
