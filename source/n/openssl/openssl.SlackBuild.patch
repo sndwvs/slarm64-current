@@ -1,15 +1,17 @@
---- a/openssl.SlackBuild	2018-05-06 21:32:17.264000477 +0100
-+++ b/openssl.SlackBuild	2018-05-10 17:15:30.192194487 +0100
-@@ -82,6 +82,8 @@
+--- a/openssl.SlackBuild	2021-02-10 09:12:38.901159895 +0200
++++ b/openssl.SlackBuild	2021-02-10 09:13:03.553143710 +0200
+@@ -83,6 +83,10 @@
    LIBDIRSUFFIX=""
  elif [ "$ARCH" = "x86_64" ]; then
    LIBDIRSUFFIX="64"
 +elif [ "$ARCH" = "aarch64" ]; then
 +  LIBDIRSUFFIX="64"
++elif [ "$ARCH" = "riscv64" ]; then
++  LIBDIRSUFFIX="64"
  fi
  
  # OpenSSL has a (nasty?) habit of bumping the internal version number with
-@@ -137,6 +139,9 @@
+@@ -138,6 +142,9 @@
   no-sse2 \
   shared
  
