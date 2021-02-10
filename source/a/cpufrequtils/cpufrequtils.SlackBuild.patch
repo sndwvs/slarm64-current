@@ -1,21 +1,24 @@
---- a/cpufrequtils.SlackBuild	2018-02-21 18:13:23.485196874 +0000
-+++ b/cpufrequtils.SlackBuild	2018-02-21 18:13:27.620196874 +0000
-@@ -50,6 +50,9 @@
+--- a/cpufrequtils.SlackBuild	2021-02-10 17:14:48.302078803 +0200
++++ b/cpufrequtils.SlackBuild	2021-02-10 17:15:27.562051024 +0200
+@@ -58,6 +58,12 @@
  elif [ "$ARCH" = "x86_64" ]; then
    SLKCFLAGS="-O2 -fPIC"
    LIBDIRSUFFIX="64"
 +elif [ "$ARCH" = "aarch64" ]; then
-+  SLKCFLAGS="-O2"
++  SLKCFLAGS="-O2 -fPIC"
++  LIBDIRSUFFIX="64"
++elif [ "$ARCH" = "riscv64" ]; then
++  SLKCFLAGS="-O2 -fPIC"
 +  LIBDIRSUFFIX="64"
  else
    SLKCFLAGS="-O2"
    LIBDIRSUFFIX=""
-@@ -68,6 +71,8 @@
+@@ -76,6 +82,8 @@
    \( -perm 666 -o -perm 664 -o -perm 600 -o -perm 444 -o -perm 440 -o -perm 400 \) \
-   -exec chmod 644 {} \;
+   -exec chmod 644 {} \+
  
 +xzcat $CWD/0001-Only-x86-has-cpuid-instruction.patch.xz | patch -p1 --verbose || exit 1
 +
  # Build and install:
- make libdir=/usr/lib${LIBDIRSUFFIX}
- make install libdir=/usr/lib${LIBDIRSUFFIX} DESTDIR=$PKG
+ make libdir=/usr/lib${LIBDIRSUFFIX} || exit 1
+ make install libdir=/usr/lib${LIBDIRSUFFIX} DESTDIR=$PKG || exit 1

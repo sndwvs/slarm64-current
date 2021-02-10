@@ -1,18 +1,13 @@
---- a/libgudev.SlackBuild	2017-09-18 23:17:33.678205207 +0300
-+++ b/libgudev.SlackBuild	2017-09-18 23:18:52.245205207 +0300
-@@ -36,11 +36,10 @@
-   esac
+--- a/libgudev.SlackBuild	2021-02-10 17:24:05.109682527 +0200
++++ b/libgudev.SlackBuild	2021-02-10 17:24:35.921660461 +0200
+@@ -48,6 +48,10 @@
+ 
+ if [ "$ARCH" = "x86_64" ]; then
+   LIBDIRSUFFIX="64"
++elif [ "$ARCH" = "aarch64" ]; then
++  LIBDIRSUFFIX="64"
++elif [ "$ARCH" = "riscv64" ]; then
++  LIBDIRSUFFIX="64"
+ else
+   LIBDIRSUFFIX=""
  fi
- 
--if [ "$ARCH" = "x86_64" ]; then
--  LIBDIRSUFFIX="64"
--else
--  LIBDIRSUFFIX=""
--fi
-+case "$ARCH" in
-+  x86_64|aarch64) LIBDIRSUFFIX="64" ;;
-+               *) LIBDIRSUFFIX="" ;;
-+esac
- 
- CWD=$(pwd)
- TMP=${TMP:-/tmp}

@@ -1,21 +1,15 @@
---- a/gpm.SlackBuild	2021-01-20 18:13:07.574005829 +0000
-+++ b/gpm.SlackBuild	2021-01-27 17:18:12.411931873 +0000
-@@ -55,6 +55,9 @@
- elif [ "$ARCH" = "s390" ]; then
-   SLKCFLAGS="-O2 -fcommon"
-   LIBDIRSUFFIX=""
-+elif [ "$ARCH" = "aarch64" ]; then
-+  SLKCFLAGS="-O2"
-+  LIBDIRSUFFIX="64"
+--- a/gpm.SlackBuild	2021-02-10 17:19:03.265897950 +0200
++++ b/gpm.SlackBuild	2021-02-10 17:19:35.097875298 +0200
+@@ -58,6 +58,12 @@
  elif [ "$ARCH" = "x86_64" ]; then
    SLKCFLAGS="-O2 -fPIC -fcommon"
    LIBDIRSUFFIX="64"
-@@ -99,7 +102,7 @@
- # into configure:
- autoconf
++elif [ "$ARCH" = "aarch64" ]; then
++  SLKCFLAGS="-O2 -fPIC -fcommon"
++  LIBDIRSUFFIX="64"
++elif [ "$ARCH" = "riscv64" ]; then
++  SLKCFLAGS="-O2 -fPIC -fcommon"
++  LIBDIRSUFFIX="64"
+ fi
  
--CFLAGS="$SLKCFLAGS" \
-+CFLAGS="$SLKCFLAGS -fcommon" \
- ./configure \
-   --prefix=/usr \
-   --sysconfdir=/etc \
+ rm -rf $PKG

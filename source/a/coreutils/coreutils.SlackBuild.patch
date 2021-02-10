@@ -1,16 +1,19 @@
---- a/coreutils.SlackBuild	2020-03-06 19:16:04.846595002 +0000
-+++ b/coreutils.SlackBuild	2020-03-06 19:18:01.228300988 +0000
-@@ -64,6 +64,9 @@
+--- a/coreutils.SlackBuild	2021-02-10 17:11:24.378222671 +0200
++++ b/coreutils.SlackBuild	2021-02-10 17:12:11.786189289 +0200
+@@ -64,6 +64,12 @@
  elif [ "$ARCH" = "armel" ]; then
    SLKCFLAGS="-O2 -march=armv4t"
    LIBDIRSUFFIX=""
 +elif [ "$ARCH" = "aarch64" ]; then
-+  SLKCFLAGS="-O2"
++  SLKCFLAGS="-O2 -fPIC"
++  LIBDIRSUFFIX="64"
++elif [ "$ARCH" = "riscv64" ]; then
++  SLKCFLAGS="-O2 -fPIC"
 +  LIBDIRSUFFIX="64"
  else
    SLKCFLAGS="-O2"
    LIBDIRSUFFIX=""
-@@ -93,6 +96,9 @@
+@@ -93,6 +99,9 @@
  # Revert change to ls quoting style introduced in coreutils-8.25:
  zcat $CWD/no_ls_quoting.patch.gz | patch -p1 --verbose --backup --suffix=.orig || exit 1
  

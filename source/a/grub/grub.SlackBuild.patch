@@ -1,16 +1,19 @@
---- a/grub.SlackBuild	1970-01-02 14:12:30.592901312 +0100
-+++ b/grub.SlackBuild	1970-01-02 14:13:51.249938424 +0100
-@@ -77,6 +77,9 @@
+--- a/grub.SlackBuild	2021-02-10 17:20:35.117832543 +0200
++++ b/grub.SlackBuild	2021-02-10 17:21:13.221805372 +0200
+@@ -77,6 +77,12 @@
  elif [ "$ARCH" = "armv7hl" ]; then
    SLKCFLAGS="-O3 -march=armv7-a -mfpu=vfpv3-d16"
    LIBDIRSUFFIX=""
 +elif [ "$ARCH" = "aarch64" ]; then
 +  SLKCFLAGS="-O3"
 +  LIBDIRSUFFIX="64"
++elif [ "$ARCH" = "riscv64" ]; then
++  SLKCFLAGS="-O3"
++  LIBDIRSUFFIX="64"
  else
    SLKCFLAGS="-O2"
    LIBDIRSUFFIX=""
-@@ -130,6 +133,7 @@
+@@ -118,6 +124,7 @@
  build_grub() {
    EFI_DO="$*"
    # Configure:

@@ -1,18 +1,13 @@
---- a/bzip2.SlackBuild	2017-09-18 21:22:22.866489405 +0300
-+++ b/bzip2.SlackBuild	2017-09-18 21:22:50.916489405 +0300
-@@ -39,11 +39,10 @@
- TMP=${TMP:-/tmp}
- PKG=$TMP/package-bzip2
+--- a/bzip2.SlackBuild	2021-02-10 16:49:21.211139300 +0200
++++ b/bzip2.SlackBuild	2021-02-10 16:49:51.555118073 +0200
+@@ -50,6 +50,10 @@
  
--if [ "$ARCH" = "x86_64" ]; then
--  LIBDIRSUFFIX="64"
--else
--  LIBDIRSUFFIX=""
--fi
-+case "$ARCH" in
-+  x86_64|aarch64) LIBDIRSUFFIX="64" ;;
-+               *) LIBDIRSUFFIX="" ;;
-+esac
- 
- rm -rf $PKG
- mkdir -p $TMP $PKG
+ if [ "$ARCH" = "x86_64" ]; then
+   LIBDIRSUFFIX="64"
++elif [ "$ARCH" = "aarch64" ]; then
++  LIBDIRSUFFIX="64"
++elif [ "$ARCH" = "riscv64" ]; then
++  LIBDIRSUFFIX="64"
+ else
+   LIBDIRSUFFIX=""
+ fi
