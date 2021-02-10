@@ -1,3 +1,25 @@
+Mon Feb  8 14:14:51 UTC 2021
+a/aaa_elflibs-14.2-aarch64-35.txz:  Removed.
+a/aaa_glibc-solibs-2.32-aarch64-2.txz:  Added.
+a/aaa_libraries-15.0-aarch64-1.txz:  Added.
+a/btrfs-progs-5.10.1-aarch64-1.txz:  Upgraded.
+a/glibc-solibs-2.27-aarch64-2.txz:  Removed.
+a/kernel-generic-5.10.14-aarch64-1.txz:  Upgraded.
+a/kernel-modules-5.10.14-aarch64-1.txz:  Upgraded.
+ap/slackpkg-15.0-noarch-1.txz:  Upgraded.
+ap/soma-3.3.7-noarch-1.txz:  Upgraded.
+ap/xorriso-1.5.4.pl02-aarch64-1.txz:  Upgraded.
+d/help2man-1.48.1-aarch64-1.txz:  Upgraded.
+d/kernel-headers-5.10.14-arm64-1.txz:  Upgraded.
+k/kernel-source-5.10.14-noarch-1.txz:  Upgraded.
+l/elfutils-0.183-aarch64-1.txz:  Upgraded.
+l/glibc-2.32-aarch64-2.txz:  Rebuilt.
+l/glibc-i18n-2.32-aarch64-2.txz:  Rebuilt.
+l/glibc-profile-2.32-aarch64-2.txz:  Rebuilt.
+l/lcms2-2.12-aarch64-1.txz:  Upgraded.
+l/libburn-1.5.4-aarch64-1.txz:  Upgraded.
+x/xf86-input-wacom-0.40.0-aarch64-1.txz:  Upgraded.
++--------------------------+
 Sun Feb  7 08:25:44 UTC 2021
 a/udisks2-2.9.2-aarch64-1.txz:  Upgraded.
 d/ccache-4.2-aarch64-1.txz:  Upgraded.
