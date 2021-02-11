@@ -1,0 +1,37 @@
+--- a/pcre.SlackBuild	2021-01-20 20:16:43.524010659 +0200
++++ b/pcre.SlackBuild	2021-02-11 13:07:30.171211318 +0200
+@@ -55,6 +55,12 @@
+ elif [ "$ARCH" = "x86_64" ]; then
+   SLKCFLAGS="-O2 -fPIC"
+   LIBDIRSUFFIX="64"
++elif [ "$ARCH" = "aarch64" ]; then
++  SLKCFLAGS="-O2 -fPIC"
++  LIBDIRSUFFIX="64"
++elif [ "$ARCH" = "riscv64" ]; then
++  SLKCFLAGS="-O2 -fPIC"
++  LIBDIRSUFFIX="64"
+ else
+   SLKCFLAGS="-O2"
+   LIBDIRSUFFIX=""
+@@ -79,6 +85,8 @@
+   \( -perm 666 -o -perm 664 -o -perm 600 -o -perm 444 -o -perm 440 -o -perm 400 \) \
+   -exec chmod 644 {} \+
+ 
++[[ $ARCH != riscv64 ]] && JIT="--enable-jit"
++
+ CFLAGS="$SLKCFLAGS" \
+ ./configure \
+   --prefix=/usr \
+@@ -87,11 +95,11 @@
+   --enable-utf8 \
+   --enable-pcre16 \
+   --enable-pcre32 \
+-  --enable-jit \
+   --enable-unicode-properties \
+   --enable-pcregrep-libz \
+   --enable-pcregrep-libbz2 \
+   --disable-static \
++  $JIT \
+   --build=$ARCH-slackware-linux || exit 1
+ 
+ CFLAGS="$SLKCFLAGS" make $NUMJOBS || make || exit 1
