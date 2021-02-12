@@ -1,10 +1,12 @@
---- a/x11.SlackBuild	2020-02-19 20:37:54.752789884 +0000
-+++ b/x11.SlackBuild	2020-09-13 06:30:38.137577240 +0000
-@@ -86,10 +86,22 @@
+--- a/x11.SlackBuild	2021-02-13 00:12:32.969584071 +0200
++++ b/x11.SlackBuild	2021-02-13 00:13:02.889573183 +0200
+@@ -86,10 +86,24 @@
  
  if [ "$ARCH" = "x86_64" ]; then
    LIBDIRSUFFIX="64"
 +elif [ "$ARCH" = "aarch64" ]; then
++  LIBDIRSUFFIX="64"
++elif [ "$ARCH" = "riscv64" ]; then
 +  LIBDIRSUFFIX="64"
  else
    LIBDIRSUFFIX=""

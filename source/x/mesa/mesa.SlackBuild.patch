@@ -1,5 +1,5 @@
---- a/mesa.SlackBuild	2019-10-09 22:22:08.128790109 +0300
-+++ b/mesa.SlackBuild	2020-02-01 14:57:18.895492463 +0200
+--- a/mesa.SlackBuild	2021-02-13 00:06:30.501685953 +0200
++++ b/mesa.SlackBuild	2021-02-13 00:10:39.049620511 +0200
 @@ -31,8 +31,8 @@
  NUMJOBS=${NUMJOBS:-" -j$(expr $(nproc) + 1) "}
  
@@ -11,32 +11,30 @@
  
  if [ -z "$ARCH" ]; then
    case "$( uname -m )" in
-@@ -67,6 +67,9 @@
+@@ -67,6 +67,12 @@
  elif [ "$ARCH" = "x86_64" ]; then
    SLKCFLAGS="-O2 -fPIC"
    LIBDIRSUFFIX="64"
 +elif [ "$ARCH" = "aarch64" ]; then
-+  SLKCFLAGS="-O2"
++  SLKCFLAGS="-O2 -fPIC"
++  LIBDIRSUFFIX="64"
++elif [ "$ARCH" = "riscv64" ]; then
++  SLKCFLAGS="-O2 -fPIC"
 +  LIBDIRSUFFIX="64"
  else
    SLKCFLAGS="-O2"
    LIBDIRSUFFIX=""
-@@ -129,9 +132,13 @@
-   -Dllvm=true \
-   -Dshared-llvm=true \
-   -Dshared-glapi=true \
+@@ -134,6 +140,9 @@
+   -Dgles2=enabled \
+   -Dopengl=true \
+   -Dglx=dri \
 +  -Ddri3=true \
-   -Degl=true \
--  -Dgles1=true \
 +  -Dgbm=true \
-+  -Dgles1=false \
-   -Dgles2=true \
-+  -Dglx=dri \
 +  -Dlibunwind=false \
    .. || exit 1
    "${NINJA:=ninja}" $NUMJOBS || exit 1
    DESTDIR=$PKG $NINJA install || exit 1
-@@ -158,6 +165,7 @@
+@@ -167,6 +176,7 @@
      CFLAGS="$SLKCFLAGS" \
      ./configure \
        --prefix=/usr \
@@ -44,7 +42,7 @@
        --build=$ARCH-slackware-linux || exit 1
      make $NUMJOBS || exit 1
      # Install all the demos (including the pointless ones) at first, in a
-@@ -165,7 +173,8 @@
+@@ -174,7 +184,8 @@
      make install DESTDIR=$PKG/cruft || exit 1
      # Install gears and glinfo, as well as a few other demos:
      mkdir -p $PKG/usr/bin

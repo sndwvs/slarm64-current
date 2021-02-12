@@ -1,16 +1,19 @@
---- a/glew.SlackBuild	2017-10-01 10:23:41.289601273 +0300
-+++ b/glew.SlackBuild	2017-10-01 10:25:27.395601273 +0300
-@@ -51,6 +51,9 @@
+--- a/glew.SlackBuild	2021-02-13 00:04:50.661703925 +0200
++++ b/glew.SlackBuild	2021-02-13 00:05:25.049698537 +0200
+@@ -60,6 +60,12 @@
  elif [ "$ARCH" = "x86_64" ]; then
    SLKCFLAGS="-O2 -fPIC"
    LIBDIRSUFFIX="64"
 +elif [ "$ARCH" = "aarch64" ]; then
-+  SLKCFLAGS="-O2"
++  SLKCFLAGS="-O2 -fPIC"
++  LIBDIRSUFFIX="64"
++elif [ "$ARCH" = "riscv64" ]; then
++  SLKCFLAGS="-O2 -fPIC"
 +  LIBDIRSUFFIX="64"
  else
    SLKCFLAGS="-O2"
    LIBDIRSUFFIX=""
-@@ -80,6 +83,8 @@
+@@ -89,6 +95,8 @@
  # Use lib${LIBDIRSUFFIX} (if needed) in Makefile:
  sed -i "s,/lib,/lib${LIBDIRSUFFIX},g" Makefile
  
