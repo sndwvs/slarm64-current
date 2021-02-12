@@ -1,10 +1,13 @@
---- a/squashfs-tools.SlackBuild	2021-01-20 18:13:13.458005960 +0000
-+++ b/squashfs-tools.SlackBuild	2021-01-27 17:49:05.005051995 +0000
-@@ -59,6 +59,9 @@
+--- a/squashfs-tools.SlackBuild	2021-02-12 22:57:26.500589697 +0200
++++ b/squashfs-tools.SlackBuild	2021-02-12 22:57:52.748538232 +0200
+@@ -59,6 +59,12 @@
  elif [ "$ARCH" = "x86_64" ]; then
    SLKCFLAGS="-O2 -fPIC -fcommon"
    LIBDIRSUFFIX="64"
 +elif [ "$ARCH" = "aarch64" ]; then
++  SLKCFLAGS="-O2 -fPIC -fcommon"
++  LIBDIRSUFFIX="64"
++elif [ "$ARCH" = "riscv64" ]; then
 +  SLKCFLAGS="-O2 -fPIC -fcommon"
 +  LIBDIRSUFFIX="64"
  elif [ "$ARCH" = "armv7hl" ]; then

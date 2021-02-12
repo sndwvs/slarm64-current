@@ -1,3 +1,19 @@
+Fri Feb 12 18:03:35 UTC 2021
+l/pango-1.48.2-aarch64-1.txz:  Upgraded.
+x/xterm-366-aarch64-1.txz:  Upgraded.
+xap/gftp-2.7.0b-aarch64-1.txz:  Upgraded.
++--------------------------+
+Thu Feb 11 14:38:45 UTC 2021
+a/e2fsprogs-1.46.1-aarch64-1.txz:  Upgraded.
+a/eudev-3.2.10-aarch64-1.txz:  Upgraded.
+a/kernel-generic-5.10.15-aarch64-1.txz:  Upgraded.
+a/kernel-modules-5.10.15-aarch64-1.txz:  Upgraded.
+d/kernel-headers-5.10.15-arm64-1.txz:  Upgraded.
+d/subversion-1.14.1-aarch64-1.txz:  Upgraded.
+k/kernel-source-5.10.15-noarch-1.txz:  Upgraded.
+l/graphene-1.10.4-aarch64-1.txz:  Upgraded.
+l/json-glib-1.6.2-aarch64-1.txz:  Upgraded.
++--------------------------+
 Wed Feb 10 09:30:05 UTC 2021
 a/exfatprogs-1.1.0-aarch64-1.txz:  Upgraded.
 a/kernel-firmware-20210208_b79d239-noarch-1.txz:  Upgraded.

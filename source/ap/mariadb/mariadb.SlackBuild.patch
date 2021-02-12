@@ -1,25 +1,28 @@
---- a/mariadb.SlackBuild	2017-12-01 02:40:32.545044631 +0000
-+++ b/mariadb.SlackBuild	2017-12-01 16:19:00.690937729 +0000
-@@ -26,6 +26,8 @@
- # MariaDB conversion by:  Heinz Wiesinger <pprkut@liwjatan.at>
- # Also maintained by:  Patrick Volkerding <volkerdi@slackware.com>
+--- a/mariadb.SlackBuild	2021-02-12 22:55:58.416759870 +0200
++++ b/mariadb.SlackBuild	2021-02-12 22:56:25.544707883 +0200
+@@ -28,6 +28,8 @@
+ 
+ cd $(dirname $0) ; CWD=$(pwd)
  
 +# disable mroonga storage engine (doesn't build on ARM)
 +
  PKGNAM=mariadb
- VERSION=${VERSION:-$(echo ${PKGNAM}-*.tar.?z* | rev | cut -f 3- -d . | cut -f 1 -d - | rev)}
- BUILD=${BUILD:-1}
-@@ -74,6 +76,9 @@
+ VERSION=${VERSION:-$(echo ${PKGNAM}-*.tar.?z | rev | cut -f 3- -d . | cut -f 1 -d - | rev)}
+ BUILD=${BUILD:-2}
+@@ -81,6 +83,12 @@
  elif [ "$ARCH" = "x86_64" ]; then
    SLKCFLAGS="-O2 -fPIC"
    LIBDIRSUFFIX="64"
 +elif [ "$ARCH" = "aarch64" ]; then
 +  SLKCFLAGS="-O2 -fPIC"
 +  LIBDIRSUFFIX="64"
++elif [ "$ARCH" = "riscv64" ]; then
++  SLKCFLAGS="-O2 -fPIC"
++  LIBDIRSUFFIX="64"
  fi
  
  rm -rf $PKG
-@@ -127,6 +132,7 @@
+@@ -141,6 +149,7 @@
    -DCONC_WITH_SSL=ON \
    -DUSE_ARIA_FOR_TMP_TABLES=ON \
    -DAWS_SDK_EXTERNAL_PROJECT=OFF \

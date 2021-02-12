@@ -1,16 +1,19 @@
---- a/lxc.SlackBuild	2019-12-24 06:49:54.302213478 +0000
-+++ b/lxc.SlackBuild	2019-12-24 06:51:52.388002497 +0000
-@@ -57,6 +57,9 @@
+--- a/lxc.SlackBuild	2021-02-12 22:54:17.112950578 +0200
++++ b/lxc.SlackBuild	2021-02-12 22:54:58.020874228 +0200
+@@ -57,6 +57,12 @@
  elif [ "$ARCH" = "x86_64" ]; then
    SLKCFLAGS="-O2 -fPIC"
    LIBDIRSUFFIX="64"
 +elif [ "$ARCH" = "aarch64" ]; then
-+  SLKCFLAGS="-O2"
++  SLKCFLAGS="-O2 -fPIC"
++  LIBDIRSUFFIX="64"
++elif [ "$ARCH" = "riscv64" ]; then
++  SLKCFLAGS="-O2 -fPIC"
 +  LIBDIRSUFFIX="64"
  else
    SLKCFLAGS="-O2"
    LIBDIRSUFFIX=""
-@@ -82,6 +85,7 @@
+@@ -82,6 +88,7 @@
  
  # Add the template file:
  cat $CWD/lxc-slackware.in > templates/lxc-slackware.in
@@ -18,7 +21,7 @@
  
  # Our python package is not split:
  sed -i "s|PKG_CHECK_MODULES(\[PYTHONDEV.*||" configure.ac || exit 1
-@@ -126,6 +130,8 @@
+@@ -126,6 +133,8 @@
  cp -a $CWD/scripts/*.lxc $PKG/usr/share/lxc/scripts/slackware
  chown root:root $PKG/usr/share/lxc/scripts/slackware/*
  chmod 644 $PKG/usr/share/lxc/scripts/slackware/*

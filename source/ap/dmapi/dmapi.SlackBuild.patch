@@ -1,22 +1,17 @@
---- a/dmapi.SlackBuild	2017-09-20 22:31:06.914174937 +0300
-+++ b/dmapi.SlackBuild	2017-09-20 22:30:28.672174937 +0300
-@@ -34,11 +34,10 @@
-   esac
+--- a/dmapi.SlackBuild	2021-02-12 22:49:52.225421978 +0200
++++ b/dmapi.SlackBuild	2021-02-12 22:51:22.041266760 +0200
+@@ -46,6 +46,10 @@
+ 
+ if [ "$ARCH" = "x86_64" ]; then
+   LIBDIRSUFFIX="64"
++elif [ "$ARCH" = "aarch64" ]; then
++  LIBDIRSUFFIX="64"
++elif [ "$ARCH" = "riscv64" ]; then
++  LIBDIRSUFFIX="64"
+ else
+   LIBDIRSUFFIX=""
  fi
- 
--if [ "$ARCH" = "x86_64" ]; then
--  LIBDIRSUFFIX="64"
--else
--  LIBDIRSUFFIX=""
--fi
-+case "$ARCH" in
-+  x86_64|aarch64) LIBDIRSUFFIX="64" ;;
-+               *) LIBDIRSUFFIX="" ;;
-+esac
- 
- CWD=$(pwd)
- TMP=${TMP:-/tmp}
-@@ -61,6 +60,7 @@
+@@ -70,6 +74,7 @@
  
  # Thanks, Debian
  zcat $CWD/bug799162.patch.gz | patch -p1 --verbose || exit 1
@@ -24,7 +19,7 @@
  
  # Make sure you have the same version of autoconf as the
  # developers did...  ;-)
-@@ -75,7 +75,8 @@
+@@ -84,7 +89,8 @@
    --libexecdir=/usr/lib${LIBDIRSUFFIX} \
    --includedir=/usr/include \
    --mandir=/usr/man \
@@ -33,8 +28,8 @@
 +  --build=$ARCH-slackware-linux || exit 1
  
  make || exit 1
- make install DESTDIR=$PKG
-@@ -118,4 +119,3 @@
+ make install DESTDIR=$PKG || exit 1
+@@ -126,4 +132,3 @@
  
  cd $PKG
  /sbin/makepkg -l y -c n $TMP/dmapi-$(echo $VERSION | tr - _ )-$ARCH-$BUILD.txz
