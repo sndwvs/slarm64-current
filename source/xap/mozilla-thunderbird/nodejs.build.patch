@@ -1,11 +1,14 @@
---- a/build-deps/nodejs/nodejs.build	2019-07-12 19:38:54.804696096 +0100
-+++ b/build-deps/nodejs/nodejs.build	2019-07-12 19:39:14.832998551 +0100
-@@ -51,6 +51,9 @@
+--- a/build-deps/nodejs/nodejs.build	2021-02-13 00:53:30.507514867 +0200
++++ b/build-deps/nodejs/nodejs.build	2021-02-13 00:54:19.839460342 +0200
+@@ -51,6 +51,12 @@
  elif [ "$ARCH" = "armv7hl" ]; then
    SLKCFLAGS="-O3 -march=armv7-a -mfpu=vfpv3-d16"
    LIBDIRSUFFIX=""
 +elif [ "$ARCH" = "aarch64" ]; then
-+  SLKCFLAGS="-O2"
++  SLKCFLAGS="-O2 -fPIC"
++  LIBDIRSUFFIX="64"
++elif [ "$ARCH" = "riscv64" ]; then
++  SLKCFLAGS="-O2 -fPIC"
 +  LIBDIRSUFFIX="64"
  else
    SLKCFLAGS="-O2"

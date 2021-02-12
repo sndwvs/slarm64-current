@@ -1,11 +1,14 @@
---- a/blackbox.SlackBuild	2018-06-22 22:33:31.819628973 +0100
-+++ b/blackbox.SlackBuild	2018-06-24 18:01:08.804120884 +0100
-@@ -68,6 +68,9 @@
+--- a/blackbox.SlackBuild	2021-02-13 00:40:24.324343393 +0200
++++ b/blackbox.SlackBuild	2021-02-13 00:41:20.468286912 +0200
+@@ -68,6 +68,12 @@
    arm)    export SLKCFLAGS="-O2 -march=armv4t"
            export LIBDIRSUFFIX="" 
            export ARCHQUADLET="-gnueabi" ;;
-+ aarch64) export SLKCFLAGS="-O2"
-+          export LIBDIRSUFFIX="64" 
++ aarch64) export SLKCFLAGS="-O2 -fPIC"
++          export LIBDIRSUFFIX="64"
++          export ARCHQUADLET="" ;;
++ riscv64) export SLKCFLAGS="-O2 -fPIC"
++          export LIBDIRSUFFIX="64"
 +          export ARCHQUADLET="" ;;
    *)      export SLKCFLAGS="-O2"
            export LIBDIRSUFFIX=""

@@ -1,27 +1,30 @@
---- a/ssr.SlackBuild	2020-11-18 21:43:47.654012653 +0200
-+++ b/ssr.SlackBuild	2020-11-19 02:33:45.543166963 +0200
-@@ -56,6 +56,9 @@
- elif [ "$ARCH" = "s390" ]; then
-   SLKCFLAGS="-O2"
+--- a/ssr.SlackBuild	2021-02-13 00:46:33.087964602 +0200
++++ b/ssr.SlackBuild	2021-02-13 00:47:16.955918350 +0200
+@@ -62,6 +62,12 @@
+ elif [ "$ARCH" = "armv7hl" ]; then
+   SLKCFLAGS="-O3 -march=armv7-a -mfpu=vfpv3-d16"
    LIBDIRSUFFIX=""
 +elif [ "$ARCH" = "aarch64" ]; then
-+  SLKCFLAGS="-O2"
++  SLKCFLAGS="-O2 -fPIC"
 +  LIBDIRSUFFIX="64"
- elif [ "$ARCH" = "x86_64" ]; then
-   SLKCFLAGS="-O2 -fPIC"
-   LIBDIRSUFFIX="64"
-@@ -85,6 +88,10 @@
++elif [ "$ARCH" = "riscv64" ]; then
++  SLKCFLAGS="-O2 -fPIC"
++  LIBDIRSUFFIX="64"
+ else
+   SLKCFLAGS="-O2"
+   LIBDIRSUFFIX=""
+@@ -85,6 +91,10 @@
    \( -perm 666 -o -perm 664 -o -perm 600 -o -perm 444 -o -perm 440 -o -perm 400 \) \
    -exec chmod 644 {} \+
  
-+if [[ $ARCH =~ aarch64|arm ]]; then
++if [[ $ARCH =~ aarch64|riscv64|arm ]]; then
 +    OPTIONS="-DWITH_GLINJECT=FALSE "
 +fi
 +
  # Configure, build, and install:
  mkdir cmake-build
  cd cmake-build
-@@ -97,6 +104,7 @@
+@@ -97,6 +107,7 @@
      -DCMAKE_INSTALL_MANDIR=/usr/man \
      -DWITH_JACK=FALSE \
      -DWITH_QT5=TRUE \

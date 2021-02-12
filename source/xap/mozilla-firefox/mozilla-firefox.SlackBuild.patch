@@ -1,5 +1,5 @@
---- a/mozilla-firefox.SlackBuild	2020-11-16 19:41:07.777084128 +0000
-+++ b/mozilla-firefox.SlackBuild	2020-11-17 00:49:50.595342860 +0000
+--- a/mozilla-firefox.SlackBuild	2021-02-13 00:55:17.215396576 +0200
++++ b/mozilla-firefox.SlackBuild	2021-02-13 00:55:54.623354802 +0200
 @@ -42,6 +42,9 @@
  # "UnicodeDecodeError: 'ascii' codec can't decode byte 0xe2 in position 36: ordinal not in range(128)"
  LANG=C
@@ -10,17 +10,20 @@
  # Add a shell script to start the firefox binary with MOZ_ALLOW_DOWNGRADE=1
  # to avoid backing up (and disabling) the user profile if a browser downgrade
  # is detected. We made it fine for years without this feature, and all the
-@@ -145,6 +148,9 @@
+@@ -145,6 +148,12 @@
  elif [ "$ARCH" = "armel" ]; then
    SLKCFLAGS="-O2 -g0 -march=armv4t"
    LIBDIRSUFFIX=""
 +elif [ "$ARCH" = "aarch64" ]; then
-+  SLKCFLAGS="-O2 -g0"
++  SLKCFLAGS="-O2 -g0 -fPIC"
++  LIBDIRSUFFIX="64"
++elif [ "$ARCH" = "riscv64" ]; then
++  SLKCFLAGS="-O2 -g0 -fPIC"
 +  LIBDIRSUFFIX="64"
  else
    SLKCFLAGS="-O2 -g0"
    LIBDIRSUFFIX=""
-@@ -221,8 +227,18 @@
+@@ -221,8 +230,18 @@
    \( -perm 666 -o -perm 664 -o -perm 600 -o -perm 444 -o -perm 440 -o -perm 400 \) \
    -exec chmod 644 {} \+
  
@@ -39,7 +42,7 @@
    --enable-official-branding \
    --prefix=/usr \
    --libdir=/usr/lib${LIBDIRSUFFIX} \
-@@ -295,9 +311,19 @@
+@@ -295,9 +314,19 @@
    echo "ac_add_options --target=i686-pc-linux-gnu" >> .mozconfig
  fi
  
