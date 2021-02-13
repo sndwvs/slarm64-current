@@ -1,5 +1,5 @@
---- a/mariadb.SlackBuild	2021-02-12 22:55:58.416759870 +0200
-+++ b/mariadb.SlackBuild	2021-02-12 22:56:25.544707883 +0200
+--- a/mariadb.SlackBuild	2021-02-13 19:35:12.401346664 +0200
++++ b/mariadb.SlackBuild	2021-02-13 19:43:55.220170408 +0200
 @@ -28,6 +28,8 @@
  
  cd $(dirname $0) ; CWD=$(pwd)
@@ -22,7 +22,18 @@
  fi
  
  rm -rf $PKG
-@@ -141,6 +149,7 @@
+@@ -97,6 +105,10 @@
+   zcat $CWD/mysql.no.plugin_auth_pam.diff.gz | patch -p1 --verbose || exit 1
+ fi
+ 
++# RocksDB build fails on riscv64
++# When building on RiscV64 on Ubuntu/Debian this fails due to missing libatomic fixes.
++xzcat $CWD/c11_atomics.patch.xz | patch -p1 --verbose || exit 1
++
+ chown -R root:root .
+ find . \
+  \( -perm 777 -o -perm 775 -o -perm 711 -o -perm 555 -o -perm 511 \) \
+@@ -141,6 +153,7 @@
    -DCONC_WITH_SSL=ON \
    -DUSE_ARIA_FOR_TMP_TABLES=ON \
    -DAWS_SDK_EXTERNAL_PROJECT=OFF \
