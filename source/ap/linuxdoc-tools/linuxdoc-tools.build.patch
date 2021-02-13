@@ -1,6 +1,17 @@
---- a/linuxdoc-tools.build	2019-02-05 16:55:28.000000000 +0000
-+++ b/linuxdoc-tools.build	2019-02-06 18:38:50.767601088 +0000
-@@ -108,7 +108,8 @@
+--- a/linuxdoc-tools.build	2021-02-13 22:47:23.288731358 +0200
++++ b/linuxdoc-tools.build	2021-02-13 22:48:36.128510941 +0200
+@@ -53,6 +53,10 @@
+            export LIBDIRSUFFIX="64"
+            export HOSTTARGET=""
+            ;;
++  riscv64) export SLKCFLAGS="-O2"
++           export LIBDIRSUFFIX="64"
++           export HOSTTARGET=""
++           ;;
+   i?86)    export SLKCFLAGS="-O2 -march=i586 -mtune=i686"
+            export LIBDIRSUFFIX=""
+            export HOSTTARGET=""
+@@ -108,7 +112,8 @@
    --prefix=/usr \
    --sysconfdir=/etc \
    --docdir=/usr/doc/asciidoc-$ASCIIDOCVER \
@@ -10,7 +21,7 @@
  
  # Install:
  if [ "$1" = "nodocs" ]; then
-@@ -346,6 +347,7 @@
+@@ -349,6 +354,7 @@
    --enable-http \
    --enable-default-catalog=/etc/sgml/catalog \
    --enable-default-search-path=/usr/share/sgml \
@@ -18,7 +29,7 @@
    || exit 1
  
  # Build:
-@@ -426,6 +428,7 @@
+@@ -429,6 +435,7 @@
    --enable-default-catalog=/etc/sgml/catalog \
    --enable-default-search-path=/usr/share/sgml \
    --datadir=/usr/share/sgml/openjade-$OPENJADEVER \
@@ -26,7 +37,7 @@
    || exit 1
  
  # Build:
-@@ -1040,7 +1043,7 @@
+@@ -1059,7 +1066,7 @@
    --mandir=/usr/man \
    --disable-scrollkeeper \
    --enable-build-utils \
@@ -35,7 +46,7 @@
  
  # No parallel build here because it doesn't work:
  make || exit 1
-@@ -1168,7 +1171,7 @@
+@@ -1201,7 +1208,7 @@
     --disable-dependency-tracking \
     --program-transform-name="s/^docbook2/docbook2x-/" \
     --with-html-xsl \
