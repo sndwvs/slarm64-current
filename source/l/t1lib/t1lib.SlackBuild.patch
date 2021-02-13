@@ -1,21 +1,24 @@
---- a/t1lib.SlackBuild	2017-09-28 23:49:02.280940209 +0300
-+++ b/t1lib.SlackBuild	2017-09-28 23:50:01.949952798 +0300
-@@ -44,6 +44,9 @@
+--- a/t1lib.SlackBuild	2021-02-13 03:53:38.606409605 +0200
++++ b/t1lib.SlackBuild	2021-02-13 03:54:09.298389092 +0200
+@@ -53,6 +53,12 @@
  elif [ "$ARCH" = "x86_64" ]; then
    SLKCFLAGS="-O2 -fPIC"
    LIBDIRSUFFIX="64"
 +elif [ "$ARCH" = "aarch64" ]; then
-+  SLKCFLAGS="-O2"
++  SLKCFLAGS="-O2 -fPIC"
++  LIBDIRSUFFIX="64"
++elif [ "$ARCH" = "riscv64" ]; then
++  SLKCFLAGS="-O2 -fPIC"
 +  LIBDIRSUFFIX="64"
  fi
  
- NUMJOBS=${NUMJOBS:-" -j7 "}
-@@ -87,7 +90,7 @@
+ NUMJOBS=${NUMJOBS:-" -j$(expr $(nproc) + 1) "}
+@@ -95,7 +101,7 @@
    --enable-static=no \
-   --build=$ARCH-slackware-linux
+   --build=$ARCH-slackware-linux || exit 1
  
 -make $NUMJOBS || make || exit 1
 +make $NUMJOBS without_doc || make without_doc || exit 1
  make install prefix=$PKG/usr libdir=$PKG/usr/lib${LIBDIRSUFFIX} || exit 1
  
- find $PKG | xargs file | grep -e "executable" -e "shared object" | grep ELF \
+ # Don't ship .la files:

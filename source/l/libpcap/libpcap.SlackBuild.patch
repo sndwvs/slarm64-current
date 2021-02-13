@@ -1,10 +1,12 @@
---- a/libpcap.SlackBuild	2019-10-03 17:16:23.247032493 +0100
-+++ b/libpcap.SlackBuild	2019-10-12 10:11:20.480702435 +0100
-@@ -48,6 +48,8 @@
+--- a/libpcap.SlackBuild	2021-02-13 03:37:40.002966641 +0200
++++ b/libpcap.SlackBuild	2021-02-13 03:38:13.550947861 +0200
+@@ -48,6 +48,10 @@
  
  if [ "$ARCH" = "x86_64" ]; then
    LIBDIRSUFFIX="64"
 +elif [ "$ARCH" = "aarch64" ]; then
++  LIBDIRSUFFIX="64"
++elif [ "$ARCH" = "riscv64" ]; then
 +  LIBDIRSUFFIX="64"
  else
    LIBDIRSUFFIX=""

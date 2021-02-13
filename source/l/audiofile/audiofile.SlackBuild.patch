@@ -1,18 +1,21 @@
---- a/audiofile.SlackBuild	2017-09-26 20:56:10.376058055 +0300
-+++ b/audiofile.SlackBuild	2017-09-26 21:04:13.937058055 +0300
-@@ -52,6 +52,9 @@
+--- a/audiofile.SlackBuild	2021-02-13 03:07:58.359953637 +0200
++++ b/audiofile.SlackBuild	2021-02-13 03:08:32.803936019 +0200
+@@ -60,6 +60,12 @@
  elif [ "$ARCH" = "x86_64" ]; then
    SLKCFLAGS="-O2 -fPIC"
    LIBDIRSUFFIX="64"
 +elif [ "$ARCH" = "aarch64" ]; then
-+  SLKCFLAGS="-O2"
++  SLKCFLAGS="-O2 -fPIC"
++  LIBDIRSUFFIX="64"
++elif [ "$ARCH" = "riscv64" ]; then
++  SLKCFLAGS="-O2 -fPIC"
 +  LIBDIRSUFFIX="64"
  else
    SLKCFLAGS="-O2"
    LIBDIRSUFFIX=""
-@@ -70,6 +73,10 @@
+@@ -78,6 +84,10 @@
    \( -perm 666 -o -perm 664 -o -perm 600 -o -perm 444 -o -perm 440 -o -perm 400 \) \
-   -exec chmod 644 {} \;
+   -exec chmod 644 {} \+
  
 +for pf in $CWD/*.patch.xz; do
 +    xzcat ${pf} | patch -p1 --verbose || exit 1
@@ -20,4 +23,4 @@
 +
  # Configure:
  CFLAGS="$SLKCFLAGS" \
- ./configure \
+ CXXFLAGS="$SLKCFLAGS -fpermissive" \

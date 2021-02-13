@@ -1,16 +1,19 @@
---- a/sdl.SlackBuild	2020-02-13 16:45:11.121723443 +0000
-+++ b/sdl.SlackBuild	2020-02-13 16:46:42.099012586 +0000
-@@ -61,6 +61,9 @@
+--- a/sdl.SlackBuild	2021-02-13 03:50:17.542544517 +0200
++++ b/sdl.SlackBuild	2021-02-13 03:50:56.350518404 +0200
+@@ -61,6 +61,12 @@
  elif [ "$ARCH" = "x86_64" ]; then
    SLKCFLAGS="-O2 -fPIC"
    LIBDIRSUFFIX="64"
 +elif [ "$ARCH" = "aarch64" ]; then
-+  SLKCFLAGS="-O2"
++  SLKCFLAGS="-O2 -fPIC"
++  LIBDIRSUFFIX="64"
++elif [ "$ARCH" = "riscv64" ]; then
++  SLKCFLAGS="-O2 -fPIC"
 +  LIBDIRSUFFIX="64"
  else
    SLKCFLAGS="-O2"
    LIBDIRSUFFIX=""
-@@ -97,7 +100,9 @@
+@@ -97,7 +103,9 @@
    --disable-esd \
    --enable-shared=yes \
    --enable-static=no \
@@ -21,7 +24,7 @@
  
  make $NUMJOBS || make || exit 1
  
-@@ -139,7 +144,9 @@
+@@ -139,7 +147,9 @@
    --enable-static=no \
    --enable-jpg-shared=no \
    --enable-png-shared=no \
@@ -32,7 +35,7 @@
  
  make $NUMJOBS || make || exit 1
  make install DESTDIR=$PKG || exit 1
-@@ -166,7 +173,9 @@
+@@ -166,7 +176,9 @@
    --libdir=/usr/local/lib${LIBDIRSUFFIX} \
    --with-pic \
    --enable-shared=no \
@@ -43,7 +46,7 @@
    make $NUMJOBS || make || exit 1
    make install || exit 1
  ) || exit 1
-@@ -185,7 +194,9 @@
+@@ -185,7 +197,9 @@
    --mandir=/usr/man \
    --enable-music-mod \
    --enable-shared=yes \
@@ -54,7 +57,7 @@
  
  make $NUMJOBS || make || exit 1
  make install DESTDIR=$PKG || exit 1
-@@ -216,7 +227,9 @@
+@@ -216,7 +230,9 @@
    --libdir=/usr/lib${LIBDIRSUFFIX} \
    --mandir=/usr/man \
    --enable-shared=yes \
@@ -65,7 +68,7 @@
  
  make $NUMJOBS || make || exit 1
  make install DESTDIR=$PKG || exit 1
-@@ -247,7 +260,9 @@
+@@ -247,7 +263,9 @@
    --libdir=/usr/lib${LIBDIRSUFFIX} \
    --mandir=/usr/man \
    --enable-shared=yes \
@@ -76,7 +79,7 @@
  
  make $NUMJOBS || make || exit 1
  make install DESTDIR=$PKG || exit 1
-@@ -272,7 +287,9 @@
+@@ -277,7 +295,9 @@
    --sysconfdir=/etc \
    --mandir=/usr/man \
    --enable-shared=yes \

@@ -1,20 +1,25 @@
---- a/libkarma.SlackBuild	2019-10-12 10:00:51.720758754 +0100
-+++ b/libkarma.SlackBuild	2019-10-12 10:04:26.915506012 +0100
-@@ -60,6 +60,9 @@
+--- a/libkarma.SlackBuild	2021-02-13 03:34:45.399064535 +0200
++++ b/libkarma.SlackBuild	2021-02-13 03:35:38.231034886 +0200
+@@ -60,6 +60,12 @@
  elif [ "$ARCH" = "x86_64" ]; then
    SLKCFLAGS="-O2 -fPIC"
    LIBDIRSUFFIX="64"
 +elif [ "$ARCH" = "aarch64" ]; then
-+  SLKCFLAGS="-O2"
++  SLKCFLAGS="-O2 -fPIC"
++  LIBDIRSUFFIX="64"
++elif [ "$ARCH" = "riscv64" ]; then
++  SLKCFLAGS="-O2 -fPIC"
 +  LIBDIRSUFFIX="64"
  fi
  
  cd $TMP
-@@ -81,6 +84,8 @@
+@@ -81,6 +87,10 @@
  
  if [ "$ARCH" = "x86_64" ]; then
    mv $PKG/usr/lib $PKG/usr/lib${LIBDIRSUFFIX}
 +elif [ "$ARCH" = "aarch64" ]; then
++  mv $PKG/usr/lib $PKG/usr/lib${LIBDIRSUFFIX}
++elif [ "$ARCH" = "riscv64" ]; then
 +  mv $PKG/usr/lib $PKG/usr/lib${LIBDIRSUFFIX}
  fi
  rm $PKG/usr/lib${LIBDIRSUFFIX}/*.a

@@ -1,11 +1,15 @@
---- a/SDL2_gfx.SlackBuild	2018-04-28 14:02:01.318138281 +0300
-+++ b/SDL2_gfx.SlackBuild	2018-04-28 14:02:28.073714541 +0300
-@@ -64,6 +64,10 @@
+--- a/SDL2_gfx.SlackBuild	2021-02-13 03:03:06.888102564 +0200
++++ b/SDL2_gfx.SlackBuild	2021-02-13 03:03:43.960083638 +0200
+@@ -64,6 +64,14 @@
    SLKCFLAGS="-O3 -march=armv7-a -mfpu=vfpv3-d16"
    LIBDIRSUFFIX=""
    MMX="--disable-mmx"
 +elif [ "$ARCH" = "aarch64" ]; then
-+  SLKCFLAGS="-O2"
++  SLKCFLAGS="-O2 -fPIC"
++  LIBDIRSUFFIX="64"
++  MMX="--disable-mmx"
++elif [ "$ARCH" = "riscv64" ]; then
++  SLKCFLAGS="-O2 -fPIC"
 +  LIBDIRSUFFIX="64"
 +  MMX="--disable-mmx"
  else

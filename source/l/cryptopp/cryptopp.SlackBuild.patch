@@ -1,10 +1,14 @@
---- a/cryptopp.SlackBuild	2020-10-27 19:12:50.803057531 +0000
-+++ b/cryptopp.SlackBuild	2020-11-04 04:48:51.525126206 +0000
-@@ -60,6 +60,10 @@
+--- a/cryptopp.SlackBuild	2021-02-13 03:14:31.779752182 +0200
++++ b/cryptopp.SlackBuild	2021-02-13 03:16:51.987672659 +0200
+@@ -60,6 +60,14 @@
    SLKCFLAGS="-O2 -fPIC"
    SLKLDFLAGS="-L/usr/lib64"
    LIBDIRSUFFIX="64"
 +elif [ "$ARCH" = "aarch64" ]; then
++  SLKCFLAGS="-O2 -fPIC"
++  SLKLDFLAGS="-L/usr/lib64"
++  LIBDIRSUFFIX="64"
++elif [ "$ARCH" = "riscv64" ]; then
 +  SLKCFLAGS="-O2 -fPIC"
 +  SLKLDFLAGS="-L/usr/lib64"
 +  LIBDIRSUFFIX="64"

@@ -1,21 +1,25 @@
---- a/mozilla-nss.SlackBuild	2020-08-22 17:21:57.628930713 +0000
-+++ b/mozilla-nss.SlackBuild	2020-08-22 22:23:22.626536525 +0000
-@@ -60,6 +60,10 @@
+--- a/mozilla-nss.SlackBuild	2021-02-13 03:39:54.978891140 +0200
++++ b/mozilla-nss.SlackBuild	2021-02-13 03:40:55.462857356 +0200
+@@ -60,6 +60,14 @@
  elif [ "$ARCH" = "armv7hl" ]; then
    SLKCFLAGS="-O2 -march=armv7-a -mfpu=vfpv3-d16"
    LIBDIRSUFFIX=""
 +elif [ "$ARCH" = "aarch64" ]; then
-+  SLKCFLAGS="-O2"
++  SLKCFLAGS="-O2 -fPIC"
++  LIBDIRSUFFIX="64"
++  export USE_64=1
++elif [ "$ARCH" = "riscv64" ]; then
++  SLKCFLAGS="-O2 -fPIC"
 +  LIBDIRSUFFIX="64"
 +  export USE_64=1
  else
    SLKCFLAGS="-O2"
    LIBDIRSUFFIX=""
-@@ -92,8 +96,12 @@
+@@ -92,8 +100,12 @@
    \( -perm 666 -o -perm 664 -o -perm 600 -o -perm 444 -o -perm 440 -o -perm 400 \) \
    -exec chmod 644 {} \+
  
-+if [[ $ARCH == "arch64" ]]; then
++if [[ $ARCH == "arch64" || $ARCH == "riscv64" ]]; then
 +    OPTIONS="-Ddisable_arm32_neon=1 -Ddisable_arm_hw_aes=1 -Ddisable_arm_hw_sha2=1"
 +fi
 +

@@ -1,16 +1,19 @@
---- a/exiv2.SlackBuild	2020-10-29 04:37:09.930687866 +0000
-+++ b/exiv2.SlackBuild	2020-10-30 01:07:19.267990302 +0000
-@@ -60,6 +60,9 @@
+--- a/exiv2.SlackBuild	2021-02-13 03:18:12.327626731 +0200
++++ b/exiv2.SlackBuild	2021-02-13 03:18:43.567608892 +0200
+@@ -60,6 +60,12 @@
  elif [ "$ARCH" = "x86_64" ]; then
    SLKCFLAGS="-O2 -fPIC"
    LIBDIRSUFFIX="64"
 +elif [ "$ARCH" = "aarch64" ]; then
-+  SLKCFLAGS="-O2"
++  SLKCFLAGS="-O2 -fPIC"
++  LIBDIRSUFFIX="64"
++elif [ "$ARCH" = "riscv64" ]; then
++  SLKCFLAGS="-O2 -fPIC"
 +  LIBDIRSUFFIX="64"
  else
    SLKCFLAGS="-O2"
    LIBDIRSUFFIX=""
-@@ -80,6 +83,8 @@
+@@ -80,6 +86,8 @@
   \( -perm 666 -o -perm 664 -o -perm 600 -o -perm 444 -o -perm 440 -o -perm 400 \) \
   -exec chmod 644 {} \+
  

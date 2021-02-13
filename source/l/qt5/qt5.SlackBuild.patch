@@ -1,22 +1,27 @@
---- a/qt5.SlackBuild	2020-02-21 18:03:46.641566977 +0000
-+++ b/qt5.SlackBuild	2020-02-21 18:04:50.518999057 +0000
-@@ -81,6 +81,11 @@
+--- a/qt5.SlackBuild	2021-02-13 03:46:31.830669992 +0200
++++ b/qt5.SlackBuild	2021-02-13 03:47:40.154632038 +0200
+@@ -81,6 +81,16 @@
    SLKCFLAGS="-O2 -march=armv7-a -mfpu=vfpv3-d16 -fno-strict-volatile-bitfields"
    SLKLDFLAGS=""
    LIBDIRSUFFIX=""
 +elif [ "$ARCH" = "aarch64" ]; then
-+  SLKCFLAGS="-O2"
++  SLKCFLAGS="-O2 -fPIC"
++  SLKLDFLAGS=""
++  SLKLDFLAGS="-L/usr/lib64"
++  LIBDIRSUFFIX="64"
++elif [ "$ARCH" = "riscv64" ]; then
++  SLKCFLAGS="-O2 -fPIC"
 +  SLKLDFLAGS=""
 +  SLKLDFLAGS="-L/usr/lib64"
 +  LIBDIRSUFFIX="64"
  else
    SLKCFLAGS="-O2"
    SLKLDFLAGS=""
-@@ -153,6 +158,19 @@
+@@ -146,6 +156,19 @@
    unset TAG
  fi
  
-+if [ "$ARCH" == "aarch64" ]; then
++if [ "$ARCH" == "aarch64" || "$ARCH" == "riscv64" ]; then
 +  EXTRACONF="-no-sse2 \
 +             -no-sse3 \
 +             -no-ssse3 \
@@ -32,7 +37,7 @@
  # Use our custom compiler and linker flags:
  sed -e "s|^\(QMAKE_CFLAGS_RELEASE.*\)|\1 ${SLKCFLAGS}|" \
    -i qtbase/mkspecs/common/gcc-base.conf || exit 1
-@@ -217,6 +235,7 @@
+@@ -210,6 +233,7 @@
    ${FFMPEG_OPTION} \
    ${PULSEAUDIO_OPTION} \
    ${RELOCATIONS} \

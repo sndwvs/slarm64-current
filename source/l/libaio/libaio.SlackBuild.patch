@@ -1,10 +1,12 @@
---- a/libaio.SlackBuild	2019-03-02 04:57:06.049418222 +0000
-+++ b/libaio.SlackBuild	2019-03-09 12:50:08.025588764 +0000
-@@ -48,6 +48,8 @@
+--- a/libaio.SlackBuild	2021-02-13 03:32:22.455144875 +0200
++++ b/libaio.SlackBuild	2021-02-13 03:32:46.743131212 +0200
+@@ -48,6 +48,10 @@
  
  if [ "$ARCH" = "x86_64" ]; then
    LIBDIRSUFFIX="64"
 +elif [ "$ARCH" = "aarch64" ]; then
++  LIBDIRSUFFIX="64"
++elif [ "$ARCH" = "riscv64" ]; then
 +  LIBDIRSUFFIX="64"
  else
    LIBDIRSUFFIX=""

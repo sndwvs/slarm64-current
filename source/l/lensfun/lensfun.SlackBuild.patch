@@ -1,16 +1,19 @@
---- a/lensfun.SlackBuild	2020-10-27 19:14:00.463059089 +0000
-+++ b/lensfun.SlackBuild	2020-11-04 05:11:03.898444042 +0000
-@@ -60,6 +60,9 @@
+--- a/lensfun.SlackBuild	2021-02-13 03:30:47.971198081 +0200
++++ b/lensfun.SlackBuild	2021-02-13 03:31:20.095179982 +0200
+@@ -60,6 +60,12 @@
  elif [ "$ARCH" = "x86_64" ]; then
    SLKCFLAGS="-O2 -fPIC"
    LIBDIRSUFFIX="64"
 +elif [ "$ARCH" = "aarch64" ]; then
-+  SLKCFLAGS="-O2"
++  SLKCFLAGS="-O2 -fPIC"
++  LIBDIRSUFFIX="64"
++elif [ "$ARCH" = "riscv64" ]; then
++  SLKCFLAGS="-O2 -fPIC"
 +  LIBDIRSUFFIX="64"
  elif [ "$ARCH" = "armv7hl" ]; then
    SLKCFLAGS="-O3 -march=armv7-a -mfpu=vfpv3-d16"
    LIBDIRSUFFIX=""
-@@ -86,6 +89,9 @@
+@@ -86,6 +92,9 @@
    \( -perm 666 -o -perm 664 -o -perm 600 -o -perm 444 -o -perm 440 -o -perm 400 \) \
    -exec chmod 644 {} \+
  
@@ -20,7 +23,7 @@
  # Configure, build, and install:
  mkdir cmake-build
  cd cmake-build
-@@ -93,13 +99,13 @@
+@@ -93,13 +102,13 @@
      -DCMAKE_BUILD_TYPE=Release \
      -DCMAKE_C_FLAGS:STRING="$SLKCFLAGS" \
      -DCMAKE_C_FLAGS_RELEASE:STRING="$SLKCFLAGS" \
