@@ -1,16 +1,19 @@
---- a/metamail.SlackBuild	2017-10-01 03:11:56.597385190 +0300
-+++ b/metamail.SlackBuild	2017-10-01 03:12:34.684385190 +0300
-@@ -51,6 +51,9 @@
+--- a/metamail.SlackBuild	2021-02-13 01:49:35.365049552 +0200
++++ b/metamail.SlackBuild	2021-02-13 01:50:11.013043373 +0200
+@@ -62,6 +62,12 @@
  elif [ "$ARCH" = "armel" ]; then
    SLKCFLAGS="-O2 -march=armv4t"
    LIBDIRSUFFIX=""
 +elif [ "$ARCH" = "aarch64" ]; then
-+  SLKCFLAGS="-O2"
++  SLKCFLAGS="-O2 -fPIC"
++  LIBDIRSUFFIX="64"
++elif [ "$ARCH" = "riscv64" ]; then
++  SLKCFLAGS="-O2 -fPIC"
 +  LIBDIRSUFFIX="64"
  else
    SLKCFLAGS="-O2"
    LIBDIRSUFFIX=""
-@@ -87,6 +90,7 @@
+@@ -97,6 +103,7 @@
    --disable-static \
    --program-prefix="" \
    --program-suffix="" \

@@ -1,0 +1,7 @@
+
+rules() {
+    export CFLAGS=""
+    export LDFLAGS=""
+}
+
+rules

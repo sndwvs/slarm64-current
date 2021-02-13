@@ -1,10 +1,12 @@
---- a/tcp_wrappers.SlackBuild	2019-06-13 03:25:55.050115541 +0100
-+++ b/tcp_wrappers.SlackBuild	2019-10-12 10:22:13.476908728 +0100
-@@ -48,6 +48,8 @@
+--- a/tcp_wrappers.SlackBuild	2021-02-13 02:03:16.640859127 +0200
++++ b/tcp_wrappers.SlackBuild	2021-02-13 02:03:45.672850675 +0200
+@@ -48,6 +48,10 @@
  
  if [ "$ARCH" = "x86_64" ]; then
    LIBDIRSUFFIX="64"
 +elif [ "$ARCH" = "aarch64" ]; then
++  LIBDIRSUFFIX="64"
++elif [ "$ARCH" = "riscv64" ]; then
 +  LIBDIRSUFFIX="64"
  else
    LIBDIRSUFFIX=""

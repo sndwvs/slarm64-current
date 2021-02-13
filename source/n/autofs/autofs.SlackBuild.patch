@@ -1,16 +1,19 @@
---- a/autofs.SlackBuild	2017-09-30 14:13:28.222852556 +0300
-+++ b/autofs.SlackBuild	2017-09-30 14:22:30.232852556 +0300
-@@ -47,6 +47,9 @@
+--- a/autofs.SlackBuild	2021-02-13 01:27:59.881791100 +0200
++++ b/autofs.SlackBuild	2021-02-13 01:28:32.189772994 +0200
+@@ -55,6 +55,12 @@
  elif [ "$ARCH" = "x86_64" ]; then
    SLKCFLAGS="-O2 -fPIC"
    LIBDIRSUFFIX="64"
 +elif [ "$ARCH" = "aarch64" ]; then
 +  SLKCFLAGS="-O2 -fgnu89-inline"
 +  LIBDIRSUFFIX="64"
++elif [ "$ARCH" = "riscv64" ]; then
++  SLKCFLAGS="-O2 -fgnu89-inline"
++  LIBDIRSUFFIX="64"
  else
    SLKCFLAGS="-O2"
    LIBDIRSUFFIX=""
-@@ -77,6 +80,7 @@
+@@ -82,6 +88,7 @@
  
  CFLAGS="$SLKCFLAGS" \
  CPPFLAGS="$SLKCFLAGS" \
@@ -18,9 +21,9 @@
  ./configure \
    --prefix=/usr \
    --mandir=/usr/man \
-@@ -85,6 +89,11 @@
+@@ -91,6 +98,11 @@
    --without-sasl \
-   --build=$ARCH-slackware-linux
+   --build=$ARCH-slackware-linux || exit 1
  
 +# Nasty hack since adding -fgnu89-inline to CFLAGS is not enough.
 +# https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=777787

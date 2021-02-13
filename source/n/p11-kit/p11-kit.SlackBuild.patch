@@ -1,16 +1,19 @@
---- a/p11-kit.SlackBuild	2020-01-23 17:02:52.383698510 +0000
-+++ b/p11-kit.SlackBuild	2020-01-23 17:10:09.933596792 +0000
-@@ -58,6 +58,9 @@
+--- a/p11-kit.SlackBuild	2021-02-13 01:58:02.804943307 +0200
++++ b/p11-kit.SlackBuild	2021-02-13 01:58:35.108935266 +0200
+@@ -58,6 +58,12 @@
  elif [ "$ARCH" = "x86_64" ]; then
    SLKCFLAGS="-O2 -fPIC"
    LIBDIRSUFFIX="64"
 +elif [ "$ARCH" = "aarch64" ]; then
-+  SLKCFLAGS="-O2"
++  SLKCFLAGS="-O2 -fPIC"
++  LIBDIRSUFFIX="64"
++elif [ "$ARCH" = "riscv64" ]; then
++  SLKCFLAGS="-O2 -fPIC"
 +  LIBDIRSUFFIX="64"
  else
    SLKCFLAGS="-O2"
    LIBDIRSUFFIX=""
-@@ -83,6 +86,7 @@
+@@ -83,6 +89,7 @@
    --libdir=/usr/lib${LIBDIRSUFFIX} \
    --sysconfdir=/etc \
    --localstatedir=/var \

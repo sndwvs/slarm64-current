@@ -1,18 +1,13 @@
---- a/wireless_tools.SlackBuild	2017-09-23 02:04:34.457842160 +0300
-+++ b/wireless_tools.SlackBuild	2017-09-23 02:05:01.911842160 +0300
-@@ -34,11 +34,10 @@
-   esac
+--- a/wireless_tools.SlackBuild	2021-02-13 02:07:43.872777268 +0200
++++ b/wireless_tools.SlackBuild	2021-02-13 02:08:12.000768133 +0200
+@@ -46,6 +46,10 @@
+ 
+ if [ "$ARCH" = "x86_64" ]; then
+   LIBDIRSUFFIX="64"
++elif [ "$ARCH" = "aarch64" ]; then
++  LIBDIRSUFFIX="64"
++elif [ "$ARCH" = "riscv64" ]; then
++  LIBDIRSUFFIX="64"
+ else
+   LIBDIRSUFFIX=""
  fi
- 
--if [ "$ARCH" = "x86_64" ]; then
--  LIBDIRSUFFIX="64"
--else
--  LIBDIRSUFFIX=""
--fi
-+case "$ARCH" in
-+  x86_64|aarch64) LIBDIRSUFFIX="64" ;;
-+               *) LIBDIRSUFFIX="" ;;
-+esac
- 
- CWD=$(pwd)
- TMP=${TMP:-/tmp}

@@ -1,17 +1,19 @@
---- a/net-tools.SlackBuild	2017-10-01 03:48:55.763997055 +0300
-+++ b/net-tools.SlackBuild	2017-10-01 03:50:07.592994496 +0300
-@@ -49,6 +49,8 @@
+--- a/net-tools.SlackBuild	2021-02-13 01:52:38.073015774 +0200
++++ b/net-tools.SlackBuild	2021-02-13 01:53:15.501008219 +0200
+@@ -57,6 +57,10 @@
    SLKCFLAGS="-O2"
  elif [ "$ARCH" = "x86_64" ]; then
    SLKCFLAGS="-O2 -fPIC"
 +elif [ "$ARCH" = "aarch64" ]; then
-+  SLKCFLAGS="-O2"
++  SLKCFLAGS="-O2 -fPIC"
++elif [ "$ARCH" = "riscv64" ]; then
++  SLKCFLAGS="-O2 -fPIC"
  else
    SLKCFLAGS="-O2"
  fi
-@@ -67,6 +69,16 @@
+@@ -75,6 +79,16 @@
    \( -perm 666 -o -perm 664 -o -perm 600 -o -perm 444 -o -perm 440 -o -perm 400 \) \
-   -exec chmod 644 {} \;
+   -exec chmod 644 {} \+
  
 +# Patch to fix FTBFS:
 +sed -i 's? HAVE_HWSTRIP 1? HAVE_HWSTRIP 0?g' config.h
@@ -24,5 +26,5 @@
 +done
 +
  mkdir -p $PKG/usr/doc/net-tools-$VERSION
- cp -a COPYING* README* $PKG/usr/doc/net-tools-$VERSION
- chmod 644 $PKG/usr/doc/net-tools-$VERSION/*
+ cp -a \
+   COPYING* INSTALLING README* THANKS TODO \

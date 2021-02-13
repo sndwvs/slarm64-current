@@ -1,10 +1,12 @@
---- a/traceroute.SlackBuild	2019-06-13 03:32:11.683577670 +0100
-+++ b/traceroute.SlackBuild	2019-10-12 10:24:04.810295134 +0100
-@@ -48,6 +48,8 @@
+--- a/traceroute.SlackBuild	2021-02-13 02:05:27.652820123 +0200
++++ b/traceroute.SlackBuild	2021-02-13 02:05:57.364810973 +0200
+@@ -48,6 +48,10 @@
  
  if [ "$ARCH" = "x86_64" ]; then
    LIBDIRSUFFIX=64
 +elif [ "$ARCH" = "aarch64" ]; then
++  LIBDIRSUFFIX=64
++elif [ "$ARCH" = "riscv64" ]; then
 +  LIBDIRSUFFIX=64
  else
    LIBDIRSUFFIX=

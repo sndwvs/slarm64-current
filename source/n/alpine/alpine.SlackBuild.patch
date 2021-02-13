@@ -1,10 +1,12 @@
---- a/alpine.SlackBuild	2017-10-01 04:59:58.240534396 +0300
-+++ b/alpine.SlackBuild	2017-10-01 05:00:34.105534396 +0300
-@@ -52,6 +52,8 @@
+--- a/alpine.SlackBuild	2021-02-13 01:26:45.097832403 +0200
++++ b/alpine.SlackBuild	2021-02-13 01:27:10.569818430 +0200
+@@ -63,6 +63,10 @@
    SLKCFLAGS="-O2"
  elif [ "$ARCH" = "x86_64" ]; then
    SLKCFLAGS="-O2 -fPIC"
 +elif [ "$ARCH" = "aarch64" ]; then
++  SLKCFLAGS="-O2 -fPIC"
++elif [ "$ARCH" = "riscv64" ]; then
 +  SLKCFLAGS="-O2 -fPIC"
  fi
  

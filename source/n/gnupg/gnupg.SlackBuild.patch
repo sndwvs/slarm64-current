@@ -1,10 +1,12 @@
---- a/gnupg.SlackBuild	2021-01-20 20:16:52.513010860 +0200
-+++ b/gnupg.SlackBuild	2021-01-27 20:49:19.556600927 +0200
-@@ -55,6 +55,8 @@
+--- a/gnupg.SlackBuild	2021-02-13 01:34:42.117554849 +0200
++++ b/gnupg.SlackBuild	2021-02-13 01:35:04.957540749 +0200
+@@ -55,6 +55,10 @@
    SLKCFLAGS="-O2 -fcommon"
  elif [ "$ARCH" = "x86_64" ]; then
    SLKCFLAGS="-O2 -fPIC -fcommon"
 +elif [ "$ARCH" = "aarch64" ]; then
++  SLKCFLAGS="-O2 -fPIC -fcommon"
++elif [ "$ARCH" = "riscv64" ]; then
 +  SLKCFLAGS="-O2 -fPIC -fcommon"
  else
    SLKCFLAGS="-O2 -fcommon"

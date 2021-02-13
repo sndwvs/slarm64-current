@@ -1,10 +1,14 @@
---- a/nn.SlackBuild	2021-01-20 20:16:53.383010880 +0200
-+++ b/nn.SlackBuild	2021-01-27 20:58:46.638726856 +0200
-@@ -52,6 +52,10 @@
+--- a/nn.SlackBuild	2021-02-13 01:55:29.436979459 +0200
++++ b/nn.SlackBuild	2021-02-13 01:56:00.348972445 +0200
+@@ -52,6 +52,14 @@
    SLKCFLAGS="-O2 -fPIC -fcommon"
    LIBDIRSUFFIX="64"
    MFILE="m-x86_64.h"
 +elif [ "$ARCH" = "aarch64" ]; then
++  SLKCFLAGS="-O2 -fPIC -fcommon"
++  LIBDIRSUFFIX="64"
++  MFILE="m-i80386.h"
++elif [ "$ARCH" = "riscv64" ]; then
 +  SLKCFLAGS="-O2 -fPIC -fcommon"
 +  LIBDIRSUFFIX="64"
 +  MFILE="m-i80386.h"

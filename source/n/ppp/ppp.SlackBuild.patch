@@ -1,18 +1,13 @@
---- a/ppp.SlackBuild	2017-09-23 01:57:00.597842160 +0300
-+++ b/ppp.SlackBuild	2017-09-23 01:56:28.121842160 +0300
-@@ -37,11 +37,10 @@
-   esac
+--- a/ppp.SlackBuild	2021-02-13 01:59:18.324924280 +0200
++++ b/ppp.SlackBuild	2021-02-13 01:59:47.536916707 +0200
+@@ -50,6 +50,10 @@
+ 
+ if [ "$ARCH" = "x86_64" ]; then
+   LIBDIRSUFFIX="64"
++elif [ "$ARCH" = "aarch64" ]; then
++  LIBDIRSUFFIX="64"
++elif [ "$ARCH" = "riscv64" ]; then
++  LIBDIRSUFFIX="64"
+ else
+   LIBDIRSUFFIX=""
  fi
- 
--if [ "$ARCH" = "x86_64" ]; then
--  LIBDIRSUFFIX="64"
--else
--  LIBDIRSUFFIX=""
--fi
-+case "$ARCH" in
-+  x86_64|aarch64) LIBDIRSUFFIX="64" ;;
-+               *) LIBDIRSUFFIX="" ;;
-+esac
- 
- CWD=$(pwd)
- TMP=${TMP:-/tmp}

@@ -1,10 +1,13 @@
---- a/iftop.SlackBuild	2021-01-20 20:16:52.605010862 +0200
-+++ b/iftop.SlackBuild	2021-01-27 20:51:29.595845157 +0200
-@@ -60,6 +60,9 @@
+--- a/iftop.SlackBuild	2021-02-13 01:37:23.821453513 +0200
++++ b/iftop.SlackBuild	2021-02-13 01:37:49.337437205 +0200
+@@ -60,6 +60,12 @@
  elif [ "$ARCH" = "x86_64" ]; then
    SLKCFLAGS="-O2 -fPIC -fcommon"
    LIBDIRSUFFIX="64"
 +elif [ "$ARCH" = "aarch64" ]; then
++  SLKCFLAGS="-O2 -fPIC -fcommon"
++  LIBDIRSUFFIX="64"
++elif [ "$ARCH" = "riscv64" ]; then
 +  SLKCFLAGS="-O2 -fPIC -fcommon"
 +  LIBDIRSUFFIX="64"
  else

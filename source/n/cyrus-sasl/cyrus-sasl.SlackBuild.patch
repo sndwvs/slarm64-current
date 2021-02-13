@@ -1,17 +1,20 @@
---- a/cyrus-sasl.SlackBuild	2017-11-30 22:28:31.646167435 +0200
-+++ b/cyrus-sasl.SlackBuild	2017-11-30 22:29:58.461167435 +0200
-@@ -47,6 +47,9 @@
+--- a/cyrus-sasl.SlackBuild	2021-02-13 01:29:38.881735127 +0200
++++ b/cyrus-sasl.SlackBuild	2021-02-13 01:30:18.785712156 +0200
+@@ -58,6 +58,12 @@
  elif [ "$ARCH" = "x86_64" ]; then
    SLKCFLAGS="-O2 -fPIC"
    LIBDIRSUFFIX="64"
 +elif [ "$ARCH" = "aarch64" ]; then
-+  SLKCFLAGS="-O2"
++  SLKCFLAGS="-O2 -fPIC"
++  LIBDIRSUFFIX="64"
++elif [ "$ARCH" = "riscv64" ]; then
++  SLKCFLAGS="-O2 -fPIC"
 +  LIBDIRSUFFIX="64"
  else
    SLKCFLAGS="-O2"
    LIBDIRSUFFIX=""
-@@ -82,7 +85,8 @@
-   --with-saslauthd \
+@@ -93,7 +99,8 @@
+   --with-sqlite3=/usr \
    --with-gdbm \
    --with-devrandom=/dev/urandom \
 -  --with-dblib=gdbm || exit 1

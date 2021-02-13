@@ -1,10 +1,12 @@
---- a/vsftpd.SlackBuild	2018-09-18 23:04:14.079104596 +0100
-+++ b/vsftpd.SlackBuild	2019-10-12 10:25:47.431573594 +0100
-@@ -48,6 +48,8 @@
+--- a/vsftpd.SlackBuild	2021-02-13 02:06:38.740798046 +0200
++++ b/vsftpd.SlackBuild	2021-02-13 02:07:02.668790473 +0200
+@@ -48,6 +48,10 @@
  
  if [ "$ARCH" = "x86_64" ]; then
    LIBDIRSUFFIX="64"
 +elif [ "$ARCH" = "aarch64" ]; then
++  LIBDIRSUFFIX="64"
++elif [ "$ARCH" = "riscv64" ]; then
 +  LIBDIRSUFFIX="64"
  else
    LIBDIRSUFFIX=""
