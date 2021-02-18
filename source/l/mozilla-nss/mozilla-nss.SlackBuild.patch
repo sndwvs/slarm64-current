@@ -1,5 +1,5 @@
---- a/mozilla-nss.SlackBuild	2021-02-13 03:39:54.978891140 +0200
-+++ b/mozilla-nss.SlackBuild	2021-02-13 03:40:55.462857356 +0200
+--- a/mozilla-nss.SlackBuild	2021-02-18 12:07:48.958304500 +0200
++++ b/mozilla-nss.SlackBuild	2021-02-18 12:18:00.285670341 +0200
 @@ -60,6 +60,14 @@
  elif [ "$ARCH" = "armv7hl" ]; then
    SLKCFLAGS="-O2 -march=armv7-a -mfpu=vfpv3-d16"
@@ -15,10 +15,12 @@
  else
    SLKCFLAGS="-O2"
    LIBDIRSUFFIX=""
-@@ -92,8 +100,12 @@
+@@ -92,8 +100,14 @@
    \( -perm 666 -o -perm 664 -o -perm 600 -o -perm 444 -o -perm 440 -o -perm 400 \) \
    -exec chmod 644 {} \+
  
++xzcat $CWD/nss_use_64-riscv64.patch.xz | patch -p1 --verbose || exit 1
++
 +if [[ $ARCH == "arch64" || $ARCH == "riscv64" ]]; then
 +    OPTIONS="-Ddisable_arm32_neon=1 -Ddisable_arm_hw_aes=1 -Ddisable_arm_hw_sha2=1"
 +fi
