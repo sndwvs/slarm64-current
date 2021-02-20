@@ -1,5 +1,5 @@
---- a/llvm.SlackBuild	2021-02-19 22:06:48.981590491 +0200
-+++ b/llvm.SlackBuild	2021-02-19 22:08:24.863775026 +0200
+--- a/llvm.SlackBuild	2021-02-20 15:32:10.519175899 +0200
++++ b/llvm.SlackBuild	2021-02-20 15:34:40.150783736 +0200
 @@ -59,6 +59,12 @@
  elif [ "$ARCH" = "x86_64" ]; then
    SLKCFLAGS="-O2 -fPIC"
@@ -29,3 +29,21 @@
  # As of clang-tools-extra-7.0.0 we get the following error on i586 or i686:
  # CMakeFiles/clangDaemon.dir/Trace.cpp.o:Trace.cpp:function std::unique_ptr<clang::clangd::trace::(anonymous namespace)::JSONTracer::JSONSpan, std::default_delete<clang::clangd::trace::(anonymous namespace)::JSONTracer::JSONSpan> >::~unique_ptr(): error: undefined reference to '__atomic_load_8'
  # Attempts to try to fix this have failed here, so for now we will not build
+@@ -136,6 +151,8 @@
+   \( -perm 666 -o -perm 664 -o -perm 640 -o -perm 600 -o -perm 444 -o -perm 440 -o -perm 400 \) \
+   -exec chmod 644 {} \+
+ 
++[[ "$ARCH" != "riscv64" ]] && USE_LINKER="-DLLVM_USE_LINKER=gold"
++
+ mkdir build
+ cd build
+   cmake -GNinja \
+@@ -147,7 +164,7 @@
+     -DLLVM_LIBDIR_SUFFIX=${LIBDIRSUFFIX} \
+     -DCMAKE_BUILD_TYPE=Release \
+     -DBUILD_SHARED_LIBS=ON \
+-    -DLLVM_USE_LINKER=gold \
++    $USE_LINKER \
+     -DLLVM_ENABLE_RTTI=ON \
+     -DLLVM_ENABLE_FFI=ON \
+     -DLLVM_ENABLE_ASSERTIONS=OFF \
