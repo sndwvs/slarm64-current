@@ -1,5 +1,5 @@
 --- a/llvm.SlackBuild	2021-02-20 15:32:10.519175899 +0200
-+++ b/llvm.SlackBuild	2021-02-21 16:05:20.323272437 +0200
++++ b/llvm.SlackBuild	2021-02-21 17:38:33.046030637 +0200
 @@ -59,6 +59,12 @@
  elif [ "$ARCH" = "x86_64" ]; then
    SLKCFLAGS="-O2 -fPIC"
@@ -36,7 +36,7 @@
 +if [[ "$ARCH" == "riscv64" ]]; then
 +    # /usr/bin/ld: lib64/liblldbPluginProcessLinux.a(NativeThreadLinux.cpp.o): in function `.LBB0_1':
 +    # NativeThreadLinux.cpp:(.text._ZN12lldb_private13process_linux17NativeThreadLinuxC2ERNS0_18NativeProcessLinuxEm+0x46): undefined reference to `lldb_private::process_linux::NativeRegisterContextLinux::CreateHostNativeRegisterContextLinux(lldb_private::ArchSpec const&, lldb_private::NativeThreadProtocol&)'
-+    OPTIONS="-DWITHOUT_LLDB=ON"
++    OPTIONS="-DLLDB_BUILD_FRAMEWORK=OFF"
 +else
 +    OPTIONS="-DLLVM_USE_LINKER=gold"
 +fi
