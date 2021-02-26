@@ -1,6 +1,16 @@
---- a/rust.SlackBuild	2021-01-20 20:21:41.241017319 +0200
-+++ b/rust.SlackBuild	2021-02-06 08:00:25.920327331 +0200
-@@ -126,6 +126,10 @@
+--- a/rust.SlackBuild	2021-02-26 20:07:43.843333049 +0200
++++ b/rust.SlackBuild	2021-02-26 20:09:35.807101967 +0200
+@@ -98,6 +98,9 @@
+ elif [ "$ARCH" = "armv7hl" ]; then
+   BARCH="armv7"
+   TARCH="$BARCH"
++elif [ "$ARCH" = "riscv64" ]; then
++  BARCH="riscv64gc"
++  TARCH="$ARCH"
+ else
+   BARCH="$ARCH"
+   TARCH="$ARCH"
+@@ -126,6 +129,10 @@
    LIBDIRSUFFIX="64"
  elif [ "$ARCH" = "armv7hl" ]; then
    LIBDIRSUFFIX=""
@@ -11,7 +21,7 @@
  else
    LIBDIRSUFFIX=""
  fi
-@@ -198,6 +202,12 @@
+@@ -198,6 +205,12 @@
  
  [target.armv7-unknown-linux-gnueabihf]
  llvm-config = "/usr/bin/llvm-config"
@@ -19,7 +29,7 @@
 +[target.aarch64-unknown-linux-gnu]
 +llvm-config = "/usr/bin/llvm-config"
 +
-+[target.riscv64gc-unknown-linux-gnu]
++[target.riscv64-unknown-linux-gnu]
 +llvm-config = "/usr/bin/llvm-config"
  EOF
  fi
