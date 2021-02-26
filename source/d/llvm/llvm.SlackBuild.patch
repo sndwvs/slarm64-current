@@ -36,7 +36,7 @@
 +if [[ "$ARCH" == "riscv64" ]]; then
 +    # /usr/bin/ld: lib64/liblldbPluginProcessLinux.a(NativeThreadLinux.cpp.o): in function `.LBB0_1':
 +    # NativeThreadLinux.cpp:(.text._ZN12lldb_private13process_linux17NativeThreadLinuxC2ERNS0_18NativeProcessLinuxEm+0x46): undefined reference to `lldb_private::process_linux::NativeRegisterContextLinux::CreateHostNativeRegisterContextLinux(lldb_private::ArchSpec const&, lldb_private::NativeThreadProtocol&)'
-+    OPTIONS="-DLLDB_BUILD_FRAMEWORK=OFF"
++    OPTIONS="-DLLDB_TOOL_LLDB_SERVER_BUILD=OFF"
 +    CLANGD="-DCLANG_ENABLE_CLANGD=OFF"
 +else
 +    OPTIONS="-DLLVM_USE_LINKER=gold"
