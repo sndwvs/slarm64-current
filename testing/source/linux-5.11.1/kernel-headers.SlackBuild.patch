@@ -1,0 +1,11 @@
+--- a/kernel-headers.SlackBuild	2019-09-29 23:48:34.848502654 +0000
++++ b/kernel-headers.SlackBuild	2021-02-05 19:22:12.180614936 +0000
+@@ -35,6 +35,8 @@
+     case "$(uname -m)" in
+     i?86) HEADERS_ARCH=x86 ;;
+     x86_64) HEADERS_ARCH=x86 ;;
++    aarch64) HEADERS_ARCH=arm64 ;;
++    riscv64) HEADERS_ARCH=riscv ;;
+     # Use uname -m for all other archs:
+     *) HEADERS_ARCH=$(uname -m) ;;
+   esac

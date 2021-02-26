@@ -1,0 +1,50 @@
+--- a/build-all-kernels.sh	2019-12-27 22:39:09.034996687 +0000
++++ b/build-all-kernels.sh	2021-02-05 19:28:52.549211368 +0000
+@@ -53,6 +53,10 @@
+     RECIPES="x86_64"
+   elif uname -m | grep -wq i.86 ; then
+     RECIPES="IA32_NO_SMP IA32_SMP"
++  elif uname -m | grep -wq aarch64 ; then
++    RECIPES="aarch64"
++  elif uname -m | grep -wq riscv64 ; then
++    RECIPES="riscv64"
+   else
+     echo "Error: no build recipes available for $(uname -m)"
+     exit 1
+@@ -79,6 +83,16 @@
+     unset CONFIG_SUFFIX
+     unset LOCALVERSION
+     OUTPUT=${OUTPUT:-${TMP}/output-ia32-${VERSION}}
++  elif [ "$recipe" = "aarch64" ]; then
++    # Recipe for aarch64:
++    CONFIG_SUFFIX=".arm64"
++    unset LOCALVERSION
++    OUTPUT=${OUTPUT:-${TMP}/output-aarch64-${VERSION}}
++  elif [ "$recipe" = "riscv64" ]; then
++    # Recipe for riscv64:
++    CONFIG_SUFFIX=".riscv64"
++    unset LOCALVERSION
++    OUTPUT=${OUTPUT:-${TMP}/output-riscv64-${VERSION}}
+   else
+     echo "Error: recipe ${recipe} not implemented"
+     exit 1
+@@ -100,19 +114,6 @@
+     installpkg ${OUTPUT}/${KERNEL_SOURCE_PACKAGE_NAME} || exit 1
+   fi
+ 
+-  # Build kernel-huge package:
+-  # We will build in the just-built kernel tree. First, let's put back the
+-  # symlinks:
+-  ( cd $TMP/package-kernel-source
+-    sh install/doinst.sh
+-  )
+-  KERNEL_HUGE_PACKAGE_NAME=$(PRINT_PACKAGE_NAME=YES KERNEL_NAME=huge KERNEL_SOURCE=$TMP/package-kernel-source/usr/src/linux KERNEL_CONFIG=./kernel-configs/config-huge${LOCALVERSION}-${VERSION}${LOCALVERSION}${CONFIG_SUFFIX} CONFIG_SUFFIX=${CONFIG_SUFFIX} KERNEL_OUTPUT_DIRECTORY=$OUTPUT/kernels/huge$(echo ${LOCALVERSION} | tr -d -).s BUILD=$BUILD ./kernel-generic.SlackBuild)
+-  KERNEL_NAME=huge KERNEL_SOURCE=$TMP/package-kernel-source/usr/src/linux KERNEL_CONFIG=./kernel-configs/config-huge${LOCALVERSION}-${VERSION}${LOCALVERSION}${CONFIG_SUFFIX} CONFIG_SUFFIX=${CONFIG_SUFFIX} KERNEL_OUTPUT_DIRECTORY=$OUTPUT/kernels/huge$(echo ${LOCALVERSION} | tr -d -).s BUILD=$BUILD ./kernel-generic.SlackBuild
+-  mv ${TMP}/${KERNEL_HUGE_PACKAGE_NAME} $OUTPUT || exit 1
+-  if [ "${INSTALL_PACKAGES}" = "YES" ]; then
+-    installpkg ${OUTPUT}/${KERNEL_HUGE_PACKAGE_NAME} || exit 1
+-  fi
+-
+   # Build kernel-generic package:
+   KERNEL_GENERIC_PACKAGE_NAME=$(PRINT_PACKAGE_NAME=YES KERNEL_NAME=generic KERNEL_SOURCE=$TMP/package-kernel-source/usr/src/linux KERNEL_CONFIG=./kernel-configs/config-generic${LOCALVERSION}-${VERSION}${LOCALVERSION}${CONFIG_SUFFIX} CONFIG_SUFFIX=${CONFIG_SUFFIX} KERNEL_OUTPUT_DIRECTORY=$OUTPUT/kernels/generic$(echo ${LOCALVERSION} | tr -d -).s BUILD=$BUILD ./kernel-generic.SlackBuild)
+   KERNEL_NAME=generic KERNEL_SOURCE=$TMP/package-kernel-source/usr/src/linux KERNEL_CONFIG=./kernel-configs/config-generic${LOCALVERSION}-${VERSION}${LOCALVERSION}${CONFIG_SUFFIX} CONFIG_SUFFIX=${CONFIG_SUFFIX} KERNEL_OUTPUT_DIRECTORY=$OUTPUT/kernels/generic$(echo ${LOCALVERSION} | tr -d -).s BUILD=$BUILD ./kernel-generic.SlackBuild
