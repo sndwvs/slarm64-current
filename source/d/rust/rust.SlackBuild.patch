@@ -6,7 +6,7 @@
    TARCH="$BARCH"
 +elif [ "$ARCH" = "riscv64" ]; then
 +  BARCH="riscv64gc"
-+  TARCH="$ARCH"
++  TARCH="$BARCH"
  else
    BARCH="$ARCH"
    TARCH="$ARCH"
@@ -29,7 +29,7 @@
 +[target.aarch64-unknown-linux-gnu]
 +llvm-config = "/usr/bin/llvm-config"
 +
-+[target.riscv64-unknown-linux-gnu]
++[target.riscv64gc-unknown-linux-gnu]
 +llvm-config = "/usr/bin/llvm-config"
  EOF
  fi
