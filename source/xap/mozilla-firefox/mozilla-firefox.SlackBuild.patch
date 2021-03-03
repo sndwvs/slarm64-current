@@ -1,64 +1,42 @@
---- a/mozilla-firefox.SlackBuild	2021-02-13 00:55:17.215396576 +0200
-+++ b/mozilla-firefox.SlackBuild	2021-02-13 00:55:54.623354802 +0200
-@@ -42,6 +42,9 @@
+--- a/mozilla-thunderbird.SlackBuild	2021-03-03 19:08:16.204200568 +0200
++++ b/mozilla-thunderbird.SlackBuild	2021-03-03 19:12:23.476045239 +0200
+@@ -44,6 +44,9 @@
  # "UnicodeDecodeError: 'ascii' codec can't decode byte 0xe2 in position 36: ordinal not in range(128)"
  LANG=C
  
 +# LTO needs more open files
 +ulimit -n 4096
 +
- # Add a shell script to start the firefox binary with MOZ_ALLOW_DOWNGRADE=1
+ # Add a shell script to start the thunderbird binary with MOZ_ALLOW_DOWNGRADE=1
  # to avoid backing up (and disabling) the user profile if a browser downgrade
- # is detected. We made it fine for years without this feature, and all the
-@@ -145,6 +148,12 @@
- elif [ "$ARCH" = "armel" ]; then
-   SLKCFLAGS="-O2 -g0 -march=armv4t"
+ # is detected. If you want to build with the stock default behavior, set
+@@ -107,6 +110,14 @@
+   SLKCFLAGS="-march=armv4 -mtune=xscale"
    LIBDIRSUFFIX=""
+   OPTIMIZE=${OPTIMIZE:-"-O2 -g0"}
 +elif [ "$ARCH" = "aarch64" ]; then
 +  SLKCFLAGS="-O2 -g0 -fPIC"
 +  LIBDIRSUFFIX="64"
++  OPTIMIZE=${OPTIMIZE:-"-O2 -g0"}
 +elif [ "$ARCH" = "riscv64" ]; then
 +  SLKCFLAGS="-O2 -g0 -fPIC"
 +  LIBDIRSUFFIX="64"
++  OPTIMIZE=${OPTIMIZE:-"-O2 -g0"}
  else
-   SLKCFLAGS="-O2 -g0"
+   SLKCFLAGS=""
    LIBDIRSUFFIX=""
-@@ -221,8 +230,18 @@
-   \( -perm 666 -o -perm 664 -o -perm 600 -o -perm 444 -o -perm 440 -o -perm 400 \) \
-   -exec chmod 644 {} \+
- 
-+xzcat $CWD/Bug-1238661---fix-mozillaSignalTrampoline-to-work-.patch.xz | patch -p1 --verbose || exit 1
-+xzcat $CWD/arm.patch.xz | patch -p1 --verbose || exit 1
-+xzcat $CWD/build-arm-libopus.patch.xz | patch -p1 --verbose || exit 1
-+
- # Our building options, in a configure-like display ;)
- OPTIONS="\
-+  --host=$ARCH-slackware-linux \
-+  --target=$ARCH-slackware-linux \
-+  --disable-av1 \
-+  --disable-jemalloc \
-+  --disable-webrtc \
-+  \
-   --enable-official-branding \
-   --prefix=/usr \
-   --libdir=/usr/lib${LIBDIRSUFFIX} \
-@@ -295,9 +314,19 @@
-   echo "ac_add_options --target=i686-pc-linux-gnu" >> .mozconfig
- fi
- 
-+if [[ $ARCH == "aarch64" ]]; then
-+    echo 'ac_add_options --enable-rust-simd' >> .mozconfig
-+fi
-+
- # Add the $OPTIONS above to .mozconfig:
- for option in $OPTIONS; do echo "ac_add_options $option" >> .mozconfig; done
- 
-+# ARM: see https://bugzilla.redhat.com/show_bug.cgi?id=1426850
-+# This isn't added using $SLKCONFARGS because it doesn't cater for things with spaces in:
-+# unless I edit the for loop above to use IFS with some other variable.
-+# this is easier right now ;-)
-+echo 'ac_add_options --enable-optimize="-O2 -fno-schedule-insns"' >> .mozconfig
-+
- # https://developer.mozilla.org/en-US/docs/Building_with_Profile-Guided_Optimization
- # Thanks to ArchLinux and Gentoo for the additional hints.
- if [ "$PGO" = "yes" ]; then
+@@ -187,6 +198,14 @@
+              # Make Thunderbird compile on ARM platforms lacking neon support:
+              zcat $CWD/mozilla-firefox.xpcom_arm.patch.gz | patch -p1 --verbose || exit 1
+              ;;
++    aarch64) ARCH_CONFIG="--disable-elf-hack"
++             xzcat $CWD/arm.patch.xz | patch -p1 --verbose || exit 1
++             xzcat $CWD/Bug-1238661---fix-mozillaSignalTrampoline-to-work-.patch.xz | patch -p1 --verbose || exit 1
++             ;;
++    riscv64) ARCH_CONFIG="--disable-elf-hack"
++             xzcat $CWD/arm.patch.xz | patch -p1 --verbose || exit 1
++             xzcat $CWD/Bug-1238661---fix-mozillaSignalTrampoline-to-work-.patch.xz | patch -p1 --verbose || exit 1
++             ;;
+     *)       ARCH_CONFIG=" "
+              ;;
+ esac
