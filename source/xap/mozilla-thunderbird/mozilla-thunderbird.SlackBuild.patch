@@ -1,5 +1,5 @@
---- a/mozilla-thunderbird.SlackBuild	2021-03-02 20:11:00.933457726 +0200
-+++ b/mozilla-thunderbird.SlackBuild	2021-03-02 20:19:00.996719513 +0200
+--- a/mozilla-thunderbird.SlackBuild	2021-03-04 19:52:24.132870010 +0200
++++ b/mozilla-thunderbird.SlackBuild	2021-03-04 20:12:23.134624607 +0200
 @@ -44,6 +44,9 @@
  # "UnicodeDecodeError: 'ascii' codec can't decode byte 0xe2 in position 36: ordinal not in range(128)"
  LANG=C
@@ -40,7 +40,35 @@
      *)       ARCH_CONFIG=" "
               ;;
  esac
-@@ -261,7 +280,7 @@
+@@ -200,6 +219,7 @@
+ 
+ # Our building options, in a configure-like display ;)
+ OPTIONS="\
++  $ARCH_CONFIG \
+   --enable-official-branding \
+   --prefix=/usr \
+   --libdir=/usr/lib${LIBDIRSUFFIX} \
+@@ -216,7 +236,7 @@
+   $GOOGLE_API_KEY \
+   --disable-crashreporter \
+   --disable-debug \
+-  --disable-tests \
++  --disable-debug-symbols \
+   --disable-updater \
+   --host=$ARCH-slackware-linux \
+   --target=$ARCH-slackware-linux"
+@@ -238,8 +258,9 @@
+ export BUILD_OFFICIAL=1
+ export MOZILLA_OFFICIAL=1
+ export MOZ_PHOENIX=1
++export MOZ_PACKAGE_JSSHELL=1
+ export CFLAGS="$SLKCFLAGS"
+-export CXXFLAGS="$SLKCFLAGS"
++export CXXFLAGS="$SLKCFLAGS -fno-delete-null-pointer-checks"
+ export MOZ_MAKE_FLAGS="$NUMJOBS"
+ 
+ # Clear some variables that could break the build
+@@ -261,7 +282,7 @@
  mkdir -p mozilla/obj
  
  # Set options for $OPTIMIZE:
