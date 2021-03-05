@@ -20,7 +20,7 @@ rules() {
     if [[ ${PIPESTATUS[0]} == 1 ]]; then
         echo "${_PKG}" 2>&1 >> ${BCWD}/build_error.log
     else
-        move_pkg ${t##*/} "kde_build/${p}"
+        move_pkg ${t##*/} kde_build/${p}-*-${MARCH}
     fi
     popd 2>&1>/dev/null
 }
