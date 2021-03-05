@@ -29,11 +29,11 @@
               # Make Thunderbird compile on ARM platforms lacking neon support:
               zcat $CWD/mozilla-firefox.xpcom_arm.patch.gz | patch -p1 --verbose || exit 1
               ;;
-+    aarch64) ARCH_CONFIG="--disable-elf-hack"
++    aarch64) ARCH_CONFIG="--disable-webrtc"
 +             xzcat $CWD/arm.patch.xz | patch -p1 --verbose || exit 1
 +             xzcat $CWD/Bug-1238661---fix-mozillaSignalTrampoline-to-work-.patch.xz | patch -p1 --verbose || exit 1
 +             ;;
-+    riscv64) ARCH_CONFIG="--disable-elf-hack"
++    riscv64) ARCH_CONFIG="--disable-webrtc"
 +             xzcat $CWD/arm.patch.xz | patch -p1 --verbose || exit 1
 +             xzcat $CWD/Bug-1238661---fix-mozillaSignalTrampoline-to-work-.patch.xz | patch -p1 --verbose || exit 1
 +             ;;
