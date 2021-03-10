@@ -1,3 +1,25 @@
+Tue Mar  9 16:22:52 UTC 2021
+a/lrzip-0.641-aarch64-1.txz:  Upgraded.
+a/smartmontools-7.2-aarch64-4.txz:  Rebuilt.
+a/sysvinit-2.99-aarch64-1.txz:  Upgraded.
+l/iso-codes-4.6.0-noarch-1.txz:  Upgraded.
+n/ca-certificates-20210308-noarch-1.txz:  Upgraded.
+n/fetchmail-6.4.17-aarch64-1.txz:  Upgraded.
+xfce/thunar-4.16.5-aarch64-1.txz:  Upgraded.
++--------------------------+
+Mon Mar  8 09:25:32 UTC 2021
+a/dialog-1.3_20210306-aarch64-1.txz:  Upgraded.
+a/kernel-generic-5.10.21-aarch64-1.txz:  Upgraded.
+a/kernel-modules-5.10.21-aarch64-1.txz:  Upgraded.
+d/kernel-headers-5.10.21-arm64-1.txz:  Upgraded.
+d/python-setuptools-54.1.1-aarch64-1.txz:  Upgraded.
+k/kernel-source-5.10.21-noarch-1.txz:  Upgraded.
+kde/alkimia-8.1.0-aarch64-1.txz:  Upgraded.
+l/gd-2.3.2-aarch64-1.txz:  Upgraded.
+l/python-pygments-2.8.1-aarch64-1.txz:  Upgraded.
+n/mutt-2.0.6-aarch64-1.txz:  Upgraded.
+xfce/thunar-4.16.4-aarch64-1.txz:  Upgraded.
++--------------------------+
 Sat Mar  6 22:31:29 UTC 2021
 l/python-pillow-8.1.2-aarch64-1.txz:  Upgraded.
 x/ibus-table-1.12.5-aarch64-1.txz:  Upgraded.

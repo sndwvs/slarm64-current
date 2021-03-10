@@ -1,5 +1,5 @@
---- a/dhcp.SlackBuild	2021-02-13 01:31:01.017687592 +0200
-+++ b/dhcp.SlackBuild	2021-02-13 01:31:24.745673677 +0200
+--- a/dhcp.SlackBuild	2021-03-09 21:03:09.315661075 +0000
++++ b/dhcp.SlackBuild	2021-03-09 21:04:32.267281142 +0000
 @@ -62,6 +62,12 @@
  elif [ "$ARCH" = "x86_64" ]; then
    SLKCFLAGS="-O2 -fPIC -fcommon"
@@ -13,3 +13,14 @@
  else
    SLKCFLAGS="-O2 -fcommon"
    LIBDIRSUFFIX=""
+@@ -85,6 +91,10 @@
+ # Add PATH setting to /sbin/dhclient-script
+ zcat $CWD/dhclient-script.PATH.diff.gz | patch -p1 || exit 1
+ 
++xzcat $CWD/config.guess.xz > config.guess || exit 1
++xzcat $CWD/config.sub.xz > config.sub || exit 1
++xzcat $CWD/Makefile.in.patch.xz | patch -p1 || exit 1
++
+ # Fix paths in manual pages
+ sed -i \
+     -e "s,ETCDIR,/etc,g" \
