@@ -1,5 +1,5 @@
---- a/mozilla-thunderbird.SlackBuild	2021-03-04 19:52:24.132870010 +0200
-+++ b/mozilla-thunderbird.SlackBuild	2021-03-04 20:12:23.134624607 +0200
+--- a/mozilla-thunderbird.SlackBuild	2021-03-12 20:44:41.864746064 +0000
++++ b/mozilla-thunderbird.SlackBuild	2021-03-13 05:42:17.011311829 +0000
 @@ -44,6 +44,9 @@
  # "UnicodeDecodeError: 'ascii' codec can't decode byte 0xe2 in position 36: ordinal not in range(128)"
  LANG=C
@@ -48,16 +48,7 @@
    --enable-official-branding \
    --prefix=/usr \
    --libdir=/usr/lib${LIBDIRSUFFIX} \
-@@ -216,7 +236,7 @@
-   $GOOGLE_API_KEY \
-   --disable-crashreporter \
-   --disable-debug \
--  --disable-tests \
-+  --disable-debug-symbols \
-   --disable-updater \
-   --host=$ARCH-slackware-linux \
-   --target=$ARCH-slackware-linux"
-@@ -238,8 +258,9 @@
+@@ -241,8 +261,9 @@
  export BUILD_OFFICIAL=1
  export MOZILLA_OFFICIAL=1
  export MOZ_PHOENIX=1
@@ -68,7 +59,7 @@
  export MOZ_MAKE_FLAGS="$NUMJOBS"
  
  # Clear some variables that could break the build
-@@ -261,7 +282,7 @@
+@@ -264,7 +285,7 @@
  mkdir -p mozilla/obj
  
  # Set options for $OPTIMIZE:
