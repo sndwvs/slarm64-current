@@ -1,5 +1,5 @@
---- a/samba.SlackBuild	2021-02-13 02:01:47.108884497 +0200
-+++ b/samba.SlackBuild	2021-02-13 02:02:22.388874627 +0200
+--- a/samba.SlackBuild	2021-03-13 07:04:05.339362473 +0200
++++ b/samba.SlackBuild	2021-03-13 07:05:14.129102586 +0200
 @@ -52,6 +52,12 @@
    elif [ "$ARCH" = "x86_64" ]; then
      SLKCFLAGS="-O2 -fPIC"
@@ -13,7 +13,7 @@
    else
      SLKCFLAGS="-O2"
      LIBDIRSUFFIX=""
-@@ -109,6 +115,10 @@
+@@ -109,12 +115,16 @@
    SHADOW_OPTIONS="--without-pam"
  fi
  
@@ -24,3 +24,10 @@
  # Some of these options could be auto-detected, but declaring them
  # here doesn't hurt and helps document what features we're trying to
  # build in.
+ #
+ # LDFLAGS are needed to avoid problems with missing symbols.
+-LDFLAGS="-Wl,--no-as-needed" \
++LDFLAGS="-Wl,--no-as-needed -lrt -lpthread" \
+ CFLAGS="$SLKCFLAGS" \
+ ./configure \
+   --enable-fhs \
