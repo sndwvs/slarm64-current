@@ -1,3 +1,13 @@
+Sun Mar 14 08:48:32 UTC 2021
+a/acl-2.3.0-aarch64-1.txz:  Upgraded.
+a/attr-2.5.0-aarch64-1.txz:  Upgraded.
+ap/hplip-3.20.5-aarch64-3.txz:  Rebuilt.
+d/doxygen-1.9.1-aarch64-1.txz:  Upgraded.
+xap/mozilla-firefox-78.8.0esr-aarch64-3.txz:  Rebuilt.
+xap/mozilla-thunderbird-78.8.1-aarch64-2.txz:  Rebuilt.
+xap/seamonkey-2.53.6-aarch64-3.txz:  Rebuilt.
+xfce/exo-4.16.1-aarch64-1.txz:  Upgraded.
++--------------------------+
 Fri Mar 12 19:30:10 UTC 2021
 a/cryptsetup-2.3.5-aarch64-1.txz:  Upgraded.
 a/kernel-generic-5.10.23-aarch64-1.txz:  Upgraded.

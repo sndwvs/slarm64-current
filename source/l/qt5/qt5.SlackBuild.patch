@@ -1,5 +1,5 @@
---- a/qt5.SlackBuild	2021-02-13 03:46:31.830669992 +0200
-+++ b/qt5.SlackBuild	2021-02-13 03:47:40.154632038 +0200
+--- a/qt5.SlackBuild	2021-03-14 11:02:19.928819259 +0200
++++ b/qt5.SlackBuild	2021-03-14 11:08:30.297082225 +0200
 @@ -81,6 +81,16 @@
    SLKCFLAGS="-O2 -march=armv7-a -mfpu=vfpv3-d16 -fno-strict-volatile-bitfields"
    SLKLDFLAGS=""
@@ -17,7 +17,16 @@
  else
    SLKCFLAGS="-O2"
    SLKLDFLAGS=""
-@@ -146,6 +156,19 @@
+@@ -130,6 +140,8 @@
+ # See also https://bugzilla.redhat.com/1704474
+ cd qtbase
+   zcat $CWD/patches/qt5.qtbase_cmake_isystem_includes.patch.gz | patch -p1 --verbose || exit 1
++  # RISC-V: must use -pthread to link libatomic
++  xzcat $CWD/patches/qtbase-everywhere-src-5.12.4-pthread.patch.xz | patch -p1 --verbose || exit 1
+ cd - 1>/dev/null
+ 
+ # Fix sandbox functions for glibc-2.33:
+@@ -146,6 +158,19 @@
    unset TAG
  fi
  
@@ -37,7 +46,7 @@
  # Use our custom compiler and linker flags:
  sed -e "s|^\(QMAKE_CFLAGS_RELEASE.*\)|\1 ${SLKCFLAGS}|" \
    -i qtbase/mkspecs/common/gcc-base.conf || exit 1
-@@ -210,6 +233,7 @@
+@@ -210,6 +235,7 @@
    ${FFMPEG_OPTION} \
    ${PULSEAUDIO_OPTION} \
    ${RELOCATIONS} \
