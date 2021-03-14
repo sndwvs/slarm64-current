@@ -4,9 +4,9 @@
  
  if [ "$ARCH" = "x86_64" ]; then
    LIBDIRSUFFIX="64"
-+if [ "$ARCH" = "aarch64" ]; then
++elif [ "$ARCH" = "aarch64" ]; then
 +  LIBDIRSUFFIX="64"
-+if [ "$ARCH" = "riscv64" ]; then
++elif [ "$ARCH" = "riscv64" ]; then
 +  LIBDIRSUFFIX="64"
  else
    LIBDIRSUFFIX=""
