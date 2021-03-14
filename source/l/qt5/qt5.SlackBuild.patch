@@ -30,7 +30,7 @@
    unset TAG
  fi
  
-+if [ "$ARCH" == "aarch64" || "$ARCH" == "riscv64" ]; then
++if [[ "$ARCH" == "aarch64" || "$ARCH" == "riscv64" ]]; then
 +  EXTRACONF="-no-sse2 \
 +             -no-sse3 \
 +             -no-ssse3 \
