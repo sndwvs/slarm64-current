@@ -1,5 +1,5 @@
---- a/mozilla-firefox.SlackBuild	2021-02-13 00:55:17.215396576 +0200
-+++ b/mozilla-firefox.SlackBuild	2021-02-13 00:55:54.623354802 +0200
+--- a/mozilla-firefox.SlackBuild	2021-03-15 18:32:27.569820919 +0000
++++ b/mozilla-firefox.SlackBuild	2021-03-19 17:17:49.224021062 +0000
 @@ -42,6 +42,9 @@
  # "UnicodeDecodeError: 'ascii' codec can't decode byte 0xe2 in position 36: ordinal not in range(128)"
  LANG=C
@@ -23,11 +23,10 @@
  else
    SLKCFLAGS="-O2 -g0"
    LIBDIRSUFFIX=""
-@@ -221,8 +230,18 @@
+@@ -218,8 +227,17 @@
    \( -perm 666 -o -perm 664 -o -perm 600 -o -perm 444 -o -perm 440 -o -perm 400 \) \
    -exec chmod 644 {} \+
  
-+xzcat $CWD/Bug-1238661---fix-mozillaSignalTrampoline-to-work-.patch.xz | patch -p1 --verbose || exit 1
 +xzcat $CWD/arm.patch.xz | patch -p1 --verbose || exit 1
 +xzcat $CWD/build-arm-libopus.patch.xz | patch -p1 --verbose || exit 1
 +
@@ -42,13 +41,13 @@
    --enable-official-branding \
    --prefix=/usr \
    --libdir=/usr/lib${LIBDIRSUFFIX} \
-@@ -295,9 +314,19 @@
+@@ -295,9 +313,19 @@
    echo "ac_add_options --target=i686-pc-linux-gnu" >> .mozconfig
  fi
  
-+if [[ $ARCH == "aarch64" ]]; then
-+    echo 'ac_add_options --enable-rust-simd' >> .mozconfig
-+fi
++#if [[ $ARCH == "aarch64" ]]; then
++#    echo 'ac_add_options --enable-rust-simd' >> .mozconfig
++#fi
 +
  # Add the $OPTIONS above to .mozconfig:
  for option in $OPTIONS; do echo "ac_add_options $option" >> .mozconfig; done
