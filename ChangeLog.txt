@@ -1,3 +1,21 @@
+Sun Mar 21 01:08:49 UTC 2021
+a/aaa_libraries-15.0-aarch64-4.txz:  Rebuilt.
+a/kernel-generic-5.10.25-aarch64-1.txz:  Upgraded.
+a/kernel-modules-5.10.25-aarch64-1.txz:  Upgraded.
+d/kernel-headers-5.10.25-arm64-1.txz:  Upgraded.
+k/kernel-source-5.10.25-noarch-1.txz:  Upgraded.
+l/glib2-2.66.8-aarch64-2.txz:  Rebuilt.
+n/samba-4.14.0-aarch64-2.txz:  Rebuilt.
++--------------------------+
+Fri Mar 19 21:13:56 UTC 2021
+ap/vim-8.2.2623-aarch64-1.txz:  Upgraded.
+l/jasper-2.0.27-aarch64-1.txz:  Upgraded.
+l/mozilla-nss-3.63-aarch64-1.txz:  Upgraded.
+l/pipewire-0.3.24-aarch64-1.txz:  Upgraded.
+l/pygobject3-3.40.0-aarch64-1.txz:  Upgraded.
+n/wireguard-tools-1.0.20210315-aarch64-1.txz:  Added.
+xap/vim-gvim-8.2.2623-aarch64-1.txz:  Upgraded.
++--------------------------+
 Fri Mar 19 17:23:31 UTC 2021
 a/kernel-firmware-20210315_3568f96-noarch-1.txz:  Upgraded.
 a/kernel-generic-5.10.24-aarch64-1.txz:  Upgraded.
