@@ -1,0 +1,26 @@
+--- a/gtk+.SlackBuild	2021-03-24 17:03:19.895738578 +0000
++++ b/gtk+.SlackBuild	2021-03-24 17:05:01.275136601 +0000
+@@ -60,6 +60,12 @@
+ elif [ "$ARCH" = "x86_64" ]; then
+   SLKCFLAGS="-O2 -fPIC"
+   LIBDIRSUFFIX="64"
++elif [ "$ARCH" = "aarch64" ]; then
++  SLKCFLAGS="-O2 -fPIC"
++  LIBDIRSUFFIX="64"
++elif [ "$ARCH" = "riscv64" ]; then
++  SLKCFLAGS="-O2 -fPIC"
++  LIBDIRSUFFIX="64"
+ else
+   SLKCFLAGS="-O2"
+   LIBDIRSUFFIX=""
+@@ -101,7 +107,9 @@
+ zcat $CWD/gtk+-1.2.10-format.patch.gz | patch -p0 --verbose || exit 1
+ 
+ # The original config.{guess,sub} do not work on x86_64 and some other $ARCH:
+-cp -p /usr/share/libtool/build-aux/config.{guess,sub} .
++#cp -p /usr/share/libtool/build-aux/config.{guess,sub} .
++xzcat $CWD/config.guess.xz > config.guess || exit 1
++xzcat $CWD/config.sub.xz > config.sub || exit 1
+ 
+ # Make sure ownerships and permissions are sane:
+ chown -R root:root .
