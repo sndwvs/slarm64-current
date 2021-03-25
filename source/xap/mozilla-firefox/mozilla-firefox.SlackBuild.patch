@@ -1,5 +1,5 @@
---- a/mozilla-firefox.SlackBuild	2021-03-15 18:32:27.569820919 +0000
-+++ b/mozilla-firefox.SlackBuild	2021-03-19 17:17:49.224021062 +0000
+--- a/mozilla-firefox.SlackBuild	2021-03-25 18:42:47.759159784 +0200
++++ b/mozilla-firefox.SlackBuild	2021-03-25 18:51:30.731997418 +0200
 @@ -42,6 +42,9 @@
  # "UnicodeDecodeError: 'ascii' codec can't decode byte 0xe2 in position 36: ordinal not in range(128)"
  LANG=C
@@ -10,9 +10,9 @@
  # Add a shell script to start the firefox binary with MOZ_ALLOW_DOWNGRADE=1
  # to avoid backing up (and disabling) the user profile if a browser downgrade
  # is detected. We made it fine for years without this feature, and all the
-@@ -145,6 +148,12 @@
+@@ -152,6 +155,12 @@
  elif [ "$ARCH" = "armel" ]; then
-   SLKCFLAGS="-O2 -g0 -march=armv4t"
+   SLKCFLAGS="-g0 -march=armv4t"
    LIBDIRSUFFIX=""
 +elif [ "$ARCH" = "aarch64" ]; then
 +  SLKCFLAGS="-O2 -g0 -fPIC"
@@ -21,9 +21,9 @@
 +  SLKCFLAGS="-O2 -g0 -fPIC"
 +  LIBDIRSUFFIX="64"
  else
-   SLKCFLAGS="-O2 -g0"
+   SLKCFLAGS="-g0"
    LIBDIRSUFFIX=""
-@@ -218,8 +227,17 @@
+@@ -228,8 +237,17 @@
    \( -perm 666 -o -perm 664 -o -perm 600 -o -perm 444 -o -perm 440 -o -perm 400 \) \
    -exec chmod 644 {} \+
  
@@ -41,14 +41,23 @@
    --enable-official-branding \
    --prefix=/usr \
    --libdir=/usr/lib${LIBDIRSUFFIX} \
-@@ -295,9 +313,19 @@
-   echo "ac_add_options --target=i686-pc-linux-gnu" >> .mozconfig
- fi
- 
-+#if [[ $ARCH == "aarch64" ]]; then
-+#    echo 'ac_add_options --enable-rust-simd' >> .mozconfig
-+#fi
-+
+@@ -240,7 +258,6 @@
+   --enable-application=browser \
+   --enable-default-toolkit=cairo-gtk3-wayland \
+   --enable-linker=$LINKER \
+-  --enable-optimize \
+   --enable-rust-simd \
+   $GOOGLE_API_KEY \
+   --disable-strip \
+@@ -250,7 +267,6 @@
+   --disable-crashreporter \
+   --disable-debug-symbols \
+   --disable-debug \
+-  --disable-elf-hack \
+   --disable-updater"
+ # Complains about missing APNG support in Slackware's libpng:
+ # --with-system-png \
+@@ -310,6 +326,12 @@
  # Add the $OPTIONS above to .mozconfig:
  for option in $OPTIONS; do echo "ac_add_options $option" >> .mozconfig; done
  
@@ -56,7 +65,7 @@
 +# This isn't added using $SLKCONFARGS because it doesn't cater for things with spaces in:
 +# unless I edit the for loop above to use IFS with some other variable.
 +# this is easier right now ;-)
-+echo 'ac_add_options --enable-optimize="-O2 -fno-schedule-insns"' >> .mozconfig
++echo 'ac_add_options --enable-optimize="-g0 -O2"' >> .mozconfig
 +
  # https://developer.mozilla.org/en-US/docs/Building_with_Profile-Guided_Optimization
  # Thanks to ArchLinux and Gentoo for the additional hints.

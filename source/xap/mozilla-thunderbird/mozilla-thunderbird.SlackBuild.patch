@@ -1,5 +1,5 @@
---- a/mozilla-thunderbird.SlackBuild	2021-03-12 20:44:41.864746064 +0000
-+++ b/mozilla-thunderbird.SlackBuild	2021-03-13 05:42:17.011311829 +0000
+--- a/mozilla-thunderbird.SlackBuild	2021-03-25 18:42:51.255245522 +0200
++++ b/mozilla-thunderbird.SlackBuild	2021-03-25 18:58:13.257778314 +0200
 @@ -44,6 +44,9 @@
  # "UnicodeDecodeError: 'ascii' codec can't decode byte 0xe2 in position 36: ordinal not in range(128)"
  LANG=C
@@ -10,22 +10,20 @@
  # Add a shell script to start the thunderbird binary with MOZ_ALLOW_DOWNGRADE=1
  # to avoid backing up (and disabling) the user profile if a browser downgrade
  # is detected. If you want to build with the stock default behavior, set
-@@ -107,6 +110,14 @@
-   SLKCFLAGS="-march=armv4 -mtune=xscale"
+@@ -109,6 +112,12 @@
+ elif [ "$ARCH" = "armel" ]; then
+   SLKCFLAGS="-g0 -march=armv4t"
    LIBDIRSUFFIX=""
-   OPTIMIZE=${OPTIMIZE:-"-O2 -g0"}
 +elif [ "$ARCH" = "aarch64" ]; then
-+  SLKCFLAGS="-O2 -g0 -fPIC"
++  SLKCFLAGS="-g0 -fPIC"
 +  LIBDIRSUFFIX="64"
-+  OPTIMIZE=${OPTIMIZE:-"-O2"}
 +elif [ "$ARCH" = "riscv64" ]; then
-+  SLKCFLAGS="-O2 -g0 -fPIC"
++  SLKCFLAGS="-g0 -fPIC"
 +  LIBDIRSUFFIX="64"
-+  OPTIMIZE=${OPTIMIZE:-"-O2"}
  else
-   SLKCFLAGS=""
+   SLKCFLAGS="-g0"
    LIBDIRSUFFIX=""
-@@ -187,6 +198,14 @@
+@@ -195,6 +204,14 @@
               # Make Thunderbird compile on ARM platforms lacking neon support:
               zcat $CWD/mozilla-firefox.xpcom_arm.patch.gz | patch -p1 --verbose || exit 1
               ;;
@@ -40,7 +38,7 @@
      *)       ARCH_CONFIG=" "
               ;;
  esac
-@@ -200,6 +219,7 @@
+@@ -208,6 +225,7 @@
  
  # Our building options, in a configure-like display ;)
  OPTIONS="\
@@ -48,7 +46,20 @@
    --enable-official-branding \
    --prefix=/usr \
    --libdir=/usr/lib${LIBDIRSUFFIX} \
-@@ -241,8 +261,9 @@
+@@ -223,12 +241,10 @@
+   --disable-install-strip \
+   --enable-cpp-rtti \
+   --enable-accessibility \
+-  --enable-optimize \
+   $GOOGLE_API_KEY \
+   --disable-crashreporter \
+   --disable-debug-symbols \
+   --disable-debug \
+-  --disable-elf-hack \
+   --disable-tests \
+   --disable-updater \
+   --host=$ARCH-slackware-linux \
+@@ -252,8 +268,9 @@
  export BUILD_OFFICIAL=1
  export MOZILLA_OFFICIAL=1
  export MOZ_PHOENIX=1
@@ -59,12 +70,12 @@
  export MOZ_MAKE_FLAGS="$NUMJOBS"
  
  # Clear some variables that could break the build
-@@ -264,7 +285,7 @@
- mkdir -p mozilla/obj
+@@ -283,6 +300,8 @@
+ # Add the $OPTIONS above to .mozconfig:
+ for option in $OPTIONS; do echo "ac_add_options $option" >> .mozconfig; done
  
- # Set options for $OPTIMIZE:
--echo "ac_add_options --enable-optimize=\"${OPTIMIZE}\"" >> .mozconfig
-+echo 'ac_add_options --enable-optimize="${OPTIMIZE} -fno-schedule-insns"' >> .mozconfig
- 
- if [ "$COMPILE_X86_UNDER_X86_64" = "true" ]; then
-   # Compile for i686 under an x86_64 kernel:
++echo 'ac_add_options --enable-optimize="-g0 -02"' >> .mozconfig
++
+ # Disable tests on standard build:
+ echo "ac_add_options --disable-tests" >> .mozconfig
+ ./mach build || exit 1
