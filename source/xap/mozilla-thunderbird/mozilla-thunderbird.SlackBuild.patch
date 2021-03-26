@@ -1,5 +1,5 @@
---- a/mozilla-thunderbird.SlackBuild	2021-03-25 18:42:51.255245522 +0200
-+++ b/mozilla-thunderbird.SlackBuild	2021-03-25 18:58:13.257778314 +0200
+--- a/mozilla-thunderbird.SlackBuild	2021-03-26 17:14:18.691145015 +0000
++++ b/mozilla-thunderbird.SlackBuild	2021-03-26 17:15:21.028064375 +0000
 @@ -44,6 +44,9 @@
  # "UnicodeDecodeError: 'ascii' codec can't decode byte 0xe2 in position 36: ordinal not in range(128)"
  LANG=C
@@ -46,12 +46,7 @@
    --enable-official-branding \
    --prefix=/usr \
    --libdir=/usr/lib${LIBDIRSUFFIX} \
-@@ -223,12 +241,10 @@
-   --disable-install-strip \
-   --enable-cpp-rtti \
-   --enable-accessibility \
--  --enable-optimize \
-   $GOOGLE_API_KEY \
+@@ -228,7 +246,6 @@
    --disable-crashreporter \
    --disable-debug-symbols \
    --disable-debug \
@@ -59,7 +54,7 @@
    --disable-tests \
    --disable-updater \
    --host=$ARCH-slackware-linux \
-@@ -252,8 +268,9 @@
+@@ -252,8 +269,9 @@
  export BUILD_OFFICIAL=1
  export MOZILLA_OFFICIAL=1
  export MOZ_PHOENIX=1
@@ -70,12 +65,3 @@
  export MOZ_MAKE_FLAGS="$NUMJOBS"
  
  # Clear some variables that could break the build
-@@ -283,6 +300,8 @@
- # Add the $OPTIONS above to .mozconfig:
- for option in $OPTIONS; do echo "ac_add_options $option" >> .mozconfig; done
- 
-+echo 'ac_add_options --enable-optimize="-g0 -02"' >> .mozconfig
-+
- # Disable tests on standard build:
- echo "ac_add_options --disable-tests" >> .mozconfig
- ./mach build || exit 1
