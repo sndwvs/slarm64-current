@@ -22,6 +22,7 @@ removed:
  f/linux-faqs
  f/linux-howtos
 -
+ l/gnu-efi
  l/libunwind
  l/svgalib
 -
