@@ -37,6 +37,7 @@ removed:
  xap/Mplayer
  xap/mozilla-firefox
  xap/mozilla-thunderbird
+ xap/seamonkey
 ----------------------------
 
 
