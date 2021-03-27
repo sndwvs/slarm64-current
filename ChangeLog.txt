@@ -1,3 +1,35 @@
+Fri Mar 26 23:24:07 UTC 2021
+a/btrfs-progs-5.11.1-aarch64-1.txz:  Upgraded.
+a/dialog-1.3_20210324-aarch64-1.txz:  Upgraded.
+a/kernel-generic-5.10.26-aarch64-1.txz:  Upgraded.
+a/kernel-modules-5.10.26-aarch64-1.txz:  Upgraded.
+a/mkinitrd-1.4.11-aarch64-20.txz:  Rebuilt.
+a/openssl-solibs-1.1.1k-aarch64-1.txz:  Upgraded.
+ap/cups-filters-1.28.8-aarch64-1.txz:  Upgraded.
+ap/mpg123-1.26.5-aarch64-1.txz:  Upgraded.
+d/cmake-3.20.0-aarch64-1.txz:  Upgraded.
+d/kernel-headers-5.10.26-arm64-1.txz:  Upgraded.
+d/rust-1.51.0-aarch64-1.txz:  Upgraded.
+e/emacs-27.2-aarch64-1.txz:  Upgraded.
+e/emacspeak-53.0-aarch64-3.txz:  Rebuilt.
+k/kernel-source-5.10.26-noarch-1.txz:  Upgraded.
+kde/krita-4.4.3-aarch64-1.txz:  Upgraded.
+l/expat-2.3.0-aarch64-1.txz:  Upgraded.
+l/libsigc++3-3.0.6-aarch64-1.txz:  Added.
+l/libvpx-1.10.0-aarch64-1.txz:  Upgraded.
+l/mozjs78-78.9.0esr-aarch64-1.txz:  Upgraded.
+l/netpbm-10.93.03-aarch64-1.txz:  Upgraded.
+n/libassuan-2.5.5-aarch64-1.txz:  Upgraded.
+n/openssl-1.1.1k-aarch64-1.txz:  Upgraded.
+n/pam-krb5-4.10-aarch64-1.txz:  Upgraded.
+n/samba-4.14.2-aarch64-1.txz:  Upgraded.
+x/libinput-1.17.1-aarch64-1.txz:  Upgraded.
+x/libva-2.11.0-aarch64-1.txz:  Upgraded.
+x/libva-utils-2.11.0-aarch64-1.txz:  Upgraded.
+x/mesa-21.0.1-aarch64-1.txz:  Upgraded.
+xap/mozilla-firefox-87.0-aarch64-2.txz:  Upgraded.
+xap/mozilla-thunderbird-78.9.0-aarch64-1.txz:  Upgraded.
++--------------------------+
 Tue Mar 23 19:17:04 UTC 2021
 a/kernel-firmware-20210322_3f026a2-noarch-1.txz:  Upgraded.
 ap/man-pages-5.11-noarch-1.txz:  Upgraded.
