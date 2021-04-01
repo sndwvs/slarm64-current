@@ -7,11 +7,11 @@
 +elif [ "$ARCH" = "aarch64" ]; then
 +  LIBDIRSUFFIX="64"
 +  OPTIMIZE_FLAG=${OPTIMIZE_FLAG:-"-O1 -g0"}
-+  ELFHACK="--disable-elf-hack"
++  ELFHACK=""
 +elif [ "$ARCH" = "riscv64" ]; then
 +  LIBDIRSUFFIX="64"
 +  OPTIMIZE_FLAG=${OPTIMIZE_FLAG:-"-O1 -g0"}
-+  ELFHACK="--disable-elf-hack"
++  ELFHACK=""
  else
    LIBDIRSUFFIX=""
    OPTIMIZE_FLAG=${OPTIMIZE_FLAG:-"-O1 -g0"}
