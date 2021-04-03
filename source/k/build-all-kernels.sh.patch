@@ -1,5 +1,5 @@
---- a/build-all-kernels.sh	2019-12-27 22:39:09.034996687 +0000
-+++ b/build-all-kernels.sh	2021-02-05 19:28:52.549211368 +0000
+--- a/build-all-kernels.sh	2021-03-04 19:38:26.770003260 +0000
++++ b/build-all-kernels.sh	2021-04-03 22:29:04.012996072 +0000
 @@ -53,6 +53,10 @@
      RECIPES="x86_64"
    elif uname -m | grep -wq i.86 ; then
@@ -28,7 +28,7 @@
    else
      echo "Error: recipe ${recipe} not implemented"
      exit 1
-@@ -100,19 +114,6 @@
+@@ -99,24 +113,6 @@
      installpkg ${OUTPUT}/${KERNEL_SOURCE_PACKAGE_NAME} || exit 1
    fi
  
@@ -40,7 +40,12 @@
 -  )
 -  KERNEL_HUGE_PACKAGE_NAME=$(PRINT_PACKAGE_NAME=YES KERNEL_NAME=huge KERNEL_SOURCE=$TMP/package-kernel-source/usr/src/linux KERNEL_CONFIG=./kernel-configs/config-huge${LOCALVERSION}-${VERSION}${LOCALVERSION}${CONFIG_SUFFIX} CONFIG_SUFFIX=${CONFIG_SUFFIX} KERNEL_OUTPUT_DIRECTORY=$OUTPUT/kernels/huge$(echo ${LOCALVERSION} | tr -d -).s BUILD=$BUILD ./kernel-generic.SlackBuild)
 -  KERNEL_NAME=huge KERNEL_SOURCE=$TMP/package-kernel-source/usr/src/linux KERNEL_CONFIG=./kernel-configs/config-huge${LOCALVERSION}-${VERSION}${LOCALVERSION}${CONFIG_SUFFIX} CONFIG_SUFFIX=${CONFIG_SUFFIX} KERNEL_OUTPUT_DIRECTORY=$OUTPUT/kernels/huge$(echo ${LOCALVERSION} | tr -d -).s BUILD=$BUILD ./kernel-generic.SlackBuild
--  mv ${TMP}/${KERNEL_HUGE_PACKAGE_NAME} $OUTPUT || exit 1
+-  if [ -r ${TMP}/${KERNEL_HUGE_PACKAGE_NAME} ]; then
+-    mv ${TMP}/${KERNEL_HUGE_PACKAGE_NAME} $OUTPUT
+-  else
+-    echo "kernel-source build failed."
+-    exit 1
+-  fi
 -  if [ "${INSTALL_PACKAGES}" = "YES" ]; then
 -    installpkg ${OUTPUT}/${KERNEL_HUGE_PACKAGE_NAME} || exit 1
 -  fi
