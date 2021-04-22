@@ -17,7 +17,7 @@
    POPPLER="--with-system-poppler --with-system-xpdf"
  fi
  
-+[[ $ARCH == "riscv64" ]] && OPTIONS="--disable-luajittex"
++[[ $ARCH == "riscv64" ]] && OPTIONS="--disable-luajittex --disable-luajithbtex --disable-mfluajit"
 +
  rm -rf $PKG
  mkdir -p $TMP $PKG
