@@ -1,6 +1,6 @@
---- a/mesa.SlackBuild	2021-05-11 20:52:14.062110620 +0000
-+++ b/mesa.SlackBuild	2021-05-13 06:24:09.836223089 +0000
-@@ -31,8 +31,8 @@
+--- a/mesa.SlackBuild	2021-05-13 06:47:22.678761639 +0000
++++ b/mesa.SlackBuild	2021-05-13 06:50:17.239126892 +0000
+@@ -31,8 +31,9 @@
  NUMJOBS=${NUMJOBS:-" -j$(expr $(nproc) + 1) "}
  
  # Be sure this list is up-to-date:
@@ -8,10 +8,11 @@
 -GALLIUM_DRIVERS="nouveau,r300,r600,svga,radeonsi,swrast,virgl,iris"
 +DRI_DRIVERS="nouveau"
 +GALLIUM_DRIVERS="freedreno,nouveau,swrast,virgl,kmsro,lima,panfrost,v3d,vc4"
++VULKAN_DRIVERS="amd,intel,swrast"
  
  if [ -z "$ARCH" ]; then
    case "$( uname -m )" in
-@@ -67,6 +67,12 @@
+@@ -67,6 +68,12 @@
  elif [ "$ARCH" = "x86_64" ]; then
    SLKCFLAGS="-O2 -fPIC"
    LIBDIRSUFFIX="64"
@@ -24,12 +25,13 @@
  else
    SLKCFLAGS="-O2"
    LIBDIRSUFFIX=""
-@@ -108,6 +114,12 @@
+@@ -108,6 +115,13 @@
    done
  fi
  
-+if [[ $ARCH == "aarch64" || $ARCH == "riscv64" ]]; then
++if [[ $ARCH = "aarch64" || $ARCH = "riscv64" ]]; then
 +    MESON_OPT="-Dasm=false"
++    VULKAN_DRIVERS="amd,swrast,broadcom"
 +fi
 +
 +xzcat $CWD/meson.build.patch.xz | patch -p1 --verbose || exit 1
@@ -37,7 +39,16 @@
  # Configure, build, and install:
  export CFLAGS="$SLKCFLAGS"
  export CXXFLAGS="$SLKCFLAGS"
-@@ -142,6 +154,10 @@
+@@ -131,7 +145,7 @@
+   -Dosmesa=true \
+   -Ddri-drivers=$DRI_DRIVERS \
+   -Dgallium-drivers=$GALLIUM_DRIVERS \
+-  -Dvulkan-drivers=amd,intel,swrast \
++  -Dvulkan-drivers=$VULKAN_DRIVERS \
+   -Dvulkan-layers=device-select,intel-nullhw,overlay \
+   -Dglvnd=true \
+   -Dllvm=enabled \
+@@ -142,6 +156,10 @@
    -Dgles2=enabled \
    -Dopengl=true \
    -Dglx=dri \
@@ -48,7 +59,7 @@
    .. || exit 1
    "${NINJA:=ninja}" $NUMJOBS || exit 1
    DESTDIR=$PKG $NINJA install || exit 1
-@@ -175,6 +191,7 @@
+@@ -175,6 +193,7 @@
      CFLAGS="$SLKCFLAGS" \
      ./configure \
        --prefix=/usr \
@@ -56,7 +67,7 @@
        --build=$ARCH-slackware-linux || exit 1
      make $NUMJOBS || exit 1
      # Install all the demos (including the pointless ones) at first, in a
-@@ -182,7 +199,8 @@
+@@ -182,7 +201,8 @@
      make install DESTDIR=$PKG/cruft || exit 1
      # Install gears and glinfo, as well as a few other demos:
      mkdir -p $PKG/usr/bin
