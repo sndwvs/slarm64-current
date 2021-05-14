@@ -1,3 +1,13 @@
+Thu May 13 07:33:06 UTC 2021
+a/kernel-firmware-20210512_55d9649-noarch-1.txz:  Upgraded.
+a/sysklogd-2.2.3-aarch64-1.txz:  Upgraded.
+ap/sudo-1.9.7-aarch64-1.txz:  Upgraded.
+d/distcc-3.4-aarch64-1.txz:  Upgraded.
+n/rpcbind-1.2.6-aarch64-1.txz:  Upgraded.
+x/libXfixes-6.0.0-aarch64-1.txz:  Upgraded.
+x/mesa-21.1.0-aarch64-1.txz:  Upgraded.
+xfce/mousepad-0.5.5-aarch64-1.txz:  Upgraded.
++--------------------------+
 Wed May 12 09:40:35 UTC 2021
 a/btrfs-progs-5.12-aarch64-1.txz:  Upgraded.
 a/hdparm-9.62-aarch64-1.txz:  Upgraded.
