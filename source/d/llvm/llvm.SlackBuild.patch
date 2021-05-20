@@ -1,6 +1,22 @@
---- a/llvm.SlackBuild	2021-05-13 17:52:58.237323167 +0000
-+++ b/llvm.SlackBuild	2021-05-14 10:59:14.642582016 +0000
-@@ -82,6 +82,12 @@
+--- a/llvm.SlackBuild	2021-05-13 20:52:58.237323167 +0300
++++ b/llvm.SlackBuild	2021-05-20 19:35:01.902913345 +0300
+@@ -39,10 +39,14 @@
+   esac
+ fi
+ 
++# Choose a compiler (gcc/g++ or clang/clang++):
++export CC=${CC:-clang}
++export CXX=${CXX:-clang++}
++
+ # Building clangd will be determined automatically unless BUILD_CLANG is
+ # preset to YES or NO:
+ if [ -z $BUILD_CLANGD ]; then
+-  if [ "$ARCH" = "i586" -o "$ARCH" = "i686" ]; then
++  if [ "$ARCH" = "i586" -o "$ARCH" = "i686" -o "$ARCH" = "riscv64" ]; then
+     BUILD_CLANGD=NO
+   else
+     BUILD_CLANGD=YES
+@@ -82,6 +86,12 @@
  elif [ "$ARCH" = "x86_64" ]; then
    SLKCFLAGS="-O2 -fPIC"
    LIBDIRSUFFIX="64"
@@ -13,7 +29,7 @@
  else
    SLKCFLAGS="-O2"
    LIBDIRSUFFIX=""
-@@ -149,6 +155,15 @@
+@@ -149,6 +159,12 @@
  # Hack to fix build with polly. Maybe we should just not use polly... ?
  zcat $CWD/llvm.polly.hack.diff.gz | patch -p1 --verbose || exit 1
  
@@ -23,21 +39,25 @@
 +xzcat $CWD/clang.dynamic.linker.riscv64.patch.xz | patch -p1 --verbose || exit 1
 +xzcat $CWD/clang.toolchains.riscv64.triple.patch.xz | patch -p1 --verbose || exit 1
 +
-+# Better detect 64bit atomics support.
-+xzcat $CWD/llvm-better-detect-64bit-atomics-support.patch.xz | patch -p1 --verbose || exit 1
-+
  chown -R root:root .
  find . \
    \( -perm 777 -o -perm 775 -o -perm 750 -o -perm 711 -o -perm 555 -o -perm 511 \) \
-@@ -156,6 +171,15 @@
+@@ -156,6 +172,22 @@
    \( -perm 666 -o -perm 664 -o -perm 640 -o -perm 600 -o -perm 444 -o -perm 440 -o -perm 400 \) \
    -exec chmod 644 {} \+
  
 +if [[ "$ARCH" == "riscv64" ]]; then
++    # when compiling gcc
++    # /usr/bin/ld: lib64/liblldbTarget.a(Process.cpp.o): in function `lldb_private::Process::Finalize()':
++    # Process.cpp:(.text._ZN12lldb_private7Process8FinalizeEv+0x2a): undefined reference to `__atomic_exchange_1'
++    [[ $CC == "gcc" ]] export LDFLAGS="-latomic"
++
 +    # /usr/bin/ld: lib64/liblldbPluginProcessLinux.a(NativeThreadLinux.cpp.o): in function `.LBB0_1':
 +    # NativeThreadLinux.cpp:(.text._ZN12lldb_private13process_linux17NativeThreadLinuxC2ERNS0_18NativeProcessLinuxEm+0x46): undefined reference to `lldb_private::process_linux::NativeRegisterContextLinux::CreateHostNativeRegisterContextLinux(lldb_private::ArchSpec const&, lldb_private::NativeThreadProtocol&)'
-+    OPTIONS="-DLLDB_TOOL_LLDB_SERVER_BUILD=OFF"
-+    CLANGD="-DCLANG_ENABLE_CLANGD=OFF"
++    OPTIONS="   -DLLDB_TOOL_LLDB_SERVER_BUILD=OFF \
++                -DLLVM_BUILD_EXAMPLES:BOOL=OFF \
++                -DLLVM_ENABLE_LIBCXX:BOOL=OFF \
++                -DLLVM_INSTALL_TOOLCHAIN_ONLY:BOOL=OFF"
 +else
 +    OPTIONS="-DLLVM_USE_LINKER=gold"
 +fi
@@ -45,7 +65,17 @@
  mkdir build
  cd build
    mkdir include
-@@ -172,7 +196,7 @@
+@@ -164,15 +196,15 @@
+   # Nuke LLVM libunwind as it conflicts with the one already on the system:
+   rm -r ../projects/libunwind
+   cmake -GNinja \
+-    -DCMAKE_C_COMPILER="clang" \
+-    -DCMAKE_CXX_COMPILER="clang++" \
++    -DCMAKE_C_COMPILER="$CC" \
++    -DCMAKE_CXX_COMPILER="$CXX" \
+     -DCMAKE_C_FLAGS:STRING="$SLKCFLAGS" \
+     -DCMAKE_CXX_FLAGS:STRING="$SLKCFLAGS" \
+     -DCMAKE_INSTALL_PREFIX=/usr \
      -DLLVM_LIBDIR_SUFFIX=${LIBDIRSUFFIX} \
      -DCMAKE_BUILD_TYPE=Release \
      -DBUILD_SHARED_LIBS=ON \
