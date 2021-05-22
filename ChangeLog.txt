@@ -1,3 +1,27 @@
+Sat May 22 15:29:31 UTC 2021
+a/exfatprogs-1.1.2-aarch64-1.txz:  Upgraded.
+a/kmod-29-aarch64-1.txz:  Upgraded.
+a/logrotate-3.18.1-aarch64-1.txz:  Upgraded.
+a/pkgtools-15.0-noarch-41.txz:  Rebuilt.
+ap/texinfo-6.7-aarch64-5.txz:  Rebuilt.
+ap/vim-8.2.2876-aarch64-1.txz:  Upgraded.
+d/perl-5.34.0-aarch64-1.txz:  Upgraded.
+d/sassc-3.6.2-aarch64-1.txz:  Upgraded.
+d/subversion-1.14.1-aarch64-3.txz:  Rebuilt.
+l/libsass-3.6.5-aarch64-1.txz:  Upgraded.
+l/libsigc++3-3.0.7-aarch64-1.txz:  Upgraded.
+n/bind-9.16.16-aarch64-1.txz:  Upgraded.
+n/epic5-2.1.4-aarch64-2.txz:  Rebuilt.
+n/irssi-1.2.3-aarch64-2.txz:  Rebuilt.
+n/libndp-1.8-aarch64-1.txz:  Upgraded.
+n/net-snmp-5.9-aarch64-6.txz:  Rebuilt.
+n/ntp-4.2.8p15-aarch64-8.txz:  Rebuilt.
+n/openldap-2.4.58-aarch64-2.txz:  Rebuilt.
+x/mesa-21.1.1-aarch64-1.txz:  Upgraded.
+xap/hexchat-2.14.3-aarch64-8.txz:  Rebuilt.
+xap/rxvt-unicode-9.26-aarch64-2.txz:  Rebuilt.
+xap/vim-gvim-8.2.2876-aarch64-1.txz:  Upgraded.
++--------------------------+
 Thu May 20 07:59:58 UTC 2021
 a/btrfs-progs-5.12.1-aarch64-1.txz:  Upgraded.
 a/dialog-1.3_20210509-aarch64-1.txz:  Upgraded.

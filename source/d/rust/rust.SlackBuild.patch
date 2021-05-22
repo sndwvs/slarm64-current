@@ -1,5 +1,5 @@
---- a/rust.SlackBuild	2021-02-26 20:07:43.843333049 +0200
-+++ b/rust.SlackBuild	2021-02-26 20:09:35.807101967 +0200
+--- a/rust.SlackBuild	2021-05-22 20:56:48.085331336 +0300
++++ b/rust.SlackBuild	2021-05-22 21:06:58.986056968 +0300
 @@ -98,6 +98,9 @@
  elif [ "$ARCH" = "armv7hl" ]; then
    BARCH="armv7"
@@ -34,3 +34,15 @@
  EOF
  fi
  
+@@ -205,6 +218,11 @@
+   sed -i "s|^\(extended = true\)$|\1\nrustc = \"/usr/bin/rustc\"\ncargo = \"/usr/bin/cargo\"|" config.toml
+ fi
+ 
++if [ "$ARCH" = "riscv64" ] ; then
++  # "analysis" does not compile for riscv64 architecture
++  sed -i "s|^\(extended = true\)$|\1\ntools = \[\"cargo\", \"rls\", \"clippy\", \"rustfmt\", \"src\"\]|" config.toml
++fi
++
+ chown -R root:root .
+ find -L . \
+  \( -perm 777 -o -perm 775 -o -perm 750 -o -perm 711 -o -perm 555 \
