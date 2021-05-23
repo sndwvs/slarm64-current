@@ -1,0 +1,19 @@
+# HOW TO EDIT THIS FILE:
+# The "handy ruler" below makes it easier to edit a package description. Line
+# up the first '|' above the ':' following the base package name, and the '|'
+# on the right side marks the last column you can put a character in. You must
+# make exactly 11 lines for the formatting to be correct. It's also
+# customary to leave one space after the ':'.
+
+        |-----handy-ruler------------------------------------------------------|
+libgpiod: libgpiod (C library and tools for interacting with linux GPIO char device)
+libgpiod:
+libgpiod: libgpiod is a C library and tools for interacting with the linux GPIO character
+libgpiod: device (gpiod stands for GPIO device) The new character device interface
+libgpiod: guarantees all allocated resources are freed after closing the device file
+libgpiod: descriptor and adds several new features that are not present in the obsolete
+libgpiod: sysfs interface (like event polling, setting/reading multiple values at once or
+libgpiod: open-source and open-drain GPIOs).
+libgpiod:
+libgpiod: home: https://git.kernel.org/pub/scm/libs/libgpiod/libgpiod.git/
+libgpiod:

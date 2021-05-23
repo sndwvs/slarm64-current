@@ -49,5 +49,7 @@ added:
  a/mtd-utils
  a/u-boot-tools
 -
+ l/libgpiod
+-
  d/dtc
 ----------------------------

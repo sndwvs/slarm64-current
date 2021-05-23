@@ -42,5 +42,7 @@ added:
 -
  d/dtc
 -
+ l/libgpiod
+-
  x/xf86-video-fbdev
 ----------------------------

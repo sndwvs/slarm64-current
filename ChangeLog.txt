@@ -1,3 +1,12 @@
+Sun May 23 14:48:24 UTC 2021
+a/kernel-generic-5.10.39-aarch64-1.txz:  Upgraded.
+a/kernel-modules-5.10.39-aarch64-1.txz:  Upgraded.
+ap/slackpkg-15.0.3-noarch-1.txz:  Upgraded.
+d/kernel-headers-5.10.39-arm64-1.txz:  Upgraded.
+k/kernel-source-5.10.39-noarch-1.txz:  Upgraded.
+l/libsigc++-2.10.7-aarch64-1.txz:  Upgraded.
+x/libepoxy-1.5.8-aarch64-1.txz:  Upgraded.
++--------------------------+
 Sat May 22 15:29:31 UTC 2021
 a/exfatprogs-1.1.2-aarch64-1.txz:  Upgraded.
 a/kmod-29-aarch64-1.txz:  Upgraded.
