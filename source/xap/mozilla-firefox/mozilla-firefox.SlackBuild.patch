@@ -1,5 +1,5 @@
---- a/mozilla-firefox.SlackBuild	2021-05-13 08:02:14.085288686 +0300
-+++ b/mozilla-firefox.SlackBuild	2021-06-02 22:47:10.360083294 +0300
+--- a/mozilla-firefox.SlackBuild	2021-03-25 18:42:47.759159784 +0200
++++ b/mozilla-firefox.SlackBuild	2021-03-25 18:51:30.731997418 +0200
 @@ -42,6 +42,9 @@
  # "UnicodeDecodeError: 'ascii' codec can't decode byte 0xe2 in position 36: ordinal not in range(128)"
  LANG=C
@@ -57,29 +57,7 @@
    --disable-updater"
  # Complains about missing APNG support in Slackware's libpng:
  # --with-system-png \
-@@ -271,6 +287,11 @@
-     browser/installer/package-manifest.in || exit 1
- fi
- 
-+export AR=llvm-ar
-+export NM=llvm-nm
-+export RANLIB=llvm-ranlib
-+export MOZ_ENABLE_FULL_SYMBOLS=1
-+export MOZ_NOSPAM=1
- export MACH_USE_SYSTEM_PYTHON="1"
- export MOZILLA_OFFICIAL="1"
- export BUILD_OFFICIAL="1"
-@@ -300,6 +321,9 @@
- # Tell .mozconfig about the selected compiler:
- echo "export CC=\"${CC}\"" >> .mozconfig
- echo "export CXX=\"${CXX}\"" >> .mozconfig
-+echo "export AR=\"${AR}\"" >> .mozconfig
-+echo "export NM=\"${NM}\"" >> .mozconfig
-+echo "export RANLIB=\"${RANLIB}\"" >> .mozconfig
- 
- if [ "$COMPILE_X86_UNDER_X86_64" = "true" ]; then
-   # Compile for i686 under an x86_64 kernel:
-@@ -310,6 +334,12 @@
+@@ -310,6 +326,12 @@
  # Add the $OPTIONS above to .mozconfig:
  for option in $OPTIONS; do echo "ac_add_options $option" >> .mozconfig; done
  
