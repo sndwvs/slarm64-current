@@ -1,3 +1,21 @@
+Thu Jun  3 19:32:07 UTC 2021
+xap/mozilla-firefox-89.0-aarch64-1.txz:  Upgraded.
++--------------------------+
+Thu Jun  3 17:32:47 UTC 2021
+l/gsl-2.7-aarch64-1.txz:  Upgraded.
+l/mozjs78-78.11.0esr-aarch64-1.txz:  Upgraded.
+n/samba-4.14.5-aarch64-1.txz:  Upgraded.
++--------------------------+
+Thu Jun  3 16:52:13 UTC 2021
+ap/alsa-utils-1.2.5-aarch64-1.txz:  Upgraded.
+ap/ispell-3.4.03-aarch64-1.txz:  Upgraded.
+d/m4-1.4.19-aarch64-1.txz:  Upgraded.
+l/alsa-lib-1.2.5-aarch64-1.txz:  Upgraded.
+l/alsa-plugins-1.2.5-aarch64-1.txz:  Upgraded.
+l/imagemagick-7.0.11_14-aarch64-1.txz:  Upgraded.
+l/libedit-20210522_3.1-aarch64-1.txz:  Upgraded.
+l/python-certifi-2021.5.30-aarch64-1.txz:  Upgraded.
++--------------------------+
 Sat May 29 22:42:31 UTC 2021
 n/dhcp-4.4.2_P1-aarch64-1.txz:  Upgraded.
 +--------------------------+
