@@ -1,6 +1,7 @@
 
 rules() {
     export CFLAGS=""
+    export CPPFLAGS=""
 }
 
 rules
