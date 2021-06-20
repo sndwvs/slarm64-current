@@ -1,5 +1,5 @@
---- a/rust.SlackBuild	2021-05-22 20:56:48.085331336 +0300
-+++ b/rust.SlackBuild	2021-05-22 21:06:58.986056968 +0300
+--- a/rust.SlackBuild	2021-06-18 05:33:32.759514905 +0000
++++ b/rust.SlackBuild	2021-06-20 19:42:28.516328648 +0000
 @@ -98,6 +98,9 @@
  elif [ "$ARCH" = "armv7hl" ]; then
    BARCH="armv7"
@@ -21,7 +21,7 @@
  else
    LIBDIRSUFFIX=""
  fi
-@@ -198,6 +205,12 @@
+@@ -197,6 +204,12 @@
  
  [target.armv7-unknown-linux-gnueabihf]
  llvm-config = "/usr/bin/llvm-config"
@@ -34,13 +34,13 @@
  EOF
  fi
  
-@@ -205,6 +218,11 @@
+@@ -204,6 +217,11 @@
    sed -i "s|^\(extended = true\)$|\1\nrustc = \"/usr/bin/rustc\"\ncargo = \"/usr/bin/cargo\"|" config.toml
  fi
  
++# "analysis" does not compile for riscv64 architecture
 +if [ "$ARCH" = "riscv64" ] ; then
-+  # "analysis" does not compile for riscv64 architecture
-+  sed -i "s|^\(extended = true\)$|\1\ntools = \[\"cargo\", \"rls\", \"clippy\", \"rustfmt\", \"src\"\]|" config.toml
++  sed -i 's:\"analysis\",::g' config.toml
 +fi
 +
  chown -R root:root .
