@@ -1,6 +1,6 @@
---- a/texlive.SlackBuild	2021-04-17 18:41:42.890808788 +0000
-+++ b/texlive.SlackBuild	2021-04-22 18:05:31.722315667 +0000
-@@ -59,6 +59,12 @@
+--- a/texlive.SlackBuild	2021-04-20 05:20:00.000000000 +0000
++++ b/texlive.SlackBuild	2021-07-08 17:19:15.744514550 +0000
+@@ -60,6 +60,12 @@
  if [ "$ARCH" = "i586" ]; then
    SLKCFLAGS="-O2 -march=i586 -mtune=i686"
    LIBDIRSUFFIX=""
@@ -13,8 +13,8 @@
  elif [ "$ARCH" = "x86_64" ]; then
    SLKCFLAGS="-O2 -fPIC"
    LIBDIRSUFFIX="64"
-@@ -80,6 +86,8 @@
-   POPPLER="--with-system-poppler --with-system-xpdf"
+@@ -68,6 +74,8 @@
+   LIBDIRSUFFIX=""
  fi
  
 +[[ $ARCH == "riscv64" ]] && OPTIONS="--disable-luajittex --disable-luajithbtex --disable-mfluajit"
@@ -22,10 +22,10 @@
  rm -rf $PKG
  mkdir -p $TMP $PKG
  cd $TMP
-@@ -147,6 +155,7 @@
-     --disable-dump-share \
+@@ -121,6 +129,7 @@
+     --with-system-ncurses \
+     --with-system-harfbuzz \
      --disable-linked-scripts \
-     $POPPLER \
 +    $OPTIONS \
      --build=$ARCH-slackware-linux || exit 1
  
