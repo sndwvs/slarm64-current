@@ -22,16 +22,6 @@
  rm -rf $PKG
  mkdir -p $TMP $PKG
  cd $TMP
-@@ -80,6 +88,9 @@
- # fixes from stable branch
- cat $CWD/patches/fixes-210420.patch | patch -p1 --verbose || exit 1
- 
-+# broken tests for mendexk on arm
-+xzcat $CWD/fix-test-mendex-arm.patch.xz | patch -p1 --verbose || exit 1
-+
- mkdir build
- cd build
-   CFLAGS="$SLKCFLAGS" \
 @@ -121,6 +132,7 @@
      --with-system-ncurses \
      --with-system-harfbuzz \
