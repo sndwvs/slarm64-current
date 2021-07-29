@@ -1,9 +1,9 @@
 --- /dev/null	2021-07-16 22:18:51.676000018 +0300
-+++ b/kernel-configs/config-generic-5.13.2.riscv64	2021-07-17 21:03:06.067415309 +0300
-@@ -0,0 +1,9123 @@
++++ b/kernel-configs/config-generic-5.13.6.riscv64	2021-07-29 21:39:24.398520230 +0300
+@@ -0,0 +1,9122 @@
 +#
 +# Automatically generated file; DO NOT EDIT.
-+# Linux/riscv 5.13.2 Kernel Configuration
++# Linux/riscv 5.13.6 Kernel Configuration
 +#
 +CONFIG_CC_VERSION_TEXT="gcc (GCC) 10.3.0"
 +CONFIG_CC_IS_GCC=y
@@ -4258,6 +4258,7 @@
 +CONFIG_CHARGER_SMB347=m
 +# CONFIG_BATTERY_GAUGE_LTC2941 is not set
 +CONFIG_BATTERY_GOLDFISH=m
++CONFIG_BATTERY_RT5033=m
 +CONFIG_CHARGER_RT9455=m
 +CONFIG_CHARGER_UCS1002=m
 +CONFIG_CHARGER_BD99954=m
@@ -7896,8 +7897,6 @@
 +CONFIG_BOARD_TPCI200=m
 +CONFIG_SERIAL_IPOCTAL=m
 +CONFIG_RESET_CONTROLLER=y
-+# CONFIG_RESET_BRCMSTB_RESCAL is not set
-+# CONFIG_RESET_INTEL_GW is not set
 +CONFIG_RESET_SIMPLE=y
 +# CONFIG_RESET_TI_SYSCON is not set
 +
