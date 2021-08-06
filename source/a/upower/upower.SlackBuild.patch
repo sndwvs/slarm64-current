@@ -1,0 +1,25 @@
+--- a/upower.SlackBuild	2021-08-05 22:36:27.312730864 +0300
++++ b/upower.SlackBuild	2021-08-05 22:38:30.036419994 +0300
+@@ -64,6 +64,12 @@
+ elif [ "$ARCH" = "armv7hl" ]; then
+   SLKCFLAGS="-O2 -march=armv7-a -mfpu=vfpv3-d16"
+   LIBDIRSUFFIX=""
++elif [ "$ARCH" = "aarch64" ]; then
++  SLKCFLAGS="-O2 -fPIC"
++  LIBDIRSUFFIX="64"
++elif [ "$ARCH" = "riscv64" ]; then
++  SLKCFLAGS="-O2 -fPIC"
++  LIBDIRSUFFIX="64"
+ else
+   SLKCFLAGS="-O2"
+   LIBDIRSUFFIX=""
+@@ -90,6 +96,9 @@
+  \( -perm 666 -o -perm 664 -o -perm 600 -o -perm 444 -o -perm 440 -o -perm 400 \) \
+  -exec chmod 644 {} \;
+ 
++xzcat $CWD/2949136b152e94aa3b57da5130bcb9022724debe.patch.xz | patch -p1 --verbose || exit 1
++xzcat $CWD/b64902eed2efa1e91e8faa49b44bf6b1982b8375.patch.xz | patch -p1 --verbose || exit 1
++
+ CFLAGS="$SLKCFLAGS" \
+ CXXFLAGS="$SLKCFLAGS" \
+ ./configure \
