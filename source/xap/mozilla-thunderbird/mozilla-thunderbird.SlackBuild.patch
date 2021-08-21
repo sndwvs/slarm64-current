@@ -1,5 +1,5 @@
---- a/mozilla-thunderbird.SlackBuild	2021-03-26 17:14:18.691145015 +0000
-+++ b/mozilla-thunderbird.SlackBuild	2021-03-26 17:15:21.028064375 +0000
+--- a/mozilla-thunderbird.SlackBuild	2021-08-21 06:34:29.797589381 +0300
++++ b/mozilla-thunderbird.SlackBuild	2021-08-21 06:35:21.721547615 +0300
 @@ -44,6 +44,9 @@
  # "UnicodeDecodeError: 'ascii' codec can't decode byte 0xe2 in position 36: ordinal not in range(128)"
  LANG=C
@@ -10,7 +10,7 @@
  # Add a shell script to start the thunderbird binary with MOZ_ALLOW_DOWNGRADE=1
  # to avoid backing up (and disabling) the user profile if a browser downgrade
  # is detected. If you want to build with the stock default behavior, set
-@@ -109,6 +112,12 @@
+@@ -101,6 +104,12 @@
  elif [ "$ARCH" = "armel" ]; then
    SLKCFLAGS="-g0 -march=armv4t"
    LIBDIRSUFFIX=""
@@ -23,22 +23,20 @@
  else
    SLKCFLAGS="-g0"
    LIBDIRSUFFIX=""
-@@ -195,6 +204,14 @@
-              # Make Thunderbird compile on ARM platforms lacking neon support:
-              zcat $CWD/mozilla-firefox.xpcom_arm.patch.gz | patch -p1 --verbose || exit 1
+@@ -185,6 +194,12 @@
+ case "$ARCH" in
+     armv7hl) ARCH_CONFIG="--with-arch=armv7-a --with-float-abi=hard --with-fpu=vfpv3-d16 --disable-elf-hack"
               ;;
 +    aarch64) ARCH_CONFIG="--disable-webrtc"
 +             xzcat $CWD/arm.patch.xz | patch -p1 --verbose || exit 1
-+             xzcat $CWD/Bug-1238661---fix-mozillaSignalTrampoline-to-work-.patch.xz | patch -p1 --verbose || exit 1
 +             ;;
 +    riscv64) ARCH_CONFIG="--disable-webrtc"
 +             xzcat $CWD/arm.patch.xz | patch -p1 --verbose || exit 1
-+             xzcat $CWD/Bug-1238661---fix-mozillaSignalTrampoline-to-work-.patch.xz | patch -p1 --verbose || exit 1
 +             ;;
      *)       ARCH_CONFIG=" "
               ;;
  esac
-@@ -208,6 +225,7 @@
+@@ -198,6 +213,7 @@
  
  # Our building options, in a configure-like display ;)
  OPTIONS="\
@@ -46,7 +44,7 @@
    --enable-official-branding \
    --prefix=/usr \
    --libdir=/usr/lib${LIBDIRSUFFIX} \
-@@ -228,7 +246,6 @@
+@@ -217,7 +233,6 @@
    --disable-crashreporter \
    --disable-debug-symbols \
    --disable-debug \
@@ -54,7 +52,7 @@
    --disable-tests \
    --disable-updater \
    --host=$ARCH-slackware-linux \
-@@ -252,8 +269,9 @@
+@@ -241,8 +256,9 @@
  export BUILD_OFFICIAL=1
  export MOZILLA_OFFICIAL=1
  export MOZ_PHOENIX=1
