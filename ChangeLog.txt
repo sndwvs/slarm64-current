@@ -1,3 +1,7 @@
+Sun Aug 22 21:30:49 UTC 2021
+d/help2man-1.48.5-aarch64-1.txz:  Upgraded.
+x/mesa-21.2.1-aarch64-1.txz:  Upgraded.
++--------------------------+
 Sat Aug 21 22:04:13 UTC 2021
 a/upower-0.99.13-aarch64-1.txz:  Upgraded.
 a/xfsprogs-5.13.0-aarch64-1.txz:  Upgraded.

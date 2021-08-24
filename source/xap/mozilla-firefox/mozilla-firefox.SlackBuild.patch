@@ -1,5 +1,5 @@
---- a/mozilla-firefox.SlackBuild	2021-03-25 18:42:47.759159784 +0200
-+++ b/mozilla-firefox.SlackBuild	2021-03-25 18:51:30.731997418 +0200
+--- a/mozilla-firefox.SlackBuild	2021-08-23 22:06:33.980993474 +0300
++++ b/mozilla-firefox.SlackBuild	2021-08-24 15:51:21.549912658 +0300
 @@ -42,6 +42,9 @@
  # "UnicodeDecodeError: 'ascii' codec can't decode byte 0xe2 in position 36: ordinal not in range(128)"
  LANG=C
@@ -41,15 +41,15 @@
    --enable-official-branding \
    --prefix=/usr \
    --libdir=/usr/lib${LIBDIRSUFFIX} \
-@@ -240,7 +258,6 @@
+@@ -242,7 +260,6 @@
    --enable-application=browser \
    --enable-default-toolkit=cairo-gtk3-wayland \
    --enable-linker=$LINKER \
 -  --enable-optimize \
-   --enable-rust-simd \
    $GOOGLE_API_KEY \
    --disable-strip \
-@@ -250,7 +267,6 @@
+   --disable-install-strip \
+@@ -252,7 +269,6 @@
    --disable-crashreporter \
    --disable-debug-symbols \
    --disable-debug \
@@ -57,7 +57,7 @@
    --disable-updater"
  # Complains about missing APNG support in Slackware's libpng:
  # --with-system-png \
-@@ -310,6 +326,12 @@
+@@ -312,6 +328,12 @@
  # Add the $OPTIONS above to .mozconfig:
  for option in $OPTIONS; do echo "ac_add_options $option" >> .mozconfig; done
  
