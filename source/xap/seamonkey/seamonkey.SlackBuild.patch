@@ -1,5 +1,5 @@
---- a/seamonkey.SlackBuild	2021-03-12 20:39:22.811763712 +0000
-+++ b/seamonkey.SlackBuild	2021-03-13 05:37:18.572291048 +0000
+--- a/seamonkey.SlackBuild	2021-08-26 20:47:34.623405128 +0000
++++ b/seamonkey.SlackBuild	2021-08-29 05:49:21.249222315 +0000
 @@ -65,6 +65,14 @@
    LIBDIRSUFFIX="64"
    OPTIMIZE_FLAG=${OPTIMIZE_FLAG:-"-O1 -g0"}
@@ -27,7 +27,7 @@
  NUMJOBS=${NUMJOBS:-" -j$(expr $(nproc) + 1) "}
  
  TMP=${TMP:-/tmp}
-@@ -143,6 +156,18 @@
+@@ -143,6 +156,16 @@
  OPTIONS="\
    --prefix=/usr \
    --libdir=/usr/lib${LIBDIRSUFFIX} \
@@ -35,19 +35,17 @@
 +  --with-system-libvpx \
 +  --with-system-nss \
 +  --with-system-icu \
-+  --enable-system-cairo \
 +  --enable-system-ffi \
 +  --enable-system-pixman \
 +  --with-system-bz2 \
 +  --with-system-jpeg \
 +  --disable-webrtc \
-+  --disable-rust-simd \
 +  \
    --enable-cpp-rtti \
    --enable-default-toolkit=cairo-gtk3 \
    --enable-startup-notification \
-@@ -168,7 +193,8 @@
-   --with-system-zlib \
+@@ -170,7 +193,8 @@
+   --with-unsigned-addon-scopes=app,system \
    --enable-application=comm/suite \
    --host=$ARCH-slackware-linux \
 -  --target=$ARCH-slackware-linux"
