@@ -1,3 +1,12 @@
+Sun Aug 29 08:26:40 UTC 2021
+a/kernel-generic-5.13.13-aarch64-1.txz:  Upgraded.
+a/kernel-modules-5.13.13-aarch64-1.txz:  Upgraded.
+d/kernel-headers-5.13.13-arm64-1.txz:  Upgraded.
+k/kernel-source-5.13.13-noarch-1.txz:  Upgraded.
+l/iso-codes-4.7.0-noarch-1.txz:  Upgraded.
+l/pipewire-0.3.34-aarch64-1.txz:  Upgraded.
+xap/seamonkey-2.53.9-aarch64-1.txz:  Upgraded.
++--------------------------+
 Fri Aug 27 17:11:39 UTC 2021
 d/gcc-11.2.0-aarch64-2.txz:  Rebuilt.
 d/gcc-g++-11.2.0-aarch64-2.txz:  Rebuilt.
