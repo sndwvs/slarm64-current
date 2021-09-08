@@ -1,5 +1,5 @@
---- a/mozilla-firefox.SlackBuild	2021-08-23 22:06:33.980993474 +0300
-+++ b/mozilla-firefox.SlackBuild	2021-08-24 15:51:21.549912658 +0300
+--- a/mozilla-firefox.SlackBuild	2021-08-24 21:29:28.183004321 +0300
++++ b/mozilla-firefox.SlackBuild	2021-09-08 20:15:56.607588628 +0300
 @@ -42,6 +42,9 @@
  # "UnicodeDecodeError: 'ascii' codec can't decode byte 0xe2 in position 36: ordinal not in range(128)"
  LANG=C
@@ -23,11 +23,10 @@
  else
    SLKCFLAGS="-g0"
    LIBDIRSUFFIX=""
-@@ -228,8 +237,17 @@
+@@ -228,8 +237,16 @@
    \( -perm 666 -o -perm 664 -o -perm 600 -o -perm 444 -o -perm 440 -o -perm 400 \) \
    -exec chmod 644 {} \+
  
-+xzcat $CWD/arm.patch.xz | patch -p1 --verbose || exit 1
 +xzcat $CWD/build-arm-libopus.patch.xz | patch -p1 --verbose || exit 1
 +
  # Our building options, in a configure-like display ;)
@@ -41,7 +40,7 @@
    --enable-official-branding \
    --prefix=/usr \
    --libdir=/usr/lib${LIBDIRSUFFIX} \
-@@ -242,7 +260,6 @@
+@@ -242,7 +259,6 @@
    --enable-application=browser \
    --enable-default-toolkit=cairo-gtk3-wayland \
    --enable-linker=$LINKER \
@@ -49,7 +48,7 @@
    $GOOGLE_API_KEY \
    --disable-strip \
    --disable-install-strip \
-@@ -252,7 +269,6 @@
+@@ -252,7 +268,6 @@
    --disable-crashreporter \
    --disable-debug-symbols \
    --disable-debug \
@@ -57,7 +56,7 @@
    --disable-updater"
  # Complains about missing APNG support in Slackware's libpng:
  # --with-system-png \
-@@ -312,6 +328,12 @@
+@@ -312,6 +327,12 @@
  # Add the $OPTIONS above to .mozconfig:
  for option in $OPTIONS; do echo "ac_add_options $option" >> .mozconfig; done
  
