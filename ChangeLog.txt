@@ -1,3 +1,24 @@
+Sat Sep 11 07:00:29 UTC 2021
+a/grub-2.06-aarch64-4.txz:  Rebuilt.
+l/jansson-2.14-aarch64-1.txz:  Upgraded.
+l/libcap-2.57-aarch64-1.txz:  Upgraded.
+l/liburing-2.1-aarch64-1.txz:  Upgraded.
+xap/libnma-1.8.32-aarch64-2.txz:  Rebuilt.
+xap/network-manager-applet-1.24.0-aarch64-2.txz:  Rebuilt.
++--------------------------+
+Fri Sep 10 21:25:56 UTC 2021
+a/grub-2.06-aarch64-3.txz:  Rebuilt.
+d/python-setuptools-58.0.4-aarch64-1.txz:  Upgraded.
+d/rust-1.55.0-aarch64-1.txz:  Upgraded.
+l/gst-plugins-base-1.18.5-aarch64-1.txz:  Upgraded.
+l/gst-plugins-good-1.18.5-aarch64-1.txz:  Upgraded.
+l/gst-plugins-libav-1.18.5-aarch64-1.txz:  Upgraded.
+l/gstreamer-1.18.5-aarch64-1.txz:  Upgraded.
+l/libgtop-2.40.0-aarch64-5.txz:  Rebuilt.
+l/pipewire-0.3.35-aarch64-1.txz:  Upgraded.
+n/dnsmasq-2.86-aarch64-1.txz:  Upgraded.
+xfce/mousepad-0.5.6-aarch64-2.txz:  Rebuilt.
++--------------------------+
 Thu Sep  9 18:11:33 UTC 2021
 a/kernel-generic-5.14.2-aarch64-1.txz:  Upgraded.
 a/kernel-modules-5.14.2-aarch64-1.txz:  Upgraded.
