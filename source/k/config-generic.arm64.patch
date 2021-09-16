@@ -1,9 +1,9 @@
---- /dev/null	2021-08-17 20:32:17.176000013 +0300
-+++ b/kernel-configs/config-generic-5.14.arm64	2021-08-31 18:31:21.728013138 +0300
-@@ -0,0 +1,9660 @@
+--- /dev/null	2013-01-18 11:00:24.512000289 +0200
++++ b/kernel-configs/config-generic-5.14.5.arm64	2021-09-16 22:59:04.138858911 +0300
+@@ -0,0 +1,9661 @@
 +#
 +# Automatically generated file; DO NOT EDIT.
-+# Linux/arm64 5.14.0 Kernel Configuration
++# Linux/arm64 5.14.5 Kernel Configuration
 +#
 +CONFIG_CC_VERSION_TEXT="gcc (GCC) 10.2.0"
 +CONFIG_CC_IS_GCC=y
@@ -7576,6 +7576,7 @@
 +# CONFIG_LTE_GDM724X is not set
 +# CONFIG_GS_FPGABOOT is not set
 +# CONFIG_UNISYSSPAR is not set
++# CONFIG_COMMON_CLK_XLNX_CLKWZRD is not set
 +CONFIG_FB_TFT=m
 +CONFIG_FB_TFT_AGM1264K_FL=m
 +CONFIG_FB_TFT_BD663474=m
