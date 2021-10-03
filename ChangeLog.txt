@@ -1,3 +1,71 @@
+Thu Sep 30 16:25:44 UTC 2021
+a/kernel-firmware-20210928_7a30050-noarch-1.txz:  Upgraded.
+d/ccache-4.4.2-aarch64-1.txz:  Upgraded.
+d/meson-0.59.2-aarch64-1.txz:  Upgraded.
+l/gc-8.0.6-aarch64-1.txz:  Upgraded.
+l/mlt-7.0.1-aarch64-2.txz:  Rebuilt.
+l/netpbm-10.96.00-aarch64-1.txz:  Upgraded.
+n/epic5-2.1.5-aarch64-2.txz:  Rebuilt.
+n/openssh-8.8p1-aarch64-2.txz:  Rebuilt.
+xap/NetworkManager-openvpn-1.8.16-aarch64-1.txz:  Upgraded.
++--------------------------+
+Wed Sep 29 18:26:01 UTC 2021
+kde/knewstuff-5.86.0-aarch64-2.txz:  Rebuilt.
+l/pygobject3-3.42.0-aarch64-1.txz:  Upgraded.
+n/pinentry-1.2.0-aarch64-1.txz:  Upgraded.
+x/libinput-1.19.1-aarch64-1.txz:  Upgraded.
+xap/seamonkey-2.53.9.1-aarch64-1.txz:  Upgraded.
++--------------------------+
+Wed Sep 29 15:41:33 UTC 2021
+n/nftables-1.0.0-aarch64-2.txz:  Rebuilt.
+xap/mozilla-thunderbird-91.1.2-aarch64-1.txz:  Upgraded.
++--------------------------+
+Tue Sep 28 15:15:42 UTC 2021
+a/coreutils-9.0-aarch64-3.txz:  Rebuilt.
+a/kernel-generic-5.14.8-aarch64-1.txz:  Upgraded.
+a/kernel-modules-5.14.8-aarch64-1.txz:  Upgraded.
+ap/ghostscript-9.55.0-aarch64-1.txz:  Upgraded.
+ap/itstool-2.0.7-aarch64-1.txz:  Upgraded.
+ap/vim-8.2.3458-aarch64-1.txz:  Upgraded.
+d/kernel-headers-5.14.8-arm64-1.txz:  Upgraded.
+d/vala-0.54.1-aarch64-1.txz:  Upgraded.
+k/kernel-source-5.14.8-noarch-1.txz:  Upgraded.
+l/at-spi2-core-2.42.0-aarch64-1.txz:  Upgraded.
+l/gexiv2-0.14.0-aarch64-1.txz:  Upgraded.
+l/gjs-1.70.0-aarch64-1.txz:  Upgraded.
+l/glib-networking-2.70.0-aarch64-1.txz:  Upgraded.
+l/glib2-2.70.0-aarch64-1.txz:  Upgraded.
+l/gobject-introspection-1.70.0-aarch64-1.txz:  Upgraded.
+l/libcap-2.59-aarch64-1.txz:  Upgraded.
+l/libmtp-1.1.19-aarch64-1.txz:  Upgraded.
+l/librsvg-2.52.0-aarch64-1.txz:  Upgraded.
+l/libsoup-2.74.0-aarch64-1.txz:  Upgraded.
+n/ModemManager-1.18.2-aarch64-1.txz:  Upgraded.
+n/NetworkManager-1.32.12-aarch64-1.txz:  Upgraded.
+n/getmail-6.18.4-aarch64-1.txz:  Upgraded.
+n/openssh-8.8p1-aarch64-1.txz:  Upgraded.
+n/tin-2.6.0-aarch64-1.txz:  Upgraded.
+xap/vim-gvim-8.2.3458-aarch64-1.txz:  Upgraded.
++--------------------------+
+Sun Sep 26 11:38:46 UTC 2021
+a/coreutils-9.0-aarch64-2.txz:  Rebuilt.
+a/elvis-2.2_0-aarch64-8.txz:  Rebuilt.
+d/bison-3.8.2-aarch64-1.txz:  Upgraded.
+d/meson-0.59.1-aarch64-1.txz:  Upgraded.
+d/subversion-1.14.1-aarch64-4.txz:  Rebuilt.
+kde/plasma-desktop-5.22.5-aarch64-2.txz:  Rebuilt.
+l/gst-plugins-bad-free-1.18.5-aarch64-1.txz:  Added.
+l/gtk4-4.4.0-aarch64-1.txz:  Upgraded.
+l/libssh2-1.10.0-aarch64-1.txz:  Upgraded.
+n/lynx-2.9.0dev.9-aarch64-1.txz:  Upgraded.
+xap/x3270-4.0ga14-aarch64-1.txz:  Upgraded.
+xap/xpdf-4.03-aarch64-3.txz:  Rebuilt.
++--------------------------+
+Sat Sep 25 04:44:57 UTC 2021
+a/coreutils-9.0-aarch64-1.txz:  Upgraded.
+n/ca-certificates-20210924-noarch-1.txz:  Upgraded.
+n/cifs-utils-6.14-aarch64-1.txz:  Upgraded.
++--------------------------+
 Fri Sep 24 23:14:45 UTC 2021
 extra/php8/php8-8.0.11-aarch64-1.txz:  Upgraded.
 l/fribidi-1.0.11-aarch64-1.txz:  Upgraded.

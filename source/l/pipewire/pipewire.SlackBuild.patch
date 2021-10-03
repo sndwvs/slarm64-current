@@ -1,0 +1,24 @@
+--- a/pipewire.SlackBuild	2021-10-03 12:12:07.187224596 +0300
++++ b/pipewire.SlackBuild	2021-10-03 12:13:52.337847027 +0300
+@@ -60,6 +60,12 @@
+ elif [ "$ARCH" = "x86_64" ]; then
+   SLKCFLAGS="-O2 -fPIC"
+   LIBDIRSUFFIX="64"
++elif [ "$ARCH" = "aarch64" ]; then
++  SLKCFLAGS="-O2 -fPIC"
++  LIBDIRSUFFIX="64"
++elif [ "$ARCH" = "riscv64" ]; then
++  SLKCFLAGS="-O2 -fPIC"
++  LIBDIRSUFFIX="64"
+ elif [ "$ARCH" = "armv7hl" ]; then
+   SLKCFLAGS="-O3 -march=armv7-a -mfpu=vfpv3-d16"
+   LIBDIRSUFFIX=""
+@@ -86,6 +92,8 @@
+   \( -perm 666 -o -perm 664 -o -perm 600 -o -perm 444 -o -perm 440 -o -perm 400 \) \
+   -exec chmod 644 {} \+
+ 
++xzcat $CWD/f8817b439433798bd7217dc4ae72197887b0fc96.patch.xz | patch -p1 --verbose || exit 1
++
+ # Configure, build, and install:
+ export CFLAGS="$SLKCFLAGS"
+ export CXXFLAGS="$SLKCFLAGS"
