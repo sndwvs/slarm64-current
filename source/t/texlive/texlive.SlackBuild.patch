@@ -1,5 +1,5 @@
---- a/texlive.SlackBuild	2021-04-20 05:20:00.000000000 +0000
-+++ b/texlive.SlackBuild	2021-07-08 19:12:56.039281516 +0000
+--- a/texlive.SlackBuild	2021-10-13 22:03:23.548288963 +0000
++++ b/texlive.SlackBuild	2021-10-13 22:03:40.164737140 +0000
 @@ -60,6 +60,12 @@
  if [ "$ARCH" = "i586" ]; then
    SLKCFLAGS="-O2 -march=i586 -mtune=i686"
@@ -22,7 +22,16 @@
  rm -rf $PKG
  mkdir -p $TMP $PKG
  cd $TMP
-@@ -121,6 +132,7 @@
+@@ -79,6 +87,8 @@
+ 
+ # fixes from stable branch
+ cat $CWD/patches/fixes-210420.patch | patch -p1 --verbose || exit 1
++xzcat $CWD/broke-mendexk-tests-arm-aarch64.patch.xz | patch -p1 --verbose || exit 1
++xzcat $CWD/broke-upmendexk-tests-arm-aarch64.patch.xz | patch -p1 --verbose || exit 1
+ 
+ mkdir build
+ cd build
+@@ -121,6 +131,7 @@
      --with-system-ncurses \
      --with-system-harfbuzz \
      --disable-linked-scripts \
