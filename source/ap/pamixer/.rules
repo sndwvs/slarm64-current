@@ -1,6 +1,6 @@
 
 rules() {
-    export CXXFLAGS=""
+    unset CXXFLAGS
 }
 
 rules
