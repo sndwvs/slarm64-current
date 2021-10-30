@@ -30,7 +30,7 @@
  fi
  
 +if [[ $ARCH = "aarch64" || $ARCH = "riscv64" ]]; then
-+    MESON_OPT="-Dasm=false"
++#    MESON_OPT="-Dasm=false"
 +    VULKAN_DRIVERS="amd,swrast,broadcom"
 +fi
 +
