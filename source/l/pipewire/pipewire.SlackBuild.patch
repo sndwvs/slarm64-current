@@ -1,0 +1,24 @@
+--- a/pipewire.SlackBuild	2021-05-19 19:58:09.855002569 +0000
++++ b/pipewire.SlackBuild	2021-11-02 05:58:36.714159698 +0000
+@@ -57,6 +57,12 @@
+ elif [ "$ARCH" = "s390" ]; then
+   SLKCFLAGS="-O2"
+   LIBDIRSUFFIX=""
++elif [ "$ARCH" = "aarch64" ]; then
++  SLKCFLAGS="-O2 -fPIC"
++  LIBDIRSUFFIX="64"
++elif [ "$ARCH" = "riscv64" ]; then
++  SLKCFLAGS="-O2 -fPIC"
++  LIBDIRSUFFIX="64"
+ elif [ "$ARCH" = "x86_64" ]; then
+   SLKCFLAGS="-O2 -fPIC"
+   LIBDIRSUFFIX="64"
+@@ -86,6 +92,8 @@
+   \( -perm 666 -o -perm 664 -o -perm 600 -o -perm 444 -o -perm 440 -o -perm 400 \) \
+   -exec chmod 644 {} \+
+ 
++xzcat $CWD/0001-cpu-fix-compilation-on-some-architectures.patch.xz | patch -p1 --verbose || exit 1
++
+ # Configure, build, and install:
+ export CFLAGS="$SLKCFLAGS"
+ export CXXFLAGS="$SLKCFLAGS"
