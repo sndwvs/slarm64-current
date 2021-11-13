@@ -1,5 +1,5 @@
---- a/lxc.SlackBuild	2021-08-04 21:54:04.452036473 +0300
-+++ b/lxc.SlackBuild	2021-09-19 15:03:41.620707425 +0300
+--- a/lxc.SlackBuild	2021-11-12 18:35:31.854827652 +0000
++++ b/lxc.SlackBuild	2021-11-13 09:50:28.782172241 +0000
 @@ -58,6 +58,12 @@
  elif [ "$ARCH" = "x86_64" ]; then
    SLKCFLAGS="-O2 -fPIC"
@@ -13,19 +13,12 @@
  else
    SLKCFLAGS="-O2"
    LIBDIRSUFFIX=""
-@@ -124,12 +130,15 @@
+@@ -124,6 +130,8 @@
  # Add the template file:
  cat $CWD/lxc-slackware.in > $PKG/usr/share/lxc/templates/lxc-slackware
  chmod 755 $PKG/usr/share/lxc/templates/lxc-slackware
 +cat $CWD/lxc-slarm64.in > $PKG/usr/share/lxc/templates/lxc-slarm64
 +chmod 755 $PKG/usr/share/lxc/templates/lxc-slarm64
- 
- # Add the modified Slackware startup scripts:
- mkdir -p $PKG/usr/share/lxc/scripts/slackware
- cp -a $CWD/scripts/*.lxc $PKG/usr/share/lxc/scripts/slackware
- chown root:root $PKG/usr/share/lxc/scripts/slackware/*
- chmod 644 $PKG/usr/share/lxc/scripts/slackware/*
-+ln -s /usr/share/lxc/scripts/slackware -r $PKG/usr/share/lxc/scripts/slarm64
  
  # Make the default configuration directories and an empty rootfs folder:
  mkdir -p $PKG/var/lib/lxc $PKG/etc/lxc $PKG/var/lib/rootfs-lxc $PKG/var/lib/misc
