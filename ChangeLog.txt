@@ -1,3 +1,21 @@
+Sat Nov 20 23:55:56 UTC 2021
+ap/mariadb-10.5.13-aarch64-2.txz:  Rebuilt.
+d/python3-3.9.9-aarch64-2.txz:  Rebuilt.
+n/fetchmail-6.4.24-aarch64-1.txz:  Upgraded.
++--------------------------+
+Sat Nov 20 19:38:02 UTC 2021
+d/d/python3-3.9.8-aarch64-1.txz:  Added.
+d/python3-3.9.9-aarch64-1.txz:  Upgraded.
+extra/php8/php8-8.0.13-aarch64-1.txz:  Upgraded.
+l/libjpeg-turbo-2.1.2-aarch64-1.txz:  Upgraded.
+l/python-setuptools_scm-6.3.2-aarch64-1.txz:  Added.
+l/python-tomli-1.2.2-aarch64-1.txz:  Added.
+l/qtkeychain-0.13.2-aarch64-1.txz:  Upgraded.
+n/libmbim-1.26.2-aarch64-1.txz:  Upgraded.
+n/libnftnl-1.2.1-aarch64-1.txz:  Upgraded.
+n/nftables-1.0.1-aarch64-1.txz:  Upgraded.
+xap/mozilla-thunderbird-91.3.2-aarch64-1.txz:  Upgraded.
++--------------------------+
 Fri Nov 19 12:05:11 UTC 2021
 a/bash-5.1.012-aarch64-1.txz:  Upgraded.
 a/cryptsetup-2.4.2-aarch64-1.txz:  Upgraded.
