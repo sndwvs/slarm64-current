@@ -1,3 +1,56 @@
+Sun Nov 28 09:26:31 UTC 2021
+ap/inxi-20211122_2feaf0b8-noarch-1.txz:  Upgraded.
+ap/neofetch-20211127_c1c69937-noarch-1.txz:  Upgraded.
+ap/sqlite-3.37.0-aarch64-1.txz:  Upgraded.
++--------------------------+
+Sat Nov 27 04:25:30 UTC 2021
+ap/ksh93-1.0_7ea95b7-aarch64-1.txz:  Upgraded.
+d/git-2.34.1-aarch64-1.txz:  Upgraded.
+l/harfbuzz-3.1.2-aarch64-1.txz:  Upgraded.
+l/libexif-0.6.24-aarch64-1.txz:  Upgraded.
+l/libsoup-2.74.2-aarch64-1.txz:  Upgraded.
+l/python-charset-normalizer-2.0.8-aarch64-1.txz:  Upgraded.
+n/ModemManager-1.18.4-aarch64-1.txz:  Upgraded.
+n/gnupg2-2.2.33-aarch64-1.txz:  Upgraded.
+x/mesa-21.2.6-aarch64-1.txz:  Upgraded.
+xfce/mousepad-0.5.8-aarch64-1.txz:  Upgraded.
++--------------------------+
+Thu Nov 25 17:43:54 UTC 2021
+d/ruby-3.0.3-aarch64-1.txz:  Upgraded.
+kde/kopeninghours-21.08.3-aarch64-2.txz:  Rebuilt.
+l/Mako-1.1.6-aarch64-1.txz:  Upgraded.
++--------------------------+
+Wed Nov 24 17:47:33 UTC 2021
+a/btrfs-progs-5.15.1-aarch64-1.txz:  Upgraded.
+a/kernel-firmware-20211123_b0e898f-noarch-1.txz:  Upgraded.
+ap/vim-8.2.3656-aarch64-1.txz:  Upgraded.
+d/d/python3-3.9.8-aarch64-1.txz:  Removed.
+d/mercurial-6.0-aarch64-1.txz:  Upgraded.
+d/parallel-20211122-noarch-1.txz:  Upgraded.
+extra/tigervnc/tigervnc-1.12.0-aarch64-3.txz:  Rebuilt.
+l/fluidsynth-2.2.4-aarch64-1.txz:  Upgraded.
+n/libnetfilter_log-1.0.2-aarch64-1.txz:  Upgraded.
+x/wayland-protocols-1.24-noarch-1.txz:  Upgraded.
+xap/vim-gvim-8.2.3656-aarch64-1.txz:  Upgraded.
++--------------------------+
+Tue Nov 23 18:24:34 UTC 2021
+a/kernel-generic-5.15.4-aarch64-1.txz:  Upgraded.
+a/kernel-modules-5.15.4-aarch64-1.txz:  Upgraded.
+d/kernel-headers-5.15.4-arm64-1.txz:  Upgraded.
+extra/fltk/fltk-1.3.8-aarch64-1.txz:  Upgraded.
+extra/tigervnc/tigervnc-1.12.0-aarch64-2.txz:  Rebuilt.
+k/kernel-source-5.15.4-noarch-1.txz:  Upgraded.
+l/imagemagick-7.1.0_16-aarch64-1.txz:  Upgraded.
+l/libcap-2.61-aarch64-1.txz:  Upgraded.
+l/python-Jinja2-3.0.3-aarch64-1.txz:  Added.
+l/python-MarkupSafe-2.0.1-aarch64-1.txz:  Added.
+l/python-PyYAML-6.0-aarch64-1.txz:  Added.
+l/python-doxypypy-0.8.8.6-aarch64-1.txz:  Added.
+l/python-doxyqml-0.5.1-aarch64-1.txz:  Added.
+l/python-packaging-21.3-aarch64-1.txz:  Upgraded.
+l/python-pbr-5.8.0-aarch64-1.txz:  Added.
+n/nss-pam-ldapd-0.9.12-aarch64-1.txz:  Upgraded.
++--------------------------+
 Sat Nov 20 23:55:56 UTC 2021
 ap/mariadb-10.5.13-aarch64-2.txz:  Rebuilt.
 d/python3-3.9.9-aarch64-2.txz:  Rebuilt.

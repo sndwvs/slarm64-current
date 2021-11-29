@@ -1,11 +1,11 @@
---- a/cdrtools.SlackBuild	2021-01-20 18:13:12.725005944 +0000
-+++ b/cdrtools.SlackBuild	2021-01-27 17:47:26.158583309 +0000
-@@ -66,6 +66,8 @@
- 
- zcat $CWD/cdrtools-3.01-fix-20151126-mkisofs-isoinfo.patch.gz | patch -p1 --verbose || exit 1
- 
-+sed -i 's|/opt/schily|/usr|g' DEFAULTS/Defaults.linux
-+
- make -e $NUMJOBS INS_BASE=/usr DEFMANBASE=. || make -e INS_BASE=/usr DEFMANBASE=. || exit 1
+--- a/cdrtools.SlackBuild	2021-11-29 18:53:04.490088797 +0000
++++ b/cdrtools.SlackBuild	2021-11-30 00:31:26.940060146 +0000
+@@ -72,7 +72,7 @@
+ # However, lconfig.h will eventually be generated from lconfig.h.in, the build
+ # will restart, and the package will be correctly built. Since there are no
+ # ill effects from this I see no compelling reason to try to patch it here.
+-make -e INS_BASE=/usr DEFMANBASE=. || exit 1
++make -e INS_BASE=/usr DEFMANBASE=. DEFINCDIRS=../include || exit 1
  make -e install INS_BASE=/usr DEFMANBASE=. DESTDIR=$PKG || exit 1
  
+ # I don't know why this couldn't be "/etc/cdrtools" or something, but since
