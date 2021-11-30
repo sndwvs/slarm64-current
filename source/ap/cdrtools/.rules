@@ -1,0 +1,9 @@
+
+rules() {
+    unset CXXFLAGS
+    unset CPPFLAGS
+    unset CFLAGS
+    unset LDFLAGS
+}
+
+rules
