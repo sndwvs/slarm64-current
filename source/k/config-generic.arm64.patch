@@ -1,9 +1,9 @@
 --- /dev/null	2021-10-28 21:45:52.500000014 +0300
-+++ b/kernel-configs/config-generic-5.15.1.arm64	2021-11-07 13:44:57.978581016 +0200
-@@ -0,0 +1,9736 @@
++++ b/kernel-configs/config-generic-5.15.6.arm64	2021-12-02 01:57:21.715399477 +0200
+@@ -0,0 +1,9742 @@
 +#
 +# Automatically generated file; DO NOT EDIT.
-+# Linux/arm64 5.15.1 Kernel Configuration
++# Linux/arm64 5.15.6 Kernel Configuration
 +#
 +CONFIG_CC_VERSION_TEXT="gcc (GCC) 11.2.0"
 +CONFIG_CC_IS_GCC=y
@@ -2241,6 +2241,7 @@
 +# CONFIG_SSFDC is not set
 +# CONFIG_SM_FTL is not set
 +# CONFIG_MTD_OOPS is not set
++# CONFIG_MTD_PSTORE is not set
 +# CONFIG_MTD_SWAP is not set
 +# CONFIG_MTD_PARTITIONED_MASTER is not set
 +
@@ -8955,6 +8956,11 @@
 +# CONFIG_PSTORE_CONSOLE is not set
 +# CONFIG_PSTORE_PMSG is not set
 +CONFIG_PSTORE_RAM=m
++CONFIG_PSTORE_ZONE=m
++CONFIG_PSTORE_BLK=m
++CONFIG_PSTORE_BLK_BLKDEV=""
++CONFIG_PSTORE_BLK_KMSG_SIZE=64
++CONFIG_PSTORE_BLK_MAX_REASON=2
 +CONFIG_SYSV_FS=m
 +CONFIG_UFS_FS=m
 +# CONFIG_UFS_FS_WRITE is not set

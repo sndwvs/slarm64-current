@@ -1,3 +1,59 @@
+Wed Dec  1 08:30:00 UTC 2021
+ap/htop-3.1.2-aarch64-1.txz:  Upgraded.
+kde/bluedevil-5.23.4-aarch64-1.txz:  Upgraded.
+kde/breeze-5.23.4-aarch64-1.txz:  Upgraded.
+kde/breeze-grub-5.23.4-aarch64-1.txz:  Upgraded.
+kde/breeze-gtk-5.23.4-aarch64-1.txz:  Upgraded.
+kde/drkonqi-5.23.4-aarch64-1.txz:  Upgraded.
+kde/kactivitymanagerd-5.23.4-aarch64-1.txz:  Upgraded.
+kde/kde-cli-tools-5.23.4-aarch64-1.txz:  Upgraded.
+kde/kde-gtk-config-5.23.4-aarch64-1.txz:  Upgraded.
+kde/kdecoration-5.23.4-aarch64-1.txz:  Upgraded.
+kde/kdeplasma-addons-5.23.4-aarch64-1.txz:  Upgraded.
+kde/kgamma5-5.23.4-aarch64-1.txz:  Upgraded.
+kde/khotkeys-5.23.4-aarch64-1.txz:  Upgraded.
+kde/kinfocenter-5.23.4-aarch64-1.txz:  Upgraded.
+kde/kmenuedit-5.23.4-aarch64-1.txz:  Upgraded.
+kde/kscreen-5.23.4-aarch64-1.txz:  Upgraded.
+kde/kscreenlocker-5.23.4-aarch64-1.txz:  Upgraded.
+kde/ksshaskpass-5.23.4-aarch64-1.txz:  Upgraded.
+kde/ksystemstats-5.23.4-aarch64-1.txz:  Upgraded.
+kde/kwallet-pam-5.23.4-aarch64-1.txz:  Upgraded.
+kde/kwayland-integration-5.23.4-aarch64-1.txz:  Upgraded.
+kde/kwayland-server-5.23.4-aarch64-1.txz:  Upgraded.
+kde/kwin-5.23.4-aarch64-1.txz:  Upgraded.
+kde/kwrited-5.23.4-aarch64-1.txz:  Upgraded.
+kde/layer-shell-qt-5.23.4-aarch64-1.txz:  Upgraded.
+kde/libkscreen-5.23.4-aarch64-1.txz:  Upgraded.
+kde/libksysguard-5.23.4-aarch64-1.txz:  Upgraded.
+kde/milou-5.23.4-aarch64-1.txz:  Upgraded.
+kde/oxygen-5.23.4-aarch64-1.txz:  Upgraded.
+kde/plasma-browser-integration-5.23.4-aarch64-1.txz:  Upgraded.
+kde/plasma-desktop-5.23.4-aarch64-1.txz:  Upgraded.
+kde/plasma-disks-5.23.4-aarch64-1.txz:  Upgraded.
+kde/plasma-firewall-5.23.4-aarch64-1.txz:  Upgraded.
+kde/plasma-integration-5.23.4-aarch64-1.txz:  Upgraded.
+kde/plasma-nm-5.23.4-aarch64-1.txz:  Upgraded.
+kde/plasma-pa-5.23.4-aarch64-1.txz:  Upgraded.
+kde/plasma-sdk-5.23.4-aarch64-1.txz:  Upgraded.
+kde/plasma-systemmonitor-5.23.4-aarch64-1.txz:  Upgraded.
+kde/plasma-vault-5.23.4-aarch64-1.txz:  Upgraded.
+kde/plasma-workspace-5.23.4-aarch64-1.txz:  Upgraded.
+kde/plasma-workspace-wallpapers-5.23.4-aarch64-1.txz:  Upgraded.
+kde/polkit-kde-agent-1-5.23.4-aarch64-1.txz:  Upgraded.
+kde/powerdevil-5.23.4-aarch64-1.txz:  Upgraded.
+kde/qqc2-breeze-style-5.23.4-aarch64-1.txz:  Upgraded.
+kde/sddm-kcm-5.23.4-aarch64-1.txz:  Upgraded.
+kde/systemsettings-5.23.4-aarch64-1.txz:  Upgraded.
+kde/xdg-desktop-portal-kde-5.23.4-aarch64-1.txz:  Upgraded.
+l/xxHash-0.8.1-aarch64-1.txz:  Upgraded.
++--------------------------+
+Tue Nov 30 04:42:47 UTC 2021
+ap/cdrtools-3.02a09-aarch64-1.txz:  Upgraded.
+d/vala-0.54.4-aarch64-1.txz:  Upgraded.
+extra/php8/php8-8.1.0-aarch64-1.txz:  Upgraded.
+x/xauth-1.1.1-aarch64-1.txz:  Upgraded.
++--------------------------+
 Sun Nov 28 09:26:31 UTC 2021
 ap/inxi-20211122_2feaf0b8-noarch-1.txz:  Upgraded.
 ap/neofetch-20211127_c1c69937-noarch-1.txz:  Upgraded.
