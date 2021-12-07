@@ -1,0 +1,11 @@
+--- a/cdrtools.SlackBuild	2021-11-29 18:53:04.490088797 +0000
++++ b/cdrtools.SlackBuild	2021-12-07 14:13:07.448270331 +0000
+@@ -66,6 +66,8 @@
+   \( -perm 666 -o -perm 664 -o -perm 600 -o -perm 444 -o -perm 440 -o -perm 400 \) \
+   -exec chmod 644 {} \+
+ 
++xzcat $CWD/add-support-riscv64.patch.xz | patch -p1 --verbose || exit 1
++
+ # When running make below, you'll see "errors" like these:
+ # config.h:34:10: fatal error: lconfig.h: No such file or directory
+ #    34 | #include "lconfig.h"
