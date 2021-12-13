@@ -1,0 +1,15 @@
+--- a/floppy.SlackBuild	2021-12-13 08:36:41.950977830 +0000
++++ b/floppy.SlackBuild	2021-12-13 08:37:31.086789757 +0000
+@@ -48,6 +48,12 @@
+ if [ "$ARCH" = "x86_64" ]; then
+   SLKCFLAGS="-O -fPIC -fcommon"
+   LIBDIRSUFFIX="64"
++elif [ "$ARCH" = "aarch64" ]; then
++  SLKCFLAGS="-O -fPIC -fcommon"
++  LIBDIRSUFFIX="64"
++elif [ "$ARCH" = "riscv64" ]; then
++  SLKCFLAGS="-O -fPIC -fcommon"
++  LIBDIRSUFFIX="64"
+ else
+   SLKCFLAGS="-O -fcommon"
+   LIBDIRSUFFIX=""
