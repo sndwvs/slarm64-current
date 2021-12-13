@@ -21,7 +21,6 @@ removed:
  f/linux-faqs
  f/linux-howtos
 -
- l/libunwind
  l/svgalib
 -
  x/igt-gpu-tools
