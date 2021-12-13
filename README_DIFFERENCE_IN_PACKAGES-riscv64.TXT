@@ -6,7 +6,6 @@ Do not compile on riscv64 architecture:
 
 removed:
 ----------------------------
- a/efibootmgr
  a/elilo
  a/kernel-huge
  a/syslinux
