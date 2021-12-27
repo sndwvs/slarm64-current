@@ -1,3 +1,60 @@
+Fri Dec 24 21:57:24 UTC 2021
+xap/pan-0.149-aarch64-1.txz:  Upgraded.
++--------------------------+
+Fri Dec 24 11:23:53 UTC 2021
+kde/krita-5.0.0-aarch64-1.txz:  Upgraded.
+n/stunnel-5.61-aarch64-1.txz:  Upgraded.
++--------------------------+
+Thu Dec 23 09:40:51 UTC 2021
+a/kernel-generic-5.15.11-aarch64-1.txz:  Upgraded.
+a/kernel-modules-5.15.11-aarch64-1.txz:  Upgraded.
+ap/qpdf-10.5.0-aarch64-1.txz:  Upgraded.
+d/kernel-headers-5.15.11-arm64-1.txz:  Upgraded.
+d/parallel-20211222-noarch-1.txz:  Upgraded.
+k/kernel-source-5.15.11-noarch-1.txz:  Upgraded.
+l/netpbm-10.96.06-aarch64-1.txz:  Upgraded.
++--------------------------+
+Tue Dec 21 22:44:32 UTC 2021
+ap/vim-8.2.3868-aarch64-1.txz:  Upgraded.
+kde/breeze-icons-5.89.0-noarch-2.txz:  Rebuilt.
+l/gtk+3-3.24.31-aarch64-1.txz:  Upgraded.
+l/zstd-1.5.1-aarch64-1.txz:  Upgraded.
+n/net-snmp-5.9.1-aarch64-4.txz:  Rebuilt.
+xap/vim-gvim-8.2.3868-aarch64-1.txz:  Upgraded.
++--------------------------+
+Tue Dec 21 11:20:42 UTC 2021
+a/pkgtools-15.0-noarch-42.txz:  Rebuilt.
+l/expat-2.4.2-aarch64-1.txz:  Upgraded.
+l/gegl-0.4.34-aarch64-1.txz:  Upgraded.
+n/httpd-2.4.52-aarch64-1.txz:  Upgraded.
+xap/gimp-2.10.30-aarch64-1.txz:  Upgraded.
+xap/mozilla-thunderbird-91.4.1-aarch64-1.txz:  Upgraded.
+xap/xlockmore-5.68-aarch64-1.txz:  Upgraded.
+xap/xsnow-3.4.2-aarch64-1.txz:  Upgraded.
++--------------------------+
+Mon Dec 20 09:49:25 UTC 2021
+a/kernel-generic-5.15.10-aarch64-1.txz:  Upgraded.
+a/kernel-modules-5.15.10-aarch64-1.txz:  Upgraded.
+ap/inxi-3.3.11_1-noarch-1.txz:  Upgraded.
+ap/ksh93-1.0_20211217_ce3e080c-aarch64-1.txz:  Upgraded.
+ap/neofetch-20211210_ccd5d9f5-noarch-1.txz:  Upgraded.
+d/Cython-0.29.26-aarch64-1.txz:  Upgraded.
+d/kernel-headers-5.15.10-arm64-1.txz:  Upgraded.
+extra/php80/php80-8.0.14-aarch64-1.txz:  Upgraded.
+extra/php81/php81-8.1.1-aarch64-1.txz:  Upgraded.
+k/kernel-source-5.15.10-noarch-1.txz:  Upgraded.
+kde/kid3-3.9.0-aarch64-1.txz:  Upgraded.
+kde/latte-dock-0.10.6-aarch64-1.txz:  Upgraded.
+kde/plasma-nm-5.23.4-aarch64-2.txz:  Rebuilt.
+kde/umbrello-21.12.0-aarch64-2.txz:  Rebuilt.
+l/imagemagick-7.1.0_18-aarch64-1.txz:  Upgraded.
+l/librsvg-2.52.5-aarch64-1.txz:  Upgraded.
+l/utf8proc-2.7.0-aarch64-1.txz:  Upgraded.
+n/ca-certificates-20211216-noarch-1.txz:  Upgraded.
++--------------------------+
+Sat Dec 18 14:10:14 UTC 2021
+l/attica-0.4.2-aarch64-2.txz:  Removed.
++--------------------------+
 Sat Dec 18 09:22:57 UTC 2021
 xap/xine-ui-0.99.13-aarch64-1.txz:  Upgraded.
 +--------------------------+
