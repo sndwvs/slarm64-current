@@ -13,15 +13,3 @@
  elif [ "$ARCH" = "armv7hl" ]; then
    SLKCFLAGS="-O3 -march=armv7-a -mfpu=vfpv3-d16 -fcommon"
    LIBDIRSUFFIX=""
-@@ -85,6 +91,11 @@
-   \( -perm 666 -o -perm 664 -o -perm 600 -o -perm 444 -o -perm 440 -o -perm 400 \) \
-   -exec chmod 644 {} \+
- 
-+if [ "$ARCH" = "riscv64" ]; then
-+    VERSION="1.6.2"
-+    xzcat $CWD/libunwind-1.6.2.patch.xz | patch -p1 || exit 1
-+fi
-+
- # Configure:
- CFLAGS="$SLKCFLAGS" \
- ./configure \
