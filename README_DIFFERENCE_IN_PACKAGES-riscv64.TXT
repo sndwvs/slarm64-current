@@ -15,7 +15,6 @@ removed:
  ap/vbetool
 -
  d/gcc-brig
- d/gcc-gnat
  d/oprofile
 -
  f/linux-faqs
