@@ -1,3 +1,32 @@
+Fri Feb  4 17:34:50 UTC 2022
+slarm64 15.0 aarch64 stable is released!
++--------------------------+
+Thu Feb  3 16:32:33 UTC 2022
+a/kernel-generic-5.15.19-aarch64-1.txz:  Upgraded.
+a/kernel-modules-5.15.19-aarch64-1.txz:  Upgraded.
+d/kernel-headers-5.15.19-arm64-1.txz:  Upgraded.
+k/kernel-source-5.15.19-noarch-1.txz:  Upgraded.
++--------------------------+
+Wed Feb  2 21:20:25 UTC 2022
+ap/screen-4.9.0-aarch64-1.txz:  Upgraded.
+l/lcms2-2.13-aarch64-2.txz:  Rebuilt.
++--------------------------+
+Tue Feb  1 18:12:56 UTC 2022
+a/rpm2tgz-1.2.2-aarch64-6.txz:  Rebuilt.
+kde/falkon-3.2.0-aarch64-1.txz:  Upgraded.
+kde/kate-21.12.1-aarch64-2.txz:  Rebuilt.
+kde/ktexteditor-5.90.0-aarch64-2.txz:  Rebuilt.
+l/libcanberra-0.30-aarch64-9.txz:  Rebuilt.
+n/samba-4.15.5-aarch64-1.txz:  Upgraded.
++--------------------------+
+Mon Jan 31 16:32:58 UTC 2022
+a/aaa_libraries-15.0-aarch64-19.txz:  Rebuilt.
+ap/at-3.2.4-aarch64-1.txz:  Upgraded.
+d/git-2.35.1-aarch64-1.txz:  Upgraded.
+l/expat-2.4.4-aarch64-1.txz:  Upgraded.
+l/imagemagick-7.1.0_22-aarch64-1.txz:  Upgraded.
+l/lcms2-2.13-aarch64-1.txz:  Upgraded.
++--------------------------+
 Sun Jan 30 01:19:50 UTC 2022
 a/kernel-generic-5.15.18-aarch64-1.txz:  Upgraded.
 a/kernel-modules-5.15.18-aarch64-1.txz:  Upgraded.
