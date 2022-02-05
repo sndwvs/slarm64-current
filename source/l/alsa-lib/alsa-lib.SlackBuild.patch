@@ -1,0 +1,26 @@
+--- a/alsa-lib.SlackBuild	2022-02-05 12:01:32.217744862 +0200
++++ b/alsa-lib.SlackBuild	2022-02-05 12:46:23.935941675 +0200
+@@ -50,6 +50,12 @@
+ elif [ "$ARCH" = "x86_64" ]; then
+   SLKCFLAGS="-O2 -fPIC"
+   LIBDIRSUFFIX="64"
++elif [ "$ARCH" = "aarch64" ]; then
++  SLKCFLAGS="-O2 -fPIC"
++  LIBDIRSUFFIX="64"
++elif [ "$ARCH" = "riscv64" ]; then
++  SLKCFLAGS="-O2 -fPIC"
++  LIBDIRSUFFIX="64"
+ else
+   SLKCFLAGS="-O2"
+   LIBDIRSUFFIX=""
+@@ -92,6 +98,10 @@
+   done
+ )
+ 
++xzcat $CWD/amlogic-0001-WIP-add-confs-for-gx-sound-card-and-axg-sound-card.patch.xz | patch -p1 --verbose || exit 1
++xzcat $CWD/amlogic-0002-WIP-add-Amlogic-cards-to-Makefile.am.patch.xz | patch -p1 --verbose || exit 1
++xzcat $CWD/amlogic-0003-WIP-add-analogue-surrounds-to-confs.patch.xz | patch -p1 --verbose || exit 1
++
+ chown -R root:root .
+ find . \
+   \( -perm 777 -o -perm 775 -o -perm 711 -o -perm 555 -o -perm 511 \) \
