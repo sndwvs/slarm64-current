@@ -1,9 +1,9 @@
 --- /dev/null	2022-02-01 21:29:21.712000021 +0200
-+++ b/kernel-configs/config-generic-5.16.9.arm64	2022-02-12 11:58:44.210842759 +0200
-@@ -0,0 +1,9792 @@
++++ b/kernel-configs/config-generic-5.16.10.arm64	2022-02-19 10:19:05.111525254 +0200
+@@ -0,0 +1,9793 @@
 +#
 +# Automatically generated file; DO NOT EDIT.
-+# Linux/arm64 5.16.9 Kernel Configuration
++# Linux/arm64 5.16.10 Kernel Configuration
 +#
 +CONFIG_CC_VERSION_TEXT="gcc (GCC) 11.2.0"
 +CONFIG_CC_IS_GCC=y
@@ -368,6 +368,7 @@
 +CONFIG_ARM64_ERRATUM_1463225=y
 +CONFIG_ARM64_ERRATUM_1542419=y
 +CONFIG_ARM64_ERRATUM_1508412=y
++CONFIG_ARM64_ERRATUM_2051678=y
 +CONFIG_ARM64_WORKAROUND_TSB_FLUSH_FAILURE=y
 +CONFIG_ARM64_ERRATUM_2054223=y
 +CONFIG_ARM64_ERRATUM_2067961=y
