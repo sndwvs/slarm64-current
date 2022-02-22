@@ -1,3 +1,29 @@
+Sun Feb 20 08:55:14 UTC 2022
+ap/nano-6.2-aarch64-1.txz:  Upgraded.
+d/mercurial-6.0.3-aarch64-1.txz:  Upgraded.
+l/expat-2.4.5-aarch64-1.txz:  Upgraded.
+l/pipewire-0.3.47-aarch64-1.txz:  Upgraded.
+n/libnetfilter_conntrack-1.0.9-aarch64-1.txz:  Upgraded.
+n/mutt-2.2.1-aarch64-1.txz:  Upgraded.
++--------------------------+
+Sat Feb 19 12:36:14 UTC 2022
+a/btrfs-progs-5.16.2-aarch64-1.txz:  Upgraded.
+a/kernel-generic-5.16.10-aarch64-1.txz:  Upgraded.
+a/kernel-modules-5.16.10-aarch64-1.txz:  Upgraded.
+ap/cups-filters-1.28.12-aarch64-1.txz:  Upgraded.
+ap/qpdf-10.6.2-aarch64-1.txz:  Upgraded.
+d/kernel-headers-5.16.10-arm64-1.txz:  Upgraded.
+extra/php80/php80-8.0.16-aarch64-1.txz:  Upgraded.
+extra/php81/php81-8.1.3-aarch64-1.txz:  Upgraded.
+k/kernel-source-5.16.10-noarch-1.txz:  Upgraded.
+l/imagemagick-7.1.0_25-aarch64-1.txz:  Upgraded.
+l/librsvg-2.52.6-aarch64-1.txz:  Upgraded.
+l/pipewire-0.3.46-aarch64-1.txz:  Upgraded.
+n/php-7.4.28-aarch64-1.txz:  Upgraded.
+x/libdrm-2.4.110-aarch64-1.txz:  Upgraded.
+xap/mozilla-firefox-97.0.1-aarch64-1.txz:  Upgraded.
+xap/mozilla-thunderbird-91.6.1-aarch64-1.txz:  Upgraded.
++--------------------------+
 Wed Feb 16 09:44:41 UTC 2022
 a/aaa_base-15.1-aarch64-2.txz:  Rebuilt.
 d/help2man-1.49.1-aarch64-1.txz:  Upgraded.
