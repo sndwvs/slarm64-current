@@ -27,7 +27,7 @@
  export LD_LIBRARY_PATH="${QTDIR}/qtbase/lib:${QTDIR}/qttools/lib:${LD_LIBRARY_PATH}"
  
 +# riscv64
-+[[ $ARCH == "riscv64" ]] && OPTIONS="-DENABLE_JIT=OFF -DTHREADS_PREFER_PTHREAD_FLAG:BOOL=YES"
++[[ $ARCH == "riscv64" ]] && OPTIONS="-DCMAKE_EXE_LINKER_FLAGS=-latomic -DENABLE_JIT=OFF -DTHREADS_PREFER_PTHREAD_FLAG:BOOL=YES"
 +
  # Configure, build, and install:
  mkdir qtwebkit-build
