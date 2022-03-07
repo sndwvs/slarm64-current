@@ -1,5 +1,5 @@
---- a/qt5-webkit.SlackBuild	2021-03-14 16:58:20.256245511 +0200
-+++ b/qt5-webkit.SlackBuild	2021-03-14 17:04:39.175484550 +0200
+--- a/qt5-webkit.SlackBuild	2022-02-23 21:40:03.690331493 +0000
++++ b/qt5-webkit.SlackBuild	2022-03-05 19:22:12.937051997 +0000
 @@ -63,6 +63,12 @@
  elif [ "$ARCH" = "x86_64" ]; then
    SLKCFLAGS="-O2 -fPIC"
@@ -20,14 +20,20 @@
 +# Enable RISC-V (riscv64)
 +xzcat $CWD/qtwebkit-5.212.0-alpha3-add-riscv.patch.xz | patch -p1 --verbose || exit 1
  
- # -DU_DEFINE_FALSE_AND_TRUE=1 since recent icu4c no longer defines these otherwise.
- 
-@@ -108,12 +116,16 @@
+ # Fix for glib-2.68.0:
+ zcat $CWD/qt5-webkit.glib-2.68.0.diff.gz | patch -p1 --verbose || exit 1
+@@ -111,12 +119,22 @@
  export QTDIR="/usr/lib$LIBDIRSUFFIX/qt5"
  export LD_LIBRARY_PATH="${QTDIR}/qtbase/lib:${QTDIR}/qttools/lib:${LD_LIBRARY_PATH}"
  
 +# riscv64
-+[[ $ARCH == "riscv64" ]] && OPTIONS="-DCMAKE_EXE_LINKER_FLAGS=-latomic -DENABLE_JIT=OFF -DTHREADS_PREFER_PTHREAD_FLAG:BOOL=YES"
++if [[ $ARCH == "riscv64" ]]; then
++    # Fix riscv64
++    # error: undefined reference to `__atomic_compare_exchange_1'
++    xzcat $CWD/atomic.patch.xz | patch -p1 --verbose || exit 1
++
++    OPTIONS="-DCMAKE_EXE_LINKER_FLAGS=-latomic -DENABLE_JIT=OFF -DTHREADS_PREFER_PTHREAD_FLAG:BOOL=YES"
++fi
 +
  # Configure, build, and install:
  mkdir qtwebkit-build
