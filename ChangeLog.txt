@@ -1,3 +1,17 @@
+Tue Mar  8 14:22:10 UTC 2022
+ap/sudo-1.9.10-aarch64-1.txz:  Upgraded.
+ap/vim-8.2.4507-aarch64-1.txz:  Upgraded.
+d/cmake-3.22.3-aarch64-1.txz:  Upgraded.
+d/icecream-1.4.0-aarch64-1.txz:  Upgraded.
+l/expat-2.4.7-aarch64-1.txz:  Upgraded.
+l/libgphoto2-2.5.29-aarch64-1.txz:  Upgraded.
+l/netpbm-10.97.05-aarch64-1.txz:  Upgraded.
+l/qt5-5.15.3_20220304_a657406f-aarch64-1.txz:  Upgraded.
+n/curl-7.82.0-aarch64-2.txz:  Upgraded.
+xap/mozilla-firefox-98.0-aarch64-1.txz:  Upgraded.
+xap/mozilla-thunderbird-91.6.2-aarch64-1.txz:  Upgraded.
+xap/vim-gvim-8.2.4522-aarch64-1.txz:  Upgraded.
++--------------------------+
 Fri Mar  4 22:09:01 UTC 2022
 a/hwdata-0.357-noarch-1.txz:  Upgraded.
 a/smartmontools-7.3-aarch64-1.txz:  Upgraded.
