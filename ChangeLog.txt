@@ -1,3 +1,17 @@
+Sun Mar 13 17:59:58 UTC 2022
+a/kernel-generic-5.16.14-aarch64-1.txz:  Upgraded.
+a/kernel-modules-5.16.14-aarch64-1.txz:  Upgraded.
+ap/qpdf-10.6.3-aarch64-1.txz:  Upgraded.
+ap/sqlite-3.38.1-aarch64-1.txz:  Upgraded.
+d/kernel-headers-5.16.14-arm64-1.txz:  Upgraded.
+k/kernel-source-5.16.14-noarch-1.txz:  Upgraded.
+l/harfbuzz-4.0.1-aarch64-1.txz:  Upgraded.
+l/librsvg-2.52.7-aarch64-1.txz:  Upgraded.
+l/polkit-0.120-aarch64-3.txz:  Rebuilt.
+xap/NetworkManager-openvpn-1.8.18-aarch64-1.txz:  Upgraded.
+xap/xlockmore-5.69-aarch64-1.txz:  Upgraded.
+xfce/xfce4-screenshooter-1.9.10-aarch64-1.txz:  Upgraded.
++--------------------------+
 Fri Mar 11 05:51:31 UTC 2022
 a/dbus-1.14.0-aarch64-1.txz:  Upgraded.
 a/kernel-firmware-20220309_cd01f85-noarch-1.txz:  Upgraded.
