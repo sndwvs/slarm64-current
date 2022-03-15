@@ -1,5 +1,5 @@
---- a/vulkan-sdk.SlackBuild	2021-06-15 19:21:15.903798831 +0000
-+++ b/vulkan-sdk.SlackBuild	2021-06-19 08:31:16.592908287 +0000
+--- a/vulkan-sdk.SlackBuild	2022-03-06 15:50:35.000000000 +0000
++++ b/vulkan-sdk.SlackBuild	2022-03-15 05:42:05.661767041 +0000
 @@ -57,6 +57,12 @@
  elif [ "$ARCH" = "s390" ]; then
    SLKCFLAGS="-O2"
@@ -13,7 +13,7 @@
  elif [ "$ARCH" = "x86_64" ]; then
    SLKCFLAGS="-O2 -fPIC"
    LIBDIRSUFFIX="64"
-@@ -480,6 +486,10 @@
+@@ -502,6 +508,10 @@
    \( -perm 666 -o -perm 664 -o -perm 600 -o -perm 444 -o -perm 440 -o -perm 400 \) \
    -exec chmod 644 {} \+
  
@@ -21,6 +21,6 @@
 +install -Dm755 $CWD/config.guess autoconf/ || exit 1
 +xzcat $CWD/config-ix.cmake-riscv64.patch.xz | patch -p1 --verbose || exit 1
 +
- mkdir -p build
+ mkdir -p build/docs
  cd build
    cmake \
