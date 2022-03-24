@@ -1,3 +1,147 @@
+Thu Mar 24 14:46:23 UTC 2022
+l/qt5-5.15.3_20220318_e507d3e5-aarch64-1.txz:  Upgraded.
++--------------------------+
+Sun Mar 20 08:26:17 UTC 2022
+a/glibc-zoneinfo-2022a-noarch-1.txz:  Upgraded.
+a/kernel-firmware-20220318_681281e-noarch-1.txz:  Upgraded.
+a/kernel-generic-5.16.16-aarch64-1.txz:  Upgraded.
+a/kernel-modules-5.16.16-aarch64-1.txz:  Upgraded.
+ap/squashfs-tools-4.5.1-aarch64-1.txz:  Upgraded.
+d/kernel-headers-5.16.16-arm64-1.txz:  Upgraded.
+k/kernel-source-5.16.16-noarch-1.txz:  Upgraded.
+l/gmime-3.2.11-aarch64-1.txz:  Upgraded.
+l/graphene-1.10.8-aarch64-1.txz:  Upgraded.
+x/libepoxy-1.5.10-aarch64-1.txz:  Upgraded.
+x/mesa-21.3.8-aarch64-1.txz:  Upgraded.
++--------------------------+
+Sat Mar 19 14:05:36 UTC 2022
+ap/man-db-2.10.2-aarch64-1.txz:  Upgraded.
+d/python3-3.9.11-aarch64-1.txz:  Upgraded.
+extra/php80/php80-8.0.17-aarch64-1.txz:  Upgraded.
+extra/php81/php81-8.1.4-aarch64-1.txz:  Upgraded.
+l/nodejs-16.14.2-aarch64-1.txz:  Upgraded.
+n/gnutls-3.7.4-aarch64-1.txz:  Upgraded.
++--------------------------+
+Sat Mar 19 08:00:06 UTC 2022
+a/kernel-generic-5.16.15-aarch64-1.txz:  Upgraded.
+a/kernel-modules-5.16.15-aarch64-1.txz:  Upgraded.
+a/openssl-solibs-1.1.1n-aarch64-1.txz:  Upgraded.
+d/kernel-headers-5.16.15-arm64-1.txz:  Upgraded.
+d/meson-0.61.3-aarch64-1.txz:  Upgraded.
+k/kernel-source-5.16.15-noarch-1.txz:  Upgraded.
+kde/kstars-3.5.8-aarch64-1.txz:  Upgraded.
+l/nodejs-16.14.1-aarch64-1.txz:  Upgraded.
+n/bind-9.18.1-aarch64-1.txz:  Upgraded.
+n/bluez-5.64-aarch64-1.txz:  Upgraded.
+n/mobile-broadband-provider-info-20220316-aarch64-1.txz:  Upgraded.
+n/openssl-1.1.1n-aarch64-1.txz:  Upgraded.
+n/openvpn-2.5.6-aarch64-1.txz:  Upgraded.
+x/ibus-1.5.26-aarch64-1.txz:  Upgraded.
++--------------------------+
+Fri Mar 18 18:14:33 UTC 2022
+l/jasper-3.0.3-aarch64-1.txz:  Upgraded.
+l/qt5-5.15.3_20220312_33a3f16f-aarch64-1.txz:  Upgraded.
+n/krb5-1.19.3-aarch64-1.txz:  Upgraded.
+n/samba-4.15.6-aarch64-1.txz:  Upgraded.
+n/stunnel-5.63-aarch64-1.txz:  Upgraded.
++--------------------------+
+Tue Mar 15 11:06:41 UTC 2022
+l/gst-plugins-bad-free-1.20.1-aarch64-1.txz:  Upgraded.
+l/gst-plugins-base-1.20.1-aarch64-1.txz:  Upgraded.
+l/gst-plugins-good-1.20.1-aarch64-1.txz:  Upgraded.
+l/gst-plugins-libav-1.20.1-aarch64-1.txz:  Upgraded.
+l/gstreamer-1.20.1-aarch64-1.txz:  Upgraded.
+n/httpd-2.4.53-aarch64-1.txz:  Upgraded.
+xap/mozilla-firefox-98.0.1-aarch64-1.txz:  Upgraded.
++--------------------------+
+Mon Mar 14 19:03:32 UTC 2022
+ap/ispell-3.4.05-aarch64-1.txz:  Upgraded.
+d/perl-5.34.1-aarch64-1.txz:  Upgraded.
+kde/attica-5.92.0-aarch64-1.txz:  Upgraded.
+kde/baloo-5.92.0-aarch64-1.txz:  Upgraded.
+kde/bluez-qt-5.92.0-aarch64-1.txz:  Upgraded.
+kde/breeze-icons-5.92.0-noarch-1.txz:  Upgraded.
+kde/extra-cmake-modules-5.92.0-aarch64-1.txz:  Upgraded.
+kde/frameworkintegration-5.92.0-aarch64-1.txz:  Upgraded.
+kde/kactivities-5.92.0-aarch64-1.txz:  Upgraded.
+kde/kactivities-stats-5.92.0-aarch64-1.txz:  Upgraded.
+kde/kapidox-5.92.0-aarch64-1.txz:  Upgraded.
+kde/karchive-5.92.0-aarch64-1.txz:  Upgraded.
+kde/kauth-5.92.0-aarch64-1.txz:  Upgraded.
+kde/kbookmarks-5.92.0-aarch64-1.txz:  Upgraded.
+kde/kcalendarcore-5.92.0-aarch64-1.txz:  Upgraded.
+kde/kcmutils-5.92.0-aarch64-1.txz:  Upgraded.
+kde/kcodecs-5.92.0-aarch64-1.txz:  Upgraded.
+kde/kcompletion-5.92.0-aarch64-1.txz:  Upgraded.
+kde/kconfig-5.92.0-aarch64-1.txz:  Upgraded.
+kde/kconfigwidgets-5.92.0-aarch64-1.txz:  Upgraded.
+kde/kcontacts-5.92.0-aarch64-1.txz:  Upgraded.
+kde/kcoreaddons-5.92.0-aarch64-1.txz:  Upgraded.
+kde/kcrash-5.92.0-aarch64-1.txz:  Upgraded.
+kde/kdav-5.92.0-aarch64-1.txz:  Upgraded.
+kde/kdbusaddons-5.92.0-aarch64-1.txz:  Upgraded.
+kde/kdeclarative-5.92.0-aarch64-1.txz:  Upgraded.
+kde/kded-5.92.0-aarch64-1.txz:  Upgraded.
+kde/kdelibs4support-5.92.0-aarch64-1.txz:  Upgraded.
+kde/kdesignerplugin-5.92.0-aarch64-1.txz:  Upgraded.
+kde/kdesu-5.92.0-aarch64-1.txz:  Upgraded.
+kde/kdewebkit-5.92.0-aarch64-1.txz:  Upgraded.
+kde/kdnssd-5.92.0-aarch64-1.txz:  Upgraded.
+kde/kdoctools-5.92.0-aarch64-1.txz:  Upgraded.
+kde/kemoticons-5.92.0-aarch64-1.txz:  Upgraded.
+kde/kfilemetadata-5.92.0-aarch64-1.txz:  Upgraded.
+kde/kglobalaccel-5.92.0-aarch64-1.txz:  Upgraded.
+kde/kguiaddons-5.92.0-aarch64-1.txz:  Upgraded.
+kde/kholidays-5.92.0-aarch64-1.txz:  Upgraded.
+kde/khtml-5.92.0-aarch64-1.txz:  Upgraded.
+kde/ki18n-5.92.0-aarch64-1.txz:  Upgraded.
+kde/kiconthemes-5.92.0-aarch64-1.txz:  Upgraded.
+kde/kidletime-5.92.0-aarch64-1.txz:  Upgraded.
+kde/kimageformats-5.92.0-aarch64-1.txz:  Upgraded.
+kde/kinit-5.92.0-aarch64-1.txz:  Upgraded.
+kde/kio-5.92.0-aarch64-1.txz:  Upgraded.
+kde/kirigami2-5.92.0-aarch64-1.txz:  Upgraded.
+kde/kitemmodels-5.92.0-aarch64-1.txz:  Upgraded.
+kde/kitemviews-5.92.0-aarch64-1.txz:  Upgraded.
+kde/kjobwidgets-5.92.0-aarch64-1.txz:  Upgraded.
+kde/kjs-5.92.0-aarch64-1.txz:  Upgraded.
+kde/kjsembed-5.92.0-aarch64-1.txz:  Upgraded.
+kde/kmediaplayer-5.92.0-aarch64-1.txz:  Upgraded.
+kde/knewstuff-5.92.0-aarch64-1.txz:  Upgraded.
+kde/knotifications-5.92.0-aarch64-1.txz:  Upgraded.
+kde/knotifyconfig-5.92.0-aarch64-1.txz:  Upgraded.
+kde/kpackage-5.92.0-aarch64-1.txz:  Upgraded.
+kde/kparts-5.92.0-aarch64-1.txz:  Upgraded.
+kde/kpeople-5.92.0-aarch64-1.txz:  Upgraded.
+kde/kplotting-5.92.0-aarch64-1.txz:  Upgraded.
+kde/kpty-5.92.0-aarch64-1.txz:  Upgraded.
+kde/kquickcharts-5.92.0-aarch64-1.txz:  Upgraded.
+kde/kross-5.92.0-aarch64-1.txz:  Upgraded.
+kde/krunner-5.92.0-aarch64-1.txz:  Upgraded.
+kde/kservice-5.92.0-aarch64-1.txz:  Upgraded.
+kde/ktexteditor-5.92.0-aarch64-1.txz:  Upgraded.
+kde/ktextwidgets-5.92.0-aarch64-1.txz:  Upgraded.
+kde/kunitconversion-5.92.0-aarch64-1.txz:  Upgraded.
+kde/kwallet-5.92.0-aarch64-1.txz:  Upgraded.
+kde/kwayland-5.92.0-aarch64-1.txz:  Upgraded.
+kde/kwidgetsaddons-5.92.0-aarch64-1.txz:  Upgraded.
+kde/kwindowsystem-5.92.0-aarch64-1.txz:  Upgraded.
+kde/kxmlgui-5.92.0-aarch64-1.txz:  Upgraded.
+kde/kxmlrpcclient-5.92.0-aarch64-1.txz:  Upgraded.
+kde/modemmanager-qt-5.92.0-aarch64-1.txz:  Upgraded.
+kde/networkmanager-qt-5.92.0-aarch64-1.txz:  Upgraded.
+kde/oxygen-icons5-5.92.0-noarch-1.txz:  Upgraded.
+kde/plasma-framework-5.92.0-aarch64-1.txz:  Upgraded.
+kde/prison-5.92.0-aarch64-1.txz:  Upgraded.
+kde/purpose-5.92.0-aarch64-1.txz:  Upgraded.
+kde/qqc2-desktop-style-5.92.0-aarch64-1.txz:  Upgraded.
+kde/solid-5.92.0-aarch64-1.txz:  Upgraded.
+kde/sonnet-5.92.0-aarch64-1.txz:  Upgraded.
+kde/syndication-5.92.0-aarch64-1.txz:  Upgraded.
+kde/syntax-highlighting-5.92.0-aarch64-1.txz:  Upgraded.
+kde/threadweaver-5.92.0-aarch64-1.txz:  Upgraded.
+n/gpgme-1.17.1-aarch64-2.txz:  Rebuilt.
++--------------------------+
 Sun Mar 13 17:59:58 UTC 2022
 a/kernel-generic-5.16.14-aarch64-1.txz:  Upgraded.
 a/kernel-modules-5.16.14-aarch64-1.txz:  Upgraded.
