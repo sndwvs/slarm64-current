@@ -1,3 +1,15 @@
+Fri Apr  8 11:00:15 UTC 2022
+a/gzip-1.12-aarch64-1.txz:  Upgraded.
+d/meson-0.62.0-aarch64-1.txz:  Upgraded.
+d/rust-1.60.0-aarch64-1.txz:  Upgraded.
+l/libsigc++-2.10.8-aarch64-1.txz:  Upgraded.
+n/libgpg-error-1.45-aarch64-1.txz:  Upgraded.
+x/xf86-video-dummy-0.4.0-aarch64-1.txz:  Upgraded.
+xap/libnma-1.8.38-aarch64-1.txz:  Upgraded.
++--------------------------+
+Thu Apr  7 13:57:12 UTC 2022
+a/u-boot-tools-2022.04-aarch64-1.txz:  Upgraded.
++--------------------------+
 Thu Apr  7 11:00:43 UTC 2022
 a/haveged-1.9.17-aarch64-2.txz:  Rebuilt.
 a/sysvinit-scripts-15.0-noarch-10.txz:  Rebuilt.
