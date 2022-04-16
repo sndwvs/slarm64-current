@@ -1,0 +1,56 @@
+--- a/seamonkey.SlackBuild	2021-08-26 20:47:34.623405128 +0000
++++ b/seamonkey.SlackBuild	2021-08-29 05:49:21.249222315 +0000
+@@ -65,6 +65,14 @@
+   LIBDIRSUFFIX="64"
+   OPTIMIZE_FLAG=${OPTIMIZE_FLAG:-"-O1 -g0"}
+   ELFHACK="--enable-elf-hack"
++elif [ "$ARCH" = "aarch64" ]; then
++  LIBDIRSUFFIX="64"
++  OPTIMIZE_FLAG=${OPTIMIZE_FLAG:-"-O1 -g0"}
++  ELFHACK=""
++elif [ "$ARCH" = "riscv64" ]; then
++  LIBDIRSUFFIX="64"
++  OPTIMIZE_FLAG=${OPTIMIZE_FLAG:-"-O1 -g0"}
++  ELFHACK=""
+ else
+   LIBDIRSUFFIX=""
+   OPTIMIZE_FLAG=${OPTIMIZE_FLAG:-"-O1 -g0"}
+@@ -93,6 +101,11 @@
+ # Set linker to use:
+ LINKER=bfd
+ 
++# Keep memory usage as low as possible when linking:
++SLKLDFLAGS=" -Wl,--as-needed -Wl,--no-keep-memory -Wl,--stats"
++export LDFLAGS="$SLKLDFLAGS"
++export MOZ_LINK_FLAGS="$SLKLDFLAGS"
++
+ NUMJOBS=${NUMJOBS:-" -j$(expr $(nproc) + 1) "}
+ 
+ TMP=${TMP:-/tmp}
+@@ -143,6 +156,16 @@
+ OPTIONS="\
+   --prefix=/usr \
+   --libdir=/usr/lib${LIBDIRSUFFIX} \
++  \
++  --with-system-libvpx \
++  --with-system-nss \
++  --with-system-icu \
++  --enable-system-ffi \
++  --enable-system-pixman \
++  --with-system-bz2 \
++  --with-system-jpeg \
++  --disable-webrtc \
++  \
+   --enable-cpp-rtti \
+   --enable-default-toolkit=cairo-gtk3 \
+   --enable-startup-notification \
+@@ -170,7 +193,8 @@
+   --with-unsigned-addon-scopes=app,system \
+   --enable-application=comm/suite \
+   --host=$ARCH-slackware-linux \
+-  --target=$ARCH-slackware-linux"
++  --target=$ARCH-slackware-linux \
++  "
+ 
+ export BUILD_OFFICIAL=1
+ export MOZILLA_OFFICIAL=1
