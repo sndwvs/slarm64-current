@@ -1,0 +1,22 @@
+--- a/python3.SlackBuild	2021-02-10 21:05:28.207933685 +0200
++++ b/python3.SlackBuild	2021-02-10 21:07:55.587813141 +0200
+@@ -68,6 +68,10 @@
+   LIBDIRSUFFIX=""
+ elif [ "$ARCH" = "armel" ]; then
+   LIBDIRSUFFIX=""
++elif [ "$ARCH" = "aarch64" ]; then
++  LIBDIRSUFFIX="64"
++elif [ "$ARCH" = "riscv64" ]; then
++  LIBDIRSUFFIX="64"
+ fi
+ 
+ # Location for Python site-packages:
+@@ -85,7 +89,7 @@
+ # We don't want a large libpython*.a.
+ zcat $CWD/python3.no-static-library.diff.gz | patch -p1 --verbose || exit 1
+ 
+-if [ "$ARCH" = "x86_64" ]; then
++if [ "$ARCH" = "x86_64" -o "$ARCH" = "aarch64" -o "$ARCH" = "riscv64" ]; then
+   # Install to lib64 instead of lib.
+   zcat $CWD/python.sysconfig.py.x86_64.diff.gz | patch -p1 --verbose || exit 1
+   zcat $CWD/python3.distutils.x86_64.diff.gz | patch -p1 --verbose || exit 1
