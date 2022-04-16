@@ -1,5 +1,9 @@
 extra/*/*.txz
 extra/*/*.asc
+patches/*/*.txz
+patches/*/*.asc
+patches/*/*/*.txz
+patches/*/*/*.asc
 testing/*/*.txz
 testing/*/*.asc
 testing/*/*/*.txz
