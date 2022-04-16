@@ -1,0 +1,13 @@
+--- a/build-deps.sh	2020-08-01 15:23:59.795295182 +0000
++++ b/build-deps.sh	2020-08-01 15:24:40.895942577 +0000
+@@ -31,8 +31,8 @@
+ # cbindgen is a build-time dependency:
+ ( cd $CWD/build-deps/cbindgen ; ./cbindgen.build ) || exit 1
+ 
+-if /bin/ls build-deps*.txz 1> /dev/null 2> /dev/null ; then # use prebuilt autoconf/nodejs
+-  ( cd $TMP/mozilla-thunderbird-build-deps ; tar xf $CWD/build-deps*.txz )
++if /bin/ls build-deps*${ARCH}*.txz 1> /dev/null 2> /dev/null ; then # use prebuilt autoconf/nodejs
++  ( cd $TMP/mozilla-thunderbird-build-deps ; tar xf $CWD/build-deps*${ARCH}*.txz )
+ else
+   # We need to use the incredibly ancient autoconf-2.13 for this  :/
+   ( cd $CWD/build-deps/autoconf ; ./autoconf.build ) || exit 1
