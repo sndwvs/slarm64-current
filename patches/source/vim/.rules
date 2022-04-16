@@ -3,7 +3,27 @@ rules() {
     if [[ ${p} == vim-gvim ]]; then
         PKG_SOURCE=$(echo ${_WORK_DIR}/vim-*.tar.?z)
         PKG_VERSION=$(echo $PKG_SOURCE | rev | cut -f 3- -d . | cut -f 1 -d - | rev)
-        cp ${PACKAGES_PATH}/ap/vim-${_VERSION}*.txz ${BTMP}/
+        cp ${PACKAGES_PATH}/patches/packages/vim-${_VERSION}*.txz ${BTMP}/
+
+        local base_package="vim"
+
+        remove_work_dir "$base_package"
+        prepare_work_dir "$base_package"
+
+        pushd ${SLARM64_SOURCE_PATH}/$base_package 2>&1>/dev/null
+        patching_files STATUS
+        popd 2>&1>/dev/null
+        pushd ${SLARM64_SOURCE_PATH}/$base_package/${WORK_DIR} 2>&1>/dev/null
+        ./${p}.SlackBuild 2>&1 | tee ${p}.build.log
+        if [[ ${PIPESTATUS[0]} == 1 ]]; then
+            echo "${_PKG}" 2>&1 >> ${BCWD}/build_error.log
+        else
+            [[ ${t} == "patches" ]] && t="${t}/packages"
+            move_pkg ${t} ${p}
+            upgradepkg --install-new --reinstall $(get_package ${t} ${p})
+        fi
+        popd 2>&1>/dev/null
+
     fi
 }
 
