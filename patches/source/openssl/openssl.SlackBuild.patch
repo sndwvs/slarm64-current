@@ -1,0 +1,23 @@
+--- a/openssl.SlackBuild	2021-02-10 09:12:38.901159895 +0200
++++ b/openssl.SlackBuild	2021-02-10 09:13:03.553143710 +0200
+@@ -83,6 +83,10 @@
+   LIBDIRSUFFIX=""
+ elif [ "$ARCH" = "x86_64" ]; then
+   LIBDIRSUFFIX="64"
++elif [ "$ARCH" = "aarch64" ]; then
++  LIBDIRSUFFIX="64"
++elif [ "$ARCH" = "riscv64" ]; then
++  LIBDIRSUFFIX="64"
+ fi
+ 
+ # OpenSSL has a (nasty?) habit of bumping the internal version number with
+@@ -138,6 +142,9 @@
+  no-sse2 \
+  shared
+ 
++sed -i "s/^LIBDIR=lib$/LIBDIR=lib${LIBDIRSUFFIX}/" Makefile
++sed -i "s/lib\/engines/lib${LIBDIRSUFFIX}\/engines/" Makefile
++
+ make $NUMJOBS depend || make depend || exit 1
+ 
+ make $NUMJOBS || make || exit 1
