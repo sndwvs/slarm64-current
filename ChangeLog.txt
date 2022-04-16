@@ -1,3 +1,28 @@
+Sat Apr 16 16:06:42 UTC 2022
+patches/packages/aaa_base-15.0-aarch64-4_slack15.0.txz:  Added.
+patches/packages/bind-9.16.27-aarch64-1_slack15.0.txz:  Added.
+patches/packages/bluez-5.64-aarch64-1_slack15.0.txz:  Added.
+patches/packages/boost-1.78.0-aarch64-2_slack15.0.txz:  Added.
+patches/packages/ca-certificates-20220403-noarch-1_slack15.0.txz:  Added.
+patches/packages/cyrus-sasl-2.1.28-aarch64-1_slack15.0.txz:  Added.
+patches/packages/expat-2.4.7-aarch64-1_slack15.0.txz:  Added.
+patches/packages/flac-1.3.4-aarch64-1_slack15.0.txz:  Added.
+patches/packages/git-2.35.3-aarch64-1_slack15.0.txz:  Added.
+patches/packages/glibc-zoneinfo-2022a-noarch-1_slack15.0.txz:  Added.
+patches/packages/gzip-1.12-aarch64-1_slack15.0.txz:  Added.
+patches/packages/httpd-2.4.53-aarch64-1_slack15.0.txz:  Added.
+patches/packages/libarchive-3.6.1-aarch64-1_slack15.0.txz:  Added.
+patches/packages/libxml2-2.9.13-aarch64-1_slack15.0.txz:  Added.
+patches/packages/libxslt-1.1.35-aarch64-1_slack15.0.txz:  Added.
+patches/packages/openssl-1.1.1n-aarch64-1_slack15.0.txz:  Added.
+patches/packages/polkit-0.120-aarch64-3_slack15.0.txz:  Added.
+patches/packages/ruby-3.0.4-aarch64-1_slack15.0.txz:  Added.
+patches/packages/util-linux-2.37.4-aarch64-1_slack15.0.txz:  Added.
+patches/packages/vim-8.2.4649-aarch64-1_slack15.0.txz:  Added.
+patches/packages/whois-5.5.13-aarch64-1_slack15.0.txz:  Added.
+patches/packages/xz-5.2.5-aarch64-4_slack15.0.txz:  Added.
+patches/packages/zlib-1.2.12-aarch64-1_slack15.0.txz:  Added.
++--------------------------+
 Fri Feb  4 17:34:50 UTC 2022
 slarm64 15.0 aarch64 stable is released!
 +--------------------------+

@@ -1,0 +1,15 @@
+--- a/vim.SlackBuild	2021-02-12 22:59:59.872284254 +0200
++++ b/vim.SlackBuild	2021-02-12 23:00:35.488211737 +0200
+@@ -72,6 +72,12 @@
+ if [ "$ARCH" = "x86_64" ]; then
+   export SLKCFLAGS="-O2 -fPIC"
+   export LIBDIRSUFFIX="64"
++elif [ "$ARCH" = "aarch64" ]; then
++  export SLKCFLAGS="-O2 -fPIC"
++  export LIBDIRSUFFIX="64"
++elif [ "$ARCH" = "riscv64" ]; then
++  export SLKCFLAGS="-O2 -fPIC"
++  export LIBDIRSUFFIX="64"
+ else
+   export SLKCFLAGS="-O2"
+   export LIBDIRSUFFIX=""
