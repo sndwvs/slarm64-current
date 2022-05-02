@@ -1,3 +1,29 @@
+Sun May  1 00:14:45 UTC 2022
+patches/packages/pidgin-2.14.9-aarch64-1_slack15.0.txz:  Added.
++--------------------------+
+Thu Apr 28 07:13:26 UTC 2022
+patches/packages/curl-7.83.0-aarch64-1_slack15.0.txz:  Added.
++--------------------------+
+Tue Apr 26 05:12:18 UTC 2022
+patches/packages/freerdp-2.7.0-aarch64-1_slack15.0.txz:  Added.
+patches/packages/mozilla-thunderbird-91.8.1-aarch64-1_slack15.0.txz:  Upgraded.
++--------------------------+
+Mon Apr 25 12:51:37 UTC 2022
+patches/packages/qt5-5.15.3_20220318_e507d3e5-aarch64-1_slack15.0.txz:  Added.
++--------------------------+
+Tue Apr 19 12:24:42 UTC 2022
+patches/packages/at-3.2.3-aarch64-1_slack15.0.txz:  Added.
+patches/packages/mariadb-10.5.15-aarch64-2_slack15.0.txz:  Added.
++--------------------------+
+Mon Apr 18 10:48:40 UTC 2022
+patches/packages/mozilla-thunderbird-91.8.0-aarch64-1_slack15.0.txz:  Added.
++--------------------------+
+Sun Apr 17 21:22:57 UTC 2022
+patches/packages/mozilla-firefox-91.8.0esr-aarch64-1_slack15.0.txz:  Added.
++--------------------------+
+Sun Apr 17 11:23:01 UTC 2022
+patches/packages/seamonkey-2.53.11.1-aarch64-1_slack15.0.txz:  Added.
++--------------------------+
 Sat Apr 16 21:47:18 UTC 2022
 extra/php80/php80-8.0.16-aarch64-1_slack15.0.txz:  Upgraded.
 extra/php81/php81-8.1.3-aarch64-1_slack15.0.txz:  Upgraded.
