@@ -1,0 +1,32 @@
+--- a/mariadb.SlackBuild	2021-11-17 22:36:17.862536545 +0200
++++ b/mariadb.SlackBuild	2021-11-17 22:37:15.091997603 +0200
+@@ -28,6 +28,8 @@
+ 
+ cd $(dirname $0) ; CWD=$(pwd)
+ 
++# disable mroonga storage engine (doesn't build on ARM)
++
+ PKGNAM=mariadb
+ VERSION=${VERSION:-$(echo ${PKGNAM}-*.tar.?z | rev | cut -f 3- -d . | cut -f 1 -d - | rev)}
+ BUILD=${BUILD:-1}
+@@ -81,6 +83,12 @@
+ elif [ "$ARCH" = "x86_64" ]; then
+   SLKCFLAGS="-O2 -fPIC"
+   LIBDIRSUFFIX="64"
++elif [ "$ARCH" = "aarch64" ]; then
++  SLKCFLAGS="-O2 -fPIC"
++  LIBDIRSUFFIX="64"
++elif [ "$ARCH" = "riscv64" ]; then
++  SLKCFLAGS="-O2 -fPIC"
++  LIBDIRSUFFIX="64"
+ fi
+ 
+ rm -rf $PKG
+@@ -134,6 +142,7 @@
+   -DCONC_WITH_SSL=ON \
+   -DUSE_ARIA_FOR_TMP_TABLES=ON \
+   -DAWS_SDK_EXTERNAL_PROJECT=OFF \
++  -DWITHOUT_MROONGA_STORAGE_ENGINE=1 \
+   .. || exit 1
+ 
+ # doesn't currently compile
