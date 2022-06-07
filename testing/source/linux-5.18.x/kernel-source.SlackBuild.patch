@@ -1,0 +1,28 @@
+--- a/kernel-source.SlackBuild	2021-11-19 14:40:49.489765771 +0200
++++ b/kernel-source.SlackBuild	2021-11-19 14:42:54.012944825 +0200
+@@ -61,6 +61,12 @@
+   if [ "$ARCH" = "x86_64" ]; then
+     CONFIG_SUFFIX=".x64"
+   fi
++  if [ "$ARCH" = "aarch64" ]; then
++    CONFIG_SUFFIX=".arm64"
++  fi
++  if [ "$ARCH" = "riscv64" ]; then
++    CONFIG_SUFFIX=".riscv64"
++  fi
+   if [ -z "${LOCALVERSION}" ]; then
+     if echo $ARCH | grep -q -E "i?86$" ; then
+       # Default to SMP extraversion on 32-bit:
+@@ -163,9 +169,9 @@
+     fi
+   fi
+ 
+-  echo "Building kernel and modules (needed before clean for building NVIDIA to work)..."
+-  make ${NUMJOBS} || exit 1
+-  make ${NUMJOBS} modules || exit 1
++#  echo "Building kernel and modules (needed before clean for building NVIDIA to work)..."
++#  make ${NUMJOBS} || exit 1
++#  make ${NUMJOBS} modules || exit 1
+   echo "Cleaning up..."
+   make clean
+   # Make sure header files aren't missing...

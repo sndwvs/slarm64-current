@@ -1,0 +1,62 @@
+--- a/kernel-generic.SlackBuild	2021-04-04 15:06:06.983461934 +0000
++++ b/kernel-generic.SlackBuild	2021-04-04 15:07:17.439052135 +0000
+@@ -58,6 +58,10 @@
+     case "$(uname -m)" in
+     i?86) KERNEL_ARCH=x86 ;;
+     x86_64) KERNEL_ARCH=x86 ;;
++    aarch64) KERNEL_ARCH=arm64
++             PACKAGE_ARCH=aarch64 ;;
++    riscv64) KERNEL_ARCH=riscv
++             PACKAGE_ARCH=riscv64 ;;
+     # Use uname -m for all other archs:
+     *) KERNEL_ARCH=$(uname -m) ;;
+   esac
+@@ -79,7 +83,6 @@
+   cd ${KERNEL_SOURCE}
+   make oldconfig 1> /dev/null 2> /dev/null
+   make prepare 1> /dev/null 2> /dev/null
+-  PACKAGE_ARCH=$(cat kernel/bounds.s | grep -w "\-march=.*" | tr " " "\n" | grep -w "\-march=.*" | cut -f 2 -d = | tr - _)
+   echo "kernel-${KERNEL_NAME}${LOCALVERSION}-$(echo ${VERSION} | tr - _)$(echo ${LOCALVERSION} | tr - _)-${PACKAGE_ARCH}-$BUILD.txz"
+   exit 0
+ fi
+@@ -118,7 +121,8 @@
+   echo "Running make oldconfig..."
+   make oldconfig
+   echo "Building kernel..."
+-  make $NUMJOBS bzImage || make bzImage || exit 1
++  make $NUMJOBS Image || make Image || exit 1
++  make $NUMJOBS DTC_FLAGS="-@" dtbs
+   # Output files to a directory, if requested:
+   if [ ! -z "${KERNEL_OUTPUT_DIRECTORY}" ]; then
+     echo "Copying files to ${KERNEL_OUTPUT_DIRECTORY}..."
+@@ -126,14 +130,15 @@
+     rm -f ${KERNEL_OUTPUT_DIRECTORY}/*
+     cp -a --verbose System.map ${KERNEL_OUTPUT_DIRECTORY}
+     cp -a --verbose .config ${KERNEL_OUTPUT_DIRECTORY}/config
+-    cp -a --verbose arch/${KERNEL_ARCH}/boot/bzImage ${KERNEL_OUTPUT_DIRECTORY}
++    cp -a --verbose arch/${KERNEL_ARCH}/boot/Image ${KERNEL_OUTPUT_DIRECTORY}
+     gzip -9 ${KERNEL_OUTPUT_DIRECTORY}/System.map
+   fi
+   echo "Preparing the package in $PKG..."
+   mkdir -p $PKG/boot
++  make INSTALL_DTBS_PATH=$PKG/boot/dtbs dtbs_install
+   cp -a --verbose System.map $PKG/boot/System.map-${KERNEL_NAME}${LOCALVERSION}-${VERSION}${LOCALVERSION}
+   cp -a --verbose .config $PKG/boot/config-${KERNEL_NAME}${LOCALVERSION}-${VERSION}${LOCALVERSION}${CONFIG_SUFFIX}
+-  cp -a --verbose arch/${KERNEL_ARCH}/boot/bzImage $PKG/boot/vmlinuz-${KERNEL_NAME}${LOCALVERSION}-${VERSION}${LOCALVERSION}
++  cp -a --verbose arch/${KERNEL_ARCH}/boot/Image $PKG/boot/vmlinuz-${KERNEL_NAME}${LOCALVERSION}-${VERSION}${LOCALVERSION}
+   # Make symlinks:
+   ln -sf System.map-${KERNEL_NAME}${LOCALVERSION}-${VERSION}${LOCALVERSION} $PKG/boot/System.map
+   ln -sf config-${KERNEL_NAME}${LOCALVERSION}-${VERSION}${LOCALVERSION}${CONFIG_SUFFIX} $PKG/boot/config
+@@ -142,8 +147,10 @@
+ ) || exit 1
+ 
+ # Fetch the kernel architecture from the source tree:
+-cd ${KERNEL_SOURCE}
+-PACKAGE_ARCH=$(cat kernel/bounds.s | grep -w "\-march=.*" | tr " " "\n" | grep -w "\-march=.*" | cut -f 2 -d = | tr - _)
++if [ -z "${PACKAGE_ARCH}" ]; then
++  cd ${KERNEL_SOURCE}
++  PACKAGE_ARCH=$(uname -m)
++fi
+ 
+ mkdir $PKG/install
+ if [ -r $CWD/slack-desc/slack-desc.kernel-${KERNEL_NAME}${LOCALVERSION}.${PACKAGE_ARCH} ]; then
