@@ -1,3 +1,27 @@
+Thu Jun  9 19:10:43 UTC 2022
+ap/sudo-1.9.11p1-aarch64-1.txz:  Upgraded.
+kde/digikam-7.6.0-aarch64-2.txz:  Rebuilt.
+l/gst-plugins-bad-free-1.20.2-aarch64-2.txz:  Rebuilt.
+l/opencv-4.6.0-aarch64-1.txz:  Upgraded.
+n/NetworkManager-1.36.6-aarch64-1.txz:  Upgraded.
+n/epic5-2.1.11-aarch64-1.txz:  Upgraded.
+n/httpd-2.4.54-aarch64-1.txz:  Upgraded.
+n/libnftnl-1.2.2-aarch64-1.txz:  Upgraded.
+n/nftables-1.0.4-aarch64-1.txz:  Upgraded.
++--------------------------+
+Wed Jun  8 16:16:17 UTC 2022
+a/btrfs-progs-5.18.1-aarch64-1.txz:  Upgraded.
+a/kernel-generic-5.17.13-aarch64-1.txz:  Upgraded.
+a/kernel-modules-5.17.13-aarch64-1.txz:  Upgraded.
+d/kernel-headers-5.17.13-arm64-1.txz:  Upgraded.
+d/pahole-1.23-aarch64-1.txz:  Added.
+k/kernel-source-5.17.13-noarch-1.txz:  Upgraded.
+l/gmime-3.2.12-aarch64-1.txz:  Upgraded.
+l/imagemagick-7.1.0_37-aarch64-1.txz:  Upgraded.
+l/python-setuptools_scm-6.4.2-aarch64-1.txz:  Upgraded.
+n/alpine-2.26-aarch64-1.txz:  Upgraded.
+n/mutt-2.2.6-aarch64-1.txz:  Upgraded.
++--------------------------+
 Sun Jun  5 09:34:43 UTC 2022
 ap/htop-3.2.1-aarch64-1.txz:  Upgraded.
 l/imagemagick-7.1.0_36-aarch64-1.txz:  Upgraded.
