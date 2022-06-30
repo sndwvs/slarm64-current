@@ -1,5 +1,5 @@
---- a/llvm.SlackBuild	2021-05-13 20:52:58.237323167 +0300
-+++ b/llvm.SlackBuild	2021-05-20 19:35:01.902913345 +0300
+--- a/llvm.SlackBuild	2022-06-28 06:21:42.763087327 +0000
++++ b/llvm.SlackBuild	2022-06-30 15:53:37.595898095 +0000
 @@ -39,10 +39,14 @@
    esac
  fi
@@ -16,7 +16,7 @@
      BUILD_CLANGD=NO
    else
      BUILD_CLANGD=YES
-@@ -82,6 +86,12 @@
+@@ -73,6 +77,12 @@
  elif [ "$ARCH" = "x86_64" ]; then
    SLKCFLAGS="-O2 -fPIC"
    LIBDIRSUFFIX="64"
@@ -29,9 +29,9 @@
  else
    SLKCFLAGS="-O2"
    LIBDIRSUFFIX=""
-@@ -149,6 +159,12 @@
- # Hack to fix build with polly. Maybe we should just not use polly... ?
- zcat $CWD/llvm.polly.hack.diff.gz | patch -p1 --verbose || exit 1
+@@ -161,6 +171,12 @@
+ ln -sf */projects/libcxxabi .
+ cd -
  
 +xzcat $CWD/clang.dynamic.linker.aarch64.patch.xz | patch -p1 --verbose || exit 1
 +xzcat $CWD/clang.toolchains.aarch64.triple.patch.xz | patch -p1 --verbose || exit 1
@@ -42,7 +42,7 @@
  chown -R root:root .
  find . \
    \( -perm 777 -o -perm 775 -o -perm 750 -o -perm 711 -o -perm 555 -o -perm 511 \) \
-@@ -156,6 +172,22 @@
+@@ -168,6 +184,22 @@
    \( -perm 666 -o -perm 664 -o -perm 640 -o -perm 600 -o -perm 444 -o -perm 440 -o -perm 400 \) \
    -exec chmod 644 {} \+
  
@@ -65,7 +65,7 @@
  mkdir build
  cd build
    mkdir include
-@@ -164,15 +196,15 @@
+@@ -176,8 +208,8 @@
    # Nuke LLVM libunwind as it conflicts with the one already on the system:
    rm -r ../projects/libunwind
    cmake -GNinja \
@@ -76,9 +76,10 @@
      -DCMAKE_C_FLAGS:STRING="$SLKCFLAGS" \
      -DCMAKE_CXX_FLAGS:STRING="$SLKCFLAGS" \
      -DCMAKE_INSTALL_PREFIX=/usr \
-     -DLLVM_LIBDIR_SUFFIX=${LIBDIRSUFFIX} \
-     -DCMAKE_BUILD_TYPE=Release \
-     -DBUILD_SHARED_LIBS=ON \
+@@ -186,7 +218,7 @@
+     -DLLVM_BUILD_LLVM_DYLIB=ON \
+     -DLLVM_LINK_LLVM_DYLIB=ON \
+     -DCLANG_LINK_CLANG_DYLIB=ON \
 -    -DLLVM_USE_LINKER=gold \
 +    $OPTIONS \
      -DLLVM_ENABLE_RTTI=ON \
