@@ -1,0 +1,10 @@
+
+rules() {
+    export CPPFLAGS=""
+    export CFLAGS=""
+    export CXXFLAGS=""
+    export LDFLAGS=""
+}
+
+rules
+
