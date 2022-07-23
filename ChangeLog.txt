@@ -1,3 +1,9 @@
+Tue Jul 19 17:34:50 UTC 2022
+patches/packages/xorg-server-1.20.14-aarch64-4_slack15.0.txz:  Rebuilt.
+patches/packages/xorg-server-xephyr-1.20.14-aarch64-4_slack15.0.txz:  Rebuilt.
+patches/packages/xorg-server-xnest-1.20.14-aarch64-4_slack15.0.txz:  Rebuilt.
+patches/packages/xorg-server-xvfb-1.20.14-aarch64-4_slack15.0.txz:  Rebuilt.
++--------------------------+
 Thu Jul 14 16:02:22 UTC 2022
 patches/packages/xorg-server-1.20.14-aarch64-3_slack15.0.txz:  Added.
 patches/packages/xorg-server-xephyr-1.20.14-aarch64-3_slack15.0.txz:  Added.
