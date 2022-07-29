@@ -2,7 +2,7 @@
 
 LANG=C
 CHANGELOG="ChangeLog.txt"
-PATH_DISTRO=${PATH_DISTRO:-"/mnt/data/shares/linux/slarm64/slarm64-current"}
+PATH_DISTRO=${PATH_DISTRO:-"/mnt/shares/linux/slarm64/slarm64-current"}
 PREFFIX_DISTRO=${PREFFIX_DISTRO:-"slarm64"}
 WORK_DIR=$(mktemp -d)
 FILTER=".*\.\(tgz\|txz\)"

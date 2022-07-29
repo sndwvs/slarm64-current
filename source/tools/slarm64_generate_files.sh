@@ -3,7 +3,7 @@
 export LANG=C
 
 DISTR=${DISTR:-slarm64}
-DISTR_ROOT=${DISTR_ROOT:-/mnt/data/shares/linux/slackware/${DISTR}-current/}
+DISTR_ROOT=${DISTR_ROOT:-/mnt/shares/linux/slackware/${DISTR}-current/}
 DISTR_OWNER=${DISTR_OWNER:-$DISTR}
 FILELIST=${FILELIST:-FILE_LIST}
 PACKAGES="PACKAGES.TXT"
