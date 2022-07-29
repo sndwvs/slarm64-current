@@ -3,7 +3,7 @@
 export LANG=C
 
 DISTR=${DISTR:-slarm64}
-DISTR_ROOT=${DISTR_ROOT:-/mnt/data/shares/linux/slarm64/${DISTR}-15.0/}
+DISTR_ROOT=${DISTR_ROOT:-/mnt/shares/linux/slarm64/${DISTR}-15.0/}
 DISTR_OWNER=${DISTR_OWNER:-$DISTR}
 FILELIST=${FILELIST:-FILE_LIST}
 PACKAGES="PACKAGES.TXT"
