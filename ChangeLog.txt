@@ -1,3 +1,25 @@
+Sat Jul 30 16:08:31 UTC 2022
+a/dialog-1.3_20220728-aarch64-1.txz:  Upgraded.
+a/kernel-generic-5.18.15-aarch64-1.txz:  Upgraded.
+a/kernel-modules-5.18.15-aarch64-1.txz:  Upgraded.
+ap/vim-9.0.0107-aarch64-1.txz:  Upgraded.
+d/cmake-3.23.3-aarch64-1.txz:  Upgraded.
+d/kernel-headers-5.18.15-arm64-1.txz:  Upgraded.
+k/kernel-source-5.18.15-noarch-1.txz:  Upgraded.
+kde/kstars-3.6.0-aarch64-1.txz:  Upgraded.
+n/gnutls-3.7.7-aarch64-1.txz:  Upgraded.
+xap/freerdp-2.8.0-aarch64-1.txz:  Upgraded.
+xap/vim-gvim-9.0.0107-aarch64-1.txz:  Upgraded.
++--------------------------+
+Fri Jul 29 18:41:17 UTC 2022
+a/sysklogd-2.4.0-aarch64-1.txz:  Upgraded.
+ap/inxi-3.3.20_1-noarch-1.txz:  Upgraded.
+d/mercurial-6.2.1-aarch64-1.txz:  Upgraded.
+n/nettle-3.8.1-aarch64-1.txz:  Upgraded.
+x/libwacom-2.4.0-aarch64-1.txz:  Upgraded.
+xap/mozilla-thunderbird-102.1.0-aarch64-1.txz:  Upgraded.
+xap/xsnow-3.5.1-aarch64-1.txz:  Upgraded.
++--------------------------+
 Thu Jul 28 08:09:44 UTC 2022
 l/tevent-0.13.0-aarch64-1.txz:  Upgraded.
 n/samba-4.16.4-aarch64-1.txz:  Upgraded.
