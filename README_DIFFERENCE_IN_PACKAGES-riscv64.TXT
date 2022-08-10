@@ -21,12 +21,8 @@ removed:
 -
  l/svgalib
 -
- x/igt-gpu-tools
- x/intel-vaapi-driver
- x/xf86-input-vmmouse
+ x/intel-gpu-tools
  x/xf86-video-intel
- x/xf86-video-siliconmotion
- x/xf86-video-tseng
  x/xf86-video-vmware
 -
  xap/Mplayer
@@ -44,7 +40,7 @@ added:
  a/mtd-utils
  a/u-boot-tools
 -
- l/libgpiod
--
  d/dtc
+-
+ l/libgpiod
 ----------------------------

@@ -21,11 +21,8 @@ removed:
 -
  l/svgalib
 -
- x/intel-vaapi-driver
- x/xf86-input-vmmouse
+ x/intel-gpu-tools
  x/xf86-video-intel
- x/xf86-video-siliconmotion
- x/xf86-video-tseng
  x/xf86-video-vmware
 ----------------------------
 
@@ -41,6 +38,4 @@ added:
  d/dtc
 -
  l/libgpiod
--
- x/xf86-video-fbdev
 ----------------------------
