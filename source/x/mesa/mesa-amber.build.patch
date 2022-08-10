@@ -1,0 +1,21 @@
+--- a/mesa-amber.build	2022-08-10 20:12:17.423398567 +0000
++++ b/mesa-amber.build	2022-08-10 20:13:39.316752081 +0000
+@@ -6,7 +6,7 @@
+ 
+ 
+ # Be sure this list is up-to-date:
+-DRI_DRIVERS="i915,i965,r100,r200,nouveau"
++DRI_DRIVERS="nouveau"
+ 
+ cd $TMP
+ rm -rf ${PKGNAM}-${AMBERVERS}
+@@ -74,6 +74,9 @@
+   -Dgles2=enabled \
+   -Dopengl=true \
+   -Dglx=dri \
++  -Ddri3=enabled \
++  -Dgbm=enabled \
++  -Dlibunwind=disabled \
+   .. || exit 1
+   "${NINJA:=ninja}" $NUMJOBS || exit 1
+   DESTDIR=$PKG/cruft $NINJA install || exit 1
