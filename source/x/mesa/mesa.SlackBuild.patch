@@ -27,7 +27,7 @@
    -Dosmesa=true \
    -Dgallium-drivers=$GALLIUM_DRIVERS \
 -  -Dvulkan-drivers=amd,intel,swrast \
-+  -Dvulkan-drivers=amd,intel,swrast,broadcom \
++  -Dvulkan-drivers=amd,swrast,broadcom \
    -Dvulkan-layers=device-select,intel-nullhw,overlay \
    -Dglvnd=true \
    -Dllvm=enabled \
