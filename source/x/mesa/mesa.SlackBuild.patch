@@ -1,11 +1,11 @@
---- a/mesa.SlackBuild	2022-08-09 02:58:15.107303823 +0000
-+++ b/mesa.SlackBuild	2022-08-10 20:09:24.804524369 +0000
+--- a/mesa.SlackBuild	2022-08-10 23:39:34.530667285 +0300
++++ b/mesa.SlackBuild	2022-08-10 23:46:21.963021585 +0300
 @@ -33,7 +33,7 @@
  NUMJOBS=${NUMJOBS:-" -j$(expr $(nproc) + 1) "}
  
  # Be sure this list is up-to-date:
 -GALLIUM_DRIVERS="nouveau,r300,r600,svga,radeonsi,swrast,virgl,iris,crocus,zink"
-+GALLIUM_DRIVERS="freedreno,nouveau,swrast,virgl,kmsro,lima,panfrost,v3d,vc4"
++GALLIUM_DRIVERS="nouveau,r300,r600,radeonsi,swrast,virgl,zink,freedreno,etnaviv,kmsro,lima,panfrost,v3d,vc4"
  
  if [ -z "$ARCH" ]; then
    case "$( uname -m )" in
@@ -22,22 +22,23 @@
  else
    SLKCFLAGS="-O2"
    LIBDIRSUFFIX=""
-@@ -132,7 +138,7 @@
+@@ -132,8 +138,8 @@
    -Dgallium-nine=true \
    -Dosmesa=true \
    -Dgallium-drivers=$GALLIUM_DRIVERS \
 -  -Dvulkan-drivers=amd,intel,swrast \
-+  -Dvulkan-drivers=amd,swrast,broadcom \
-   -Dvulkan-layers=device-select,intel-nullhw,overlay \
+-  -Dvulkan-layers=device-select,intel-nullhw,overlay \
++  -Dvulkan-drivers=amd,swrast,broadcom,panfrost \
++  -Dvulkan-layers=device-select,overlay \
    -Dglvnd=true \
    -Dllvm=enabled \
-@@ -143,6 +149,9 @@
+   -Dshared-llvm=enabled \
+@@ -143,6 +149,8 @@
    -Dgles2=enabled \
    -Dopengl=true \
    -Dglx=dri \
 +  -Ddri3=enabled \
 +  -Dgbm=enabled \
-+  -Dlibunwind=disabled \
    .. || exit 1
    "${NINJA:=ninja}" $NUMJOBS || exit 1
    DESTDIR=$PKG $NINJA install || exit 1
