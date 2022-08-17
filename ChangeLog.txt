@@ -1,3 +1,27 @@
+Tue Aug 16 18:25:00 UTC 2022
+patches/packages/rsync-3.2.5-aarch64-1_slack15.0.txz:  Added.
++--------------------------+
+Sat Aug 13 22:31:43 UTC 2022
+patches/packages/glibc-zoneinfo-2022b-noarch-1_slack15.0.txz:  Upgraded.
++--------------------------+
+Thu Aug 11 20:07:48 UTC 2022
+patches/packages/zlib-1.2.12-aarch64-2_slack15.0.txz:  Rebuilt.
++--------------------------+
+Thu Aug  4 16:16:16 UTC 2022
+a/libblockdev-2.26-aarch64-4.txz:  Rebuilt.
+a/libbytesize-2.6-aarch64-4.txz:  Rebuilt.
+a/libpwquality-1.4.4-aarch64-7.txz:  Rebuilt.
+a/volume_key-0.3.12-aarch64-6.txz:  Rebuilt.
+ap/hplip-3.20.5-aarch64-7.txz:  Rebuilt.
+ap/linuxdoc-tools-0.9.82-aarch64-4.txz:  Rebuilt.
+ap/undervolt-20210815_e39aea1-aarch64-3.txz:  Rebuilt.
++--------------------------+
+Sat Jul 30 11:51:04 UTC 2022
+patches/packages/gnutls-3.7.7-aarch64-1_slack15.0.txz:  Added.
++--------------------------+
+Sat Jul 30 09:45:57 UTC 2022
+patches/packages/mozilla-thunderbird-91.12.0-aarch64-1_slack15.0.txz:  Upgraded.
++--------------------------+
 Thu Jul 28 09:08:23 UTC 2022
 patches/packages/samba-4.15.9-aarch64-1_slack15.0.txz:  Upgraded.
 +--------------------------+
