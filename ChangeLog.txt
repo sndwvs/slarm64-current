@@ -1,3 +1,45 @@
+Tue Aug 16 19:32:46 UTC 2022
+a/etc-15.1-aarch64-2.txz:  Rebuilt.
+a/mcelog-188-aarch64-1.txz:  Upgraded.
+kde/fcitx5-configtool-5.0.14-aarch64-1.txz:  Added.
+kde/fcitx5-theme-breeze-2.0.0-noarch-1.txz:  Added.
+kde/kcm-fcitx-0.5.6-aarch64-1.txz:  Removed.
+l/fmt-9.0.0-aarch64-1.txz:  Added.
+l/librsvg-2.54.4-aarch64-2.txz:  Rebuilt.
+n/rsync-3.2.5-aarch64-1.txz:  Upgraded.
+x/anthy-9100h-aarch64-2.txz:  Removed.
+x/anthy-unicode-1.0.0.20211224-aarch64-1.txz:  Added.
+x/fcitx-anthy-0.2.3-aarch64-1.txz:  Removed.
+x/fcitx-configtool-0.4.9-aarch64-1.txz:  Removed.
+x/fcitx-hangul-0.3.1-aarch64-1.txz:  Removed.
+x/fcitx-kkc-0.1.4-aarch64-1.txz:  Removed.
+x/fcitx-libpinyin-0.5.3-aarch64-1.txz:  Removed.
+x/fcitx-m17n-0.2.4-aarch64-1.txz:  Removed.
+x/fcitx-qt5-1.2.5-aarch64-1.txz:  Removed.
+x/fcitx-sayura-0.1.2-aarch64-1.txz:  Removed.
+x/fcitx-table-extra-0.3.8-aarch64-1.txz:  Removed.
+x/fcitx-table-other-0.2.4-aarch64-1.txz:  Removed.
+x/fcitx-unikey-0.2.7-aarch64-1.txz:  Removed.
+x/fcitx5-5.0.18-aarch64-1.txz:  Added.
+x/fcitx5-anthy-5.0.12-aarch64-1.txz:  Added.
+x/fcitx5-chinese-addons-5.0.14-aarch64-1.txz:  Added.
+x/fcitx5-gtk-5.0.17-aarch64-1.txz:  Added.
+x/fcitx5-hangul-5.0.10-aarch64-1.txz:  Added.
+x/fcitx5-kkc-5.0.10-aarch64-1.txz:  Added.
+x/fcitx5-m17n-5.0.10-aarch64-1.txz:  Added.
+x/fcitx5-qt-5.0.14-aarch64-1.txz:  Added.
+x/fcitx5-sayura-5.0.8-aarch64-1.txz:  Added.
+x/fcitx5-table-extra-5.0.11-aarch64-1.txz:  Added.
+x/fcitx5-table-other-5.0.10-aarch64-1.txz:  Added.
+x/fcitx5-unikey-5.0.11-aarch64-1.txz:  Added.
+x/ibus-1.5.26-aarch64-2.txz:  Rebuilt.
+x/ibus-anthy-1.5.14-aarch64-2.txz:  Rebuilt.
+x/libime-1.0.13-aarch64-1.txz:  Added.
+x/m17n-lib-1.8.0-aarch64-5.txz:  Rebuilt.
+x/skkdic-20210919-noarch-1.txz:  Upgraded.
+x/x11-skel-7.7-aarch64-9.txz:  Rebuilt.
+x/xcb-imdkit-1.0.3-aarch64-1.txz:  Added.
++--------------------------+
 Mon Aug 15 15:55:04 UTC 2022
 a/sysklogd-2.4.4-aarch64-1.txz:  Upgraded.
 kde/attica-5.97.0-aarch64-1.txz:  Upgraded.
