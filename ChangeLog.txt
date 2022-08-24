@@ -1,3 +1,15 @@
+Sun Aug 21 19:18:55 UTC 2022
+patches/packages/vim-8.2.4649-aarch64-3_slack15.0.txz:  Rebuilt.
+patches/packages/vim-gvim-8.2.4649-aarch64-3_slack15.0.txz:  Rebuilt.
++--------------------------+
+Fri Aug 19 19:41:45 UTC 2022
+patches/packages/glibc-zoneinfo-2022c-noarch-1_slack15.0.txz:  Upgraded.
++--------------------------+
+Thu Aug 18 15:44:58 UTC 2022
+patches/packages/mariadb-10.5.17-aarch64-1_slack15.0.txz:  Upgraded.
+patches/packages/vim-8.2.4649-aarch64-2_slack15.0.txz:  Rebuilt.
+patches/packages/vim-gvim-8.2.4649-aarch64-2_slack15.0.txz:  Rebuilt.
++--------------------------+
 Tue Aug 16 18:25:00 UTC 2022
 patches/packages/rsync-3.2.5-aarch64-1_slack15.0.txz:  Added.
 +--------------------------+
