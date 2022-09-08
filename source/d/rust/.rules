@@ -7,7 +7,7 @@ rules() {
     BOOTSTRAP_VERSION=$(grep BOOTSTRAP_VERSION= rust.url | cut -d '=' -f2)
     BOOTSTRAP_CARGO=$(grep BOOTSTRAP_CARGO= rust.url | cut -d '=' -f2)
 
-    [[ $BOOTSTRAP_CARGO == \$* ]] && BOOTSTRAP_CARGO=$(echo $BOOTSTRAP_CARGO | sed 's:\$::g') ; BOOTSTRAP_CARGO=${!BOOTSTRAP_CARGO}
+    [[ $BOOTSTRAP_CARGO == \$* ]] && BOOTSTRAP_CARGO=$(echo $BOOTSTRAP_CARGO | sed 's:\$::g') && BOOTSTRAP_CARGO=${!BOOTSTRAP_CARGO}
 
     echo
     echo "\$BOOTSTRAP_DATE = $BOOTSTRAP_DATE"
