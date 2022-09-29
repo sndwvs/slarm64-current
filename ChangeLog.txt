@@ -1,3 +1,82 @@
+Wed Sep 28 18:37:51 UTC 2022
+a/kernel-firmware-20220928_8d19846-noarch-1.txz:  Upgraded.
+n/pinentry-1.2.1-aarch64-2.txz:  Rebuilt.
+x/fcitx5-gtk-5.0.19-aarch64-1.txz:  Upgraded.
+x/libXtst-1.2.4-aarch64-1.txz:  Upgraded.
+x/libXxf86vm-1.1.5-aarch64-1.txz:  Upgraded.
+x/mesa-22.2.0-aarch64-1.txz:  Upgraded.
++--------------------------+
+Tue Sep 27 17:45:51 UTC 2022
+a/bash-5.2.000-aarch64-1.txz:  Upgraded.
+ap/vim-9.0.0594-aarch64-1.txz:  Upgraded.
+l/fluidsynth-2.3.0-aarch64-1.txz:  Upgraded.
+l/imagemagick-7.1.0_49-aarch64-1.txz:  Upgraded.
+l/libcap-2.66-aarch64-1.txz:  Upgraded.
+l/netpbm-10.99.03-aarch64-1.txz:  Upgraded.
+l/readline-8.2.000-aarch64-1.txz:  Upgraded.
+l/xapian-core-1.4.21-aarch64-1.txz:  Upgraded.
+n/dnsmasq-2.87-aarch64-1.txz:  Upgraded.
+x/xterm-373-aarch64-1.txz:  Upgraded.
+xap/vim-gvim-9.0.0594-aarch64-1.txz:  Upgraded.
++--------------------------+
+Sun Sep 25 08:44:49 UTC 2022
+a/kernel-firmware-20220923_bb3f948-noarch-1.txz:  Upgraded.
+a/kernel-generic-5.19.11-aarch64-1.txz:  Upgraded.
+a/kernel-modules-5.19.11-aarch64-1.txz:  Upgraded.
+ap/vim-9.0.0558-aarch64-1.txz:  Upgraded.
+d/kernel-headers-5.19.11-arm64-1.txz:  Upgraded.
+k/kernel-source-5.19.11-noarch-1.txz:  Upgraded.
+l/nodejs-18.9.1-aarch64-1.txz:  Upgraded.
+n/getmail-6.18.10-aarch64-1.txz:  Upgraded.
+xap/mozilla-firefox-105.0.1-aarch64-1.txz:  Upgraded.
+xap/vim-gvim-9.0.0558-aarch64-1.txz:  Upgraded.
++--------------------------+
+Fri Sep 23 13:11:12 UTC 2022
+a/quota-4.09-aarch64-1.txz:  Upgraded.
+d/parallel-20220922-noarch-1.txz:  Upgraded.
+l/jemalloc-5.3.0-aarch64-2.txz:  Rebuilt.
+n/ca-certificates-20220922-noarch-1.txz:  Upgraded.
+testing/packages/linux-5.19.x/kernel-generic-5.19.1-aarch64-1.txz:  Removed.
+testing/packages/linux-5.19.x/kernel-headers-5.19.1-arm64-1.txz:  Removed.
+testing/packages/linux-5.19.x/kernel-modules-5.19.1-aarch64-1.txz:  Removed.
+testing/packages/linux-5.19.x/kernel-source-5.19.1-noarch-1.txz:  Removed.
+testing/packages/rust/rust-1.64.0-aarch64-1.txz:  Added.
++--------------------------+
+Thu Sep 22 10:42:53 UTC 2022
+ap/cups-2.4.2-aarch64-3.txz:  Rebuilt.
++--------------------------+
+Thu Sep 22 07:02:43 UTC 2022
+a/kernel-generic-5.19.10-aarch64-1.txz:  Upgraded.
+a/kernel-modules-5.19.10-aarch64-1.txz:  Upgraded.
+d/kernel-headers-5.19.10-arm64-1.txz:  Upgraded.
+k/kernel-source-5.19.10-noarch-1.txz:  Upgraded.
+l/expat-2.4.9-aarch64-1.txz:  Upgraded.
+l/libffi-3.4.3-aarch64-1.txz:  Upgraded.
+xap/mozilla-firefox-105.0-aarch64-1.txz:  Upgraded.
+xap/mozilla-thunderbird-102.3.0-aarch64-1.txz:  Upgraded.
++--------------------------+
+Mon Sep 19 16:35:59 UTC 2022
+ap/slackpkg-15.0.10-noarch-2.txz:  Rebuilt.
+ap/vim-9.0.0500-aarch64-1.txz:  Upgraded.
+x/ibus-m17n-1.4.17-aarch64-1.txz:  Upgraded.
+xap/vim-gvim-9.0.0500-aarch64-1.txz:  Upgraded.
++--------------------------+
+Sun Sep 18 02:45:54 UTC 2022
+a/acpid-2.0.34-aarch64-1.txz:  Upgraded.
+a/libblockdev-2.28-aarch64-1.txz:  Upgraded.
+ap/lsof-4.96.3-aarch64-1.txz:  Upgraded.
+ap/mariadb-10.6.10-aarch64-1.txz:  Upgraded.
+kde/kio-extras-22.08.1-aarch64-2.txz:  Rebuilt.
+l/harfbuzz-5.2.0-aarch64-1.txz:  Upgraded.
+l/kdsoap-2.1.1-aarch64-1.txz:  Upgraded.
+l/mozilla-nss-3.83-aarch64-1.txz:  Upgraded.
+l/pango-1.50.10-aarch64-1.txz:  Upgraded.
+l/popt-1.19-aarch64-1.txz:  Upgraded.
+n/libksba-1.6.1-aarch64-1.txz:  Upgraded.
+x/ibus-libpinyin-1.13.1-aarch64-1.txz:  Upgraded.
+x/libgee-0.20.6-aarch64-1.txz:  Upgraded.
+xfce/xfce4-pulseaudio-plugin-0.4.5-aarch64-1.txz:  Upgraded.
++--------------------------+
 Fri Sep 16 15:22:57 UTC 2022
 a/aaa_libraries-15.1-aarch64-10.txz:  Rebuilt.
 a/kernel-generic-5.19.9-aarch64-1.txz:  Upgraded.
