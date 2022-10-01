@@ -1,3 +1,12 @@
+Thu Sep 29 22:42:22 UTC 2022
+a/kernel-generic-5.19.12-aarch64-1.txz:  Upgraded.
+a/kernel-modules-5.19.12-aarch64-1.txz:  Upgraded.
+d/kernel-headers-5.19.12-arm64-1.txz:  Upgraded.
+k/kernel-source-5.19.12-noarch-1.txz:  Upgraded.
+kde/kscreenlocker-5.25.5-aarch64-2.txz:  Rebuilt.
+kde/plasma-workspace-5.25.5-aarch64-3.txz:  Rebuilt.
+n/gnutls-3.7.8-aarch64-1.txz:  Upgraded.
++--------------------------+
 Wed Sep 28 18:37:51 UTC 2022
 a/kernel-firmware-20220928_8d19846-noarch-1.txz:  Upgraded.
 n/pinentry-1.2.1-aarch64-2.txz:  Rebuilt.
