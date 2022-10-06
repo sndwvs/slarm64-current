@@ -1,3 +1,78 @@
+Sun Oct  2 15:55:49 UTC 2022
+extra/php80/php80-8.0.24-aarch64-1_slack15.0.txz:  Upgraded.
+extra/php81/php81-8.1.11-aarch64-1_slack15.0.txz:  Upgraded.
+patches/packages/glibc-zoneinfo-2022d-noarch-1_slack15.0.txz:  Upgraded.
+patches/packages/mozilla-thunderbird-102.3.1-aarch64-1_slack15.0.txz:  Upgraded.
+patches/packages/php-7.4.32-aarch64-1_slack15.0.txz:  Upgraded.
+patches/packages/seamonkey-2.53.14-aarch64-1_slack15.0.txz:  Upgraded.
+patches/packages/vim-9.0.0623-aarch64-1_slack15.0.txz:  Upgraded.
+patches/packages/vim-gvim-9.0.0623-aarch64-1_slack15.0.txz:  Upgraded.
++--------------------------+
+Thu Sep 29 17:26:36 UTC 2022
+patches/packages/xorg-server-xwayland-21.1.4-aarch64-2_slack15.0.txz:  Added.
++--------------------------+
+Tue Sep 27 16:34:18 UTC 2022
+patches/packages/dnsmasq-2.87-aarch64-1_slack15.0.txz:  Added.
+patches/packages/vim-9.0.0594-aarch64-1_slack15.0.txz:  Upgraded.
+patches/packages/vim-gvim-9.0.0594-aarch64-1_slack15.0.txz:  Upgraded.
++--------------------------+
+Sat Sep 24 17:08:26 UTC 2022
+patches/packages/vim-9.0.0558-aarch64-1_slack15.0.txz:  Upgraded.
+patches/packages/vim-gvim-9.0.0558-aarch64-1_slack15.0.txz:  Upgraded.
++--------------------------+
+Fri Sep 23 11:33:08 UTC 2022
+patches/packages/ca-certificates-20220922-noarch-1_slack15.0.txz:  Upgraded.
++--------------------------+
+Fri Sep 23 08:25:47 UTC 2022
+patches/packages/expat-2.4.9-aarch64-1_slack15.0.txz:  Upgraded.
+patches/packages/mozilla-firefox-102.3.0esr-aarch64-1_slack15.0.txz:  Upgraded.
+patches/packages/mozilla-thunderbird-102.3.0-aarch64-1_slack15.0.txz:  Upgraded.
++--------------------------+
+Mon Sep 19 19:53:17 UTC 2022
+patches/packages/vim-9.0.0500-aarch64-1_slack15.0.txz:  Upgraded.
+patches/packages/vim-gvim-9.0.0500-aarch64-1_slack15.0.txz:  Upgraded.
++--------------------------+
+Sun Sep 11 08:42:25 UTC 2022
+patches/packages/python3-3.9.14-aarch64-1_slack15.0.txz:  Upgraded.
++--------------------------+
+Sun Sep 11 07:28:07 UTC 2022
+extra/rust-for-mozilla/rust-1.60.0-aarch64-1_slack15.0.txz:  Added.
+patches/packages/mozilla-firefox-102.2.0esr-aarch64-1_slack15.0.txz:  Upgraded.
+patches/packages/mozilla-thunderbird-102.2.2-aarch64-1_slack15.0.txz:  Upgraded.
+patches/packages/vim-9.0.0417-aarch64-1_slack15.0.txz:  Upgraded.
+patches/packages/vim-gvim-9.0.0417-aarch64-1_slack15.0.txz:  Upgraded.
++--------------------------+
+Fri Sep  2 20:06:39 UTC 2022
+patches/packages/poppler-21.12.0-aarch64-2_slack15.0.txz:  Added.
++--------------------------+
+Thu Sep  1 19:03:25 UTC 2022
+patches/packages/curl-7.85.0-aarch64-1_slack15.0.txz:  Upgraded.
++--------------------------+
+Wed Aug 31 17:19:17 UTC 2022
+extra/sendmail/sendmail-8.17.1-aarch64-4_slack15.0.txz:  Rebuilt.
+extra/sendmail/sendmail-cf-8.17.1-noarch-4_slack15.0.txz:  Rebuilt.
+patches/packages/vim-9.0.0334-aarch64-1_slack15.0.txz:  Upgraded.
+patches/packages/vim-gvim-9.0.0334-aarch64-1_slack15.0.txz:  Upgraded.
++--------------------------+
+Sat Aug 27 00:35:36 UTC 2022
+patches/packages/linux-5.15.38/kernel-generic-5.15.38-aarch64-1.txz:  Removed.
+patches/packages/linux-5.15.38/kernel-headers-5.15.38-arm64-1.txz:  Removed.
+patches/packages/linux-5.15.38/kernel-modules-5.15.38-aarch64-1.txz:  Removed.
+patches/packages/linux-5.15.38/kernel-source-5.15.38-noarch-1.txz:  Removed.
+patches/packages/linux-5.15.63/kernel-generic-5.15.63-aarch64-1.txz:  Added.
+patches/packages/linux-5.15.63/kernel-headers-5.15.63-arm64-1.txz:  Added.
+patches/packages/linux-5.15.63/kernel-modules-5.15.63-aarch64-1.txz:  Added.
+patches/packages/linux-5.15.63/kernel-source-5.15.63-noarch-1.txz:  Added.
+patches/packages/vim-9.0.0270-aarch64-1_slack15.0.txz:  Upgraded.
+patches/packages/vim-gvim-9.0.0270-aarch64-1_slack15.0.txz:  Upgraded.
++--------------------------+
+Thu Aug 25 17:36:21 UTC 2022
+extra/sendmail/sendmail-8.17.1-aarch64-3_slack15.0.txz:  Rebuilt.
+extra/sendmail/sendmail-cf-8.17.1-noarch-3_slack15.0.txz:  Rebuilt.
+patches/packages/hunspell-1.7.1-aarch64-1_slack15.0.txz:  Added.
+patches/packages/mozilla-firefox-91.13.0esr-aarch64-1_slack15.0.txz:  Upgraded.
+patches/packages/mozilla-thunderbird-91.13.0-aarch64-1_slack15.0.txz:  Upgraded.
++--------------------------+
 Sun Aug 21 19:18:55 UTC 2022
 patches/packages/vim-8.2.4649-aarch64-3_slack15.0.txz:  Rebuilt.
 patches/packages/vim-gvim-8.2.4649-aarch64-3_slack15.0.txz:  Rebuilt.
