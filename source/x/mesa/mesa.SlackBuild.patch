@@ -1,6 +1,6 @@
---- a/mesa.SlackBuild	2022-08-10 23:39:34.530667285 +0300
-+++ b/mesa.SlackBuild	2022-08-10 23:46:21.963021585 +0300
-@@ -33,7 +33,7 @@
+--- a/mesa.SlackBuild	2022-09-29 21:06:18.477982937 +0300
++++ b/mesa.SlackBuild	2022-10-15 21:11:14.362863239 +0300
+@@ -34,7 +34,7 @@ CODECS=${CODECS:-h264dec,h264enc,h265dec
  NUMJOBS=${NUMJOBS:-" -j$(expr $(nproc) + 1) "}
  
  # Be sure this list is up-to-date:
@@ -9,7 +9,7 @@
  
  if [ -z "$ARCH" ]; then
    case "$( uname -m )" in
-@@ -69,6 +69,12 @@
+@@ -70,6 +70,12 @@ if [ "$ARCH" = "i586" ]; then
  elif [ "$ARCH" = "x86_64" ]; then
    SLKCFLAGS="-O2 -fPIC"
    LIBDIRSUFFIX="64"
@@ -22,7 +22,7 @@
  else
    SLKCFLAGS="-O2"
    LIBDIRSUFFIX=""
-@@ -132,8 +138,8 @@
+@@ -133,8 +139,8 @@ meson setup \
    -Dgallium-nine=true \
    -Dosmesa=true \
    -Dgallium-drivers=$GALLIUM_DRIVERS \
@@ -30,10 +30,10 @@
 -  -Dvulkan-layers=device-select,intel-nullhw,overlay \
 +  -Dvulkan-drivers=amd,swrast,broadcom,panfrost \
 +  -Dvulkan-layers=device-select,overlay \
+   -Dvideo-codecs="$CODECS" \
    -Dglvnd=true \
    -Dllvm=enabled \
-   -Dshared-llvm=enabled \
-@@ -143,6 +149,8 @@
+@@ -145,6 +151,8 @@ meson setup \
    -Dgles2=enabled \
    -Dopengl=true \
    -Dglx=dri \
