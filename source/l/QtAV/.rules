@@ -1,0 +1,7 @@
+
+rules() {
+    # remove the previous version package otherwise build error
+    removepkg QtAV
+}
+
+rules

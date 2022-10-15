@@ -1,3 +1,19 @@
+Sun Oct  9 11:53:19 UTC 2022
+ap/inxi-3.3.22_1-noarch-1.txz:  Upgraded.
+n/conntrack-tools-1.4.7-aarch64-1.txz:  Upgraded.
+n/libgpg-error-1.46-aarch64-1.txz:  Upgraded.
+n/libksba-1.6.2-aarch64-1.txz:  Upgraded.
+n/postfix-3.7.3-aarch64-1.txz:  Upgraded.
+x/freeglut-3.4.0-aarch64-1.txz:  Upgraded.
+x/fstobdf-1.0.7-aarch64-1.txz:  Upgraded.
+xap/mozilla-firefox-105.0.3-aarch64-1.txz:  Upgraded.
++--------------------------+
+Sat Oct  8 12:50:14 UTC 2022
+a/iniparser-4.1-aarch64-1.txz:  Added.
+a/ndctl-74-aarch64-1.txz:  Upgraded.
+l/libical-3.0.15-aarch64-1.txz:  Upgraded.
+xap/mozilla-thunderbird-102.3.2-aarch64-1.txz:  Upgraded.
++--------------------------+
 Fri Oct  7 16:59:00 UTC 2022
 a/bash-5.2.002-aarch64-1.txz:  Upgraded.
 a/dbus-1.14.4-aarch64-1.txz:  Upgraded.
