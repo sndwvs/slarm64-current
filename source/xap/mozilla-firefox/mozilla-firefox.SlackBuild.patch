@@ -23,12 +23,11 @@
  else
    SLKCFLAGS="-g0"
    LIBDIRSUFFIX=""
-@@ -231,8 +240,17 @@ find . \
+@@ -231,8 +240,16 @@ find . \
    \( -perm 666 -o -perm 664 -o -perm 600 -o -perm 444 -o -perm 440 -o -perm 400 \) \
    -exec chmod 644 {} \+
  
 +xzcat $CWD/build-arm-libopus.patch.xz | patch -p1 --verbose || exit 1
-+xzcat $CWD/60858bce4bb1b426c07ec0e9e7f627f59b8aca45.patch.xz | patch -p1 --verbose || exit 1
 +
  # Our building options, in a configure-like display ;)
  OPTIONS="\
