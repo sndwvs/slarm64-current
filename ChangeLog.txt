@@ -1,3 +1,77 @@
+Fri Nov 25 08:04:12 UTC 2022
+patches/packages/ruby-3.0.5-aarch64-1_slack15.0.txz:  Upgraded.
++--------------------------+
+Fri Nov 18 23:38:18 UTC 2022
+patches/packages/freerdp-2.9.0-aarch64-1_slack15.0.txz:  Upgraded.
+patches/packages/krb5-1.19.2-aarch64-3_slack15.0.txz:  Added.
+patches/packages/mozilla-firefox-102.5.0esr-aarch64-1_slack15.0.txz:  Upgraded.
+patches/packages/mozilla-thunderbird-102.5.0-aarch64-1_slack15.0.txz:  Upgraded.
+patches/packages/samba-4.15.12-aarch64-1_slack15.0.txz:  Upgraded.
+patches/packages/xfce4-settings-4.16.5-aarch64-1_slack15.0.txz:  Upgraded.
++--------------------------+
+Fri Nov 11 19:40:58 UTC 2022
+patches/packages/php-7.4.33-aarch64-1_slack15.0.txz:  Upgraded.
++--------------------------+
+Thu Nov 10 17:38:55 UTC 2022
+patches/packages/sysstat-12.7.1-aarch64-1_slack15.0.txz:  Added.
+patches/packages/xfce4-settings-4.16.4-aarch64-1_slack15.0.txz:  Added.
++--------------------------+
+Wed Nov  9 21:49:05 UTC 2022
+patches/packages/glibc-zoneinfo-2022f-noarch-1_slack15.0.txz:  Upgraded.
+patches/packages/mariadb-10.5.18-aarch64-1_slack15.0.txz:  Upgraded.
++--------------------------+
+Sun Nov  6 10:41:41 UTC 2022
+patches/packages/sudo-1.9.12p1-aarch64-1_slack15.0.txz:  Added.
++--------------------------+
+Sat Nov  5 17:13:47 UTC 2022
+patches/packages/mozilla-thunderbird-102.4.2-aarch64-1_slack15.0.txz:  Upgraded.
++--------------------------+
+Fri Nov  4 14:54:05 UTC 2022
+patches/packages/mozilla-nss-3.84-aarch64-1_slack15.0.txz:  Added.
++--------------------------+
+Wed Nov  2 18:28:10 UTC 2022
+extra/php80/php80-8.0.25-aarch64-1_slack15.0.txz:  Upgraded.
+extra/php81/php81-8.1.12-aarch64-1_slack15.0.txz:  Upgraded.
+patches/packages/mozilla-thunderbird-102.4.1-aarch64-1_slack15.0.txz:  Upgraded.
+patches/packages/vim-9.0.0814-aarch64-1_slack15.0.txz:  Upgraded.
+patches/packages/vim-gvim-9.0.0814-aarch64-1_slack15.0.txz:  Upgraded.
++--------------------------+
+Thu Oct 27 19:15:10 UTC 2022
+patches/packages/curl-7.86.0-aarch64-1_slack15.0.txz:  Upgraded.
+patches/packages/expat-2.5.0-aarch64-1_slack15.0.txz:  Upgraded.
+patches/packages/samba-4.15.11-aarch64-1_slack15.0.txz:  Upgraded.
++--------------------------+
+Sat Oct 22 00:59:55 UTC 2022
+patches/packages/rsync-3.2.7-aarch64-1_slack15.0.txz:  Upgraded.
++--------------------------+
+Fri Oct 21 16:41:37 UTC 2022
+patches/packages/mozilla-thunderbird-102.4.0-aarch64-1_slack15.0.txz:  Upgraded.
+patches/packages/whois-5.5.14-aarch64-1_slack15.0.txz:  Upgraded.
++--------------------------+
+Thu Oct 20 12:17:22 UTC 2022
+patches/packages/samba-4.15.10-aarch64-1_slack15.0.txz:  Upgraded.
++--------------------------+
+Thu Oct 20 10:21:02 UTC 2022
+patches/packages/git-2.35.5-aarch64-1_slack15.0.txz:  Upgraded.
+patches/packages/mozilla-firefox-102.4.0esr-aarch64-1_slack15.0.txz:  Upgraded.
++--------------------------+
+Tue Oct 18 16:56:43 UTC 2022
+patches/packages/xorg-server-xwayland-21.1.4-aarch64-3_slack15.0.txz:  Rebuilt.
++--------------------------+
+Sun Oct 16 15:51:37 UTC 2022
+patches/packages/zlib-1.2.13-aarch64-1_slack15.0.txz:  Upgraded.
++--------------------------+
+Sat Oct 15 11:06:24 UTC 2022
+patches/packages/mozilla-thunderbird-102.3.3-aarch64-1_slack15.0.txz:  Upgraded.
+patches/packages/python3-3.9.15-aarch64-1_slack15.0.txz:  Upgraded.
++--------------------------+
+Sun Oct  9 13:26:43 UTC 2022
+patches/packages/libksba-1.6.2-aarch64-1_slack15.0.txz:  Added.
+patches/packages/mozilla-thunderbird-102.3.2-aarch64-1_slack15.0.txz:  Upgraded.
++--------------------------+
+Thu Oct  6 17:06:57 UTC 2022
+patches/packages/dhcp-4.4.3_P1-aarch64-1_slack15.0.txz:  Added.
++--------------------------+
 Sun Oct  2 15:55:49 UTC 2022
 extra/php80/php80-8.0.24-aarch64-1_slack15.0.txz:  Upgraded.
 extra/php81/php81-8.1.11-aarch64-1_slack15.0.txz:  Upgraded.
