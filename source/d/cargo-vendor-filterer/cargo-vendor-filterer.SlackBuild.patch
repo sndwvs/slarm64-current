@@ -1,0 +1,30 @@
+--- a/cargo-vendor-filterer.SlackBuild	2022-12-07 20:28:30.107020336 +0200
++++ b/cargo-vendor-filterer.SlackBuild	2022-12-08 20:29:23.101230454 +0200
+@@ -60,6 +60,13 @@ elif [ "$ARCH" = "s390" ]; then
+ elif [ "$ARCH" = "x86_64" ]; then
+   SLKCFLAGS="-O2 -fPIC"
+   LIBDIRSUFFIX="64"
++elif [ "$ARCH" = "aarch64" ]; then
++  SLKCFLAGS="-O2 -fPIC"
++  LIBDIRSUFFIX="64"
++elif [ "$ARCH" = "riscv64" ]; then
++  SLKCFLAGS="-O2 -fPIC"
++  LIBDIRSUFFIX="64"
++  ARCH_SUFFIX="gc"
+ elif [ "$ARCH" = "armv7hl" ]; then
+   SLKCFLAGS="-O3 -march=armv7-a -mfpu=vfpv3-d16"
+   LIBDIRSUFFIX=""
+@@ -104,11 +111,11 @@ OPENSSL_NO_VENDOR=1 \
+ cargo build \
+   --offline \
+   --release \
+-  --target $ARCH-unknown-linux-gnu \
++  --target $ARCH${ARCH_SUFFIX}-unknown-linux-gnu \
+   $NUMJOBS
+ 
+ mkdir -p $PKG/usr/bin
+-install -m 755 target/$ARCH-unknown-linux-gnu/release/cargo-vendor-filterer \
++install -m 755 target/$ARCH${ARCH_SUFFIX}-unknown-linux-gnu/release/cargo-vendor-filterer \
+   $PKG/usr/bin/
+ 
+ find $PKG -print0 | xargs -0 file | grep -e "executable" -e "shared object" | grep ELF \

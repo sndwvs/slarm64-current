@@ -1,0 +1,31 @@
+--- a/rust-bindgen.SlackBuild	2022-12-07 20:28:51.471020814 +0200
++++ b/rust-bindgen.SlackBuild	2022-12-08 20:37:05.826029115 +0200
+@@ -60,6 +60,13 @@ elif [ "$ARCH" = "s390" ]; then
+ elif [ "$ARCH" = "x86_64" ]; then
+   SLKCFLAGS="-O2 -fPIC"
+   LIBDIRSUFFIX="64"
++elif [ "$ARCH" = "aarch64" ]; then
++  SLKCFLAGS="-O2 -fPIC"
++  LIBDIRSUFFIX="64"
++elif [ "$ARCH" = "riscv64" ]; then
++  SLKCFLAGS="-O2 -fPIC"
++  LIBDIRSUFFIX="64"
++  ARCH_SUFFIX="gc"
+ elif [ "$ARCH" = "armv7hl" ]; then
+   SLKCFLAGS="-O3 -march=armv7-a -mfpu=vfpv3-d16"
+   LIBDIRSUFFIX=""
+@@ -104,12 +111,12 @@ RUSTONIG_DYNAMIC_LIBONIG=1 \
+ cargo build \
+   --offline \
+   --release \
+-  --target $ARCH-unknown-linux-gnu \
++  --target $ARCH${ARCH_SUFFIX}-unknown-linux-gnu \
+   --verbose \
+   $NUMJOBS || exit 1
+ 
+ mkdir -p $PKG/usr/bin
+-install -m 755 target/$ARCH-unknown-linux-gnu/release/bindgen \
++install -m 755 target/$ARCH${ARCH_SUFFIX}-unknown-linux-gnu/release/bindgen \
+   $PKG/usr/bin/
+ 
+ find $PKG -print0 | xargs -0 file | grep -e "executable" -e "shared object" | grep ELF \

@@ -1,0 +1,31 @@
+--- a/cbindgen.SlackBuild	2022-12-07 20:28:40.379020566 +0200
++++ b/cbindgen.SlackBuild	2022-12-08 20:35:01.903653135 +0200
+@@ -60,6 +60,13 @@ elif [ "$ARCH" = "s390" ]; then
+ elif [ "$ARCH" = "x86_64" ]; then
+   SLKCFLAGS="-O2 -fPIC"
+   LIBDIRSUFFIX="64"
++elif [ "$ARCH" = "aarch64" ]; then
++  SLKCFLAGS="-O2 -fPIC"
++  LIBDIRSUFFIX="64"
++elif [ "$ARCH" = "riscv64" ]; then
++  SLKCFLAGS="-O2 -fPIC"
++  LIBDIRSUFFIX="64"
++  ARCH_SUFFIX="gc"
+ elif [ "$ARCH" = "armv7hl" ]; then
+   SLKCFLAGS="-O3 -march=armv7-a -mfpu=vfpv3-d16"
+   LIBDIRSUFFIX=""
+@@ -104,12 +111,12 @@ RUSTONIG_DYNAMIC_LIBONIG=1 \
+ cargo build \
+   --offline \
+   --release \
+-  --target $ARCH-unknown-linux-gnu \
++  --target $ARCH${ARCH_SUFFIX}-unknown-linux-gnu \
+   --verbose \
+   $NUMJOBS || exit 1
+ 
+ mkdir -p $PKG/usr/bin
+-install -m 755 target/$ARCH-unknown-linux-gnu/release/cbindgen $PKG/usr/bin
++install -m 755 target/$ARCH${ARCH_SUFFIX}-unknown-linux-gnu/release/cbindgen $PKG/usr/bin
+ 
+ find $PKG -print0 | xargs -0 file | grep -e "executable" -e "shared object" | grep ELF \
+   | cut -f 1 -d : | xargs strip --strip-unneeded 2> /dev/null || true
