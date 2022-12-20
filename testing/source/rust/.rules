@@ -1,0 +1,26 @@
+
+rules() {
+    export LOCAL_BOOTSTRAP="no"
+    pushd ${WORK_DIR} 2>&1>/dev/null
+    ( xzcat rust.url.patch.xz | patch -p1 ) || return 1
+    BOOTSTRAP_DATE=$(grep BOOTSTRAP_DATE= rust.url | cut -d '=' -f2)
+    BOOTSTRAP_VERSION=$(grep BOOTSTRAP_VERSION= rust.url | cut -d '=' -f2)
+    BOOTSTRAP_CARGO=$(grep BOOTSTRAP_CARGO= rust.url | cut -d '=' -f2)
+
+    [[ $BOOTSTRAP_CARGO == \$* ]] && BOOTSTRAP_CARGO=$(echo $BOOTSTRAP_CARGO | sed 's:\$::g') && BOOTSTRAP_CARGO=${!BOOTSTRAP_CARGO}
+
+    echo
+    echo "\$BOOTSTRAP_DATE = $BOOTSTRAP_DATE"
+    echo "\$BOOTSTRAP_VERSION = $BOOTSTRAP_VERSION"
+    echo "\$BOOTSTRAP_CARGO = $BOOTSTRAP_CARGO"
+    echo
+
+    ( grep ${MARCH} rust.url | sed -e "s:\${BOOTSTRAP_DATE}:$BOOTSTRAP_DATE:g" \
+        -e "s:\${BOOTSTRAP_VERSION}:$BOOTSTRAP_VERSION:g" \
+        -e "s:\${BOOTSTRAP_CARGO}:$BOOTSTRAP_CARGO:g" \
+      | sh
+    ) || return 1
+    popd 2>&1>/dev/null
+}
+
+rules
