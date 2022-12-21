@@ -1,3 +1,52 @@
+Tue Dec 20 17:43:33 UTC 2022
+patches/packages/xorg-server-1.20.14-aarch64-6_slack15.0.txz:  Rebuilt.
+patches/packages/xorg-server-xephyr-1.20.14-aarch64-6_slack15.0.txz:  Rebuilt.
+patches/packages/xorg-server-xnest-1.20.14-aarch64-6_slack15.0.txz:  Rebuilt.
+patches/packages/xorg-server-xvfb-1.20.14-aarch64-6_slack15.0.txz:  Rebuilt.
+patches/packages/xorg-server-xwayland-21.1.4-aarch64-5_slack15.0.txz:  Rebuilt.
++--------------------------+
+Mon Dec 19 18:28:58 UTC 2022
+patches/packages/mozilla-firefox-102.6.0esr-aarch64-1_slack15.0.txz:  Upgraded.
+patches/packages/mozilla-thunderbird-102.6.0-aarch64-1_slack15.0.txz:  Upgraded.
+patches/packages/samba-4.15.13-aarch64-1_slack15.0.txz:  Upgraded.
+patches/packages/xorg-server-1.20.14-aarch64-5_slack15.0.txz:  Rebuilt.
+patches/packages/xorg-server-xephyr-1.20.14-aarch64-5_slack15.0.txz:  Rebuilt.
+patches/packages/xorg-server-xnest-1.20.14-aarch64-5_slack15.0.txz:  Rebuilt.
+patches/packages/xorg-server-xvfb-1.20.14-aarch64-5_slack15.0.txz:  Rebuilt.
+patches/packages/xorg-server-xwayland-21.1.4-aarch64-4_slack15.0.txz:  Rebuilt.
++--------------------------+
+Fri Dec  9 22:58:13 UTC 2022
+patches/packages/libarchive-3.6.2-aarch64-1_slack15.0.txz:  Upgraded.
++--------------------------+
+Fri Dec  9 01:18:05 UTC 2022
+patches/packages/emacs-27.2-aarch64-2_slack15.0.txz:  Added.
+patches/packages/vim-9.0.1034-aarch64-1_slack15.0.txz:  Upgraded.
+patches/packages/vim-gvim-9.0.1034-aarch64-1_slack15.0.txz:  Upgraded.
++--------------------------+
+Thu Dec  8 20:26:12 UTC 2022
+patches/packages/python3-3.9.16-aarch64-1_slack15.0.txz:  Upgraded.
++--------------------------+
+Tue Dec  6 08:28:40 UTC 2022
+patches/packages/ca-certificates-20221205-noarch-1_slack15.0.txz:  Upgraded.
+patches/packages/glibc-zoneinfo-2022g-noarch-1_slack15.0.txz:  Upgraded.
++--------------------------+
+Sun Dec  4 10:38:24 UTC 2022
+patches/packages/krusader-2.8.0-aarch64-1_slack15.0.txz:  Added.
+patches/packages/mozilla-thunderbird-102.5.1-aarch64-1_slack15.0.txz:  Upgraded.
++--------------------------+
+Thu Dec  1 17:24:56 UTC 2022
+patches/packages/kernel-firmware-20221130_80ed874-noarch-1.txz:  Added.
+patches/packages/linux-5.15.63/kernel-generic-5.15.63-aarch64-1.txz:  Removed.
+patches/packages/linux-5.15.63/kernel-headers-5.15.63-arm64-1.txz:  Removed.
+patches/packages/linux-5.15.63/kernel-modules-5.15.63-aarch64-1.txz:  Removed.
+patches/packages/linux-5.15.63/kernel-source-5.15.63-noarch-1.txz:  Removed.
+patches/packages/linux-5.15.80/kernel-generic-5.15.80-aarch64-1.txz:  Added.
+patches/packages/linux-5.15.80/kernel-headers-5.15.80-arm64-1.txz:  Added.
+patches/packages/linux-5.15.80/kernel-modules-5.15.80-aarch64-1.txz:  Added.
+patches/packages/linux-5.15.80/kernel-source-5.15.80-noarch-1.txz:  Added.
+patches/packages/openssl-1.1.1s-aarch64-1_slack15.0.txz:  Upgraded.
+patches/packages/openssl-solibs-1.1.1s-aarch64-1_slack15.0.txz:  Upgraded.
++--------------------------+
 Fri Nov 25 08:04:12 UTC 2022
 patches/packages/ruby-3.0.5-aarch64-1_slack15.0.txz:  Upgraded.
 +--------------------------+
