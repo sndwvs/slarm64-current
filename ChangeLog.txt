@@ -1,3 +1,56 @@
+Sat Dec 24 01:39:08 UTC 2022
+a/btrfs-progs-6.1-aarch64-1.txz:  Upgraded.
+a/kernel-firmware-20221216_52261d0-noarch-1.txz:  Upgraded.
+ap/man-pages-6.02-noarch-1.txz:  Upgraded.
+l/gtk4-4.8.3-aarch64-1.txz:  Upgraded.
+xfce/xfce4-screenshooter-1.10.1-aarch64-1.txz:  Upgraded.
+xfce/xfce4-settings-4.18.1-aarch64-1.txz:  Upgraded.
++--------------------------+
+Fri Dec 23 11:19:43 UTC 2022
+a/tcsh-6.24.07-aarch64-1.txz:  Upgraded.
+d/nasm-2.16.01-aarch64-1.txz:  Upgraded.
+n/dovecot-2.3.20-aarch64-1.txz:  Upgraded.
+n/nftables-1.0.6-aarch64-1.txz:  Upgraded.
+xfce/thunar-4.18.1-aarch64-1.txz:  Upgraded.
++--------------------------+
+Fri Dec 23 00:01:55 UTC 2022
+a/sysvinit-scripts-15.1-noarch-3.txz:  Rebuilt.
+d/nasm-2.16-aarch64-1.txz:  Upgraded.
+d/parallel-20221222-noarch-1.txz:  Upgraded.
+n/bind-9.18.10-aarch64-1.txz:  Upgraded.
+n/curl-7.87.0-aarch64-1.txz:  Upgraded.
+xap/mozilla-thunderbird-102.6.1-aarch64-1.txz:  Upgraded.
+xfce/xfce4-screenshooter-1.10.0-aarch64-1.txz:  Upgraded.
++--------------------------+
+Wed Dec 21 20:39:47 UTC 2022
+a/logrotate-3.21.0-aarch64-1.txz:  Upgraded.
+d/p2c-2.02-aarch64-1.txz:  Upgraded.
+kde/dolphin-22.12.0-aarch64-2.txz:  Rebuilt.
+kde/gwenview-22.12.0-aarch64-2.txz:  Rebuilt.
+kde/kstars-3.6.2-aarch64-2.txz:  Rebuilt.
+l/cfitsio-4.2.0-aarch64-1.txz:  Upgraded.
+l/gsettings-desktop-schemas-43.0-aarch64-1.txz:  Upgraded.
+l/gst-plugins-bad-free-1.20.5-aarch64-1.txz:  Upgraded.
+l/gst-plugins-base-1.20.5-aarch64-1.txz:  Upgraded.
+l/gst-plugins-good-1.20.5-aarch64-1.txz:  Upgraded.
+l/gst-plugins-libav-1.20.5-aarch64-1.txz:  Upgraded.
+l/gstreamer-1.20.5-aarch64-1.txz:  Upgraded.
+l/gtk4-4.8.2-aarch64-1.txz:  Upgraded.
+l/libqalculate-4.5.0-aarch64-1.txz:  Upgraded.
+l/libvncserver-0.9.14-aarch64-1.txz:  Upgraded.
+l/sdl-1.2.15-aarch64-14.txz:  Rebuilt.
+n/gnupg2-2.2.41-aarch64-1.txz:  Upgraded.
+n/libksba-1.6.3-aarch64-1.txz:  Upgraded.
+testing/packages/rust/rust-1.66.0-aarch64-1.txz:  Upgraded.
+x/libSM-1.2.4-aarch64-1.txz:  Upgraded.
+x/xcb-util-0.4.1-aarch64-1.txz:  Upgraded.
+x/xdriinfo-1.0.7-aarch64-1.txz:  Upgraded.
+x/xorg-server-21.1.6-aarch64-1.txz:  Upgraded.
+x/xorg-server-xephyr-21.1.6-aarch64-1.txz:  Upgraded.
+x/xorg-server-xnest-21.1.6-aarch64-1.txz:  Upgraded.
+x/xorg-server-xvfb-21.1.6-aarch64-1.txz:  Upgraded.
+x/xorg-server-xwayland-22.1.7-aarch64-1.txz:  Upgraded.
++--------------------------+
 Mon Dec 19 19:36:30 UTC 2022
 a/sysvinit-3.06-aarch64-1.txz:  Upgraded.
 l/imagemagick-7.1.0_55-aarch64-2.txz:  Upgraded.
