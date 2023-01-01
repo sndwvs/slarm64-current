@@ -1,3 +1,31 @@
+Sun Jan  1 18:10:32 UTC 2023
+a/dialog-1.3_20221229-aarch64-1.txz:  Upgraded.
+a/file-5.44-aarch64-1.txz:  Upgraded.
+n/ipset-7.17-aarch64-1.txz:  Upgraded.
+testing/packages/linux-6.1.x/kernel-generic-6.1.2-aarch64-1.txz:  Upgraded.
+testing/packages/linux-6.1.x/kernel-headers-6.1.2-arm64-1.txz:  Upgraded.
+testing/packages/linux-6.1.x/kernel-modules-6.1.2-aarch64-1.txz:  Upgraded.
+testing/packages/linux-6.1.x/kernel-source-6.1.2-noarch-1.txz:  Upgraded.
+x/libva-2.17.0-aarch64-1.txz:  Upgraded.
+x/libva-utils-2.17.0-aarch64-1.txz:  Upgraded.
+x/mesa-22.3.2-aarch64-1.txz:  Upgraded.
++--------------------------+
+Tue Dec 27 17:44:19 UTC 2022
+ap/vim-9.0.1091-aarch64-1.txz:  Upgraded.
+d/meson-1.0.0-aarch64-1.txz:  Upgraded.
+d/ruby-3.2.0-aarch64-1.txz:  Upgraded.
+d/subversion-1.14.2-aarch64-3.txz:  Rebuilt.
+l/glib2-2.74.4-aarch64-1.txz:  Upgraded.
+l/netpbm-11.00.03-aarch64-1.txz:  Upgraded.
+l/rubygem-asciidoctor-2.0.18-aarch64-1.txz:  Upgraded.
+n/epic5-2.1.12-aarch64-2.txz:  Rebuilt.
+testing/packages/linux-6.1.x/kernel-generic-6.1.1-aarch64-1.txz:  Added.
+testing/packages/linux-6.1.x/kernel-headers-6.1.1-arm64-1.txz:  Added.
+testing/packages/linux-6.1.x/kernel-modules-6.1.1-aarch64-1.txz:  Added.
+testing/packages/linux-6.1.x/kernel-source-6.1.1-noarch-1.txz:  Added.
+x/marisa-0.2.6-aarch64-6.txz:  Rebuilt.
+xap/vim-gvim-9.0.1091-aarch64-1.txz:  Upgraded.
++--------------------------+
 Sat Dec 24 01:39:08 UTC 2022
 a/btrfs-progs-6.1-aarch64-1.txz:  Upgraded.
 a/kernel-firmware-20221216_52261d0-noarch-1.txz:  Upgraded.
