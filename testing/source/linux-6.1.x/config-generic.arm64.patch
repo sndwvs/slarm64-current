@@ -1,9 +1,9 @@
 --- /dev/null	2022-06-09 21:05:13.432000016 +0300
-+++ b/kernel-configs/config-generic-6.1.1.arm64	2022-12-26 22:07:41.807934984 +0200
-@@ -0,0 +1,11313 @@
++++ b/kernel-configs/config-generic-6.1.2.arm64	2023-01-01 16:15:16.354441684 +0200
+@@ -0,0 +1,11314 @@
 +#
 +# Automatically generated file; DO NOT EDIT.
-+# Linux/arm64 6.1.1 Kernel Configuration
++# Linux/arm64 6.1.2 Kernel Configuration
 +#
 +CONFIG_CC_VERSION_TEXT="gcc (GCC) 12.2.0"
 +CONFIG_CC_IS_GCC=y
@@ -10793,6 +10793,7 @@
 +CONFIG_CRYPTO_SHA512_ARM64=y
 +CONFIG_CRYPTO_SHA512_ARM64_CE=y
 +CONFIG_CRYPTO_SHA3_ARM64=y
++CONFIG_CRYPTO_SM3_NEON=y
 +CONFIG_CRYPTO_SM3_ARM64_CE=y
 +# CONFIG_CRYPTO_POLYVAL_ARM64_CE is not set
 +CONFIG_CRYPTO_AES_ARM64=y
