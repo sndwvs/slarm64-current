@@ -1,6 +1,6 @@
---- a/xine-lib.SlackBuild	2021-02-13 00:44:52.792069419 +0200
-+++ b/xine-lib.SlackBuild	2021-02-13 00:45:25.172035722 +0200
-@@ -55,6 +55,12 @@
+--- a/xine-lib.SlackBuild	2023-01-27 19:24:32.718669306 +0000
++++ b/xine-lib.SlackBuild	2023-01-27 19:35:12.286768326 +0000
+@@ -55,6 +55,12 @@ elif [ "$ARCH" = "i586" ]; then
    LIBDIRSUFFIX=""
    # 32bit x86 fails without this... let me know if you have a fix
    FFARCHOPTS="--disable-asm"
@@ -13,3 +13,13 @@
  else
    LIBDIRSUFFIX=""
    FFARCHOPTS=""
+@@ -105,7 +111,8 @@ XINE_BUILD=$TARGET \
+   --disable-vcd \
+   --without-speex \
+   --without-xcb \
+-  --with-external-dvdnav || exit 1
++  --with-external-dvdnav \
++  --build=$ARCH-unknown-linux || exit 1
+ 
+ make $NUMJOBS || make || exit 1
+ make install DESTDIR=$PKG || exit 1
