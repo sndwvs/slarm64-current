@@ -1,9 +1,9 @@
---- /dev/null	2021-10-28 21:45:52.500000014 +0300
-+++ b/kernel-configs/config-generic-5.15.80.arm64	2022-11-28 19:31:24.677127219 +0200
-@@ -0,0 +1,9747 @@
+--- /dev/null	2023-02-11 08:08:04.120000021 +0200
++++ b/kernel-configs/config-generic-5.15.94.arm64	2023-02-19 14:32:02.197505250 +0200
+@@ -0,0 +1,9748 @@
 +#
 +# Automatically generated file; DO NOT EDIT.
-+# Linux/arm64 5.15.80 Kernel Configuration
++# Linux/arm64 5.15.94 Kernel Configuration
 +#
 +CONFIG_CC_VERSION_TEXT="gcc (GCC) 11.2.0"
 +CONFIG_CC_IS_GCC=y
@@ -1071,6 +1071,7 @@
 +# CONFIG_INET_ESP_OFFLOAD is not set
 +# CONFIG_INET_ESPINTCP is not set
 +CONFIG_INET_IPCOMP=m
++CONFIG_INET_TABLE_PERTURB_ORDER=16
 +CONFIG_INET_XFRM_TUNNEL=m
 +CONFIG_INET_TUNNEL=m
 +CONFIG_INET_DIAG=m

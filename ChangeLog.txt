@@ -1,3 +1,37 @@
+Sat Feb 11 15:06:04 UTC 2023
+patches/packages/gnutls-3.7.9-aarch64-1_slack15.0.txz:  Upgraded.
+patches/packages/mozilla-thunderbird-102.7.2-aarch64-1_slack15.0.txz:  Upgraded.
++--------------------------+
+Wed Feb  8 18:18:11 UTC 2023
+patches/packages/openssl-1.1.1t-aarch64-1_slack15.0.txz:  Upgraded.
+patches/packages/openssl-solibs-1.1.1t-aarch64-1_slack15.0.txz:  Upgraded.
+patches/packages/xorg-server-1.20.14-aarch64-7_slack15.0.txz:  Rebuilt.
+patches/packages/xorg-server-xephyr-1.20.14-aarch64-7_slack15.0.txz:  Rebuilt.
+patches/packages/xorg-server-xnest-1.20.14-aarch64-7_slack15.0.txz:  Rebuilt.
+patches/packages/xorg-server-xvfb-1.20.14-aarch64-7_slack15.0.txz:  Rebuilt.
+patches/packages/xorg-server-xwayland-21.1.4-aarch64-6_slack15.0.txz:  Rebuilt.
++--------------------------+
+Sat Feb  4 09:41:17 UTC 2023
+patches/packages/apr-1.7.2-aarch64-1_slack15.0.txz:  Added.
+patches/packages/apr-util-1.6.3-aarch64-1_slack15.0.txz:  Added.
+patches/packages/mozilla-thunderbird-102.7.1-aarch64-1_slack15.0.txz:  Upgraded.
+patches/packages/openssh-9.2p1-aarch64-1_slack15.0.txz:  Added.
++--------------------------+
+Thu Jan 26 20:33:05 UTC 2023
+patches/packages/bind-9.16.37-aarch64-1_slack15.0.txz:  Upgraded.
+patches/packages/vim-9.0.1241-aarch64-1_slack15.0.txz:  Upgraded.
+patches/packages/vim-gvim-9.0.1241-aarch64-1_slack15.0.txz:  Upgraded.
+testing/packages/bind-9.18.11-aarch64-1_slack15.0.txz:  Upgraded.
++--------------------------+
+Thu Jan 26 16:55:34 UTC 2023
+patches/packages/git-2.35.6-aarch64-1_slack15.0.txz:  Upgraded.
+patches/packages/httpd-2.4.55-aarch64-1_slack15.0.txz:  Upgraded.
+patches/packages/libXpm-3.5.15-aarch64-1_slack15.0.txz:  Added.
+patches/packages/mozilla-firefox-102.7.0esr-aarch64-1_slack15.0.txz:  Upgraded.
+patches/packages/mozilla-thunderbird-102.7.0-aarch64-1_slack15.0.txz:  Upgraded.
+patches/packages/netatalk-3.1.14-aarch64-1_slack15.0.txz:  Added.
+patches/packages/sudo-1.9.12p2-aarch64-1_slack15.0.txz:  Upgraded.
++--------------------------+
 Fri Jan 13 16:18:38 UTC 2023
 patches/packages/samba-4.15.13-aarch64-2_slack15.0.txz:  Rebuilt.
 +--------------------------+
