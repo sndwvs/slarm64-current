@@ -1,3 +1,14 @@
+Wed Mar 15 17:21:26 UTC 2023
+a/kernel-firmware-20230313_c761dbe-noarch-1.txz:  Upgraded.
+a/kernel-generic-6.1.19-aarch64-1.txz:  Upgraded.
+a/kernel-modules-6.1.19-aarch64-1.txz:  Upgraded.
+a/mcelog-192-aarch64-1.txz:  Upgraded.
+d/ccache-4.8-aarch64-1.txz:  Upgraded.
+d/kernel-headers-6.1.19-arm64-1.txz:  Upgraded.
+k/kernel-source-6.1.19-noarch-1.txz:  Upgraded.
+l/imagemagick-7.1.1_3-aarch64-1.txz:  Upgraded.
+n/vsftpd-3.0.5-aarch64-3.txz:  Rebuilt.
++--------------------------+
 Tue Mar 14 18:10:19 UTC 2023
 a/kernel-firmware-20230310_588dd07-noarch-1.txz:  Upgraded.
 a/kernel-generic-6.1.18-aarch64-1.txz:  Upgraded.
