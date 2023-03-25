@@ -1,0 +1,21 @@
+--- a/tar.SlackBuild	2021-02-16 18:11:01.478546468 +0200
++++ b/tar.SlackBuild	2021-02-16 18:11:44.063450290 +0200
+@@ -62,6 +62,10 @@
+   SLKCFLAGS="-O2"
+ elif [ "$ARCH" = "x86_64" ]; then
+   SLKCFLAGS="-O2 -fPIC"
++elif [ "$ARCH" = "aarch64" ]; then
++  SLKCFLAGS="-O2 -fPIC"
++elif [ "$ARCH" = "riscv64" ]; then
++  SLKCFLAGS="-O2 -fPIC"
+ else
+   SLKCFLAGS="-O2"
+ fi
+@@ -93,6 +97,7 @@
+ ./configure \
+   --prefix=/usr \
+   --disable-nls \
++  --host=$ARCH-slackware-linux \
+   --build=$ARCH-slackware-linux || exit 1
+ make $NUMJOBS || make || exit 1
+ mkdir -p $PKG/bin

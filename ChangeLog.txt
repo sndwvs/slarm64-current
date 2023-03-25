@@ -1,3 +1,46 @@
+Tue Mar 21 17:43:58 UTC 2023
+patches/packages/bind-9.16.39-aarch64-1_slack15.0.txz:  Upgraded.
+patches/packages/curl-8.0.1-aarch64-1_slack15.0.txz:  Upgraded.
+patches/packages/openssh-9.3p1-aarch64-1_slack15.0.txz:  Upgraded.
+patches/packages/vim-9.0.1418-aarch64-1_slack15.0.txz:  Upgraded.
+patches/packages/vim-gvim-9.0.1418-aarch64-1_slack15.0.txz:  Upgraded.
++--------------------------+
+Sat Mar 18 22:02:20 UTC 2023
+patches/packages/mozilla-thunderbird-102.9.0-aarch64-1_slack15.0.txz:  Upgraded.
++--------------------------+
+Thu Mar 16 17:21:13 UTC 2023
+patches/packages/mozilla-firefox-102.9.0esr-aarch64-1_slack15.0.txz:  Upgraded.
++--------------------------+
+Tue Mar 14 19:15:26 UTC 2023
+patches/packages/httpd-2.4.56-aarch64-1_slack15.0.txz:  Upgraded.
+patches/packages/sudo-1.9.13p3-aarch64-1_slack15.0.txz:  Upgraded.
+patches/packages/xscreensaver-6.06-aarch64-1_slack15.0.txz:  Added.
++--------------------------+
+Wed Mar  1 15:56:34 UTC 2023
+patches/packages/whois-5.5.16-aarch64-1_slack15.0.txz:  Upgraded.
++--------------------------+
+Tue Feb 21 19:25:48 UTC 2023
+patches/packages/curl-7.88.1-aarch64-1_slack15.0.txz:  Upgraded.
++--------------------------+
+Mon Feb 20 11:12:11 UTC 2023
+extra/php80/php80-8.0.28-aarch64-1_slack15.0.txz:  Upgraded.
+extra/php81/php81-8.1.16-aarch64-1_slack15.0.txz:  Upgraded.
+patches/packages/curl-7.88.0-aarch64-1_slack15.0.txz:  Upgraded.
+patches/packages/git-2.35.7-aarch64-1_slack15.0.txz:  Upgraded.
+patches/packages/hwdata-0.367-noarch-1_slack15.0.txz:  Added.
+patches/packages/kernel-firmware-20230215_83f1d77-noarch-1.txz:  Upgraded.
+patches/packages/linux-5.15.80/kernel-generic-5.15.80-aarch64-1.txz:  Removed.
+patches/packages/linux-5.15.80/kernel-headers-5.15.80-arm64-1.txz:  Removed.
+patches/packages/linux-5.15.80/kernel-modules-5.15.80-aarch64-1.txz:  Removed.
+patches/packages/linux-5.15.80/kernel-source-5.15.80-noarch-1.txz:  Removed.
+patches/packages/linux-5.15.94/kernel-generic-5.15.94-aarch64-1.txz:  Added.
+patches/packages/linux-5.15.94/kernel-headers-5.15.94-arm64-1.txz:  Added.
+patches/packages/linux-5.15.94/kernel-modules-5.15.94-aarch64-1.txz:  Added.
+patches/packages/linux-5.15.94/kernel-source-5.15.94-noarch-1.txz:  Added.
+patches/packages/mozilla-firefox-102.8.0esr-aarch64-1_slack15.0.txz:  Upgraded.
+patches/packages/mozilla-thunderbird-102.8.0-aarch64-1_slack15.0.txz:  Upgraded.
+patches/packages/php-7.4.33-aarch64-3_slack15.0.txz:  Rebuilt.
++--------------------------+
 Sat Feb 11 15:06:04 UTC 2023
 patches/packages/gnutls-3.7.9-aarch64-1_slack15.0.txz:  Upgraded.
 patches/packages/mozilla-thunderbird-102.7.2-aarch64-1_slack15.0.txz:  Upgraded.
