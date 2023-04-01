@@ -1,3 +1,100 @@
+Fri Mar 31 16:31:14 UTC 2023
+a/glibc-zoneinfo-2023c-noarch-1.txz:  Upgraded.
+ap/inxi-3.3.26_1-noarch-1.txz:  Upgraded.
+d/rust-1.67.1-aarch64-3.txz:  Rebuilt.
+testing/packages/rust/rust-1.68.2-aarch64-1.txz:  Upgraded.
+x/xorg-server-21.1.8-aarch64-1.txz:  Upgraded.
+x/xorg-server-xephyr-21.1.8-aarch64-1.txz:  Upgraded.
+x/xorg-server-xnest-21.1.8-aarch64-1.txz:  Upgraded.
+x/xorg-server-xvfb-21.1.8-aarch64-1.txz:  Upgraded.
+x/xorg-server-xwayland-23.1.1-aarch64-1.txz:  Upgraded.
+xap/mozilla-thunderbird-102.9.1-aarch64-1.txz:  Upgraded.
+xfce/garcon-4.18.1-aarch64-1.txz:  Upgraded.
+xfce/libxfce4ui-4.18.3-aarch64-1.txz:  Upgraded.
+xfce/xfce4-panel-4.18.3-aarch64-1.txz:  Upgraded.
+xfce/xfce4-pulseaudio-plugin-0.4.6-aarch64-1.txz:  Upgraded.
+xfce/xfce4-session-4.18.2-aarch64-1.txz:  Upgraded.
++--------------------------+
+Wed Mar 29 20:27:04 UTC 2023
+a/grub-2.06-aarch64-5.txz:  Rebuilt.
+a/shadow-4.13-aarch64-1.txz:  Upgraded.
+ap/squashfs-tools-4.6.1-aarch64-1.txz:  Upgraded.
+l/gsettings-desktop-schemas-44.0-aarch64-1.txz:  Upgraded.
+l/gvfs-1.50.4-aarch64-1.txz:  Upgraded.
+l/libcap-2.68-aarch64-1.txz:  Upgraded.
+x/libva-utils-2.18.1-aarch64-1.txz:  Upgraded.
+xfce/xfce4-screensaver-4.18.1-aarch64-1.txz:  Upgraded.
++--------------------------+
+Mon Mar 27 17:33:07 UTC 2023
+kde/kde-cli-tools-5.27.3-aarch64-1.txz:  Upgraded.
+kde/kscreen-5.27.3-aarch64-1.txz:  Upgraded.
+kde/plasma-browser-integration-5.27.3-aarch64-1.txz:  Upgraded.
+kde/plasma-desktop-5.27.3-aarch64-1.txz:  Upgraded.
++--------------------------+
+Mon Mar 27 11:27:48 UTC 2023
+a/btrfs-progs-6.2.2-aarch64-1.txz:  Upgraded.
+ap/texinfo-7.0.3-aarch64-1.txz:  Upgraded.
+d/vala-0.56.5-aarch64-1.txz:  Upgraded.
+l/fuse3-3.14.1-aarch64-1.txz:  Upgraded.
+l/gegl-0.4.44-aarch64-1.txz:  Upgraded.
+l/imagemagick-7.1.1_5-aarch64-1.txz:  Upgraded.
+l/netpbm-11.02.00-aarch64-1.txz:  Upgraded.
+n/mutt-2.2.10-aarch64-1.txz:  Upgraded.
+x/libinput-1.23.0-aarch64-1.txz:  Upgraded.
+x/mesa-23.0.1-aarch64-1.txz:  Upgraded.
++--------------------------+
+Sat Mar 25 17:27:38 UTC 2023
+a/glibc-zoneinfo-2023b-noarch-1.txz:  Upgraded.
+a/libbytesize-2.8-aarch64-1.txz:  Upgraded.
+a/tar-1.34-aarch64-3.txz:  Rebuilt.
+ap/sqlite-3.41.2-aarch64-1.txz:  Upgraded.
+d/mercurial-6.4-aarch64-1.txz:  Upgraded.
+n/openvpn-2.6.2-aarch64-1.txz:  Upgraded.
+x/xorg-server-xwayland-23.1.0-aarch64-1.txz:  Upgraded.
++--------------------------+
+Fri Mar 24 21:13:21 UTC 2023
+a/coreutils-9.2-aarch64-2.txz:  Rebuilt.
+a/grep-3.10-aarch64-1.txz:  Upgraded.
+a/kernel-firmware-20230320_bcdcfbc-noarch-1.txz:  Upgraded.
+a/kernel-generic-6.1.21-aarch64-1.txz:  Upgraded.
+a/kernel-modules-6.1.21-aarch64-1.txz:  Upgraded.
+d/cmake-3.26.1-aarch64-1.txz:  Upgraded.
+d/indent-2.2.13-aarch64-1.txz:  Upgraded.
+d/kernel-headers-6.1.21-arm64-1.txz:  Upgraded.
+d/parallel-20230322-noarch-1.txz:  Upgraded.
+d/scons-4.5.2-aarch64-1.txz:  Upgraded.
+extra/tigervnc/tigervnc-1.13.1-aarch64-1.txz:  Upgraded.
+k/kernel-source-6.1.21-noarch-1.txz:  Upgraded.
+l/adwaita-icon-theme-44.0-noarch-1.txz:  Upgraded.
+l/netpbm-11.01.03-aarch64-1.txz:  Upgraded.
+n/gpgme-1.19.0-aarch64-1.txz:  Upgraded.
+n/links-2.29-aarch64-1.txz:  Upgraded.
+t/texlive-2023.230322-aarch64-1.txz:  Upgraded.
+testing/packages/rust/rust-1.68.1-aarch64-1.txz:  Upgraded.
+x/libva-2.18.0-aarch64-1.txz:  Upgraded.
+xap/mozilla-firefox-111.0.1-aarch64-1.txz:  Upgraded.
+xfce/xfce4-clipman-plugin-1.6.3-aarch64-1.txz:  Upgraded.
++--------------------------+
+Tue Mar 21 18:57:35 UTC 2023
+a/coreutils-9.2-aarch64-1.txz:  Upgraded.
+a/xz-5.4.2-aarch64-1.txz:  Upgraded.
+ap/mpg123-1.31.3-aarch64-1.txz:  Upgraded.
+ap/squashfs-tools-4.6-aarch64-1.txz:  Upgraded.
+ap/vim-9.0.1418-aarch64-1.txz:  Upgraded.
+l/imagemagick-7.1.1_4-aarch64-1.txz:  Upgraded.
+l/libsigc++-2.12.0-aarch64-1.txz:  Upgraded.
+l/netpbm-11.01.01-aarch64-1.txz:  Upgraded.
+n/curl-8.0.1-aarch64-1.txz:  Upgraded.
+x/fcitx5-gtk-5.0.23-aarch64-1.txz:  Upgraded.
+x/libva-utils-2.18.0-aarch64-1.txz:  Upgraded.
+xap/vim-gvim-9.0.1418-aarch64-1.txz:  Upgraded.
+xfce/xfce4-screensaver-4.18.0-aarch64-1.txz:  Upgraded.
++--------------------------+
+Mon Mar 20 17:16:07 UTC 2023
+d/rust-1.67.1-aarch64-2.txz:  Upgraded.
+testing/packages/rust/rust-1.64.0-aarch64-1.txz:  Removed.
+testing/packages/samba/samba-4.17.5-aarch64-2.txz:  Removed.
++--------------------------+
 Sun Mar 19 10:53:01 UTC 2023
 l/glibmm-2.66.6-aarch64-1.txz:  Upgraded.
 n/postfix-3.7.4-aarch64-4.txz:  Rebuilt.

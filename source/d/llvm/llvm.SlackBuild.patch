@@ -1,7 +1,18 @@
---- a/llvm.SlackBuild	2022-07-02 18:34:54.597025761 +0000
-+++ b/llvm.SlackBuild	2022-07-06 18:15:03.065973606 +0000
-@@ -55,10 +55,14 @@
-   esac
+--- a/llvm.SlackBuild	2023-03-30 01:08:48.786148023 +0000
++++ b/llvm.SlackBuild	2023-04-01 11:53:47.890010773 +0000
+@@ -76,15 +76,25 @@ elif [ "$ARCH" = "i686" ]; then
+ elif [ "$ARCH" = "x86_64" ]; then
+   SLKCFLAGS="-O2 -fPIC $IGNORE_GNU_EXTENSIONS"
+   LIBDIRSUFFIX="64"
++elif [ "$ARCH" = "aarch64" ]; then
++  SLKCFLAGS="-O2 -fPIC $IGNORE_GNU_EXTENSIONS"
++  LIBDIRSUFFIX="64"
++elif [ "$ARCH" = "riscv64" ]; then
++  SLKCFLAGS="-O2 -fPIC $IGNORE_GNU_EXTENSIONS"
++  LIBDIRSUFFIX="64"
+ else
+   SLKCFLAGS="-O2 $IGNORE_GNU_EXTENSIONS"
+   LIBDIRSUFFIX=""
  fi
  
 +# Choose a compiler (gcc/g++ or clang/clang++):
@@ -16,21 +27,8 @@
      BUILD_CLANGD=NO
    else
      BUILD_CLANGD=YES
-@@ -89,6 +93,12 @@
- elif [ "$ARCH" = "x86_64" ]; then
-   SLKCFLAGS="-O2 -fPIC"
-   LIBDIRSUFFIX="64"
-+elif [ "$ARCH" = "aarch64" ]; then
-+  SLKCFLAGS="-O2 -fPIC"
-+  LIBDIRSUFFIX="64"
-+elif [ "$ARCH" = "riscv64" ]; then
-+  SLKCFLAGS="-O2 -fPIC"
-+  LIBDIRSUFFIX="64"
- else
-   SLKCFLAGS="-O2"
-   LIBDIRSUFFIX=""
-@@ -177,6 +187,12 @@
- ln -sf */projects/libcxxabi .
+@@ -176,6 +186,12 @@ cd ..
+ ln -sf */runtimes .
  cd -
  
 +xzcat $CWD/clang.dynamic.linker.aarch64.patch.xz | patch -p1 --verbose || exit 1
@@ -42,7 +40,7 @@
  chown -R root:root .
  find . \
    \( -perm 777 -o -perm 775 -o -perm 750 -o -perm 711 -o -perm 555 -o -perm 511 \) \
-@@ -193,6 +209,22 @@
+@@ -192,6 +208,20 @@ if [ "$LLVM_BUILD_LLVM_DYLIB" = "ON" ];
    SHARED_LIBRARY_OPTIONS="-DLLVM_BUILD_LLVM_DYLIB=ON -DLLVM_LINK_LLVM_DYLIB=ON -DCLANG_LINK_CLANG_DYLIB=ON"
  fi
  
@@ -58,14 +56,12 @@
 +                -DLLVM_BUILD_EXAMPLES:BOOL=OFF \
 +                -DLLVM_ENABLE_LIBCXX:BOOL=OFF \
 +                -DLLVM_INSTALL_TOOLCHAIN_ONLY:BOOL=OFF"
-+else
-+    OPTIONS="-DLLVM_USE_LINKER=gold"
 +fi
 +
  mkdir build
  cd build
    mkdir include
-@@ -201,15 +233,15 @@
+@@ -200,8 +230,8 @@ cd build
    # Nuke LLVM libunwind as it conflicts with the one already on the system:
    rm -r ../projects/libunwind
    cmake -GNinja \
@@ -76,11 +72,11 @@
      -DCMAKE_C_FLAGS:STRING="$SLKCFLAGS" \
      -DCMAKE_CXX_FLAGS:STRING="$SLKCFLAGS" \
      -DCMAKE_INSTALL_PREFIX=/usr \
-     -DLLVM_LIBDIR_SUFFIX=${LIBDIRSUFFIX} \
+@@ -210,6 +240,7 @@ cd build
+     -DLIBCXXABI_LIBDIR_SUFFIX=${LIBDIRSUFFIX} \
      -DCMAKE_BUILD_TYPE=Release \
      $SHARED_LIBRARY_OPTIONS \
--    -DLLVM_USE_LINKER=gold \
 +    $OPTIONS \
+     -DLLVM_USE_LINKER=lld \
      -DLLVM_ENABLE_RTTI=ON \
      -DLLVM_ENABLE_FFI=ON \
-     -DLLVM_ENABLE_ASSERTIONS=OFF \
