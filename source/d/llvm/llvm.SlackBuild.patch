@@ -1,6 +1,43 @@
---- a/llvm.SlackBuild	2023-03-30 01:08:48.786148023 +0000
-+++ b/llvm.SlackBuild	2023-04-03 06:09:23.074045780 +0000
-@@ -76,15 +76,25 @@ elif [ "$ARCH" = "i686" ]; then
+--- a/llvm.SlackBuild	2023-03-30 04:08:48.786148023 +0300
++++ b/llvm.SlackBuild	2023-04-07 17:53:20.718732544 +0300
+@@ -51,6 +51,27 @@ if [ -z "$ARCH" ]; then
+   esac
+ fi
+ 
++# Building lldb will be determined automatically unless BUILD_LLDB is
++# preset to YES or NO:
++if [ -z $BUILD_LLDB ]; then
++  if [ "$ARCH" = "riscv64" ]; then
++    BUILD_LLDB=NO
++  else
++    BUILD_LLDB=YES
++  fi
++fi
++
++# Building OpenMP will be determined automatically unless BUILD_OPENMP is
++# preset to YES or NO:
++if [ -z $BUILD_OPENMP ]; then
++  if [ "$ARCH" = "riscv64" ]; then
++    # OpenMP not supported on RISC-V
++    BUILD_OPENMP=NO
++  else
++    BUILD_OPENMP=YES
++  fi
++fi
++
+ # If the variable PRINT_PACKAGE_NAME is set, then this script will report what
+ # the name of the created package would be, and then exit. This information
+ # could be useful to other scripts.
+@@ -67,6 +88,8 @@ BUILDDIR=${TMP}/llvm-build-${VERSION}
+ # massive warning spew:
+ IGNORE_GNU_EXTENSIONS=${IGNORE_GNU_EXTENSIONS:--Wno-unknown-warning-option -Wno-gnu-line-marker -Wno-gnu-anonymous-struct}
+ 
++LINKER="lld"
++
+ if [ "$ARCH" = "i586" ]; then
+   SLKCFLAGS="-O2 -march=i586 -mtune=i686 $IGNORE_GNU_EXTENSIONS"
+   LIBDIRSUFFIX=""
+@@ -76,11 +99,23 @@ elif [ "$ARCH" = "i686" ]; then
  elif [ "$ARCH" = "x86_64" ]; then
    SLKCFLAGS="-O2 -fPIC $IGNORE_GNU_EXTENSIONS"
    LIBDIRSUFFIX="64"
@@ -10,26 +47,49 @@
 +elif [ "$ARCH" = "riscv64" ]; then
 +  SLKCFLAGS="-O2 -fPIC $IGNORE_GNU_EXTENSIONS"
 +  LIBDIRSUFFIX="64"
++  CMAKE_EXTRA="-DCMAKE_SHARED_LINKER_FLAGS=-latomic"
++  LINKER="bfd"
  else
    SLKCFLAGS="-O2 $IGNORE_GNU_EXTENSIONS"
    LIBDIRSUFFIX=""
  fi
  
 +# Choose a compiler (gcc/g++ or clang/clang++):
-+export CC=${CC:-gcc}
-+export CXX=${CXX:-g++}
++export CC=${CC:-clang}
++export CXX=${CXX:-clang++}
 +
  # Building clangd will be determined automatically unless BUILD_CLANG is
  # preset to YES or NO:
  if [ -z $BUILD_CLANGD ]; then
--  if [ "$ARCH" = "i586" -o "$ARCH" = "i686" ]; then
-+  if [ "$ARCH" = "i586" -o "$ARCH" = "i686" -o "$ARCH" = "riscv64" ]; then
-     BUILD_CLANGD=NO
-   else
-     BUILD_CLANGD=YES
-@@ -176,6 +186,12 @@ cd ..
- ln -sf */runtimes .
- cd -
+@@ -134,6 +169,12 @@ cd $PKGNAM-${VERSION}.src/tools || cd $P
+   mv lldb-${VERSION} lldb 2>/dev/null || mv lldb-${VERSION}.src lldb || exit 1
+   tar xvf $CWD/lld-$VERSION.src.tar.xz || exit 1
+   mv lld-${VERSION} lld 2>/dev/null || mv lld-${VERSION}.src lld || exit 1
++  if [ "$BUILD_LLDB" = "YES" ]; then
++    tar xvf $CWD/lldb-$VERSION.src.tar.xz || exit 1
++    mv lldb-${VERSION} lldb 2>/dev/null || mv lldb-${VERSION}.src lldb || exit 1
++  fi
++  tar xvf $CWD/lld-$VERSION.src.tar.xz || exit 1
++  mv lld-${VERSION} lld 2>/dev/null || mv lld-${VERSION}.src lld || exit 1
+ cd ../
+ 
+ cd tools/clang/tools || exit 1
+@@ -148,8 +189,10 @@ cd ../../../
+ cd projects || exit 1
+   tar xvf $CWD/compiler-rt-$VERSION.src.tar.xz || exit 1
+   mv compiler-rt-${VERSION} compiler-rt 2>/dev/null || mv compiler-rt-${VERSION}.src compiler-rt || exit 1
+-  tar xvf $CWD/openmp-$VERSION.src.tar.xz || exit 1
+-  mv openmp-${VERSION} openmp 2>/dev/null || mv openmp-${VERSION}.src openmp || exit 1
++  if [ "$BUILD_OPENMP" = "YES" ]; then
++    tar xvf $CWD/openmp-$VERSION.src.tar.xz || exit 1
++    mv openmp-${VERSION} openmp 2>/dev/null || mv openmp-${VERSION}.src openmp || exit 1
++  fi
+   tar xvf $CWD/libcxx-${VERSION}.src.tar.xz || exit 1
+   mv libcxx-${VERSION} libcxx 2>/dev/null || mv libcxx-${VERSION}.src libcxx || exit 1
+   tar xvf $CWD/libcxxabi-${VERSION}.src.tar.xz || exit 1
+@@ -164,6 +207,15 @@ cd ../
+ # Support GCC built for i586-slackware-linux:
+ zcat $CWD/clang.toolchains.i586.triple.diff.gz | patch -p1 --verbose || exit 1
  
 +xzcat $CWD/clang.dynamic.linker.aarch64.patch.xz | patch -p1 --verbose || exit 1
 +xzcat $CWD/clang.toolchains.aarch64.triple.patch.xz | patch -p1 --verbose || exit 1
@@ -37,33 +97,13 @@
 +xzcat $CWD/clang.dynamic.linker.riscv64.patch.xz | patch -p1 --verbose || exit 1
 +xzcat $CWD/clang.toolchains.riscv64.triple.patch.xz | patch -p1 --verbose || exit 1
 +
- chown -R root:root .
- find . \
-   \( -perm 777 -o -perm 775 -o -perm 750 -o -perm 711 -o -perm 555 -o -perm 511 \) \
-@@ -192,6 +208,22 @@ if [ "$LLVM_BUILD_LLVM_DYLIB" = "ON" ];
-   SHARED_LIBRARY_OPTIONS="-DLLVM_BUILD_LLVM_DYLIB=ON -DLLVM_LINK_LLVM_DYLIB=ON -DCLANG_LINK_CLANG_DYLIB=ON"
- fi
- 
-+if [[ "$ARCH" == "riscv64" ]]; then
-+    # when compiling gcc
-+    # /usr/bin/ld: lib64/liblldbTarget.a(Process.cpp.o): in function `lldb_private::Process::Finalize()':
-+    # Process.cpp:(.text._ZN12lldb_private7Process8FinalizeEv+0x2a): undefined reference to `__atomic_exchange_1'
-+    [[ $CC == "gcc" ]] && export LDFLAGS="-latomic"
++# Patch riscv64: AllWinner D1 does not have fence.tso instruction:
++zcat $CWD/riscv64-no-fence.tso.diff.gz | patch -p1 --verbose || exit 1
 +
-+    # /usr/bin/ld: lib64/liblldbPluginProcessLinux.a(NativeThreadLinux.cpp.o): in function `.LBB0_1':
-+    # NativeThreadLinux.cpp:(.text._ZN12lldb_private13process_linux17NativeThreadLinuxC2ERNS0_18NativeProcessLinuxEm+0x46): undefined reference to `lldb_private::process_linux::NativeRegisterContextLinux::CreateHostNativeRegisterContextLinux(lldb_private::ArchSpec const&, lldb_private::NativeThreadProtocol&)'
-+    OPTIONS="   -DLLDB_TOOL_LLDB_SERVER_BUILD=OFF \
-+                -DLLVM_BUILD_EXAMPLES:BOOL=OFF \
-+                -DLLVM_ENABLE_LIBCXX:BOOL=OFF \
-+                -DLLVM_INSTALL_TOOLCHAIN_ONLY:BOOL=OFF"
-+else
-+    OPTIONS="   -DLLVM_USE_LINKER=lld"
-+fi
-+
- mkdir build
- cd build
-   mkdir include
-@@ -200,8 +232,8 @@ cd build
+ # We require libatomic on 32-bit platforms:
+ if [ -f ./tools/lldb/source/Utility/CMakeLists.txt ]; then
+   if [ "$ARCH" = "i586" -o "$ARCH" = "i686" ]; then
+@@ -200,8 +252,8 @@ cd build
    # Nuke LLVM libunwind as it conflicts with the one already on the system:
    rm -r ../projects/libunwind
    cmake -GNinja \
@@ -74,12 +114,33 @@
      -DCMAKE_C_FLAGS:STRING="$SLKCFLAGS" \
      -DCMAKE_CXX_FLAGS:STRING="$SLKCFLAGS" \
      -DCMAKE_INSTALL_PREFIX=/usr \
-@@ -210,7 +242,7 @@ cd build
+@@ -210,7 +262,7 @@ cd build
      -DLIBCXXABI_LIBDIR_SUFFIX=${LIBDIRSUFFIX} \
      -DCMAKE_BUILD_TYPE=Release \
      $SHARED_LIBRARY_OPTIONS \
 -    -DLLVM_USE_LINKER=lld \
-+    $OPTIONS \
++    -DLLVM_USE_LINKER=$LINKER \
      -DLLVM_ENABLE_RTTI=ON \
      -DLLVM_ENABLE_FFI=ON \
      -DLLVM_ENABLE_ZLIB=ON \
+@@ -226,6 +278,7 @@ cd build
+     -DCLANG_DEFAULT_PIE_ON_LINUX=ON \
+     -DLIBCXX_ENABLE_ABI_LINKER_SCRIPT=ON \
+     $CLANGD \
++    $CMAKE_EXTRA \
+     ..  || exit 1
+ 
+   "${NINJA:=ninja}" $NUMJOBS || exit 1
+@@ -268,8 +321,10 @@ python -m compileall "$PKG/usr/lib$LIBDI
+ python -O -m compileall "$PKG/usr/lib$LIBDIRSUFFIX/python${PY2}/site-packages/clang"
+ python3 -m compileall "$PKG/usr/lib$LIBDIRSUFFIX/python${PY3}/site-packages/clang"
+ python3 -O -m compileall "$PKG/usr/lib$LIBDIRSUFFIX/python${PY3}/site-packages/clang"
+-python -m compileall "$PKG/usr/lib$LIBDIRSUFFIX/python${PY2}/site-packages/lldb"
+-python -O -m compileall "$PKG/usr/lib$LIBDIRSUFFIX/python${PY2}/site-packages/lldb"
++if [ "$BUILD_LLDB" = "YES" ]; then
++  python -m compileall "$PKG/usr/lib$LIBDIRSUFFIX/python${PY2}/site-packages/lldb"
++  python -O -m compileall "$PKG/usr/lib$LIBDIRSUFFIX/python${PY2}/site-packages/lldb"
++fi
+ python -m compileall "$PKG/usr/share/scan-view"
+ python -O -m compileall "$PKG/usr/share/scan-view"
+ python -m compileall "$PKG/usr/share/clang"
