@@ -1,5 +1,5 @@
---- a/llvm.SlackBuild	2023-03-30 04:08:48.786148023 +0300
-+++ b/llvm.SlackBuild	2023-04-07 18:04:17.658824829 +0300
+--- a/llvm.SlackBuild	2023-04-07 18:48:47.692093379 +0300
++++ b/llvm.SlackBuild	2023-04-07 18:50:17.853915885 +0300
 @@ -51,6 +51,27 @@ if [ -z "$ARCH" ]; then
    esac
  fi
@@ -18,7 +18,7 @@
 +# preset to YES or NO:
 +if [ -z $BUILD_OPENMP ]; then
 +  if [ "$ARCH" = "riscv64" ]; then
-+    # OpenMP not supported on PowerPC 32 bits / RISC-V / zArchitecture
++    # OpenMP not supported on RISC-V
 +    BUILD_OPENMP=NO
 +  else
 +    BUILD_OPENMP=YES
@@ -61,20 +61,20 @@
  # Building clangd will be determined automatically unless BUILD_CLANG is
  # preset to YES or NO:
  if [ -z $BUILD_CLANGD ]; then
-@@ -134,6 +169,12 @@ cd $PKGNAM-${VERSION}.src/tools || cd $P
-   mv lldb-${VERSION} lldb 2>/dev/null || mv lldb-${VERSION}.src lldb || exit 1
-   tar xvf $CWD/lld-$VERSION.src.tar.xz || exit 1
-   mv lld-${VERSION} lld 2>/dev/null || mv lld-${VERSION}.src lld || exit 1
+@@ -130,8 +165,10 @@ cd $PKGNAM-${VERSION}.src/tools || cd $P
+   mv clang-${VERSION} clang 2>/dev/null || mv clang-${VERSION}.src clang || exit 1
+   #tar xvf $CWD/flang-$VERSION.src.tar.xz || exit 1
+   #mv flang-${VERSION} flang 2>/dev/null || mv flang-${VERSION}.src flang || exit 1
+-  tar xvf $CWD/lldb-$VERSION.src.tar.xz || exit 1
+-  mv lldb-${VERSION} lldb 2>/dev/null || mv lldb-${VERSION}.src lldb || exit 1
 +  if [ "$BUILD_LLDB" = "YES" ]; then
 +    tar xvf $CWD/lldb-$VERSION.src.tar.xz || exit 1
 +    mv lldb-${VERSION} lldb 2>/dev/null || mv lldb-${VERSION}.src lldb || exit 1
 +  fi
-+  tar xvf $CWD/lld-$VERSION.src.tar.xz || exit 1
-+  mv lld-${VERSION} lld 2>/dev/null || mv lld-${VERSION}.src lld || exit 1
+   tar xvf $CWD/lld-$VERSION.src.tar.xz || exit 1
+   mv lld-${VERSION} lld 2>/dev/null || mv lld-${VERSION}.src lld || exit 1
  cd ../
- 
- cd tools/clang/tools || exit 1
-@@ -148,8 +189,10 @@ cd ../../../
+@@ -148,8 +185,10 @@ cd ../../../
  cd projects || exit 1
    tar xvf $CWD/compiler-rt-$VERSION.src.tar.xz || exit 1
    mv compiler-rt-${VERSION} compiler-rt 2>/dev/null || mv compiler-rt-${VERSION}.src compiler-rt || exit 1
@@ -87,7 +87,7 @@
    tar xvf $CWD/libcxx-${VERSION}.src.tar.xz || exit 1
    mv libcxx-${VERSION} libcxx 2>/dev/null || mv libcxx-${VERSION}.src libcxx || exit 1
    tar xvf $CWD/libcxxabi-${VERSION}.src.tar.xz || exit 1
-@@ -164,6 +207,12 @@ cd ../
+@@ -164,6 +203,12 @@ cd ../
  # Support GCC built for i586-slackware-linux:
  zcat $CWD/clang.toolchains.i586.triple.diff.gz | patch -p1 --verbose || exit 1
  
@@ -100,7 +100,7 @@
  # We require libatomic on 32-bit platforms:
  if [ -f ./tools/lldb/source/Utility/CMakeLists.txt ]; then
    if [ "$ARCH" = "i586" -o "$ARCH" = "i686" ]; then
-@@ -200,8 +249,8 @@ cd build
+@@ -200,8 +245,8 @@ cd build
    # Nuke LLVM libunwind as it conflicts with the one already on the system:
    rm -r ../projects/libunwind
    cmake -GNinja \
@@ -111,7 +111,7 @@
      -DCMAKE_C_FLAGS:STRING="$SLKCFLAGS" \
      -DCMAKE_CXX_FLAGS:STRING="$SLKCFLAGS" \
      -DCMAKE_INSTALL_PREFIX=/usr \
-@@ -210,7 +259,7 @@ cd build
+@@ -210,7 +255,7 @@ cd build
      -DLIBCXXABI_LIBDIR_SUFFIX=${LIBDIRSUFFIX} \
      -DCMAKE_BUILD_TYPE=Release \
      $SHARED_LIBRARY_OPTIONS \
@@ -120,7 +120,7 @@
      -DLLVM_ENABLE_RTTI=ON \
      -DLLVM_ENABLE_FFI=ON \
      -DLLVM_ENABLE_ZLIB=ON \
-@@ -226,6 +275,7 @@ cd build
+@@ -226,6 +271,7 @@ cd build
      -DCLANG_DEFAULT_PIE_ON_LINUX=ON \
      -DLIBCXX_ENABLE_ABI_LINKER_SCRIPT=ON \
      $CLANGD \
@@ -128,7 +128,7 @@
      ..  || exit 1
  
    "${NINJA:=ninja}" $NUMJOBS || exit 1
-@@ -268,8 +318,10 @@ python -m compileall "$PKG/usr/lib$LIBDI
+@@ -268,8 +314,10 @@ python -m compileall "$PKG/usr/lib$LIBDI
  python -O -m compileall "$PKG/usr/lib$LIBDIRSUFFIX/python${PY2}/site-packages/clang"
  python3 -m compileall "$PKG/usr/lib$LIBDIRSUFFIX/python${PY3}/site-packages/clang"
  python3 -O -m compileall "$PKG/usr/lib$LIBDIRSUFFIX/python${PY3}/site-packages/clang"
