@@ -1,0 +1,49 @@
+--- a/gcc.SlackBuild	2022-05-06 18:12:35.665696515 +0000
++++ b/gcc.SlackBuild	2022-05-08 13:55:05.363287028 +0000
+@@ -115,6 +115,14 @@
+   SLKCFLAGS="-O3 -march=armv7-a -mfpu=vfpv3-d16"
+   LIBDIRSUFFIX=""
+   LIB_ARCH=armv7hl
++elif [ "$ARCH" = "aarch64" ]; then
++  SLKCFLAGS="-O2 -fPIC"
++  LIBDIRSUFFIX="64"
++  LIB_ARCH=$ARCH
++elif [ "$ARCH" = "riscv64" ]; then
++  SLKCFLAGS="-O2 -fPIC"
++  LIBDIRSUFFIX="64"
++  LIB_ARCH=$ARCH
+ else
+   SLKCFLAGS="-O2"
+   LIBDIRSUFFIX=""
+@@ -163,6 +171,12 @@
+ # Smite the fixincludes:
+ zcat $CWD/patches/gcc-no_fixincludes.diff.gz | patch -p1 --verbose --backup --suffix=.orig || exit 1
+ 
++# Redefine dynamic linker for aarch64 from /lib to /lib64:
++xzcat $CWD/redefine-dynamic-linker-for-aarch64.patch.xz | patch -p1 --verbose || exit 1
++
++# Redefine dynamic linker for riscv64 from /lib to /lib64:
++xzcat $CWD/redefine-dynamic-linker-for-riscv64.patch.xz | patch -p1 --verbose || exit 1
++
+ # Fix perms/owners:
+ chown -R root:root .
+ find . \
+@@ -322,6 +336,9 @@
+   else
+     GCC_ARCHOPTS="--disable-multilib"
+   fi
++
++  [[ "$ARCH" == "aarch64" ]] && GCC_ARCHOPTS="--enable-multilib"
++  [[ "$ARCH" == "riscv64" ]] && GCC_ARCHOPTS="--disable-multilib --with-slibdir=/lib$LIBDIRSUFFIX"
+  
+   CFLAGS="$SLKCFLAGS" \
+   CXXFLAGS="$SLKCFLAGS" \
+@@ -392,7 +409,7 @@
+   fi
+ 
+   # Make our 64bit gcc look for 32bit gcc binaries in ./32 subdirectory:
+-  if [ "$ARCH" = "x86_64" ]; then
++  if [ "${LIBDIRSUFFIX}" = "64" ]; then
+     sed -i 's#;.\(:../lib !m64 m32;\)$#;32\1#' \
+       $PKG1/usr/lib${LIBDIRSUFFIX}/gcc/${TARGET}/${VERSION}/specs
+   fi
