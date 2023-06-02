@@ -1,3 +1,37 @@
+Wed May 31 20:30:33 UTC 2023
+a/kernel-firmware-20230525_d11ae98-noarch-1.txz:  Upgraded.
+a/kernel-generic-6.1.30-aarch64-1.txz:  Upgraded.
+a/kernel-modules-6.1.30-aarch64-1.txz:  Upgraded.
+a/sysvinit-scripts-15.1-noarch-5.txz:  Rebuilt.
+ap/sc-im-0.8.3-aarch64-1.txz:  Upgraded.
+d/kernel-headers-6.1.30-arm64-1.txz:  Upgraded.
+d/meson-1.1.1-aarch64-1.txz:  Upgraded.
+d/parallel-20230522-noarch-1.txz:  Upgraded.
+d/vala-0.56.8-aarch64-1.txz:  Upgraded.
+k/kernel-source-6.1.30-noarch-1.txz:  Upgraded.
+kde/calligra-3.2.1-aarch64-28.txz:  Rebuilt.
+kde/kimageformats-5.106.0-aarch64-2.txz:  Rebuilt.
+kde/kio-extras-23.04.1-aarch64-2.txz:  Rebuilt.
+kde/krita-5.1.5-aarch64-8.txz:  Rebuilt.
+l/Imath-3.1.8-aarch64-1.txz:  Upgraded.
+l/enchant-2.4.0-aarch64-1.txz:  Upgraded.
+l/glib2-2.76.3-aarch64-1.txz:  Upgraded.
+l/gst-plugins-bad-free-1.22.3-aarch64-2.txz:  Rebuilt.
+l/gtk+3-3.24.38-aarch64-1.txz:  Upgraded.
+l/imagemagick-7.1.1_10-aarch64-2.txz:  Rebuilt.
+l/openexr-3.1.7-aarch64-2.txz:  Rebuilt.
+l/qt5-5.15.9_20230523_245f369c-aarch64-1.txz:  Upgraded.
+n/curl-8.1.1-aarch64-1.txz:  Upgraded.
+t/texlive-2023.230322-aarch64-3.txz:  Rebuilt.
+x/mesa-23.1.1-aarch64-1.txz:  Upgraded.
+xap/ddd-3.4.0-aarch64-1.txz:  Upgraded.
+xap/gimp-2.10.34-aarch64-3.txz:  Rebuilt.
+xap/mozilla-firefox-113.0.2-aarch64-1.txz:  Upgraded.
+xap/mozilla-thunderbird-102.11.2-aarch64-1.txz:  Upgraded.
+xfce/libxfce4ui-4.18.4-aarch64-1.txz:  Upgraded.
+xfce/xfce4-panel-4.18.4-aarch64-1.txz:  Upgraded.
+xfce/xfce4-screensaver-4.18.2-aarch64-1.txz:  Upgraded.
++--------------------------+
 Wed May 24 15:54:12 UTC 2023
 ap/diffutils-3.10-aarch64-1.txz:  Upgraded.
 ap/qpdf-11.4.0-aarch64-1.txz:  Upgraded.

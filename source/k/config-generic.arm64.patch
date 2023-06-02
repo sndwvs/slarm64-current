@@ -1,9 +1,9 @@
 --- /dev/null	2022-06-09 21:05:13.432000016 +0300
-+++ b/kernel-configs/config-generic-6.1.30.arm64	2023-06-21 16:17:27.942891458 +0300
++++ b/kernel-configs/config-generic-6.1.31.arm64	2023-06-24 20:20:00.238991279 +0300
 @@ -0,0 +1,11311 @@
 +#
 +# Automatically generated file; DO NOT EDIT.
-+# Linux/arm64 6.1.30 Kernel Configuration
++# Linux/arm64 6.1.31 Kernel Configuration
 +#
 +CONFIG_CC_VERSION_TEXT="gcc (GCC) 12.2.0"
 +CONFIG_CC_IS_GCC=y
