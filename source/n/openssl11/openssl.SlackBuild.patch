@@ -1,5 +1,5 @@
---- a/openssl.SlackBuild	2021-02-10 09:12:38.901159895 +0200
-+++ b/openssl.SlackBuild	2021-02-10 09:13:03.553143710 +0200
+--- a/openssl11.SlackBuild	2021-02-10 09:12:38.901159895 +0200
++++ b/openssl11.SlackBuild	2021-02-10 09:13:03.553143710 +0200
 @@ -83,6 +83,10 @@
    LIBDIRSUFFIX=""
  elif [ "$ARCH" = "x86_64" ]; then
