@@ -1,3 +1,43 @@
+Fri Jun 16 16:46:23 UTC 2023
+a/btrfs-progs-6.3.2-aarch64-1.txz:  Upgraded.
+a/kernel-firmware-20230612_1cd1c87-noarch-1.txz:  Upgraded.
+a/kernel-generic-6.1.34-aarch64-1.txz:  Upgraded.
+a/kernel-modules-6.1.34-aarch64-1.txz:  Upgraded.
+ap/cups-2.4.5-aarch64-1.txz:  Upgraded.
+ap/ksh93-1.0.6-aarch64-1.txz:  Upgraded.
+d/kernel-headers-6.1.34-arm64-1.txz:  Upgraded.
+d/llvm-16.0.6-aarch64-1.txz:  Upgraded.
+k/kernel-source-6.1.34-noarch-1.txz:  Upgraded.
+l/a52dec-0.8.0-aarch64-1.txz:  Upgraded.
+l/fluidsynth-2.3.3-aarch64-1.txz:  Upgraded.
+l/gjs-1.76.2-aarch64-1.txz:  Upgraded.
+l/icu4c-73.2-aarch64-1.txz:  Upgraded.
+n/openvpn-2.6.5-aarch64-1.txz:  Upgraded.
+x/libX11-1.8.6-aarch64-1.txz:  Upgraded.
+xfce/xfce4-whiskermenu-plugin-2.7.3-aarch64-1.txz:  Upgraded.
++--------------------------+
+Wed Jun 14 18:52:35 UTC 2023
+a/aaa_terminfo-6.4_20230610-aarch64-1.txz:  Upgraded.
+a/userspace-rcu-0.14.0-aarch64-1.txz:  Added.
+a/xfsprogs-6.3.0-aarch64-1.txz:  Upgraded.
+ap/vim-9.0.1627-aarch64-1.txz:  Upgraded.
+ap/xfsdump-3.1.12-aarch64-1.txz:  Upgraded.
+ap/xorriso-1.5.6.pl01-aarch64-1.txz:  Upgraded.
+d/ccache-4.8.2-aarch64-1.txz:  Upgraded.
+d/rust-1.69.0-aarch64-1.txz:  Upgraded.
+k/kernel-source-6.1.33-noarch-1.txz:  Upgraded.
+l/fuse3-3.15.0-aarch64-1.txz:  Upgraded.
+l/gjs-1.76.1-aarch64-1.txz:  Upgraded.
+l/gtkspell3-3.0.10-aarch64-1.txz:  Added.
+l/libburn-1.5.6-aarch64-1.txz:  Upgraded.
+l/ncurses-6.4_20230610-aarch64-1.txz:  Upgraded.
+n/ntp-4.2.8p17-aarch64-2.txz:  Rebuilt.
+testing/packages/rust/rust-1.70.0-aarch64-1.txz:  Upgraded.
+x/xkeyboard-config-2.39-noarch-1.txz:  Upgraded.
+xap/mozilla-firefox-114.0.1-aarch64-1.txz:  Upgraded.
+xap/pan-0.154-aarch64-1.txz:  Upgraded.
+xap/vim-gvim-9.0.1627-aarch64-1.txz:  Upgraded.
++--------------------------+
 Tue Jun 13 18:33:50 UTC 2023
 kde/akonadi-23.04.2-aarch64-1.txz:  Upgraded.
 kde/akonadi-calendar-23.04.2-aarch64-1.txz:  Upgraded.
