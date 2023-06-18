@@ -1,3 +1,11 @@
+Sat Jun 17 13:31:26 UTC 2023
+ap/ghostscript-10.01.1-aarch64-1.txz:  Upgraded.
+l/libspectre-0.2.12-aarch64-2.txz:  Rebuilt.
+t/texlive-2023.230322-aarch64-4.txz:  Rebuilt.
+t/xfig-3.2.8b-aarch64-2.txz:  Rebuilt.
+x/xorgproto-2023.2-aarch64-1.txz:  Upgraded.
+xap/gimp-2.10.34-aarch64-5.txz:  Rebuilt.
++--------------------------+
 Fri Jun 16 16:46:23 UTC 2023
 a/btrfs-progs-6.3.2-aarch64-1.txz:  Upgraded.
 a/kernel-firmware-20230612_1cd1c87-noarch-1.txz:  Upgraded.
