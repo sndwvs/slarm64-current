@@ -1,3 +1,21 @@
+Tue Jun 27 18:28:55 UTC 2023
+patches/packages/network-scripts-15.0-noarch-19_slack15.0.txz:  Added.
+patches/packages/vim-9.0.1667-aarch64-1_slack15.0.txz:  Upgraded.
+patches/packages/vim-gvim-9.0.1667-aarch64-1_slack15.0.txz:  Upgraded.
++--------------------------+
+Fri Jun 23 20:48:14 UTC 2023
+patches/packages/bind-9.16.42-aarch64-1_slack15.0.txz:  Upgraded.
+patches/packages/cups-2.4.6-aarch64-1_slack15.0.txz:  Upgraded.
+patches/packages/linux-5.15.118/kernel-generic-5.15.118-aarch64-1.txz:  Added.
+patches/packages/linux-5.15.118/kernel-headers-5.15.118-arm64-1.txz:  Added.
+patches/packages/linux-5.15.118/kernel-modules-5.15.118-aarch64-1.txz:  Added.
+patches/packages/linux-5.15.118/kernel-source-5.15.118-noarch-1.txz:  Added.
+patches/packages/linux-5.15.94/kernel-generic-5.15.94-aarch64-1.txz:  Removed.
+patches/packages/linux-5.15.94/kernel-headers-5.15.94-arm64-1.txz:  Removed.
+patches/packages/linux-5.15.94/kernel-modules-5.15.94-aarch64-1.txz:  Removed.
+patches/packages/linux-5.15.94/kernel-source-5.15.94-noarch-1.txz:  Removed.
+testing/packages/bind-9.18.16-aarch64-1_slack15.0.txz:  Upgraded.
++--------------------------+
 Fri Jun 16 21:31:05 UTC 2023
 patches/packages/libX11-1.8.6-aarch64-1_slack15.0.txz:  Added.
 +--------------------------+

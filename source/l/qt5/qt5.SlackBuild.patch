@@ -1,6 +1,6 @@
---- a/qt5.SlackBuild	2021-03-14 11:02:19.928819259 +0200
-+++ b/qt5.SlackBuild	2021-03-14 11:08:30.297082225 +0200
-@@ -81,6 +81,16 @@
+--- a/qt5.SlackBuild	2023-07-01 13:38:40.212964533 +0300
++++ b/qt5.SlackBuild	2023-07-01 13:49:55.355763684 +0300
+@@ -81,6 +81,16 @@ elif [ "$ARCH" = "armv7hl" ]; then
    SLKCFLAGS="-O2 -march=armv7-a -mfpu=vfpv3-d16 -fno-strict-volatile-bitfields"
    SLKLDFLAGS=""
    LIBDIRSUFFIX=""
@@ -11,46 +11,32 @@
 +  LIBDIRSUFFIX="64"
 +elif [ "$ARCH" = "riscv64" ]; then
 +  SLKCFLAGS="-O2 -fPIC"
-+  SLKLDFLAGS=""
++  SLKLDFLAGS="-latomic"
 +  SLKLDFLAGS="-L/usr/lib64"
 +  LIBDIRSUFFIX="64"
  else
    SLKCFLAGS="-O2"
    SLKLDFLAGS=""
-@@ -130,6 +140,8 @@
- # See also https://bugzilla.redhat.com/1704474
- cd qtbase
+@@ -153,6 +163,22 @@ cd qtbase
    zcat $CWD/patches/qt5.qtbase_cmake_isystem_includes.patch.gz | patch -p1 --verbose || exit 1
-+  # RISC-V: must use -pthread to link libatomic
-+  xzcat $CWD/patches/qtbase-everywhere-src-5.12.4-pthread.patch.xz | patch -p1 --verbose || exit 1
  cd - 1>/dev/null
  
- # Fix sandbox functions for glibc-2.33:
-@@ -146,6 +158,19 @@
-   unset TAG
- fi
- 
-+if [[ "$ARCH" == "aarch64" || "$ARCH" == "riscv64" ]]; then
-+  EXTRACONF="-no-sse2 \
-+             -no-sse3 \
-+             -no-ssse3 \
-+             -no-sse4.1 \
-+             -no-sse4.2 \
-+             -no-avx \
-+             -no-avx2 \
-+             -no-feature-getentropy"
-+else
-+  EXTRACONF=" "
-+fi
++# Fix sandbox functions for glibc-2.33:
++cd qtwebengine
++  zcat $CWD/patches/qtwebengine-everywhere-src-5.15.2-%231904652.patch.gz | patch -p1 --verbose || exit 1
++  zcat $CWD/patches/qtwebengine-mips-ppc-riscv-s390-support.diff.gz | patch -p1 --verbose || exit 1
++  zcat $CWD/patches/qtwebengine-mips32-limit-mksnapshot-memory.diff.gz | patch -p1 --verbose || exit 1
++  zcat $CWD/patches/qtwebengine-bigendian.diff.gz | patch -p1 --verbose || exit 1
++  tar xvf $CWD/patches/qtwebengine-mips-ppc-riscv-s390-newfiles.tar.gz
++cd - 1>/dev/null
 +
- # Use our custom compiler and linker flags:
- sed -e "s|^\(QMAKE_CFLAGS_RELEASE.*\)|\1 ${SLKCFLAGS}|" \
-   -i qtbase/mkspecs/common/gcc-base.conf || exit 1
-@@ -210,6 +235,7 @@
-   ${FFMPEG_OPTION} \
-   ${PULSEAUDIO_OPTION} \
-   ${RELOCATIONS} \
-+  ${EXTRACONF} \
-   -no-pch
-   # No-precompiled-headers is ccache-friendly.
-   
++# Apply upstream patch to move the wayland socket polling to a separate event
++# thread. This greatly improves the behavior of Plasma Wayland sessions, fixing
++# (for example) stuttering that was occuring on multimedia applications.
++cd qtwayland
++  zcat $CWD/patches/24.diff.gz | patch -p1 --verbose || exit 1
++cd - 1>/dev/null
++
+ # If PulseAudio is not found, use the _alsa $TAG and disable it in the build:
+ if ! pkg-config --exists libpulse 2>/dev/null ; then
+   PULSEAUDIO_OPTION="-no-pulseaudio -no-webengine-pulseaudio"
