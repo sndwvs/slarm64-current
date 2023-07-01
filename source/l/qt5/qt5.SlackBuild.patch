@@ -1,23 +1,21 @@
 --- a/qt5.SlackBuild	2023-07-01 13:38:40.212964533 +0300
-+++ b/qt5.SlackBuild	2023-07-01 14:05:58.920709618 +0300
-@@ -81,6 +81,16 @@ elif [ "$ARCH" = "armv7hl" ]; then
++++ b/qt5.SlackBuild	2023-07-01 19:52:37.795974868 +0300
+@@ -81,6 +81,14 @@ elif [ "$ARCH" = "armv7hl" ]; then
    SLKCFLAGS="-O2 -march=armv7-a -mfpu=vfpv3-d16 -fno-strict-volatile-bitfields"
    SLKLDFLAGS=""
    LIBDIRSUFFIX=""
 +elif [ "$ARCH" = "aarch64" ]; then
 +  SLKCFLAGS="-O2 -fPIC"
-+  SLKLDFLAGS=""
 +  SLKLDFLAGS="-L/usr/lib64"
 +  LIBDIRSUFFIX="64"
 +elif [ "$ARCH" = "riscv64" ]; then
 +  SLKCFLAGS="-O2 -fPIC"
-+  SLKLDFLAGS="-latomic"
-+  SLKLDFLAGS="-L/usr/lib64"
++  SLKLDFLAGS="-L/usr/lib64 -latomic"
 +  LIBDIRSUFFIX="64"
  else
    SLKCFLAGS="-O2"
    SLKLDFLAGS=""
-@@ -133,6 +143,16 @@ cd qtwebsockets
+@@ -133,6 +141,16 @@ cd qtwebsockets
  cd - 1>/dev/null
  cd qtwebengine
    zcat $CWD/patches/qt5-qtwebengine-gcc11.patch.gz | patch -p1 --verbose || exit 1

@@ -1,3 +1,19 @@
+Sat Jul  1 16:43:24 UTC 2023
+a/util-linux-2.39.1-aarch64-2.txz:  Rebuilt.
+kde/digikam-8.0.0-aarch64-4.txz:  Rebuilt.
+kde/kirigami-addons-0.9.0-aarch64-1.txz:  Upgraded.
+l/glib-networking-2.76.1-aarch64-1.txz:  Upgraded.
+l/gst-plugins-bad-free-1.22.4-aarch64-2.txz:  Rebuilt.
+l/gvfs-1.50.5-aarch64-1.txz:  Upgraded.
+l/libpaper-2.1.1-aarch64-1.txz:  Upgraded.
+l/libwebp-1.3.1-aarch64-1.txz:  Upgraded.
+l/mozilla-nss-3.91-aarch64-1.txz:  Upgraded.
+l/netpbm-11.03.00-aarch64-1.txz:  Upgraded.
+l/opencv-4.8.0-aarch64-1.txz:  Upgraded.
+n/bluez-5.67-aarch64-1.txz:  Upgraded.
+n/openresolv-3.13.2-noarch-1.txz:  Upgraded.
+n/p11-kit-0.25.0-aarch64-1.txz:  Upgraded.
++--------------------------+
 Fri Jun 30 19:15:47 UTC 2023
 a/kernel-firmware-20230625_ee91452-noarch-2.txz:  Rebuilt.
 +--------------------------+
