@@ -1,6 +1,6 @@
---- a/qt5-webkit.SlackBuild	2022-02-23 21:40:03.690331493 +0000
-+++ b/qt5-webkit.SlackBuild	2022-03-05 19:22:12.937051997 +0000
-@@ -63,6 +63,12 @@
+--- a/qt5-webkit.SlackBuild	2023-05-04 06:21:34.811633245 +0300
++++ b/qt5-webkit.SlackBuild	2023-07-02 01:15:14.776995464 +0300
+@@ -63,6 +63,13 @@ elif [ "$ARCH" = "s390" ]; then
  elif [ "$ARCH" = "x86_64" ]; then
    SLKCFLAGS="-O2 -fPIC"
    LIBDIRSUFFIX="64"
@@ -10,38 +10,29 @@
 +elif [ "$ARCH" = "riscv64" ]; then
 +  SLKCFLAGS="-O2 -fPIC"
 +  LIBDIRSUFFIX="64"
++  CMAKE_EXTRA="-DCMAKE_EXE_LINKER_FLAGS=-latomic -DCMAKE_SHARED_LINKER_FLAGS=-latomic -DENABLE_JIT=OFF"
  elif [ "$ARCH" = "armv7hl" ]; then
    SLKCFLAGS="-O3 -march=armv7-a -mfpu=vfpv3-d16"
    LIBDIRSUFFIX=""
-@@ -99,6 +105,8 @@
+@@ -109,6 +116,13 @@ zcat $CWD/webkit-offlineasm-warnings-rub
+ # Fix for gcc13:
+ zcat $CWD/qt5-webkit.gcc13.diff.gz | patch -p1 --verbose || exit 1
  
- # Fix for bison 3.7.x:
- zcat $CWD/qt5-webkit.bison27.patch.gz | patch -p1 --verbose || exit 1
-+# Enable RISC-V (riscv64)
-+xzcat $CWD/qtwebkit-5.212.0-alpha3-add-riscv.patch.xz | patch -p1 --verbose || exit 1
- 
- # Fix for glib-2.68.0:
- zcat $CWD/qt5-webkit.glib-2.68.0.diff.gz | patch -p1 --verbose || exit 1
-@@ -111,12 +119,22 @@
- export QTDIR="/usr/lib$LIBDIRSUFFIX/qt5"
- export LD_LIBRARY_PATH="${QTDIR}/qtbase/lib:${QTDIR}/qttools/lib:${LD_LIBRARY_PATH}"
- 
-+# riscv64
-+if [[ $ARCH == "riscv64" ]]; then
-+    # Fix riscv64
-+    # error: undefined reference to `__atomic_compare_exchange_1'
-+    xzcat $CWD/atomic.patch.xz | patch -p1 --verbose || exit 1
++# Add new architectures (riscv64, or1k, sparc64, loongarch64):
++zcat $CWD/new_architectures.diff.gz | patch -p1 --verbose || exit 1
 +
-+    OPTIONS="-DCMAKE_EXE_LINKER_FLAGS=-latomic -DENABLE_JIT=OFF -DTHREADS_PREFER_PTHREAD_FLAG:BOOL=YES"
++if [ ! -z "$SLKLDFLAGS" ]; then
++  export LDFLAGS="$SLKLDFLAGS"
 +fi
 +
- # Configure, build, and install:
+ # -DU_DEFINE_FALSE_AND_TRUE=1 since recent icu4c no longer defines these otherwise.
+ 
+ export CFLAGS="$SLKCFLAGS -DU_DEFINE_FALSE_AND_TRUE=1"
+@@ -121,6 +135,7 @@ export LD_LIBRARY_PATH="${QTDIR}/qtbase/
  mkdir qtwebkit-build
  cd qtwebkit-build
    cmake \
++    $CMAKE_EXTRA \
      -DPORT=Qt \
      -DQt5_DIR=$QTDIR \
-+    $OPTIONS \
      ..  || exit 1
-   make $NUMJOBS || make || exit 1
-   make install DESTDIR=$PKG || exit 1
