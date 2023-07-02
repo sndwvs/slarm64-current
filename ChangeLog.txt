@@ -1,3 +1,13 @@
+Sun Jul  2 13:11:14 UTC 2023
+a/kernel-generic-6.1.37-aarch64-1.txz:  Upgraded.
+a/kernel-modules-6.1.37-aarch64-1.txz:  Upgraded.
+d/kernel-headers-6.1.37-arm64-1.txz:  Upgraded.
+k/kernel-source-6.1.37-noarch-1.txz:  Upgraded.
+l/librsvg-2.56.2-aarch64-1.txz:  Upgraded.
+l/libuv-1.46.0-aarch64-1.txz:  Upgraded.
+l/taglib-1.13.1-aarch64-1.txz:  Upgraded.
+n/bluez-5.68-aarch64-1.txz:  Upgraded.
++--------------------------+
 Sat Jul  1 16:43:24 UTC 2023
 a/util-linux-2.39.1-aarch64-2.txz:  Rebuilt.
 kde/digikam-8.0.0-aarch64-4.txz:  Rebuilt.
