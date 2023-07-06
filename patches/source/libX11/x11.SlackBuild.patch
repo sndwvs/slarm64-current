@@ -1,0 +1,27 @@
+--- a/x11.SlackBuild	2021-02-13 00:12:32.969584071 +0200
++++ b/x11.SlackBuild	2021-02-13 00:13:02.889573183 +0200
+@@ -86,10 +86,24 @@
+ 
+ if [ "$ARCH" = "x86_64" ]; then
+   LIBDIRSUFFIX="64"
++elif [ "$ARCH" = "aarch64" ]; then
++  LIBDIRSUFFIX="64"
++elif [ "$ARCH" = "riscv64" ]; then
++  LIBDIRSUFFIX="64"
+ else
+   LIBDIRSUFFIX=""
+ fi
+ 
++# add build aarch64
++[[ ! $(xzcat arch.use.flags.patch.xz | patch -p1 --batch --dry-run -N | grep previously) ]] && ( xzcat arch.use.flags.patch.xz | patch -p1 --verbose || exit 1 )
++[[ ! $(xzcat package-blacklist.patch.xz | patch -p1 --batch --dry-run -N | grep previously) ]] && ( xzcat package-blacklist.patch.xz | patch -p1 --verbose || exit 1 )
++[[ ! $(xzcat modularize.patch.xz | patch -p1 --batch --dry-run -N | grep previously) ]] && ( xzcat modularize.patch.xz | patch -p1 --verbose || exit 1 )
++
++# fix build arch
++sed  -e 's/\(-slackware\)\(-linux.*\s\)/-unknown\2/g' \
++     -e 's/\(-slackware\)\(-linux$\)/-unknown\2/g' \
++     -i configure/*
++
+ # Set up a few useful functions:
+ 
+ fix_perms() {

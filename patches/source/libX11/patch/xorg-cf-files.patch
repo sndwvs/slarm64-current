@@ -1,0 +1,2 @@
+zcat $CWD/patch/util/riscv64-support.patch.gz | patch -p2 --verbose || \
+  { touch ${SLACK_X_BUILD_DIR}/${PKGNAME}.failed ; continue ; }
