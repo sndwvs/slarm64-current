@@ -1,3 +1,21 @@
+Fri Jul 14 15:12:26 UTC 2023
+ap/inxi-3.3.28_1-noarch-1.txz:  Upgraded.
+ap/sudo-1.9.14p1-aarch64-1.txz:  Upgraded.
+d/rust-1.70.0-aarch64-1.txz:  Upgraded.
+l/harfbuzz-8.0.1-aarch64-1.txz:  Upgraded.
+l/lensfun-0.3.4-aarch64-1.txz:  Upgraded.
+l/lmdb-0.9.31-aarch64-1.txz:  Upgraded.
+l/pipewire-0.3.74-aarch64-1.txz:  Upgraded.
+n/krb5-1.21.1-aarch64-1.txz:  Upgraded.
+n/libnftnl-1.2.6-aarch64-1.txz:  Upgraded.
+n/nghttp2-1.55.0-aarch64-1.txz:  Upgraded.
+n/openldap-2.6.5-aarch64-1.txz:  Upgraded.
+n/stunnel-5.70-aarch64-1.txz:  Upgraded.
+testing/packages/mozilla-thunderbird/mozilla-thunderbird-115.0-aarch64-1.txz:  Added.
+x/ibus-table-1.17.1-aarch64-1.txz:  Upgraded.
+x/xterm-384-aarch64-1.txz:  Upgraded.
+xap/mozilla-firefox-115.0.2esr-aarch64-1.txz:  Upgraded.
++--------------------------+
 Mon Jul 10 15:27:38 UTC 2023
 ap/qpdf-11.5.0-aarch64-1.txz:  Upgraded.
 kde/kid3-3.9.4-aarch64-1.txz:  Upgraded.
