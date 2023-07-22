@@ -1,13 +1,13 @@
 --- /dev/null	2022-06-09 21:05:13.432000016 +0300
-+++ b/kernel-configs/config-generic-6.1.31.arm64	2023-06-24 20:20:00.238991279 +0300
-@@ -0,0 +1,11311 @@
++++ b/kernel-configs/config-generic-6.1.39.arm64	2023-07-22 17:13:42.175116751 +0300
+@@ -0,0 +1,11313 @@
 +#
 +# Automatically generated file; DO NOT EDIT.
-+# Linux/arm64 6.1.31 Kernel Configuration
++# Linux/arm64 6.1.39 Kernel Configuration
 +#
-+CONFIG_CC_VERSION_TEXT="gcc (GCC) 12.2.0"
++CONFIG_CC_VERSION_TEXT="gcc (GCC) 13.1.0"
 +CONFIG_CC_IS_GCC=y
-+CONFIG_GCC_VERSION=120200
++CONFIG_GCC_VERSION=130100
 +CONFIG_CLANG_VERSION=0
 +CONFIG_AS_IS_GNU=y
 +CONFIG_AS_VERSION=24000
@@ -1009,6 +1009,7 @@
 +# CONFIG_ANON_VMA_NAME is not set
 +# CONFIG_USERFAULTFD is not set
 +# CONFIG_LRU_GEN is not set
++CONFIG_LOCK_MM_AND_FIND_VMA=y
 +
 +#
 +# Data Access Monitoring
@@ -2228,6 +2229,7 @@
 +# Partition parsers
 +#
 +# CONFIG_MTD_AR7_PARTS is not set
++# CONFIG_MTD_BRCM_U_BOOT is not set
 +# CONFIG_MTD_CMDLINE_PARTS is not set
 +CONFIG_MTD_OF_PARTS=m
 +CONFIG_MTD_OF_PARTS_BCM4908=y
@@ -10462,7 +10464,7 @@
 +# CONFIG_CIFS_SWN_UPCALL is not set
 +CONFIG_CIFS_FSCACHE=y
 +# CONFIG_SMB_SERVER is not set
-+CONFIG_SMBFS_COMMON=m
++CONFIG_SMBFS=m
 +CONFIG_CODA_FS=m
 +# CONFIG_AFS_FS is not set
 +CONFIG_9P_FS=m
