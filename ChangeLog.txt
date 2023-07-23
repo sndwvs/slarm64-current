@@ -1,3 +1,43 @@
+Sat Jul 22 18:42:46 UTC 2023
+a/kernel-firmware-20230707_d3f6606-noarch-1.txz:  Upgraded.
+a/kernel-generic-6.1.39-aarch64-1.txz:  Upgraded.
+a/kernel-modules-6.1.39-aarch64-1.txz:  Upgraded.
+a/tar-1.35-aarch64-1.txz:  Upgraded.
+a/xfsprogs-6.4.0-aarch64-1.txz:  Upgraded.
+ap/sudo-1.9.14p2-aarch64-1.txz:  Upgraded.
+d/cmake-3.27.0-aarch64-1.txz:  Upgraded.
+d/kernel-headers-6.1.39-arm64-1.txz:  Upgraded.
+d/meson-1.2.0-aarch64-1.txz:  Upgraded.
+d/re2c-3.1-aarch64-1.txz:  Upgraded.
+extra/xv/xv-4.2.0-aarch64-1.txz:  Upgraded.
+k/kernel-source-6.1.39-noarch-1.txz:  Upgraded.
+l/gst-plugins-bad-free-1.22.5-aarch64-1.txz:  Upgraded.
+l/gst-plugins-base-1.22.5-aarch64-1.txz:  Upgraded.
+l/gst-plugins-good-1.22.5-aarch64-1.txz:  Upgraded.
+l/gst-plugins-libav-1.22.5-aarch64-1.txz:  Upgraded.
+l/gstreamer-1.22.5-aarch64-1.txz:  Upgraded.
+l/libptytty-2.0-aarch64-1.txz:  Added.
+l/librsvg-2.56.3-aarch64-1.txz:  Upgraded.
+l/mpfr-4.2.0p12-aarch64-1.txz:  Upgraded.
+l/nodejs-20.5.0-aarch64-1.txz:  Upgraded.
+l/pipewire-0.3.75-aarch64-1.txz:  Upgraded.
+l/talloc-2.4.1-aarch64-1.txz:  Upgraded.
+l/tdb-1.4.9-aarch64-1.txz:  Upgraded.
+l/tevent-0.15.0-aarch64-1.txz:  Upgraded.
+l/xxHash-0.8.2-aarch64-1.txz:  Upgraded.
+n/bind-9.18.17-aarch64-1.txz:  Upgraded.
+n/ca-certificates-20230721-noarch-1.txz:  Upgraded.
+n/curl-8.2.0-aarch64-1.txz:  Upgraded.
+n/dhcpcd-10.0.2-aarch64-1.txz:  Upgraded.
+n/openssh-9.3p2-aarch64-1.txz:  Upgraded.
+n/samba-4.18.5-aarch64-1.txz:  Upgraded.
+testing/packages/mozilla-thunderbird/mozilla-thunderbird-115.0.1-aarch64-1.txz:  Upgraded.
+x/libpthread-stubs-0.5-aarch64-1.txz:  Upgraded.
+x/mesa-23.2.0_rc1-aarch64-1.txz:  Upgraded.
+xap/mozilla-firefox-115.0.3esr-aarch64-1.txz:  Upgraded.
+xap/rxvt-unicode-9.31-aarch64-1.txz:  Upgraded.
+xap/sane-1.2.1-aarch64-1.txz:  Upgraded.
++--------------------------+
 Mon Jul 17 17:13:57 UTC 2023
 kde/sddm-0.20.0-aarch64-1.txz:  Upgraded.
 l/imagemagick-7.1.1_13-aarch64-1.txz:  Upgraded.
