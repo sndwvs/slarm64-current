@@ -1,3 +1,27 @@
+Tue Jul 25 19:19:17 UTC 2023
+patches/packages/kernel-firmware-20230725_b6ea35f-noarch-1.txz:  Upgraded.
++--------------------------+
+Mon Jul 24 11:53:26 UTC 2023
+patches/packages/whois-5.5.18-aarch64-1_slack15.0.txz:  Upgraded.
++--------------------------+
+Sat Jul 22 14:31:12 UTC 2023
+patches/packages/ca-certificates-20230721-noarch-1_slack15.0.txz:  Upgraded.
+patches/packages/curl-8.2.0-aarch64-1_slack15.0.txz:  Upgraded.
+patches/packages/openssh-9.3p2-aarch64-1_slack15.0.txz:  Upgraded.
++--------------------------+
+Wed Jul 19 18:10:47 UTC 2023
+patches/packages/sudo-1.9.14p2-aarch64-1_slack15.0.txz:  Upgraded.
++--------------------------+
+Thu Jul 13 17:53:52 UTC 2023
+patches/packages/krb5-1.19.2-aarch64-4_slack15.0.txz:  Rebuilt.
+patches/packages/sudo-1.9.14p1-aarch64-1_slack15.0.txz:  Upgraded.
++--------------------------+
+Sat Jul  8 11:55:35 UTC 2023
+patches/packages/mozilla-thunderbird-102.13.0-aarch64-1_slack15.0.txz:  Upgraded.
++--------------------------+
+Fri Jul  7 19:13:47 UTC 2023
+patches/packages/mozilla-firefox-102.13.0esr-aarch64-1_slack15.0.txz:  Upgraded.
++--------------------------+
 Tue Jun 27 18:28:55 UTC 2023
 patches/packages/network-scripts-15.0-noarch-19_slack15.0.txz:  Added.
 patches/packages/vim-9.0.1667-aarch64-1_slack15.0.txz:  Upgraded.
