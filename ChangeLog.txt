@@ -1,3 +1,22 @@
+Sat Jul 29 06:39:44 UTC 2023
+a/btrfs-progs-6.3.3-aarch64-1.txz:  Upgraded.
+a/file-5.45-aarch64-1.txz:  Upgraded.
+a/kernel-generic-6.1.42-aarch64-1.txz:  Upgraded.
+a/kernel-modules-6.1.42-aarch64-1.txz:  Upgraded.
+d/gcc-13.2.0-aarch64-1.txz:  Upgraded.
+d/gcc-g++-13.2.0-aarch64-1.txz:  Upgraded.
+d/gcc-gdc-13.2.0-aarch64-1.txz:  Upgraded.
+d/gcc-gfortran-13.2.0-aarch64-1.txz:  Upgraded.
+d/gcc-gm2-13.2.0-aarch64-1.txz:  Upgraded.
+d/gcc-gnat-13.2.0-aarch64-1.txz:  Upgraded.
+d/gcc-go-13.2.0-aarch64-1.txz:  Upgraded.
+d/gcc-objc-13.2.0-aarch64-1.txz:  Upgraded.
+d/kernel-headers-6.1.42-arm64-1.txz:  Upgraded.
+d/libtool-2.4.7-aarch64-6.txz:  Rebuilt.
+k/kernel-source-6.1.42-noarch-1.txz:  Upgraded.
+l/mozilla-nss-3.92-aarch64-1.txz:  Upgraded.
+l/pipewire-0.3.76-aarch64-1.txz:  Upgraded.
++--------------------------+
 Thu Jul 27 17:53:49 UTC 2023
 a/pkgtools-15.1-noarch-6.txz:  Rebuilt.
 d/cmake-3.27.1-aarch64-1.txz:  Upgraded.
