@@ -23,17 +23,7 @@
  else
    SLKCFLAGS="-g0"
    LIBDIRSUFFIX=""
-@@ -166,6 +175,9 @@ cd thunderbird-$RELEASEVER || exit 1
- # Delete object directory if it was mistakenly included in the tarball:
- rm -rf obj-x86_64-pc-linux-gnu
- 
-+# Bug 1772048 - Update rustc_version and semver crates.
-+xzcat $CWD/rustc_version-0.4.0.patch.xz | patch -p1 --verbose || exit 1
-+
- # Retain GTK+ v2 scrolling behavior:
- zcat $CWD/tb.ui.scrollToClick.diff.gz | patch -p1 --verbose || exit 1
- 
-@@ -193,6 +205,10 @@ fi
+@@ -194,6 +203,10 @@ fi
  case "$ARCH" in
      armv7hl) ARCH_CONFIG="--with-arch=armv7-a --with-float-abi=hard --with-fpu=vfpv3-d16 --disable-elf-hack"
               ;;
@@ -44,7 +34,7 @@
      *)       ARCH_CONFIG=" "
               ;;
  esac
-@@ -206,6 +222,7 @@ find . \
+@@ -207,6 +220,7 @@ find . \
  
  # Our building options, in a configure-like display ;)
  OPTIONS="\
@@ -52,7 +42,7 @@
    --enable-official-branding \
    --prefix=/usr \
    --libdir=/usr/lib${LIBDIRSUFFIX} \
-@@ -228,7 +245,6 @@ OPTIONS="\
+@@ -229,7 +243,6 @@ OPTIONS="\
    --disable-crashreporter \
    --disable-debug-symbols \
    --disable-debug \
@@ -60,7 +50,7 @@
    --disable-tests \
    --disable-updater \
    --host=$ARCH-slackware-linux \
-@@ -252,8 +268,9 @@ export MACH_USE_SYSTEM_PYTHON="1"
+@@ -253,8 +266,9 @@ export MACH_USE_SYSTEM_PYTHON="1"
  export BUILD_OFFICIAL=1
  export MOZILLA_OFFICIAL=1
  export MOZ_PHOENIX=1
