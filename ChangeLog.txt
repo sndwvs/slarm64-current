@@ -1,3 +1,13 @@
+Wed Aug  2 16:44:31 UTC 2023
+patches/packages/openssl-1.1.1v-aarch64-1_slack15.0.txz:  Upgraded.
+patches/packages/openssl-solibs-1.1.1v-aarch64-1_slack15.0.txz:  Upgraded.
++--------------------------+
+Sat Jul 29 05:56:06 UTC 2023
+patches/packages/curl-8.2.1-aarch64-1_slack15.0.txz:  Upgraded.
+testing/packages/mozilla-firefox-115.0.3esr-aarch64-1_slack15.0.txz:  Added.
+testing/packages/mozilla-thunderbird-115.0.1-aarch64-1_slack15.0.txz:  Added.
+testing/packages/rust-1.70.0-aarch64-1_slack15.0.txz:  Added.
++--------------------------+
 Tue Jul 25 19:19:17 UTC 2023
 patches/packages/kernel-firmware-20230725_b6ea35f-noarch-1.txz:  Upgraded.
 +--------------------------+
