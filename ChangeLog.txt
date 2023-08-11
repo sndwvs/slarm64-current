@@ -1,3 +1,49 @@
+Thu Aug 10 21:47:08 UTC 2023
+a/mkinitrd-1.4.11-aarch64-33.txz:  Rebuilt.
+ap/vim-9.0.1683-aarch64-1.txz:  Upgraded.
+l/nodejs-20.5.1-aarch64-1.txz:  Upgraded.
+n/NetworkManager-1.44.0-aarch64-1.txz:  Upgraded.
+xap/vim-gvim-9.0.1683-aarch64-1.txz:  Upgraded.
++--------------------------+
+Thu Aug 10 16:20:12 UTC 2023
+a/hwdata-0.373-noarch-1.txz:  Upgraded.
+a/kernel-firmware-20230809_789aa81-noarch-1.txz:  Upgraded.
+a/kernel-generic-6.1.44-aarch64-1.txz:  Upgraded.
+a/kernel-modules-6.1.44-aarch64-1.txz:  Upgraded.
+a/sdparm-1.12-aarch64-3.txz:  Rebuilt.
+a/sysklogd-2.5.1-aarch64-1.txz:  Upgraded.
+a/udisks-1.0.5-aarch64-11.txz:  Rebuilt.
+a/xz-5.4.4-aarch64-1.txz:  Upgraded.
+ap/man-pages-6.05.01-noarch-1.txz:  Upgraded.
+ap/vim-9.0.1678-aarch64-1.txz:  Upgraded.
+d/kernel-headers-6.1.44-arm64-1.txz:  Upgraded.
+d/mercurial-6.5.1-aarch64-1.txz:  Upgraded.
+d/meson-1.2.1-aarch64-1.txz:  Upgraded.
+d/vala-0.56.10-aarch64-1.txz:  Upgraded.
+k/kernel-source-6.1.44-noarch-1.txz:  Upgraded.
+kde/ktextaddons-1.4.1-aarch64-1.txz:  Upgraded.
+kde/okteta-0.26.13-aarch64-1.txz:  Upgraded.
+kde/plasma-desktop-5.27.7.1-aarch64-1.txz:  Upgraded.
+kde/sddm-0.20.0-aarch64-3.txz:  Rebuilt.
+l/SDL2-2.28.2-aarch64-1.txz:  Upgraded.
+l/gtk4-4.10.5-aarch64-1.txz:  Upgraded.
+l/gvfs-1.50.6-aarch64-1.txz:  Upgraded.
+l/harfbuzz-8.1.1-aarch64-1.txz:  Upgraded.
+l/libgpod-0.8.3-aarch64-12.txz:  Rebuilt.
+l/mozjs102-102.14.0esr-aarch64-1.txz:  Upgraded.
+l/netpbm-11.03.02-aarch64-1.txz:  Upgraded.
+l/pipewire-0.3.77-aarch64-1.txz:  Upgraded.
+l/poppler-23.08.0-aarch64-1.txz:  Upgraded.
+l/sg3_utils-1.48-aarch64-1.txz:  Upgraded.
+l/speech-dispatcher-0.11.5-aarch64-1.txz:  Upgraded.
+n/gnutls-3.8.1-aarch64-1.txz:  Upgraded.
+n/nfs-utils-2.6.3-aarch64-2.txz:  Rebuilt.
+x/ibus-m17n-1.4.21-aarch64-1.txz:  Upgraded.
+xap/mozilla-firefox-115.1.0esr-aarch64-1.txz:  Upgraded.
+xap/mozilla-thunderbird-115.1.0-aarch64-1.txz:  Upgraded.
+xap/vim-gvim-9.0.1678-aarch64-1.txz:  Upgraded.
+xap/windowmaker-0.96.0-aarch64-1.txz:  Upgraded.
++--------------------------+
 Thu Aug  3 15:25:23 UTC 2023
 a/openssl-solibs-3.1.2-aarch64-1.txz:  Upgraded.
 a/openssl11-solibs-1.1.1v-aarch64-1.txz:  Upgraded.
