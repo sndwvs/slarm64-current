@@ -1,3 +1,48 @@
+Fri Aug 25 05:05:22 UTC 2023
+a/kernel-generic-6.1.47-aarch64-1.txz:  Upgraded.
+a/kernel-modules-6.1.47-aarch64-1.txz:  Upgraded.
+d/kernel-headers-6.1.47-arm64-1.txz:  Upgraded.
+k/kernel-source-6.1.47-noarch-1.txz:  Upgraded.
+l/libqalculate-4.8.0-aarch64-1.txz:  Upgraded.
+l/libzip-1.10.1-aarch64-1.txz:  Upgraded.
+x/libdrm-2.4.116-aarch64-1.txz:  Upgraded.
+x/libime-1.1.1-aarch64-1.txz:  Upgraded.
+xfce/xfce4-appfinder-4.18.1-aarch64-1.txz:  Upgraded.
++--------------------------+
+Wed Aug 23 17:08:47 UTC 2023
+l/mpfr-4.2.1-aarch64-1.txz:  Upgraded.
+l/pipewire-0.3.78-aarch64-1.txz:  Upgraded.
+n/getmail-6.18.13-aarch64-1.txz:  Upgraded.
+x/ibus-anthy-1.5.15-aarch64-1.txz:  Upgraded.
+x/ibus-m17n-1.4.22-aarch64-1.txz:  Upgraded.
+x/ibus-table-1.17.2-aarch64-1.txz:  Upgraded.
+x/libime-1.1.0-aarch64-1.txz:  Upgraded.
+xfce/xfce4-terminal-1.1.0-aarch64-1.txz:  Upgraded.
++--------------------------+
+Tue Aug 22 16:26:10 UTC 2023
+ap/vim-9.0.1778-aarch64-1.txz:  Upgraded.
+d/git-2.42.0-aarch64-1.txz:  Upgraded.
+l/fuse3-3.16.1-aarch64-1.txz:  Upgraded.
+n/daemon-0.8.3-aarch64-1.txz:  Upgraded.
+n/gpgme-1.22.0-aarch64-1.txz:  Upgraded.
+xap/vim-gvim-9.0.1778-aarch64-1.txz:  Upgraded.
++--------------------------+
+Mon Aug 21 17:29:57 UTC 2023
+a/gzip-1.13-aarch64-1.txz:  Upgraded.
+a/less-643-aarch64-1.txz:  Upgraded.
+ap/vim-9.0.1776-aarch64-1.txz:  Upgraded.
+d/lua-5.4.6-aarch64-2.txz:  Rebuilt.
+d/poke-3.3-aarch64-1.txz:  Upgraded.
+l/netpbm-11.03.04-aarch64-1.txz:  Upgraded.
+xap/vim-gvim-9.0.1776-aarch64-1.txz:  Upgraded.
++--------------------------+
+Sun Aug 20 06:57:20 UTC 2023
+ap/rpm-4.18.1-aarch64-1.txz:  Upgraded.
+d/lua-5.4.6-aarch64-1.txz:  Added.
+d/vala-0.56.12-aarch64-1.txz:  Upgraded.
+l/netpbm-11.03.03-aarch64-1.txz:  Upgraded.
+xap/hexchat-2.16.1-aarch64-5.txz:  Rebuilt.
++--------------------------+
 Sat Aug 19 05:58:38 UTC 2023
 a/sysvinit-3.08-aarch64-1.txz:  Upgraded.
 ap/vim-9.0.1736-aarch64-1.txz:  Upgraded.
