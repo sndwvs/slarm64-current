@@ -1,0 +1,29 @@
+
+rules() {
+    if [[ -z $start_kde_build ]];then
+        start_kde_build="yes"
+        remove_work_dir "$t/$t"
+        prepare_work_dir "$t/$t"
+    fi
+
+    pushd ${SLARM64_SOURCE_PATH}/$t/$t 2>&1>/dev/null
+    patching_files STATUS
+    popd 2>&1>/dev/null
+    pushd ${SLARM64_SOURCE_PATH}/$t/$t/${WORK_DIR} 2>&1>/dev/null
+    for file in modules/* ;do
+        if [[ $(grep -oP "^${p}$" $file) ]]; then
+            _MODULE=${file##*/}:${p}
+            break
+        fi
+    done
+    ./kde.SlackBuild ${_MODULE} 2>&1 | tee ${p}.build.log
+    if [[ ${PIPESTATUS[0]} == 1 ]]; then
+        echo "${_PKG}" 2>&1 >> ${BCWD}/build_error.log
+    else
+        move_pkg ${t##*/} kde_build/${p}
+    fi
+    popd 2>&1>/dev/null
+}
+
+rules
+

@@ -1,5 +1,7 @@
 extra/*/*.txz
 extra/*/*.asc
+pasture/*.txz
+pasture/*.asc
 patches/*/*.txz
 patches/*/*.asc
 patches/*/*/*.txz

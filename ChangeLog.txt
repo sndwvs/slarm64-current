@@ -1,3 +1,28 @@
+Sat Sep  2 16:16:04 UTC 2023
+extra/php81/php81-8.1.23-aarch64-1_slack15.0.txz:  Upgraded.
++--------------------------+
+Fri Sep  1 17:37:43 UTC 2023
+patches/packages/mozilla-firefox-115.2.0esr-aarch64-1_slack15.0.txz:  Upgraded.
+patches/packages/mozilla-thunderbird-115.2.0-aarch64-1_slack15.0.txz:  Upgraded.
++--------------------------+
+Fri Aug 18 15:17:34 UTC 2023
+patches/packages/mozilla-thunderbird-115.1.1-aarch64-1_slack15.0.txz:  Upgraded.
++--------------------------+
+Tue Aug 15 17:15:35 UTC 2023
+patches/packages/mariadb-10.5.22-aarch64-1_slack15.0.txz:  Upgraded.
++--------------------------+
+Wed Aug  9 16:46:07 UTC 2023
+extra/php80/php80-8.0.30-aarch64-1_slack15.0.txz:  Upgraded.
+patches/packages/vim-9.0.1678-aarch64-1_slack15.0.txz:  Upgraded.
+patches/packages/vim-gvim-9.0.1678-aarch64-1_slack15.0.txz:  Upgraded.
++--------------------------+
+Sat Aug  5 19:18:50 UTC 2023
+extra/php81/php81-8.1.22-aarch64-1_slack15.0.txz:  Upgraded.
+pasture/samba-4.15.13-aarch64-1_slack15.0.txz:  Added.
+patches/packages/mozilla-firefox-115.1.0esr-aarch64-1_slack15.0.txz:  Upgraded.
+patches/packages/mozilla-thunderbird-115.1.0-aarch64-1_slack15.0.txz:  Upgraded.
+patches/packages/samba-4.18.5-aarch64-1_slack15.0.txz:  Upgraded.
++--------------------------+
 Wed Aug  2 16:44:31 UTC 2023
 patches/packages/openssl-1.1.1v-aarch64-1_slack15.0.txz:  Upgraded.
 patches/packages/openssl-solibs-1.1.1v-aarch64-1_slack15.0.txz:  Upgraded.

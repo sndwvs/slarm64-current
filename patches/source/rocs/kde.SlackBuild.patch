@@ -1,0 +1,12 @@
+--- a/kde.SlackBuild	2020-11-04 00:53:47.650472963 +0000
++++ b/kde.SlackBuild	2020-11-04 00:55:44.565313301 +0000
+@@ -83,6 +83,9 @@
+ fi
+ mkdir -p $TMP $SLACK_KDE_BUILD_DIR
+ 
++# add build from aarch64
++[[ ! $(xzcat kde.options.patch.xz | patch -p1 --batch --dry-run -N | grep previously) ]] && ( xzcat kde.options.patch.xz | patch -p1 --verbose || exit 1 )
++
+ # Set up a few useful functions:
+ 
+ extract_archive() {
