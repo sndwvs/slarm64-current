@@ -1,9 +1,9 @@
 --- /dev/null	2022-06-09 21:05:13.432000016 +0300
-+++ b/kernel-configs/config-generic-6.1.43.arm64	2023-08-05 08:44:09.667500676 +0300
-@@ -0,0 +1,11314 @@
++++ b/kernel-configs/config-generic-6.1.53.arm64	2023-09-15 17:58:02.444828766 +0300
+@@ -0,0 +1,11310 @@
 +#
 +# Automatically generated file; DO NOT EDIT.
-+# Linux/arm64 6.1.43 Kernel Configuration
++# Linux/arm64 6.1.53 Kernel Configuration
 +#
 +CONFIG_CC_VERSION_TEXT="gcc (GCC) 13.2.0"
 +CONFIG_CC_IS_GCC=y
@@ -5939,10 +5939,7 @@
 +# IR I2C driver auto-selected by 'Autoselect ancillary drivers'
 +#
 +CONFIG_VIDEO_IR_I2C=m
-+
-+#
-+# Camera sensor devices
-+#
++CONFIG_VIDEO_CAMERA_SENSOR=y
 +# CONFIG_VIDEO_AR0521 is not set
 +# CONFIG_VIDEO_HI556 is not set
 +# CONFIG_VIDEO_HI846 is not set
@@ -6011,7 +6008,6 @@
 +# CONFIG_VIDEO_CCS is not set
 +# CONFIG_VIDEO_ET8EK8 is not set
 +# CONFIG_VIDEO_M5MOLS is not set
-+# end of Camera sensor devices
 +
 +#
 +# Lens drivers
