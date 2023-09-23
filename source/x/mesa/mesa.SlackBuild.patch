@@ -1,5 +1,5 @@
---- a/mesa.SlackBuild	2022-09-29 21:06:18.477982937 +0300
-+++ b/mesa.SlackBuild	2022-10-15 21:11:14.362863239 +0300
+--- a/mesa.SlackBuild	2023-09-22 17:58:17.898971132 +0000
++++ b/mesa.SlackBuild	2023-09-23 07:44:57.958507617 +0000
 @@ -34,7 +34,7 @@ CODECS=${CODECS:-h264dec,h264enc,h265dec
  NUMJOBS=${NUMJOBS:-" -j$(expr $(nproc) + 1) "}
  
@@ -22,18 +22,18 @@
  else
    SLKCFLAGS="-O2"
    LIBDIRSUFFIX=""
-@@ -133,8 +139,8 @@ meson setup \
-   -Dgallium-nine=true \
+@@ -135,8 +141,8 @@ meson setup \
+   -Drust_std=2021 \
    -Dosmesa=true \
    -Dgallium-drivers=$GALLIUM_DRIVERS \
--  -Dvulkan-drivers=amd,intel,swrast \
+-  -Dvulkan-drivers=amd,intel,intel_hasvk,swrast \
 -  -Dvulkan-layers=device-select,intel-nullhw,overlay \
 +  -Dvulkan-drivers=amd,swrast,broadcom,panfrost \
 +  -Dvulkan-layers=device-select,overlay \
    -Dvideo-codecs="$CODECS" \
    -Dglvnd=true \
    -Dllvm=enabled \
-@@ -145,6 +151,8 @@ meson setup \
+@@ -147,6 +153,8 @@ meson setup \
    -Dgles2=enabled \
    -Dopengl=true \
    -Dglx=dri \
