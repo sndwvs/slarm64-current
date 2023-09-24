@@ -26,8 +26,6 @@ removed:
  x/xf86-video-vmware
 -
  xap/Mplayer
- xap/mozilla-firefox
- xap/mozilla-thunderbird
  xap/seamonkey
 ----------------------------
 

@@ -1,3 +1,29 @@
+Sat Sep 23 08:42:52 UTC 2023
+kde/ktextaddons-1.5.1-aarch64-1.txz:  Upgraded.
+n/ipset-7.19-aarch64-1.txz:  Upgraded.
+x/mesa-23.1.8-aarch64-2.txz:  Rebuilt.
++--------------------------+
+Sat Sep 23 08:01:34 UTC 2023
+a/gettext-0.22.2-aarch64-1.txz:  Upgraded.
+ap/cups-2.4.7-aarch64-1.txz:  Upgraded.
+d/cmake-3.27.6-aarch64-1.txz:  Upgraded.
+d/gettext-tools-0.22.2-aarch64-1.txz:  Upgraded.
+l/dconf-editor-45.0.1-aarch64-1.txz:  Upgraded.
+l/gst-plugins-bad-free-1.22.6-aarch64-1.txz:  Upgraded.
+l/gst-plugins-base-1.22.6-aarch64-1.txz:  Upgraded.
+l/gst-plugins-good-1.22.6-aarch64-1.txz:  Upgraded.
+l/gst-plugins-libav-1.22.6-aarch64-1.txz:  Upgraded.
+l/gstreamer-1.22.6-aarch64-1.txz:  Upgraded.
+l/gtk4-4.12.2-aarch64-1.txz:  Upgraded.
+l/imagemagick-7.1.1_17-aarch64-1.txz:  Upgraded.
+n/bind-9.18.19-aarch64-1.txz:  Upgraded.
+n/stunnel-5.71-aarch64-1.txz:  Upgraded.
+x/mesa-23.1.8-aarch64-1.txz:  Upgraded.
+x/xorg-server-xwayland-23.2.1-aarch64-1.txz:  Upgraded.
+xap/freerdp-2.11.2-aarch64-1.txz:  Upgraded.
+xap/mozilla-thunderbird-115.2.3-aarch64-1.txz:  Upgraded.
+xap/seamonkey-2.53.17.1-aarch64-1.txz:  Upgraded.
++--------------------------+
 Thu Sep 21 16:04:14 UTC 2023
 a/gettext-0.22.1-aarch64-1.txz:  Upgraded.
 a/kernel-firmware-20230918_3672cca-noarch-1.txz:  Upgraded.
