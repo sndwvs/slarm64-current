@@ -1,3 +1,11 @@
+Sun Sep 24 17:28:33 UTC 2023
+a/kernel-generic-6.1.55-aarch64-1.txz:  Upgraded.
+a/kernel-modules-6.1.55-aarch64-1.txz:  Upgraded.
+a/minicom-2.9-aarch64-1.txz:  Upgraded.
+d/kernel-headers-6.1.55-arm64-1.txz:  Upgraded.
+k/kernel-source-6.1.55-noarch-1.txz:  Upgraded.
+xap/xlockmore-5.73-aarch64-1.txz:  Upgraded.
++--------------------------+
 Sat Sep 23 08:42:52 UTC 2023
 kde/ktextaddons-1.5.1-aarch64-1.txz:  Upgraded.
 n/ipset-7.19-aarch64-1.txz:  Upgraded.
