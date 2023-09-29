@@ -1,5 +1,5 @@
---- a/llvm.SlackBuild	2023-09-26 18:49:46.887439215 +0300
-+++ b/llvm.SlackBuild	2023-09-26 18:54:14.563613130 +0300
+--- a/llvm.SlackBuild	2023-09-30 01:51:01.252515847 +0300
++++ b/llvm.SlackBuild	2023-09-30 01:57:17.598534225 +0300
 @@ -51,6 +51,27 @@ if [ -z "$ARCH" ]; then
    esac
  fi
@@ -98,7 +98,23 @@
  # We require libatomic on 32-bit platforms:
  if [ -f ./tools/lldb/source/Utility/CMakeLists.txt ]; then
    if [ "$ARCH" = "i586" -o "$ARCH" = "i686" ]; then
-@@ -218,8 +265,8 @@ cd build
+@@ -194,6 +241,15 @@ cd projects
+ ln -sf ../../cmake .
+ cd -
+ 
++# Patch invalid conversion from unwind state:
++zcat $CWD/unwind_state_invalid_conversion.diff.gz | patch -p1 --verbose || exit 1
++
++# Patch riscv64: AllWinner D1 does not have fence.tso instruction:
++zcat $CWD/riscv64-no-fence.tso.diff.gz | patch -p1 --verbose || exit 1
++
++# Patch alpha: Fix invalid variable name __alpha:
++zcat $CWD/alpha_fix_variable_name.diff.gz | patch -p1 --verbose || exit 1
++
+ chown -R root:root .
+ find . \
+   \( -perm 777 -o -perm 775 -o -perm 750 -o -perm 711 -o -perm 555 -o -perm 511 \) \
+@@ -218,8 +274,8 @@ cd build
    # Nuke LLVM libunwind as it conflicts with the one already on the system:
    rm -r ../projects/libunwind
    cmake -GNinja \
@@ -109,7 +125,7 @@
      -DCMAKE_C_FLAGS:STRING="$SLKCFLAGS" \
      -DCMAKE_CXX_FLAGS:STRING="$SLKCFLAGS" \
      -DCMAKE_INSTALL_PREFIX=/usr \
-@@ -228,7 +275,7 @@ cd build
+@@ -228,7 +284,7 @@ cd build
      -DLIBCXXABI_LIBDIR_SUFFIX=${LIBDIRSUFFIX} \
      -DCMAKE_BUILD_TYPE=Release \
      $SHARED_LIBRARY_OPTIONS \
@@ -118,7 +134,7 @@
      -DLLVM_ENABLE_RTTI=ON \
      -DLLVM_ENABLE_FFI=ON \
      -DLLVM_ENABLE_ZLIB=ON \
-@@ -244,6 +291,7 @@ cd build
+@@ -244,6 +300,7 @@ cd build
      -DCLANG_DEFAULT_PIE_ON_LINUX=ON \
      -DLIBCXX_ENABLE_ABI_LINKER_SCRIPT=ON \
      $CLANGD \
@@ -126,7 +142,7 @@
      ..  || exit 1
  
    "${NINJA:=ninja}" $NUMJOBS || exit 1
-@@ -286,8 +334,10 @@ python -m compileall "$PKG/usr/lib$LIBDI
+@@ -286,8 +343,10 @@ python -m compileall "$PKG/usr/lib$LIBDI
  python -O -m compileall "$PKG/usr/lib$LIBDIRSUFFIX/python${PY2}/site-packages/clang"
  python3 -m compileall "$PKG/usr/lib$LIBDIRSUFFIX/python${PY3}/site-packages/clang"
  python3 -O -m compileall "$PKG/usr/lib$LIBDIRSUFFIX/python${PY3}/site-packages/clang"
