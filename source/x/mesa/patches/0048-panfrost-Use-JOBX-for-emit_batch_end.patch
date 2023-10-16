@@ -1,0 +1,53 @@
+From 7aae2f203d52e90e9f80ff27e0c7e09640d3bed2 Mon Sep 17 00:00:00 2001
+From: Boris Brezillon <boris.brezillon@collabora.com>
+Date: Mon, 18 Sep 2023 10:59:40 +0200
+Subject: [PATCH 48/64] panfrost: Use JOBX() for emit_batch_end()
+
+---
+ src/gallium/drivers/panfrost/pan_cmdstream.c | 13 +++++++++----
+ 1 file changed, 9 insertions(+), 4 deletions(-)
+
+diff --git a/src/gallium/drivers/panfrost/pan_cmdstream.c b/src/gallium/drivers/panfrost/pan_cmdstream.c
+index 73e0fc96d23..5dd6aba0b91 100644
+--- a/src/gallium/drivers/panfrost/pan_cmdstream.c
++++ b/src/gallium/drivers/panfrost/pan_cmdstream.c
+@@ -2662,10 +2662,10 @@ panfrost_initialize_surface(struct panfrost_batch *batch,
+    }
+ }
+ 
++#if PAN_USE_CSF
+ static void
+-panfrost_emit_batch_end(struct panfrost_batch *batch)
++csf_emit_batch_end(struct panfrost_batch *batch)
+ {
+-#if PAN_USE_CSF
+    ceu_builder *b = batch->ceu_builder;
+ 
+    /* Barrier to let everything finish */
+@@ -2683,8 +2683,13 @@ panfrost_emit_batch_end(struct panfrost_batch *batch)
+    ceu_flush_caches(b, MALI_CEU_FLUSH_MODE_CLEAN_AND_INVALIDATE,
+                     MALI_CEU_FLUSH_MODE_CLEAN_AND_INVALIDATE, true, flush_id, 0,
+                     0);
+-#endif
+ }
++#else
++static void
++jm_emit_batch_end(struct panfrost_batch *batch)
++{
++}
++#endif
+ 
+ /* Generate a fragment job. This should be called once per frame. (Usually,
+  * this corresponds to eglSwapBuffers or one of glFlush, glFinish)
+@@ -5178,7 +5183,7 @@ GENX(panfrost_cmdstream_screen_init)(struct panfrost_screen *screen)
+    screen->vtbl.emit_tls = emit_tls;
+    screen->vtbl.emit_fbd = emit_fbd;
+    screen->vtbl.emit_fragment_job = emit_fragment_job;
+-   screen->vtbl.emit_batch_end = panfrost_emit_batch_end;
++   screen->vtbl.emit_batch_end = JOBX(emit_batch_end);
+    screen->vtbl.screen_destroy = screen_destroy;
+    screen->vtbl.preload = preload;
+    screen->vtbl.context_populate_vtbl = context_populate_vtbl;
+-- 
+2.42.0
+

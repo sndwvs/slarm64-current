@@ -1,0 +1,38 @@
+From 724ce219c48e3b83bed5c6ebcab368fb514f18ef Mon Sep 17 00:00:00 2001
+From: Boris Brezillon <boris.brezillon@collabora.com>
+Date: Wed, 5 Jul 2023 10:44:35 +0200
+Subject: [PATCH 06/64] panfrost: Flag BO shareable when appropriate
+
+Let the kmod backend know when we might end up exporting a BO. This
+doesn't change anything for the Panfrost kmod backend, but will be
+needed for Panthor.
+
+Signed-off-by: Boris Brezillon <boris.brezillon@collabora.com>
+---
+ src/gallium/drivers/panfrost/pan_resource.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
+
+diff --git a/src/gallium/drivers/panfrost/pan_resource.c b/src/gallium/drivers/panfrost/pan_resource.c
+index 5f04f5130e2..b01956aa1ba 100644
+--- a/src/gallium/drivers/panfrost/pan_resource.c
++++ b/src/gallium/drivers/panfrost/pan_resource.c
+@@ -724,9 +724,14 @@ panfrost_resource_create_with_modifier(struct pipe_screen *screen,
+    } else {
+       /* We create a BO immediately but don't bother mapping, since we don't
+        * care to map e.g. FBOs which the CPU probably won't touch */
++      uint32_t flags = PAN_BO_DELAY_MMAP;
+ 
+-      so->image.data.bo = panfrost_bo_create(dev, so->image.layout.data_size,
+-                                             PAN_BO_DELAY_MMAP, label);
++      /* If the resource is never exported, we can make the BO private. */
++      if (template->bind & PAN_BIND_SHARED_MASK)
++         flags |= PAN_BO_SHAREABLE;
++
++      so->image.data.bo =
++         panfrost_bo_create(dev, so->image.layout.data_size, flags, label);
+ 
+       so->constant_stencil = true;
+    }
+-- 
+2.42.0
+

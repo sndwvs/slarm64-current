@@ -1,0 +1,54 @@
+From 31935b212e56ea6a76886049a44bfd3240218f2d Mon Sep 17 00:00:00 2001
+From: Boris Brezillon <boris.brezillon@collabora.com>
+Date: Mon, 18 Sep 2023 11:28:48 +0200
+Subject: [PATCH 54/64] panfrost: Use JOBX() for job-backend specific
+ launch_xfb() implementations
+
+Rename the helpers and make them have the same prototype so we can
+use JOBX() to dispatch to the right helper.
+---
+ src/gallium/drivers/panfrost/pan_cmdstream.c | 14 ++++++--------
+ 1 file changed, 6 insertions(+), 8 deletions(-)
+
+diff --git a/src/gallium/drivers/panfrost/pan_cmdstream.c b/src/gallium/drivers/panfrost/pan_cmdstream.c
+index 5492175ebef..5f8822be653 100644
+--- a/src/gallium/drivers/panfrost/pan_cmdstream.c
++++ b/src/gallium/drivers/panfrost/pan_cmdstream.c
+@@ -3567,8 +3567,9 @@ panfrost_draw_emit_tiler(struct panfrost_batch *batch,
+ #if !PAN_USE_CSF
+ 
+ static void
+-launch_xfb_jm(struct panfrost_batch *batch, const struct pipe_draw_info *info,
+-              mali_ptr attribs, mali_ptr attrib_bufs, unsigned count)
++jm_launch_xfb(struct panfrost_batch *batch, const struct pipe_draw_info *info,
++              mali_ptr attribs, mali_ptr attrib_bufs, UNUSED unsigned start,
++              unsigned count)
+ {
+    batch->uniform_buffers[PIPE_SHADER_VERTEX] =
+       panfrost_emit_const_buf(batch, PIPE_SHADER_VERTEX, NULL,
+@@ -3622,7 +3623,8 @@ launch_xfb_jm(struct panfrost_batch *batch, const struct pipe_draw_info *info,
+ #else // PAN_USE_CSF
+ 
+ static void
+-launch_xfb_csf(struct panfrost_batch *batch, const struct pipe_draw_info *info,
++csf_launch_xfb(struct panfrost_batch *batch, const struct pipe_draw_info *info,
++               UNUSED mali_ptr attribs, UNUSED mali_ptr attrib_bufs,
+                unsigned start, unsigned count)
+ {
+    ceu_builder *b = batch->ceu_builder;
+@@ -3705,11 +3707,7 @@ panfrost_launch_xfb(struct panfrost_batch *batch,
+    batch->rsd[PIPE_SHADER_VERTEX] =
+       panfrost_emit_compute_shader_meta(batch, PIPE_SHADER_VERTEX);
+ 
+-#if !PAN_USE_CSF
+-   launch_xfb_jm(batch, info, attribs, attrib_bufs, count);
+-#else
+-   launch_xfb_csf(batch, info, start, count);
+-#endif
++   JOBX(launch_xfb)(batch, info, attribs, attrib_bufs, start, count);
+ 
+    ctx->uncompiled[PIPE_SHADER_VERTEX] = vs_uncompiled;
+    ctx->prog[PIPE_SHADER_VERTEX] = vs;
+-- 
+2.42.0
+

@@ -1,0 +1,42 @@
+From 4e09da417113ba5a83e28f7365fda6dff252ec8d Mon Sep 17 00:00:00 2001
+From: Erik Faye-Lund <erik.faye-lund@collabora.com>
+Date: Wed, 23 Aug 2023 14:10:07 +0200
+Subject: [PATCH 16/64] panfrost: consult draws instead of draw_count
+
+Draws that only do stream-out and update no framebuffer data shouldn't
+affect these code-paths. So let's check if we have drawn any buffers
+instead.
+---
+ src/gallium/drivers/panfrost/pan_context.c | 2 +-
+ src/gallium/drivers/panfrost/pan_job.c     | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/src/gallium/drivers/panfrost/pan_context.c b/src/gallium/drivers/panfrost/pan_context.c
+index 795de2da9b5..2eef7ee69c5 100644
+--- a/src/gallium/drivers/panfrost/pan_context.c
++++ b/src/gallium/drivers/panfrost/pan_context.c
+@@ -73,7 +73,7 @@ panfrost_clear(struct pipe_context *pipe, unsigned buffers,
+    struct panfrost_batch *batch = panfrost_get_batch_for_fbo(ctx);
+ 
+    /* At the start of the batch, we can clear for free */
+-   if (batch->draw_count == 0) {
++   if (!batch->draws) {
+       panfrost_batch_clear(batch, buffers, color, depth, stencil);
+       return;
+    }
+diff --git a/src/gallium/drivers/panfrost/pan_job.c b/src/gallium/drivers/panfrost/pan_job.c
+index 9dfb5e6530d..b5d94b8342e 100644
+--- a/src/gallium/drivers/panfrost/pan_job.c
++++ b/src/gallium/drivers/panfrost/pan_job.c
+@@ -726,7 +726,7 @@ panfrost_batch_submit_ioctl(struct panfrost_batch *batch,
+ static bool
+ panfrost_has_fragment_job(struct panfrost_batch *batch)
+ {
+-   return batch->draw_count > 0 || batch->clear;
++   return batch->draws || batch->clear;
+ }
+ 
+ /* Submit both vertex/tiler and fragment jobs for a batch, possibly with an
+-- 
+2.42.0
+

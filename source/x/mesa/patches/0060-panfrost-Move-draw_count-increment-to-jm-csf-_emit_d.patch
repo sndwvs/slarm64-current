@@ -1,0 +1,42 @@
+From 5ffd30b9743df3cdf1ce624ce652dd56eea8955a Mon Sep 17 00:00:00 2001
+From: Boris Brezillon <boris.brezillon@collabora.com>
+Date: Tue, 19 Sep 2023 17:21:00 +0200
+Subject: [PATCH 60/64] panfrost: Move draw_count increment to
+ {jm,csf}_emit_draw()
+
+Vertex job emission is skipped if rasterization is disabled.
+---
+ src/gallium/drivers/panfrost/pan_cmdstream.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/src/gallium/drivers/panfrost/pan_cmdstream.c b/src/gallium/drivers/panfrost/pan_cmdstream.c
+index 7af2c259911..c88afd6aa5f 100644
+--- a/src/gallium/drivers/panfrost/pan_cmdstream.c
++++ b/src/gallium/drivers/panfrost/pan_cmdstream.c
+@@ -4276,6 +4276,7 @@ csf_emit_draw(struct panfrost_batch *batch, const struct pipe_draw_info *info,
+    ceu_run_idvs(b, pan_draw_mode(info->mode),
+                 panfrost_translate_index_size(info->index_size),
+                 secondary_shader);
++   batch->draw_count++;
+ }
+ #else // PAN_USE_CSF
+ static void
+@@ -4375,6 +4376,7 @@ jm_emit_draw(struct panfrost_batch *batch, const struct pipe_draw_info *info,
+       panfrost_emit_vertex_tiler_jobs(batch, &vertex, &tiler);
+    }
+ #endif
++   batch->draw_count++;
+ }
+ #endif // PAN_USE_CSF
+ 
+@@ -4501,7 +4503,6 @@ panfrost_draw_vbo(struct pipe_context *pipe, const struct pipe_draw_info *info,
+          ctx->dirty |= PAN_DIRTY_DRAWID;
+          drawid++;
+       }
+-      batch->draw_count++;
+    }
+ }
+ 
+-- 
+2.42.0
+

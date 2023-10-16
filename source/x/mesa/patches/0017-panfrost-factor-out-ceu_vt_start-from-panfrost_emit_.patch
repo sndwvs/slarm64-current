@@ -1,0 +1,60 @@
+From 4e46c102d25ce76a8f3e7090f65de7b8b71b56cf Mon Sep 17 00:00:00 2001
+From: Erik Faye-Lund <erik.faye-lund@collabora.com>
+Date: Fri, 18 Aug 2023 14:36:57 +0000
+Subject: [PATCH 17/64] panfrost: factor out ceu_vt_start from
+ panfrost_emit_heap_set
+
+---
+ src/gallium/drivers/panfrost/pan_cmdstream.c | 15 ++++++---------
+ 1 file changed, 6 insertions(+), 9 deletions(-)
+
+diff --git a/src/gallium/drivers/panfrost/pan_cmdstream.c b/src/gallium/drivers/panfrost/pan_cmdstream.c
+index 8ebb219601a..30c9f3ca577 100644
+--- a/src/gallium/drivers/panfrost/pan_cmdstream.c
++++ b/src/gallium/drivers/panfrost/pan_cmdstream.c
+@@ -2652,7 +2652,7 @@ panfrost_initialize_surface(struct panfrost_batch *batch,
+ }
+ 
+ static void
+-panfrost_emit_heap_set(struct panfrost_batch *batch, bool vt)
++panfrost_emit_heap_set(struct panfrost_batch *batch)
+ {
+ #if PAN_ARCH >= 10
+    ceu_builder *b = batch->ceu_builder;
+@@ -2661,11 +2661,6 @@ panfrost_emit_heap_set(struct panfrost_batch *batch, bool vt)
+    ceu_index heap = ceu_reg64(b, 72);
+    ceu_move64_to(b, heap, batch->ctx->heap.tiler_heap_ctx_gpu_va);
+    ceu_heap_set(b, heap);
+-
+-   if (vt) {
+-      /* Set up the statistics */
+-      ceu_vt_start(b);
+-   }
+ #endif
+ }
+ 
+@@ -2707,7 +2702,7 @@ emit_fragment_job(struct panfrost_batch *batch, const struct pan_fb_info *pfb)
+ 
+    if (PAN_ARCH >= 10 && !batch->draws) {
+       /* Clear only batch */
+-      panfrost_emit_heap_set(batch, false);
++      panfrost_emit_heap_set(batch);
+    }
+ 
+    /* Mark the affected buffers as initialized, since we're writing to it.
+@@ -4064,8 +4059,10 @@ panfrost_draw_vbo(struct pipe_context *pipe, const struct pipe_draw_info *info,
+       assert(succ && "must be able to set state for a fresh batch");
+    }
+ 
+-   if (batch->draws == 0)
+-      panfrost_emit_heap_set(batch, true);
++   if (batch->draws == 0) {
++      panfrost_emit_heap_set(batch);
++      ceu_vt_start(batch->ceu_builder);
++   }
+ 
+    /* panfrost_batch_skip_rasterization reads
+     * batch->scissor_culls_everything, which is set by
+-- 
+2.42.0
+

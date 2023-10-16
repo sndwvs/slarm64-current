@@ -1,0 +1,43 @@
+From 3e1902049f349f697df0edfccbf25195ba76f41c Mon Sep 17 00:00:00 2001
+From: Boris Brezillon <boris.brezillon@collabora.com>
+Date: Wed, 5 Jul 2023 10:27:27 +0200
+Subject: [PATCH 07/64] panfrost: Add a flag to create uncached GPU mappings
+
+Can be useful to debug coherency issues.
+
+Signed-off-by: Boris Brezillon <boris.brezillon@collabora.com>
+---
+ src/panfrost/lib/pan_bo.c | 2 ++
+ src/panfrost/lib/pan_bo.h | 3 +++
+ 2 files changed, 5 insertions(+)
+
+diff --git a/src/panfrost/lib/pan_bo.c b/src/panfrost/lib/pan_bo.c
+index 9079ac2ff70..274edf4e77b 100644
+--- a/src/panfrost/lib/pan_bo.c
++++ b/src/panfrost/lib/pan_bo.c
+@@ -65,6 +65,8 @@ to_kmod_bo_flags(uint32_t flags)
+       kmod_bo_flags |= PAN_KMOD_BO_FLAG_ALLOC_ON_FAULT;
+    if (flags & PAN_BO_INVISIBLE)
+       kmod_bo_flags |= PAN_KMOD_BO_FLAG_NO_MMAP;
++   if (flags & PAN_BO_GPU_UNCACHED)
++      kmod_bo_flags |= PAN_KMOD_BO_FLAG_GPU_UNCACHED;
+ 
+    return kmod_bo_flags;
+ }
+diff --git a/src/panfrost/lib/pan_bo.h b/src/panfrost/lib/pan_bo.h
+index 51fed3149a4..8baa7b9be9c 100644
+--- a/src/panfrost/lib/pan_bo.h
++++ b/src/panfrost/lib/pan_bo.h
+@@ -56,6 +56,9 @@
+  * PAN_BO_SHARED if the BO has not been exported yet */
+ #define PAN_BO_SHAREABLE (1 << 5)
+ 
++/* BO should be mapped uncached in the GPU VM. */
++#define PAN_BO_GPU_UNCACHED (1 << 6)
++
+ /* GPU access flags */
+ 
+ /* BO is either shared (can be accessed by more than one GPU batch) or private
+-- 
+2.42.0
+

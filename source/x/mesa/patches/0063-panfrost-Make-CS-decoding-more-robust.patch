@@ -1,0 +1,61 @@
+From 52471adc89fa396fe05c875758faac2a83ea35ce Mon Sep 17 00:00:00 2001
+From: Boris Brezillon <boris.brezillon@collabora.com>
+Date: Wed, 20 Sep 2023 13:36:39 +0200
+Subject: [PATCH 63/64] panfrost: Make CS decoding more robust
+
+Ill-formed CS buffers might be passed NULL resource pointers. Actually,
+even valid CS can be passed NULL pointers of some steps, like fragment
+shading, are skipped.
+---
+ src/panfrost/lib/genxml/decode_csf.c | 21 ++++++++++++++++-----
+ 1 file changed, 16 insertions(+), 5 deletions(-)
+
+diff --git a/src/panfrost/lib/genxml/decode_csf.c b/src/panfrost/lib/genxml/decode_csf.c
+index a64f572a046..980c73724b9 100644
+--- a/src/panfrost/lib/genxml/decode_csf.c
++++ b/src/panfrost/lib/genxml/decode_csf.c
+@@ -152,9 +152,14 @@ pandecode_run_idvs(FILE *fp, struct queue_ctx *ctx, struct MALI_CEU_RUN_IDVS *I)
+    uint64_t vary_srt = cs_get_u64(ctx, reg_vary_srt);
+    uint64_t frag_srt = cs_get_u64(ctx, reg_frag_srt);
+ 
+-   GENX(pandecode_resource_tables)(position_srt, "Position resources");
+-   GENX(pandecode_resource_tables)(vary_srt, "Varying resources");
+-   GENX(pandecode_resource_tables)(frag_srt, "Fragment resources");
++   if (position_srt)
++      GENX(pandecode_resource_tables)(position_srt, "Position resources");
++
++   if (vary_srt)
++      GENX(pandecode_resource_tables)(vary_srt, "Varying resources");
++
++   if (frag_srt)
++      GENX(pandecode_resource_tables)(frag_srt, "Fragment resources");
+ 
+    mali_ptr position_fau = cs_get_u64(ctx, reg_position_fau);
+    mali_ptr vary_fau = cs_get_u64(ctx, reg_vary_fau);
+@@ -181,7 +186,10 @@ pandecode_run_idvs(FILE *fp, struct queue_ctx *ctx, struct MALI_CEU_RUN_IDVS *I)
+       GENX(pandecode_fau)(lo, hi, "Fragment FAU");
+    }
+ 
+-   GENX(pandecode_shader)(cs_get_u64(ctx, 16), "Position shader", ctx->gpu_id);
++   if (cs_get_u64(ctx, 16)) {
++      GENX(pandecode_shader)
++      (cs_get_u64(ctx, 16), "Position shader", ctx->gpu_id);
++   }
+ 
+    if (tiler_flags.secondary_shader) {
+       uint64_t ptr = cs_get_u64(ctx, 18);
+@@ -189,7 +197,10 @@ pandecode_run_idvs(FILE *fp, struct queue_ctx *ctx, struct MALI_CEU_RUN_IDVS *I)
+       GENX(pandecode_shader)(ptr, "Varying shader", ctx->gpu_id);
+    }
+ 
+-   GENX(pandecode_shader)(cs_get_u64(ctx, 20), "Fragment shader", ctx->gpu_id);
++   if (cs_get_u64(ctx, 20)) {
++      GENX(pandecode_shader)
++      (cs_get_u64(ctx, 20), "Fragment shader", ctx->gpu_id);
++   }
+ 
+    DUMP_ADDR(LOCAL_STORAGE, cs_get_u64(ctx, 24),
+              "Position Local Storage @%" PRIx64 ":\n",
+-- 
+2.42.0
+

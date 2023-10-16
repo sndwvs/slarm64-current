@@ -1,0 +1,195 @@
+From b6a9299588349282b947a8028668c2b739f2363d Mon Sep 17 00:00:00 2001
+From: Erik Faye-Lund <erik.faye-lund@collabora.com>
+Date: Mon, 11 Sep 2023 13:36:45 +0200
+Subject: [PATCH 24/64] panfrost: run clang-format
+
+We're going to need this before we can merge upstream...
+---
+ src/gallium/drivers/panfrost/pan_cmdstream.c | 22 ++++++++++----------
+ src/gallium/drivers/panfrost/pan_context.c   |  3 ++-
+ src/gallium/drivers/panfrost/pan_resource.c  |  4 ++--
+ src/panfrost/lib/genxml/ceu_builder.h        | 13 ++++++------
+ src/panfrost/lib/kmod/panfrost_kmod.c        |  3 ++-
+ src/panfrost/lib/pan_cs.c                    |  3 ++-
+ src/panfrost/vulkan/panvk_vX_device.c        |  3 ++-
+ 7 files changed, 28 insertions(+), 23 deletions(-)
+
+diff --git a/src/gallium/drivers/panfrost/pan_cmdstream.c b/src/gallium/drivers/panfrost/pan_cmdstream.c
+index fc27acc46ef..c826505577f 100644
+--- a/src/gallium/drivers/panfrost/pan_cmdstream.c
++++ b/src/gallium/drivers/panfrost/pan_cmdstream.c
+@@ -2759,7 +2759,8 @@ emit_fragment_job(struct panfrost_batch *batch, const struct pan_fb_info *pfb)
+     * (completed_{top,bottom fields}). */
+    if (batch->tiler_ctx.bifrost.ctx) {
+       ceu_move64_to(b, ceu_reg64(b, 94), batch->tiler_ctx.bifrost.ctx);
+-      ceu_load_to(b, ceu_reg_tuple(b, 90, 4), ceu_reg64(b, 94), BITFIELD_MASK(4), 40);
++      ceu_load_to(b, ceu_reg_tuple(b, 90, 4), ceu_reg64(b, 94),
++                  BITFIELD_MASK(4), 40);
+       ceu_wait_slot(b, 0);
+       ceu_finish_fragment(b, true, ceu_reg64(b, 90), ceu_reg64(b, 92), 0x0, 1);
+       ceu_wait_slot(b, 1);
+@@ -3048,8 +3049,8 @@ panfrost_batch_get_bifrost_tiler(struct panfrost_batch *batch,
+    if (batch->tiler_ctx.bifrost.ctx)
+       return batch->tiler_ctx.bifrost.ctx;
+ 
+-   struct panfrost_ptr t =
+-      pan_pool_alloc_aligned(&batch->pool.base, POSITION_FIFO_SIZE, POSITION_FIFO_SIZE);
++   struct panfrost_ptr t = pan_pool_alloc_aligned(
++      &batch->pool.base, POSITION_FIFO_SIZE, POSITION_FIFO_SIZE);
+ 
+    mali_ptr heap, geom_buf = t.gpu;
+ 
+@@ -3938,10 +3939,10 @@ panfrost_draw(struct panfrost_batch *batch, const struct pipe_draw_info *info,
+ 
+       if (fs_required) {
+          bool has_oq = ctx->occlusion_query && ctx->active_queries;
+-         struct pan_earlyzs_state earlyzs =
+-            pan_earlyzs_get(fs->earlyzs, ctx->depth_stencil->writes_zs || has_oq,
+-                            ctx->blend->base.alpha_to_coverage,
+-                            ctx->depth_stencil->zs_always_passes);
++         struct pan_earlyzs_state earlyzs = pan_earlyzs_get(
++            fs->earlyzs, ctx->depth_stencil->writes_zs || has_oq,
++            ctx->blend->base.alpha_to_coverage,
++            ctx->depth_stencil->zs_always_passes);
+ 
+          if (has_oq) {
+             if (ctx->occlusion_query->type == PIPE_QUERY_OCCLUSION_COUNTER)
+@@ -5024,8 +5025,8 @@ static void
+ preload(struct panfrost_batch *batch, struct pan_fb_info *fb)
+ {
+    GENX(pan_preload_fb)
+-   (&batch->pool.base, PAN_ARCH < 10 ? &batch->scoreboard : NULL, fb, batch->tls.gpu,
+-    PAN_ARCH >= 6 ? batch->tiler_ctx.bifrost.ctx : 0, NULL);
++   (&batch->pool.base, PAN_ARCH < 10 ? &batch->scoreboard : NULL, fb,
++    batch->tls.gpu, PAN_ARCH >= 6 ? batch->tiler_ctx.bifrost.ctx : 0, NULL);
+ }
+ 
+ static void
+@@ -5134,8 +5135,7 @@ panfrost_csf_init_context(struct panfrost_context *ctx)
+    ctx->heap.handle = thc.handle;
+ 
+    ctx->heap.desc_bo =
+-      panfrost_bo_create(dev,
+-                         pan_size(TILER_HEAP), 0, "Tiler Heap");
++      panfrost_bo_create(dev, pan_size(TILER_HEAP), 0, "Tiler Heap");
+    pan_pack(ctx->heap.desc_bo->ptr.cpu, TILER_HEAP, heap) {
+       heap.size = 2 * 1024 * 1024;
+       heap.base = thc.first_heap_chunk_gpu_va;
+diff --git a/src/gallium/drivers/panfrost/pan_context.c b/src/gallium/drivers/panfrost/pan_context.c
+index dac0a87994c..c94919f24ba 100644
+--- a/src/gallium/drivers/panfrost/pan_context.c
++++ b/src/gallium/drivers/panfrost/pan_context.c
+@@ -991,7 +991,8 @@ panfrost_create_context(struct pipe_screen *screen, void *priv, unsigned flags)
+    return gallium;
+ }
+ 
+-void panfrost_context_reinit(struct panfrost_context *ctx)
++void
++panfrost_context_reinit(struct panfrost_context *ctx)
+ {
+    pan_screen(ctx->base.screen)->vtbl.context_cleanup(ctx);
+    pan_screen(ctx->base.screen)->vtbl.context_init(ctx);
+diff --git a/src/gallium/drivers/panfrost/pan_resource.c b/src/gallium/drivers/panfrost/pan_resource.c
+index 612c0afdbf2..7bbc2594e0d 100644
+--- a/src/gallium/drivers/panfrost/pan_resource.c
++++ b/src/gallium/drivers/panfrost/pan_resource.c
+@@ -1084,13 +1084,13 @@ panfrost_ptr_map(struct pipe_context *pctx, struct pipe_resource *resource,
+          if (!(bo->flags & PAN_BO_SHARED)) {
+             newbo =
+                panfrost_bo_create(dev, panfrost_bo_size(bo), flags, bo->label);
+-	 }
++         }
+ 
+          if (newbo) {
+             if (copy_resource) {
+                memcpy(newbo->ptr.cpu, rsrc->image.data.bo->ptr.cpu,
+                       panfrost_bo_size(bo));
+-	    }
++            }
+ 
+             /* Swap the pointers, dropping a reference to
+              * the old BO which is no long referenced from
+diff --git a/src/panfrost/lib/genxml/ceu_builder.h b/src/panfrost/lib/genxml/ceu_builder.h
+index 2e79b81ec12..4832c0150ba 100644
+--- a/src/panfrost/lib/genxml/ceu_builder.h
++++ b/src/panfrost/lib/genxml/ceu_builder.h
+@@ -281,8 +281,8 @@ ceu_wait_slots(ceu_builder *b, uint8_t slots)
+ }
+ 
+ static inline void
+-ceu_branch(ceu_builder *b, int16_t offset,
+-           enum mali_ceu_condition cond, ceu_index val)
++ceu_branch(ceu_builder *b, int16_t offset, enum mali_ceu_condition cond,
++           ceu_index val)
+ {
+    ceu_emit(b, BRANCH, I)
+    {
+@@ -346,10 +346,11 @@ ceu_finish_tiling(ceu_builder *b)
+ static inline void
+ ceu_finish_fragment(ceu_builder *b, bool increment_frag_completed,
+                     ceu_index first_free_heap_chunk,
+-                    ceu_index last_free_heap_chunk,
+-                    uint16_t scoreboard_mask, uint8_t signal_slot)
++                    ceu_index last_free_heap_chunk, uint16_t scoreboard_mask,
++                    uint8_t signal_slot)
+ {
+-   ceu_emit(b, FINISH_FRAGMENT, I) {
++   ceu_emit(b, FINISH_FRAGMENT, I)
++   {
+       I.increment_fragment_completed = increment_frag_completed;
+       I.wait_mask = scoreboard_mask;
+       I.first_heap_chunk = ceu_to_reg64(first_free_heap_chunk);
+@@ -534,7 +535,7 @@ ceu_wait_slot(ceu_builder *b, uint8_t slot)
+ 
+ static inline void
+ ceu_store_state(ceu_builder *b, uint8_t signal_slot, ceu_index address,
+-		enum mali_ceu_state state, uint16_t wait_mask, int16_t offset)
++                enum mali_ceu_state state, uint16_t wait_mask, int16_t offset)
+ {
+    ceu_emit(b, STORE_STATE, I)
+    {
+diff --git a/src/panfrost/lib/kmod/panfrost_kmod.c b/src/panfrost/lib/kmod/panfrost_kmod.c
+index 607f86c46a5..a653d513513 100644
+--- a/src/panfrost/lib/kmod/panfrost_kmod.c
++++ b/src/panfrost/lib/kmod/panfrost_kmod.c
+@@ -115,7 +115,8 @@ panfrost_dev_query_props(struct pan_kmod_dev *dev,
+       panfrost_query_raw(fd, DRM_PANFROST_PARAM_AFBC_FEATURES, false, 0);
+ }
+ 
+-static uint32_t to_panfrost_bo_flags(struct pan_kmod_dev *dev, uint32_t flags)
++static uint32_t
++to_panfrost_bo_flags(struct pan_kmod_dev *dev, uint32_t flags)
+ {
+    uint32_t panfrost_flags = 0;
+ 
+diff --git a/src/panfrost/lib/pan_cs.c b/src/panfrost/lib/pan_cs.c
+index c70f2fa932c..879055d4d89 100644
+--- a/src/panfrost/lib/pan_cs.c
++++ b/src/panfrost/lib/pan_cs.c
+@@ -597,7 +597,8 @@ pan_emit_midgard_tiler(const struct panfrost_device *dev,
+          cfg.polygon_list_size = panfrost_tiler_full_size(
+             fb->width, fb->height, cfg.hierarchy_mask, hierarchy);
+          cfg.heap_start = dev->tiler_heap->ptr.gpu;
+-         cfg.heap_end = dev->tiler_heap->ptr.gpu + panfrost_bo_size(dev->tiler_heap);
++         cfg.heap_end =
++            dev->tiler_heap->ptr.gpu + panfrost_bo_size(dev->tiler_heap);
+       }
+ 
+       cfg.polygon_list = tiler_ctx->midgard.polygon_list->ptr.gpu;
+diff --git a/src/panfrost/vulkan/panvk_vX_device.c b/src/panfrost/vulkan/panvk_vX_device.c
+index 9f35de700a6..0e2b66cfb3c 100644
+--- a/src/panfrost/vulkan/panvk_vX_device.c
++++ b/src/panfrost/vulkan/panvk_vX_device.c
+@@ -78,7 +78,8 @@ panvk_queue_submit_batch(struct panvk_queue *queue, struct panvk_batch *batch,
+       }
+ 
+       if (debug & PANVK_DEBUG_TRACE)
+-         pandecode_jc(batch->scoreboard.first_job, panfrost_device_gpu_id(pdev));
++         pandecode_jc(batch->scoreboard.first_job,
++                      panfrost_device_gpu_id(pdev));
+ 
+       if (debug & PANVK_DEBUG_DUMP)
+          pandecode_dump_mappings();
+-- 
+2.42.0
+

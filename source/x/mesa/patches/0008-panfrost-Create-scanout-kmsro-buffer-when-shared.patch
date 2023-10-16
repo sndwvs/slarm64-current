@@ -1,0 +1,36 @@
+From 5c78c81e8c1302a1f0ee80192ca952ec28a844b3 Mon Sep 17 00:00:00 2001
+From: Robert Beckett <bob.beckett@collabora.com>
+Date: Wed, 5 Apr 2023 16:41:25 +0100
+Subject: [PATCH 08/64] panfrost: Create scanout kmsro buffer when shared
+
+Set up the "scanout resource". If the buffer might ever have
+resource_get_handle(WINSYS_HANDLE_TYPE_KMS) called on it.
+create_with_modifiers() doesn't give us usage flags, so we have to
+assume that all calls with PIPE_BIND_SHARED are scanout-possible.
+
+Signed-off-by: Robert Beckett <bob.beckett@collabora.com>
+---
+ src/gallium/drivers/panfrost/pan_resource.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
+
+diff --git a/src/gallium/drivers/panfrost/pan_resource.c b/src/gallium/drivers/panfrost/pan_resource.c
+index b01956aa1ba..612c0afdbf2 100644
+--- a/src/gallium/drivers/panfrost/pan_resource.c
++++ b/src/gallium/drivers/panfrost/pan_resource.c
+@@ -663,7 +663,12 @@ panfrost_resource_create_with_modifier(struct pipe_screen *screen,
+                        : (bind & PIPE_BIND_SHADER_IMAGE)    ? "Shader image"
+                                                             : "Other resource";
+ 
+-   if (dev->ro && (template->bind & PIPE_BIND_SCANOUT)) {
++   /* Set up the "scanout resource". If the buffer might ever have
++    * resource_get_handle(WINSYS_HANDLE_TYPE_KMS) called on it.
++    * create_with_modifiers() doesn't give us usage flags, so we have to
++    * assume that all calls with PIPE_BIND_SHARED are scanout-possible.
++    */
++   if (dev->ro && (template->bind & PAN_BIND_SHARED_MASK)) {
+       struct winsys_handle handle;
+       struct pan_block_size blocksize =
+          panfrost_block_size(modifier, template->format);
+-- 
+2.42.0
+

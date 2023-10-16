@@ -1,0 +1,60 @@
+From 9a606158f1aadce27d3a3587337ba32eb589b75e Mon Sep 17 00:00:00 2001
+From: Boris Brezillon <boris.brezillon@collabora.com>
+Date: Wed, 5 Jul 2023 10:35:20 +0200
+Subject: [PATCH 04/64] panvk: Pass the PAN_BO_SHAREABLE when relevant
+
+Check VkExportMemoryAllocateInfo to know if we might export the BO
+object at some point.
+
+Signed-off-by: Boris Brezillon <boris.brezillon@collabora.com>
+---
+ src/panfrost/vulkan/panvk_device.c | 19 ++++++++++++++++---
+ 1 file changed, 16 insertions(+), 3 deletions(-)
+
+diff --git a/src/panfrost/vulkan/panvk_device.c b/src/panfrost/vulkan/panvk_device.c
+index 534df5112a8..a8013828328 100644
+--- a/src/panfrost/vulkan/panvk_device.c
++++ b/src/panfrost/vulkan/panvk_device.c
+@@ -1049,6 +1049,7 @@ panvk_AllocateMemory(VkDevice _device,
+ {
+    VK_FROM_HANDLE(panvk_device, device, _device);
+    struct panvk_device_memory *mem;
++   bool can_be_exported = false;
+ 
+    assert(pAllocateInfo->sType == VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO);
+ 
+@@ -1058,6 +1059,18 @@ panvk_AllocateMemory(VkDevice _device,
+       return VK_SUCCESS;
+    }
+ 
++   const VkExportMemoryAllocateInfo *export_info =
++      vk_find_struct_const(pAllocateInfo->pNext, EXPORT_MEMORY_ALLOCATE_INFO);
++
++   if (export_info) {
++      if (export_info->handleTypes &
++          ~(VK_EXTERNAL_MEMORY_HANDLE_TYPE_DMA_BUF_BIT_EXT |
++            VK_EXTERNAL_MEMORY_HANDLE_TYPE_OPAQUE_FD_BIT))
++         return vk_error(device, VK_ERROR_INVALID_EXTERNAL_HANDLE);
++      else if (export_info->handleTypes)
++         can_be_exported = true;
++   }
++
+    mem = vk_object_alloc(&device->vk, pAllocator, sizeof(*mem),
+                          VK_OBJECT_TYPE_DEVICE_MEMORY);
+    if (mem == NULL)
+@@ -1083,9 +1096,9 @@ panvk_AllocateMemory(VkDevice _device,
+       /* take ownership and close the fd */
+       close(fd_info->fd);
+    } else {
+-      mem->bo = panfrost_bo_create(&device->physical_device->pdev,
+-                                   pAllocateInfo->allocationSize, 0,
+-                                   "User-requested memory");
++      mem->bo = panfrost_bo_create(
++         &device->physical_device->pdev, pAllocateInfo->allocationSize,
++         can_be_exported ? PAN_BO_SHAREABLE : 0, "User-requested memory");
+    }
+ 
+    assert(mem->bo);
+-- 
+2.42.0
+

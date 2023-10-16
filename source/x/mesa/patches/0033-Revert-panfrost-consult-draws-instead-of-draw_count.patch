@@ -1,0 +1,45 @@
+From 4fddebb65ec5011c3ac192f23c122a28c74a1cae Mon Sep 17 00:00:00 2001
+From: Boris Brezillon <boris.brezillon@collabora.com>
+Date: Mon, 18 Sep 2023 20:06:58 +0200
+Subject: [PATCH 33/64] Revert "panfrost: consult draws instead of draw_count"
+
+This reverts commit 4e09da417113ba5a83e28f7365fda6dff252ec8d.
+
+Turns out batch->draws encodes the RTs we update, but there are pipelines
+with no-attachments on which we want the vertex/fragment shaders to
+proceed, meaning we can't use batch->draws to know if draws where
+already issued on a batch. ->draw_count gives us this information.
+---
+ src/gallium/drivers/panfrost/pan_context.c | 2 +-
+ src/gallium/drivers/panfrost/pan_job.c     | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/src/gallium/drivers/panfrost/pan_context.c b/src/gallium/drivers/panfrost/pan_context.c
+index c94919f24ba..f5597c031fd 100644
+--- a/src/gallium/drivers/panfrost/pan_context.c
++++ b/src/gallium/drivers/panfrost/pan_context.c
+@@ -73,7 +73,7 @@ panfrost_clear(struct pipe_context *pipe, unsigned buffers,
+    struct panfrost_batch *batch = panfrost_get_batch_for_fbo(ctx);
+ 
+    /* At the start of the batch, we can clear for free */
+-   if (!batch->draws) {
++   if (batch->draw_count == 0) {
+       panfrost_batch_clear(batch, buffers, color, depth, stencil);
+       return;
+    }
+diff --git a/src/gallium/drivers/panfrost/pan_job.c b/src/gallium/drivers/panfrost/pan_job.c
+index bef51744165..4a7395a5491 100644
+--- a/src/gallium/drivers/panfrost/pan_job.c
++++ b/src/gallium/drivers/panfrost/pan_job.c
+@@ -726,7 +726,7 @@ panfrost_batch_submit_ioctl(struct panfrost_batch *batch,
+ static bool
+ panfrost_has_fragment_job(struct panfrost_batch *batch)
+ {
+-   return batch->draws || batch->clear;
++   return batch->draw_count > 0 || batch->clear;
+ }
+ 
+ /* Submit both vertex/tiler and fragment jobs for a batch, possibly with an
+-- 
+2.42.0
+

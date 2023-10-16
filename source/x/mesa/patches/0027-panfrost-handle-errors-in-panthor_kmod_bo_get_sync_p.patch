@@ -1,0 +1,62 @@
+From 110d87d4a073a3f29d13de52d1df1e945612cde3 Mon Sep 17 00:00:00 2001
+From: Erik Faye-Lund <erik.faye-lund@collabora.com>
+Date: Wed, 9 Aug 2023 11:15:26 +0000
+Subject: [PATCH 27/64] panfrost: handle errors in
+ panthor_kmod_bo_get_sync_point
+
+---
+ src/gallium/drivers/panfrost/pan_job.c | 25 ++++++++++++++++++-------
+ 1 file changed, 18 insertions(+), 7 deletions(-)
+
+diff --git a/src/gallium/drivers/panfrost/pan_job.c b/src/gallium/drivers/panfrost/pan_job.c
+index eb8b0315a55..13a551ea25e 100644
+--- a/src/gallium/drivers/panfrost/pan_job.c
++++ b/src/gallium/drivers/panfrost/pan_job.c
+@@ -836,9 +836,12 @@ panfrost_batch_submit_cs_ioctl(struct panfrost_batch *batch, mali_ptr cs_start,
+ 
+       bo->gpu_access |= flags & (PAN_BO_ACCESS_RW);
+ 
+-      panthor_kmod_bo_get_sync_point(bo->kmod_bo, &bo_sync_handle,
+-                                     &bo_sync_point,
+-                                     !(flags & PAN_BO_ACCESS_WRITE));
++      ret = panthor_kmod_bo_get_sync_point(bo->kmod_bo, &bo_sync_handle,
++                                           &bo_sync_point,
++                                           !(flags & PAN_BO_ACCESS_WRITE));
++      if (ret)
++         return ret;
++
+       if (bo_sync_handle == vm_sync_handle) {
+          vm_sync_wait_point = MAX2(vm_sync_wait_point, bo_sync_point);
+       } else {
+@@ -853,16 +856,24 @@ panfrost_batch_submit_cs_ioctl(struct panfrost_batch *batch, mali_ptr cs_start,
+ 
+    util_dynarray_foreach(&batch->pool.bos, struct panfrost_bo *, bo) {
+       (*bo)->gpu_access |= PAN_BO_ACCESS_RW;
+-      panthor_kmod_bo_get_sync_point((*bo)->kmod_bo, &bo_sync_handle,
+-                                     &bo_sync_point, false);
++
++      ret = panthor_kmod_bo_get_sync_point((*bo)->kmod_bo, &bo_sync_handle,
++                                           &bo_sync_point, false);
++      if (ret)
++         return ret;
++
+       assert(bo_sync_handle == vm_sync_handle);
+       vm_sync_wait_point = MAX2(vm_sync_wait_point, bo_sync_point);
+    }
+ 
+    util_dynarray_foreach(&batch->invisible_pool.bos, struct panfrost_bo *, bo) {
+       (*bo)->gpu_access |= PAN_BO_ACCESS_RW;
+-      panthor_kmod_bo_get_sync_point((*bo)->kmod_bo, &bo_sync_handle,
+-                                     &bo_sync_point, false);
++
++      ret = panthor_kmod_bo_get_sync_point((*bo)->kmod_bo, &bo_sync_handle,
++                                           &bo_sync_point, false);
++      if (ret)
++         return ret;
++
+       assert(bo_sync_handle == vm_sync_handle);
+       vm_sync_wait_point = MAX2(vm_sync_wait_point, bo_sync_point);
+    }
+-- 
+2.42.0
+

@@ -1,0 +1,69 @@
+From 624bf04f9c37c3337eaebceb9168373f21ecbf28 Mon Sep 17 00:00:00 2001
+From: Boris Brezillon <boris.brezillon@collabora.com>
+Date: Tue, 5 Sep 2023 16:37:43 +0200
+Subject: [PATCH 18/64] panfrost: Rename panfrost_vtable::context_init
+
+We are about to add arch-specific context initialization/cleanup hooks.
+Rename the existing context_init hook to avoid confusion (this hook
+was just populating the pipe_context vtable).
+
+Signed-off-by: Boris Brezillon <boris.brezillon@collabora.com>
+---
+ src/gallium/drivers/panfrost/pan_cmdstream.c | 4 ++--
+ src/gallium/drivers/panfrost/pan_context.c   | 2 +-
+ src/gallium/drivers/panfrost/pan_screen.h    | 4 ++--
+ 3 files changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/src/gallium/drivers/panfrost/pan_cmdstream.c b/src/gallium/drivers/panfrost/pan_cmdstream.c
+index 30c9f3ca577..c3990460fac 100644
+--- a/src/gallium/drivers/panfrost/pan_cmdstream.c
++++ b/src/gallium/drivers/panfrost/pan_cmdstream.c
+@@ -5106,7 +5106,7 @@ panfrost_sampler_view_destroy(struct pipe_context *pctx,
+ }
+ 
+ static void
+-context_init(struct pipe_context *pipe)
++context_populate_vtbl(struct pipe_context *pipe)
+ {
+    pipe->draw_vbo = panfrost_draw_vbo;
+    pipe->launch_grid = panfrost_launch_grid;
+@@ -5192,7 +5192,7 @@ GENX(panfrost_cmdstream_screen_init)(struct panfrost_screen *screen)
+    screen->vtbl.emit_fragment_job = emit_fragment_job;
+    screen->vtbl.screen_destroy = screen_destroy;
+    screen->vtbl.preload = preload;
+-   screen->vtbl.context_init = context_init;
++   screen->vtbl.context_populate_vtbl = context_populate_vtbl;
+    screen->vtbl.init_batch = init_batch;
+    screen->vtbl.get_blend_shader = GENX(pan_blend_get_shader_locked);
+    screen->vtbl.init_polygon_list = init_polygon_list;
+diff --git a/src/gallium/drivers/panfrost/pan_context.c b/src/gallium/drivers/panfrost/pan_context.c
+index 2eef7ee69c5..b5fc12cad6f 100644
+--- a/src/gallium/drivers/panfrost/pan_context.c
++++ b/src/gallium/drivers/panfrost/pan_context.c
+@@ -1019,7 +1019,7 @@ panfrost_create_context(struct pipe_screen *screen, void *priv, unsigned flags)
+    gallium->set_global_binding = panfrost_set_global_binding;
+    gallium->memory_barrier = panfrost_memory_barrier;
+ 
+-   pan_screen(screen)->vtbl.context_init(gallium);
++   pan_screen(screen)->vtbl.context_populate_vtbl(gallium);
+ 
+    panfrost_resource_context_init(gallium);
+    panfrost_shader_context_init(gallium);
+diff --git a/src/gallium/drivers/panfrost/pan_screen.h b/src/gallium/drivers/panfrost/pan_screen.h
+index 6e2d7be8c78..ec0966df8d0 100644
+--- a/src/gallium/drivers/panfrost/pan_screen.h
++++ b/src/gallium/drivers/panfrost/pan_screen.h
+@@ -79,8 +79,8 @@ struct panfrost_vtable {
+    /* Preload framebuffer */
+    void (*preload)(struct panfrost_batch *, struct pan_fb_info *);
+ 
+-   /* Initialize a Gallium context */
+-   void (*context_init)(struct pipe_context *pipe);
++   /* Populate context vtable */
++   void (*context_populate_vtbl)(struct pipe_context *pipe);
+ 
+    /* Device-dependent initialization of a panfrost_batch */
+    void (*init_batch)(struct panfrost_batch *batch);
+-- 
+2.42.0
+

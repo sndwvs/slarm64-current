@@ -1,0 +1,53 @@
+From 22d8470737f0fdf32d822bfc679c5740c251fb3b Mon Sep 17 00:00:00 2001
+From: Boris Brezillon <boris.brezillon@collabora.com>
+Date: Wed, 5 Jul 2023 10:25:58 +0200
+Subject: [PATCH 03/64] panfrost: Introduce a PAN_BO_SHAREABLE flag
+
+This flag reflects the ability to share a BO. This lets the kmod
+backend optimize the case where the BO stays private to a specific
+VM.
+
+Signed-off-by: Boris Brezillon <boris.brezillon@collabora.com>
+---
+ src/panfrost/lib/pan_bo.c | 6 ++++--
+ src/panfrost/lib/pan_bo.h | 4 ++++
+ 2 files changed, 8 insertions(+), 2 deletions(-)
+
+diff --git a/src/panfrost/lib/pan_bo.c b/src/panfrost/lib/pan_bo.c
+index 1d0a014d152..9079ac2ff70 100644
+--- a/src/panfrost/lib/pan_bo.c
++++ b/src/panfrost/lib/pan_bo.c
+@@ -73,11 +73,13 @@ static struct panfrost_bo *
+ panfrost_bo_alloc(struct panfrost_device *dev, size_t size, uint32_t flags,
+                   const char *label)
+ {
++   struct pan_kmod_vm *exclusive_vm =
++      !(flags & PAN_BO_SHAREABLE) ? dev->kmod.vm : NULL;
+    struct pan_kmod_bo *kmod_bo;
+    struct panfrost_bo *bo;
+ 
+-   kmod_bo =
+-      pan_kmod_bo_alloc(dev->kmod.dev, NULL, size, to_kmod_bo_flags(flags));
++   kmod_bo = pan_kmod_bo_alloc(dev->kmod.dev, exclusive_vm, size,
++                               to_kmod_bo_flags(flags));
+    assert(kmod_bo);
+ 
+    bo = pan_lookup_bo(dev, kmod_bo->handle);
+diff --git a/src/panfrost/lib/pan_bo.h b/src/panfrost/lib/pan_bo.h
+index 24414998368..51fed3149a4 100644
+--- a/src/panfrost/lib/pan_bo.h
++++ b/src/panfrost/lib/pan_bo.h
+@@ -52,6 +52,10 @@
+  * cached locally */
+ #define PAN_BO_SHARED (1 << 4)
+ 
++/* BO might be exported at some point. PAN_BO_SHAREABLE does not imply
++ * PAN_BO_SHARED if the BO has not been exported yet */
++#define PAN_BO_SHAREABLE (1 << 5)
++
+ /* GPU access flags */
+ 
+ /* BO is either shared (can be accessed by more than one GPU batch) or private
+-- 
+2.42.0
+

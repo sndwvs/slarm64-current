@@ -1,0 +1,138 @@
+From 8d24a5450e00f57d4ddaefb4219d8c922b59a84b Mon Sep 17 00:00:00 2001
+From: Boris Brezillon <boris.brezillon@collabora.com>
+Date: Wed, 5 Jul 2023 11:23:07 +0200
+Subject: [PATCH 13/64] panfrost: Move pan_afbc_compression_mode() to pan_cs.c
+ and make it per-gen
+
+With the introduction on v10, we need to this function to have a
+per-gen name to avoid duplicates. While at it, move it to pan_texture.c
+since the prototype is already defined in pan_texture.h.
+
+Signed-off-by: Boris Brezillon <boris.brezillon@collabora.com>
+---
+ src/panfrost/lib/pan_cs.c      | 36 +---------------------------------
+ src/panfrost/lib/pan_texture.c | 36 +++++++++++++++++++++++++++++++++-
+ src/panfrost/lib/pan_texture.h |  2 +-
+ 3 files changed, 37 insertions(+), 37 deletions(-)
+
+diff --git a/src/panfrost/lib/pan_cs.c b/src/panfrost/lib/pan_cs.c
+index 9848babf225..79e53985855 100644
+--- a/src/panfrost/lib/pan_cs.c
++++ b/src/panfrost/lib/pan_cs.c
+@@ -440,40 +440,6 @@ pan_rt_init_format(const struct pan_image_view *rt,
+    cfg->swizzle = panfrost_translate_swizzle_4(swizzle);
+ }
+ 
+-#if PAN_ARCH >= 9
+-enum mali_afbc_compression_mode
+-pan_afbc_compression_mode(enum pipe_format format)
+-{
+-   /* There's a special case for texturing the stencil part from a combined
+-    * depth/stencil texture, handle it separately.
+-    */
+-   if (format == PIPE_FORMAT_X24S8_UINT)
+-      return MALI_AFBC_COMPRESSION_MODE_X24S8;
+-
+-   /* Otherwise, map canonical formats to the hardware enum. This only
+-    * needs to handle the subset of formats returned by
+-    * panfrost_afbc_format.
+-    */
+-   /* clang-format off */
+-   switch (panfrost_afbc_format(PAN_ARCH, format)) {
+-   case PAN_AFBC_MODE_R8:          return MALI_AFBC_COMPRESSION_MODE_R8;
+-   case PAN_AFBC_MODE_R8G8:        return MALI_AFBC_COMPRESSION_MODE_R8G8;
+-   case PAN_AFBC_MODE_R5G6B5:      return MALI_AFBC_COMPRESSION_MODE_R5G6B5;
+-   case PAN_AFBC_MODE_R4G4B4A4:    return MALI_AFBC_COMPRESSION_MODE_R4G4B4A4;
+-   case PAN_AFBC_MODE_R5G5B5A1:    return MALI_AFBC_COMPRESSION_MODE_R5G5B5A1;
+-   case PAN_AFBC_MODE_R8G8B8:      return MALI_AFBC_COMPRESSION_MODE_R8G8B8;
+-   case PAN_AFBC_MODE_R8G8B8A8:    return MALI_AFBC_COMPRESSION_MODE_R8G8B8A8;
+-   case PAN_AFBC_MODE_R10G10B10A2: return MALI_AFBC_COMPRESSION_MODE_R10G10B10A2;
+-   case PAN_AFBC_MODE_R11G11B10:   return MALI_AFBC_COMPRESSION_MODE_R11G11B10;
+-   case PAN_AFBC_MODE_S8:          return MALI_AFBC_COMPRESSION_MODE_S8;
+-   case PAN_AFBC_MODE_INVALID:     unreachable("Invalid AFBC format");
+-   }
+-   /* clang-format on */
+-
+-   unreachable("all AFBC formats handled");
+-}
+-#endif
+-
+ static void
+ pan_prepare_rt(const struct pan_fb_info *fb, unsigned idx, unsigned cbuf_offset,
+                struct MALI_RENDER_TARGET *cfg)
+@@ -532,7 +498,7 @@ pan_prepare_rt(const struct pan_fb_info *fb, unsigned idx, unsigned cbuf_offset,
+       cfg->afbc.body_offset = surf.afbc.body - surf.afbc.header;
+       assert(surf.afbc.body >= surf.afbc.header);
+ 
+-      cfg->afbc.compression_mode = pan_afbc_compression_mode(rt->format);
++      cfg->afbc.compression_mode = GENX(pan_afbc_compression_mode)(rt->format);
+       cfg->afbc.row_stride = row_stride;
+ #else
+       const struct pan_image_slice_layout *slice =
+diff --git a/src/panfrost/lib/pan_texture.c b/src/panfrost/lib/pan_texture.c
+index ff3d7437ebe..7c48492de0f 100644
+--- a/src/panfrost/lib/pan_texture.c
++++ b/src/panfrost/lib/pan_texture.c
+@@ -438,7 +438,7 @@ panfrost_emit_plane(const struct pan_image_layout *layout,
+          cfg.afbc.ytr = (layout->modifier & AFBC_FORMAT_MOD_YTR);
+          cfg.afbc.tiled_header = (layout->modifier & AFBC_FORMAT_MOD_TILED);
+          cfg.afbc.prefetch = true;
+-         cfg.afbc.compression_mode = pan_afbc_compression_mode(format);
++         cfg.afbc.compression_mode = GENX(pan_afbc_compression_mode)(format);
+          cfg.afbc.header_stride = layout->slices[level].afbc.header_size;
+       } else {
+          cfg.plane_type = MALI_PLANE_TYPE_GENERIC;
+@@ -642,3 +642,37 @@ GENX(panfrost_new_texture)(const struct panfrost_device *dev,
+ #endif
+    }
+ }
++
++#if PAN_ARCH >= 9
++enum mali_afbc_compression_mode
++GENX(pan_afbc_compression_mode)(enum pipe_format format)
++{
++   /* There's a special case for texturing the stencil part from a combined
++    * depth/stencil texture, handle it separately.
++    */
++   if (format == PIPE_FORMAT_X24S8_UINT)
++      return MALI_AFBC_COMPRESSION_MODE_X24S8;
++
++   /* Otherwise, map canonical formats to the hardware enum. This only
++    * needs to handle the subset of formats returned by
++    * panfrost_afbc_format.
++    */
++   /* clang-format off */
++   switch (panfrost_afbc_format(PAN_ARCH, format)) {
++   case PAN_AFBC_MODE_R8:          return MALI_AFBC_COMPRESSION_MODE_R8;
++   case PAN_AFBC_MODE_R8G8:        return MALI_AFBC_COMPRESSION_MODE_R8G8;
++   case PAN_AFBC_MODE_R5G6B5:      return MALI_AFBC_COMPRESSION_MODE_R5G6B5;
++   case PAN_AFBC_MODE_R4G4B4A4:    return MALI_AFBC_COMPRESSION_MODE_R4G4B4A4;
++   case PAN_AFBC_MODE_R5G5B5A1:    return MALI_AFBC_COMPRESSION_MODE_R5G5B5A1;
++   case PAN_AFBC_MODE_R8G8B8:      return MALI_AFBC_COMPRESSION_MODE_R8G8B8;
++   case PAN_AFBC_MODE_R8G8B8A8:    return MALI_AFBC_COMPRESSION_MODE_R8G8B8A8;
++   case PAN_AFBC_MODE_R10G10B10A2: return MALI_AFBC_COMPRESSION_MODE_R10G10B10A2;
++   case PAN_AFBC_MODE_R11G11B10:   return MALI_AFBC_COMPRESSION_MODE_R11G11B10;
++   case PAN_AFBC_MODE_S8:          return MALI_AFBC_COMPRESSION_MODE_S8;
++   case PAN_AFBC_MODE_INVALID:     unreachable("Invalid AFBC format");
++   }
++   /* clang-format on */
++
++   unreachable("all AFBC formats handled");
++}
++#endif
+diff --git a/src/panfrost/lib/pan_texture.h b/src/panfrost/lib/pan_texture.h
+index a5b391e7afd..fe606b43000 100644
+--- a/src/panfrost/lib/pan_texture.h
++++ b/src/panfrost/lib/pan_texture.h
+@@ -260,7 +260,7 @@ void pan_iview_get_surface(const struct pan_image_view *iview, unsigned level,
+ 
+ #if PAN_ARCH >= 9
+ enum mali_afbc_compression_mode
+-pan_afbc_compression_mode(enum pipe_format format);
++   GENX(pan_afbc_compression_mode)(enum pipe_format format);
+ #endif
+ 
+ #ifdef __cplusplus
+-- 
+2.42.0
+

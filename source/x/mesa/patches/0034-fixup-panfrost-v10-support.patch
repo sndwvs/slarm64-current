@@ -1,0 +1,66 @@
+From de0f43d6a640dde6b2b15bc81d431c97bb3730fb Mon Sep 17 00:00:00 2001
+From: Boris Brezillon <boris.brezillon@collabora.com>
+Date: Mon, 18 Sep 2023 20:03:03 +0200
+Subject: [PATCH 34/64] fixup! panfrost: v10 support
+
+More s/->draws/->draw_count/ fixes.
+---
+ src/gallium/drivers/panfrost/pan_cmdstream.c | 6 +++---
+ src/gallium/drivers/panfrost/pan_job.c       | 5 ++---
+ 2 files changed, 5 insertions(+), 6 deletions(-)
+
+diff --git a/src/gallium/drivers/panfrost/pan_cmdstream.c b/src/gallium/drivers/panfrost/pan_cmdstream.c
+index c826505577f..444f7a108cb 100644
+--- a/src/gallium/drivers/panfrost/pan_cmdstream.c
++++ b/src/gallium/drivers/panfrost/pan_cmdstream.c
+@@ -2696,7 +2696,7 @@ panfrost_emit_batch_end(struct panfrost_batch *batch)
+ static mali_ptr
+ emit_fragment_job(struct panfrost_batch *batch, const struct pan_fb_info *pfb)
+ {
+-   if (PAN_ARCH >= 10 && !batch->clear && !batch->draws) {
++   if (PAN_ARCH >= 10 && !batch->clear && !batch->draw_count) {
+       /* Compute only batch */
+       panfrost_emit_batch_end(batch);
+       return 0;
+@@ -2735,7 +2735,7 @@ emit_fragment_job(struct panfrost_batch *batch, const struct pan_fb_info *pfb)
+ #if PAN_ARCH >= 10
+    ceu_builder *b = batch->ceu_builder;
+ 
+-   if (batch->draws) {
++   if (batch->draw_count > 0) {
+       /* Finish tiling and wait for IDVS and tiling */
+       ceu_finish_tiling(b);
+       ceu_wait_slot(b, 2);
+@@ -4046,7 +4046,7 @@ panfrost_draw_vbo(struct pipe_context *pipe, const struct pipe_draw_info *info,
+       assert(succ && "must be able to set state for a fresh batch");
+    }
+ 
+-   if (batch->draws == 0)
++   if (batch->draw_count == 0)
+       ceu_vt_start(batch->ceu_builder);
+ 
+    /* panfrost_batch_skip_rasterization reads
+diff --git a/src/gallium/drivers/panfrost/pan_job.c b/src/gallium/drivers/panfrost/pan_job.c
+index 4a7395a5491..e92ee4962a5 100644
+--- a/src/gallium/drivers/panfrost/pan_job.c
++++ b/src/gallium/drivers/panfrost/pan_job.c
+@@ -1024,14 +1024,13 @@ panfrost_batch_submit(struct panfrost_context *ctx,
+    struct pipe_screen *pscreen = ctx->base.screen;
+    struct panfrost_screen *screen = pan_screen(pscreen);
+    struct panfrost_device *dev = &screen->dev;
++   bool has_frag = panfrost_has_fragment_job(batch);
+    int ret;
+ 
+    /* Nothing to do! */
+-   if (!batch->clear && !batch->draws && !batch->any_compute)
++   if (!has_frag && !batch->any_compute)
+       goto out;
+ 
+-   bool has_frag = panfrost_has_fragment_job(batch);
+-
+    if (batch->key.zsbuf && has_frag) {
+       struct pipe_surface *surf = batch->key.zsbuf;
+       struct panfrost_resource *z_rsrc = pan_resource(surf->texture);
+-- 
+2.42.0
+

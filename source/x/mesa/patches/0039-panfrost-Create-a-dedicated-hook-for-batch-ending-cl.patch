@@ -1,0 +1,81 @@
+From d01c9ab76eb24f0f7b171466d4c7ba752dc77cb6 Mon Sep 17 00:00:00 2001
+From: Boris Brezillon <boris.brezillon@collabora.com>
+Date: Tue, 19 Sep 2023 11:52:26 +0200
+Subject: [PATCH 39/64] panfrost: Create a dedicated hook for batch
+ ending/closing
+
+It doesn't make sent to have it done in emit_fragment_job() given it's
+also needed for compute-only batches. So let's add a new method to the
+vtable.
+---
+ src/gallium/drivers/panfrost/pan_cmdstream.c | 8 +-------
+ src/gallium/drivers/panfrost/pan_job.c       | 5 ++++-
+ src/gallium/drivers/panfrost/pan_screen.h    | 3 +++
+ 3 files changed, 8 insertions(+), 8 deletions(-)
+
+diff --git a/src/gallium/drivers/panfrost/pan_cmdstream.c b/src/gallium/drivers/panfrost/pan_cmdstream.c
+index 48993a9fdbf..84128289246 100644
+--- a/src/gallium/drivers/panfrost/pan_cmdstream.c
++++ b/src/gallium/drivers/panfrost/pan_cmdstream.c
+@@ -2696,12 +2696,6 @@ panfrost_emit_batch_end(struct panfrost_batch *batch)
+ static mali_ptr
+ emit_fragment_job(struct panfrost_batch *batch, const struct pan_fb_info *pfb)
+ {
+-   if (PAN_ARCH >= 10 && !batch->clear && !batch->draw_count) {
+-      /* Compute only batch */
+-      panfrost_emit_batch_end(batch);
+-      return 0;
+-   }
+-
+    /* Mark the affected buffers as initialized, since we're writing to it.
+     * Also, add the surfaces we're writing to to the batch */
+ 
+@@ -2766,7 +2760,6 @@ emit_fragment_job(struct panfrost_batch *batch, const struct pan_fb_info *pfb)
+       ceu_wait_slot(b, 1);
+    }
+ 
+-   panfrost_emit_batch_end(batch);
+    return 0;
+ #else
+    struct panfrost_ptr transfer =
+@@ -5277,6 +5270,7 @@ GENX(panfrost_cmdstream_screen_init)(struct panfrost_screen *screen)
+    screen->vtbl.emit_tls = emit_tls;
+    screen->vtbl.emit_fbd = emit_fbd;
+    screen->vtbl.emit_fragment_job = emit_fragment_job;
++   screen->vtbl.emit_batch_end = panfrost_emit_batch_end;
+    screen->vtbl.screen_destroy = screen_destroy;
+    screen->vtbl.preload = preload;
+    screen->vtbl.context_populate_vtbl = context_populate_vtbl;
+diff --git a/src/gallium/drivers/panfrost/pan_job.c b/src/gallium/drivers/panfrost/pan_job.c
+index e92ee4962a5..fab67603780 100644
+--- a/src/gallium/drivers/panfrost/pan_job.c
++++ b/src/gallium/drivers/panfrost/pan_job.c
+@@ -992,7 +992,10 @@ panfrost_batch_submit_csf(struct panfrost_batch *batch,
+ {
+    struct panfrost_screen *screen = pan_screen(batch->ctx->base.screen);
+ 
+-   screen->vtbl.emit_fragment_job(batch, fb);
++   if (panfrost_has_fragment_job(batch))
++      screen->vtbl.emit_fragment_job(batch, fb);
++
++   screen->vtbl.emit_batch_end(batch);
+ 
+    unsigned count = ceu_finish(batch->ceu_builder);
+ 
+diff --git a/src/gallium/drivers/panfrost/pan_screen.h b/src/gallium/drivers/panfrost/pan_screen.h
+index 86645275ff5..5f6d6d0d123 100644
+--- a/src/gallium/drivers/panfrost/pan_screen.h
++++ b/src/gallium/drivers/panfrost/pan_screen.h
+@@ -73,6 +73,9 @@ struct panfrost_vtable {
+    mali_ptr (*emit_fragment_job)(struct panfrost_batch *,
+                                  const struct pan_fb_info *);
+ 
++   /* Called to finish a batch. */
++   void (*emit_batch_end)(struct panfrost_batch *);
++
+    /* General destructor */
+    void (*screen_destroy)(struct pipe_screen *);
+ 
+-- 
+2.42.0
+

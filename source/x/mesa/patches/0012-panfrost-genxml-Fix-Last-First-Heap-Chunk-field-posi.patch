@@ -1,0 +1,29 @@
+From e1745461bb5bfba43a5ef79c97992f71ef4ae476 Mon Sep 17 00:00:00 2001
+From: Boris Brezillon <boris.brezillon@collabora.com>
+Date: Wed, 5 Jul 2023 11:10:49 +0200
+Subject: [PATCH 12/64] panfrost/genxml: Fix "{Last,First} Heap Chunk" field
+ position
+
+Signed-off-by: Boris Brezillon <boris.brezillon@collabora.com>
+---
+ src/panfrost/lib/genxml/v10.xml | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/src/panfrost/lib/genxml/v10.xml b/src/panfrost/lib/genxml/v10.xml
+index 0939cc24388..f97cf5b24f7 100644
+--- a/src/panfrost/lib/genxml/v10.xml
++++ b/src/panfrost/lib/genxml/v10.xml
+@@ -606,8 +606,8 @@
+   <struct name="CEU FINISH_FRAGMENT" size="2">
+     <field name="Increment Fragment Completed" size="1" start="0" type="bool"/>
+     <field name="Wait mask" size="16" start="16" type="hex"/>
+-    <field name="First Heap Chunk" size="8" start="32" type="hex"/>
+-    <field name="Last Heap Chunk" size="8" start="40" type="hex"/>
++    <field name="Last Heap Chunk" size="8" start="32" type="hex"/>
++    <field name="First Heap Chunk" size="8" start="40" type="hex"/>
+     <field name="Scoreboard entry" size="4" start="48" type="hex"/>
+     <field name="Opcode" size="8" start="56" type="CEU Opcode" default="FINISH_FRAGMENT"/>
+   </struct>
+-- 
+2.42.0
+

@@ -1,0 +1,57 @@
+From 69818059a7e8ee424e5585c76dd106dc07f7d2df Mon Sep 17 00:00:00 2001
+From: Boris Brezillon <boris.brezillon@collabora.com>
+Date: Mon, 18 Sep 2023 11:05:07 +0200
+Subject: [PATCH 49/64] panfrost: Use JOBX() for tiler heap desc emission
+
+---
+ src/gallium/drivers/panfrost/pan_cmdstream.c | 27 ++++++++++++++------
+ 1 file changed, 19 insertions(+), 8 deletions(-)
+
+diff --git a/src/gallium/drivers/panfrost/pan_cmdstream.c b/src/gallium/drivers/panfrost/pan_cmdstream.c
+index 5dd6aba0b91..24add5d5cb0 100644
+--- a/src/gallium/drivers/panfrost/pan_cmdstream.c
++++ b/src/gallium/drivers/panfrost/pan_cmdstream.c
+@@ -3029,6 +3029,24 @@ panfrost_update_state_3d(struct panfrost_batch *batch)
+ 
+ #if PAN_ARCH >= 6
+ 
++#if PAN_USE_CSF
++static mali_ptr
++csf_emit_tiler_heap(struct panfrost_batch *batch)
++{
++   return batch->ctx->heap.desc_bo->ptr.gpu;
++}
++#else
++static mali_ptr
++jm_emit_tiler_heap(struct panfrost_batch *batch)
++{
++   struct panfrost_device *dev = pan_device(batch->ctx->base.screen);
++   struct panfrost_ptr t = pan_pool_alloc_desc(&batch->pool.base, TILER_HEAP);
++
++   GENX(pan_emit_tiler_heap)(dev, (uint8_t *)t.cpu);
++   return t.gpu;
++}
++#endif
++
+ #define POSITION_FIFO_SIZE (64 * 1024)
+ 
+ static mali_ptr
+@@ -3048,14 +3066,7 @@ panfrost_batch_get_bifrost_tiler(struct panfrost_batch *batch,
+ 
+    mali_ptr heap, geom_buf = t.gpu;
+ 
+-#if PAN_USE_CSF
+-   heap = batch->ctx->heap.desc_bo->ptr.gpu;
+-#else
+-   t = pan_pool_alloc_desc(&batch->pool.base, TILER_HEAP);
+-   GENX(pan_emit_tiler_heap)(dev, (uint8_t *)t.cpu);
+-   heap = t.gpu;
+-#endif
+-
++   heap = JOBX(emit_tiler_heap)(batch);
+    batch->tiler_ctx.bifrost.heap = heap;
+ 
+    t = pan_pool_alloc_desc(&batch->pool.base, TILER_CONTEXT);
+-- 
+2.42.0
+

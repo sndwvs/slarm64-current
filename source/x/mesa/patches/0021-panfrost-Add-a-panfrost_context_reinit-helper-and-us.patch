@@ -1,0 +1,96 @@
+From 126ad7e3f242d553ab7d78a0c175bb6edd52bdc7 Mon Sep 17 00:00:00 2001
+From: Boris Brezillon <boris.brezillon@collabora.com>
+Date: Tue, 5 Sep 2023 17:06:04 +0200
+Subject: [PATCH 21/64] panfrost: Add a panfrost_context_reinit() helper and
+ use it
+
+When something fails on a queue, we need to destroy the group and
+recreate it to start from a fresh state. Stop open-coding this logic
+and provide it as a helper that calls the ->context_{cleanup,init}()
+arch-specific init hooks.
+
+Signed-off-by: Boris Brezillon <boris.brezillon@collabora.com>
+---
+ src/gallium/drivers/panfrost/pan_context.c |  6 ++++
+ src/gallium/drivers/panfrost/pan_context.h |  2 ++
+ src/gallium/drivers/panfrost/pan_job.c     | 39 +---------------------
+ 3 files changed, 9 insertions(+), 38 deletions(-)
+
+diff --git a/src/gallium/drivers/panfrost/pan_context.c b/src/gallium/drivers/panfrost/pan_context.c
+index 9fb655413c4..dac0a87994c 100644
+--- a/src/gallium/drivers/panfrost/pan_context.c
++++ b/src/gallium/drivers/panfrost/pan_context.c
+@@ -990,3 +990,9 @@ panfrost_create_context(struct pipe_screen *screen, void *priv, unsigned flags)
+ 
+    return gallium;
+ }
++
++void panfrost_context_reinit(struct panfrost_context *ctx)
++{
++   pan_screen(ctx->base.screen)->vtbl.context_cleanup(ctx);
++   pan_screen(ctx->base.screen)->vtbl.context_init(ctx);
++}
+diff --git a/src/gallium/drivers/panfrost/pan_context.h b/src/gallium/drivers/panfrost/pan_context.h
+index bc6b6f140c3..5a6818ec62a 100644
+--- a/src/gallium/drivers/panfrost/pan_context.h
++++ b/src/gallium/drivers/panfrost/pan_context.h
+@@ -529,4 +529,6 @@ void panfrost_track_image_access(struct panfrost_batch *batch,
+                                  enum pipe_shader_type stage,
+                                  struct pipe_image_view *image);
+ 
++void panfrost_context_reinit(struct panfrost_context *ctx);
++
+ #endif
+diff --git a/src/gallium/drivers/panfrost/pan_job.c b/src/gallium/drivers/panfrost/pan_job.c
+index b5d94b8342e..eb8b0315a55 100644
+--- a/src/gallium/drivers/panfrost/pan_job.c
++++ b/src/gallium/drivers/panfrost/pan_job.c
+@@ -940,44 +940,7 @@ panfrost_batch_submit_cs_ioctl(struct panfrost_batch *batch, mali_ptr cs_start,
+                                         vm_sync_handle, vm_sync_signal_point,
+                                         true);
+    } else {
+-      struct drm_panthor_group_get_state state = {
+-         .group_handle = ctx->group.handle,
+-      };
+-
+-      ret = drmIoctl(panfrost_device_fd(dev), DRM_IOCTL_PANTHOR_GROUP_GET_STATE,
+-                     &state);
+-      assert(!ret);
+-      if (state.state != 0) {
+-         struct drm_panthor_group_destroy gd = {
+-            .group_handle = ctx->group.handle,
+-         };
+-
+-         ret = drmIoctl(panfrost_device_fd(dev),
+-                        DRM_IOCTL_PANTHOR_GROUP_DESTROY, &gd);
+-         assert(!ret);
+-
+-         struct drm_panthor_queue_create qc[] = {{
+-            .priority = 1,
+-            .ringbuf_size = 64 * 1024,
+-         }};
+-
+-         struct drm_panthor_group_create gc = {
+-            .compute_core_mask = ~0,
+-            .fragment_core_mask = ~0,
+-            .tiler_core_mask = ~0,
+-            .max_compute_cores = 64,
+-            .max_fragment_cores = 64,
+-            .max_tiler_cores = 1,
+-            .priority = PANTHOR_GROUP_PRIORITY_MEDIUM,
+-            .queues = DRM_PANTHOR_OBJ_ARRAY(ARRAY_SIZE(qc), qc),
+-            .vm_id = pan_kmod_vm_handle(dev->kmod.vm),
+-         };
+-
+-         ret = drmIoctl(panfrost_device_fd(dev), DRM_IOCTL_PANTHOR_GROUP_CREATE,
+-                        &gc);
+-         assert(!ret);
+-         ctx->group.handle = gc.group_handle;
+-      }
++      panfrost_context_reinit(ctx);
+    }
+ 
+    free(syncs);
+-- 
+2.42.0
+

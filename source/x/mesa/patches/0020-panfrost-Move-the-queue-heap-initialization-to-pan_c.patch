@@ -1,0 +1,235 @@
+From 283fde885b4f9da73ea879632fcba78ae9a9c02c Mon Sep 17 00:00:00 2001
+From: Boris Brezillon <boris.brezillon@collabora.com>
+Date: Tue, 5 Sep 2023 16:44:51 +0200
+Subject: [PATCH 20/64] panfrost: Move the queue/heap initialization to
+ pan_cmdstream.c
+
+Now that we have a arch-specific hook for things related to context
+initialization, we can move the content of
+panfrost_{init,cleanup}_cs_queue() there.
+
+Signed-off-by: Boris Brezillon <boris.brezillon@collabora.com>
+---
+ src/gallium/drivers/panfrost/pan_cmdstream.c | 77 ++++++++++++++++++++
+ src/gallium/drivers/panfrost/pan_context.c   | 77 --------------------
+ 2 files changed, 77 insertions(+), 77 deletions(-)
+
+diff --git a/src/gallium/drivers/panfrost/pan_cmdstream.c b/src/gallium/drivers/panfrost/pan_cmdstream.c
+index 7e31967b1bf..46184c18cb8 100644
+--- a/src/gallium/drivers/panfrost/pan_cmdstream.c
++++ b/src/gallium/drivers/panfrost/pan_cmdstream.c
+@@ -49,6 +49,8 @@
+ #include "pan_texture.h"
+ #include "pan_util.h"
+ 
++#include "drm-uapi/panthor_drm.h"
++
+ #define PAN_GPU_INDIRECTS (PAN_ARCH == 7)
+ 
+ struct panfrost_rasterizer {
+@@ -5105,6 +5107,75 @@ panfrost_sampler_view_destroy(struct pipe_context *pctx,
+    ralloc_free(view);
+ }
+ 
++#if PAN_ARCH >= 10
++static void
++panfrost_csf_init_context(struct panfrost_context *ctx)
++{
++   struct panfrost_device *dev = pan_device(ctx->base.screen);
++   struct drm_panthor_queue_create qc[] = {{
++      .priority = 1,
++      .ringbuf_size = 64 * 1024,
++   }};
++
++   struct drm_panthor_group_create gc = {
++      .compute_core_mask = dev->kmod.props.shader_present,
++      .fragment_core_mask = dev->kmod.props.shader_present,
++      .tiler_core_mask = 1,
++      .max_compute_cores = util_bitcount64(dev->kmod.props.shader_present),
++      .max_fragment_cores = util_bitcount64(dev->kmod.props.shader_present),
++      .max_tiler_cores = 1,
++      .priority = PANTHOR_GROUP_PRIORITY_MEDIUM,
++      .queues = DRM_PANTHOR_OBJ_ARRAY(ARRAY_SIZE(qc), qc),
++      .vm_id = pan_kmod_vm_handle(dev->kmod.vm),
++   };
++
++   int ret =
++      drmIoctl(panfrost_device_fd(dev), DRM_IOCTL_PANTHOR_GROUP_CREATE, &gc);
++
++   assert(!ret);
++
++   ctx->group.handle = gc.group_handle;
++
++   /* Get tiler heap */
++   struct drm_panthor_tiler_heap_create thc = {
++      .vm_id = pan_kmod_vm_handle(dev->kmod.vm),
++      .chunk_size = 2 * 1024 * 1024,
++      .initial_chunk_count = 5,
++      .max_chunks = 64 * 1024,
++      .target_in_flight = 65535,
++   };
++   ret = drmIoctl(panfrost_device_fd(dev), DRM_IOCTL_PANTHOR_TILER_HEAP_CREATE,
++                  &thc);
++
++   assert(!ret);
++
++   ctx->heap.handle = thc.handle;
++   ctx->heap.tiler_heap_ctx_gpu_va = thc.tiler_heap_ctx_gpu_va;
++   ctx->heap.first_heap_chunk_gpu_va = thc.first_heap_chunk_gpu_va;
++}
++
++static void
++panfrost_csf_cleanup_context(struct panfrost_context *ctx)
++{
++   struct panfrost_device *dev = pan_device(ctx->base.screen);
++   struct drm_panthor_tiler_heap_destroy thd = {
++      .handle = ctx->heap.handle,
++   };
++   int ret = drmIoctl(panfrost_device_fd(dev),
++                      DRM_IOCTL_PANTHOR_TILER_HEAP_DESTROY, &thd);
++   assert(!ret);
++   panfrost_bo_unreference(ctx->heap.desc_bo);
++
++   struct drm_panthor_group_destroy gd = {
++      .group_handle = ctx->group.handle,
++   };
++
++   ret =
++      drmIoctl(panfrost_device_fd(dev), DRM_IOCTL_PANTHOR_GROUP_DESTROY, &gd);
++   assert(!ret);
++}
++#endif
++
+ static void
+ context_populate_vtbl(struct pipe_context *pipe)
+ {
+@@ -5125,11 +5196,17 @@ context_populate_vtbl(struct pipe_context *pipe)
+ static void
+ context_init(struct panfrost_context *ctx)
+ {
++#if PAN_ARCH >= 10
++   panfrost_csf_init_context(ctx);
++#endif
+ }
+ 
+ static void
+ context_cleanup(struct panfrost_context *ctx)
+ {
++#if PAN_ARCH >= 10
++   panfrost_csf_cleanup_context(ctx);
++#endif
+ }
+ 
+ #if PAN_ARCH <= 5
+diff --git a/src/gallium/drivers/panfrost/pan_context.c b/src/gallium/drivers/panfrost/pan_context.c
+index 102369a28e0..9fb655413c4 100644
+--- a/src/gallium/drivers/panfrost/pan_context.c
++++ b/src/gallium/drivers/panfrost/pan_context.c
+@@ -548,31 +548,6 @@ panfrost_render_condition(struct pipe_context *pipe, struct pipe_query *query,
+    ctx->cond_mode = mode;
+ }
+ 
+-static void
+-panfrost_cleanup_cs_queue(struct panfrost_context *ctx)
+-{
+-   struct panfrost_device *dev = pan_device(ctx->base.screen);
+-
+-   if (dev->arch < 10)
+-      return;
+-
+-   struct drm_panthor_tiler_heap_destroy thd = {
+-      .handle = ctx->heap.handle,
+-   };
+-   int ret = drmIoctl(panfrost_device_fd(dev),
+-                      DRM_IOCTL_PANTHOR_TILER_HEAP_DESTROY, &thd);
+-   assert(!ret);
+-   panfrost_bo_unreference(ctx->heap.desc_bo);
+-
+-   struct drm_panthor_group_destroy gd = {
+-      .group_handle = ctx->group.handle,
+-   };
+-
+-   ret =
+-      drmIoctl(panfrost_device_fd(dev), DRM_IOCTL_PANTHOR_GROUP_DESTROY, &gd);
+-   assert(!ret);
+-}
+-
+ static void
+ panfrost_destroy(struct pipe_context *pipe)
+ {
+@@ -597,7 +572,6 @@ panfrost_destroy(struct pipe_context *pipe)
+       close(panfrost->in_sync_fd);
+ 
+    drmSyncobjDestroy(panfrost_device_fd(dev), panfrost->syncobj);
+-   panfrost_cleanup_cs_queue(panfrost);
+    ralloc_free(pipe);
+ }
+ 
+@@ -875,56 +849,6 @@ panfrost_memory_barrier(struct pipe_context *pctx, unsigned flags)
+    panfrost_flush_all_batches(pan_context(pctx), "Memory barrier");
+ }
+ 
+-static void
+-panfrost_init_cs_queue(struct panfrost_context *ctx)
+-{
+-   struct panfrost_device *dev = pan_device(ctx->base.screen);
+-
+-   if (dev->arch < 10)
+-      return;
+-
+-   struct drm_panthor_queue_create qc[] = {{
+-      .priority = 1,
+-      .ringbuf_size = 64 * 1024,
+-   }};
+-
+-   struct drm_panthor_group_create gc = {
+-      .compute_core_mask = dev->kmod.props.shader_present,
+-      .fragment_core_mask = dev->kmod.props.shader_present,
+-      .tiler_core_mask = 1,
+-      .max_compute_cores = util_bitcount64(dev->kmod.props.shader_present),
+-      .max_fragment_cores = util_bitcount64(dev->kmod.props.shader_present),
+-      .max_tiler_cores = 1,
+-      .priority = PANTHOR_GROUP_PRIORITY_MEDIUM,
+-      .queues = DRM_PANTHOR_OBJ_ARRAY(ARRAY_SIZE(qc), qc),
+-      .vm_id = pan_kmod_vm_handle(dev->kmod.vm),
+-   };
+-
+-   int ret =
+-      drmIoctl(panfrost_device_fd(dev), DRM_IOCTL_PANTHOR_GROUP_CREATE, &gc);
+-
+-   assert(!ret);
+-
+-   ctx->group.handle = gc.group_handle;
+-
+-   /* Get tiler heap */
+-   struct drm_panthor_tiler_heap_create thc = {
+-      .vm_id = pan_kmod_vm_handle(dev->kmod.vm),
+-      .chunk_size = 2 * 1024 * 1024,
+-      .initial_chunk_count = 5,
+-      .max_chunks = 64 * 1024,
+-      .target_in_flight = 65535,
+-   };
+-   ret = drmIoctl(panfrost_device_fd(dev), DRM_IOCTL_PANTHOR_TILER_HEAP_CREATE,
+-                  &thc);
+-
+-   assert(!ret);
+-
+-   ctx->heap.handle = thc.handle;
+-   ctx->heap.tiler_heap_ctx_gpu_va = thc.tiler_heap_ctx_gpu_va;
+-   ctx->heap.first_heap_chunk_gpu_va = thc.first_heap_chunk_gpu_va;
+-}
+-
+ static void
+ panfrost_create_fence_fd(struct pipe_context *pctx,
+                          struct pipe_fence_handle **pfence, int fd,
+@@ -1062,7 +986,6 @@ panfrost_create_context(struct pipe_screen *screen, void *priv, unsigned flags)
+    ret = drmSyncobjCreate(panfrost_device_fd(dev), 0, &ctx->in_sync_obj);
+    assert(!ret);
+ 
+-   panfrost_init_cs_queue(ctx);
+    pan_screen(screen)->vtbl.context_init(ctx);
+ 
+    return gallium;
+-- 
+2.42.0
+

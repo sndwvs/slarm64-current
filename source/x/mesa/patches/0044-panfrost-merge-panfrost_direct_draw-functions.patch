@@ -1,0 +1,584 @@
+From d11b1d453e47e36877df8e321a4297bd1f09185e Mon Sep 17 00:00:00 2001
+From: Erik Faye-Lund <erik.faye-lund@collabora.com>
+Date: Wed, 16 Aug 2023 07:44:26 +0000
+Subject: [PATCH 44/64] panfrost: merge panfrost_direct_draw functions
+
+These do enough of the same to be the same function.
+---
+ src/gallium/drivers/panfrost/pan_cmdstream.c | 499 +++++++++----------
+ 1 file changed, 230 insertions(+), 269 deletions(-)
+
+diff --git a/src/gallium/drivers/panfrost/pan_cmdstream.c b/src/gallium/drivers/panfrost/pan_cmdstream.c
+index 54f3915caee..c26145c5820 100644
+--- a/src/gallium/drivers/panfrost/pan_cmdstream.c
++++ b/src/gallium/drivers/panfrost/pan_cmdstream.c
+@@ -3766,260 +3766,6 @@ panfrost_update_point_sprite_shader(struct panfrost_context *ctx,
+ }
+ 
+ #if PAN_USE_CSF
+-/*
+- * Entrypoint for draws with CSF Mali. This is split out from JM as the handling
+- * of indirect draws is completely different, now that we can use the CEU, and
+- * the memory allocation patterns are different.
+- */
+-static void
+-panfrost_direct_draw(struct panfrost_batch *batch,
+-                     const struct pipe_draw_info *info, unsigned drawid_offset,
+-                     const struct pipe_draw_start_count_bias *draw)
+-{
+-   if (!draw->count || !info->instance_count)
+-      return;
+-
+-   struct panfrost_context *ctx = batch->ctx;
+-
+-   panfrost_update_point_sprite_shader(ctx, info);
+-
+-   /* Take into account a negative bias */
+-   ctx->vertex_count =
+-      draw->count + (info->index_size ? abs(draw->index_bias) : 0);
+-   ctx->instance_count = info->instance_count;
+-   ctx->base_vertex = info->index_size ? draw->index_bias : 0;
+-   ctx->base_instance = info->start_instance;
+-   ctx->active_prim = info->mode;
+-   ctx->drawid = drawid_offset;
+-
+-   panfrost_update_state_3d(batch);
+-   panfrost_update_shader_state(batch, PIPE_SHADER_VERTEX);
+-   panfrost_update_shader_state(batch, PIPE_SHADER_FRAGMENT);
+-   panfrost_clean_state_3d(ctx);
+-
+-   struct panfrost_compiled_shader *vs = ctx->prog[PIPE_SHADER_VERTEX];
+-   struct panfrost_compiled_shader *fs = ctx->prog[PIPE_SHADER_FRAGMENT];
+-   bool fs_required = panfrost_fs_required(
+-      fs, ctx->blend, &ctx->pipe_framebuffer, ctx->depth_stencil);
+-
+-   assert(vs->info.vs.idvs && "IDVS required for CSF");
+-   bool secondary_shader = vs->info.vs.secondary_enable && fs_required;
+-   mali_ptr indices = 0;
+-
+-   if (info->index_size) {
+-      indices = panfrost_get_index_buffer(batch, info, draw);
+-   } else {
+-      ctx->offset_start = draw->start;
+-   }
+-
+-   panfrost_statistics_record(ctx, info, draw);
+-
+-   /* Same register for XFB (compute) and IDVS */
+-   ceu_builder *b = batch->ceu_builder;
+-   ceu_move64_to(b, ceu_reg64(b, 24), batch->tls.gpu);
+-
+-   if (ctx->uncompiled[PIPE_SHADER_VERTEX]->xfb &&
+-       batch->ctx->streamout.num_targets > 0) {
+-      panfrost_launch_xfb(batch, info, 0, 0, draw->start, draw->count);
+-   }
+-
+-   /* Increment transform feedback offsets */
+-   panfrost_update_streamout_offsets(ctx);
+-
+-   if (panfrost_batch_skip_rasterization(batch))
+-      return;
+-
+-   panfrost_emit_shader_regs(batch, PIPE_SHADER_VERTEX,
+-                             panfrost_get_position_shader(batch, info));
+-
+-   if (fs_required) {
+-      panfrost_emit_shader_regs(batch, PIPE_SHADER_FRAGMENT,
+-                                batch->rsd[PIPE_SHADER_FRAGMENT]);
+-   } else {
+-      ceu_move64_to(b, ceu_reg64(b, 4), 0);
+-      ceu_move64_to(b, ceu_reg64(b, 12), 0);
+-      ceu_move64_to(b, ceu_reg64(b, 20), 0);
+-   }
+-
+-   if (secondary_shader) {
+-      ceu_move64_to(b, ceu_reg64(b, 18), panfrost_get_varying_shader(batch));
+-   }
+-
+-   ceu_move64_to(b, ceu_reg64(b, 24), batch->tls.gpu);
+-   ceu_move64_to(b, ceu_reg64(b, 30), batch->tls.gpu);
+-   ceu_move32_to(b, ceu_reg32(b, 33), draw->count);
+-   ceu_move32_to(b, ceu_reg32(b, 34), info->instance_count);
+-   ceu_move32_to(b, ceu_reg32(b, 35), 0);
+-
+-   /* Base vertex offset on Valhall is used for both indexed and
+-    * non-indexed draws, in a simple way for either. Handle both cases.
+-    */
+-   ceu_move32_to(b, ceu_reg32(b, 36),
+-                 info->index_size ? draw->index_bias : draw->start);
+-
+-   if (info->index_size)
+-      ceu_move32_to(b, ceu_reg32(b, 39), info->index_size * draw->count);
+-   else
+-      ceu_move32_to(b, ceu_reg32(b, 39), 0);
+-
+-   ceu_move64_to(b, ceu_reg64(b, 40),
+-                 panfrost_batch_get_bifrost_tiler(batch, ~0));
+-   ceu_move64_to(b, ceu_reg64(b, 86), batch->tiler_ctx.bifrost.heap);
+-
+-   STATIC_ASSERT(sizeof(batch->scissor) == pan_size(SCISSOR));
+-   STATIC_ASSERT(sizeof(uint64_t) == pan_size(SCISSOR));
+-   uint64_t *sbd = (uint64_t *)&batch->scissor[0];
+-   ceu_move64_to(b, ceu_reg64(b, 42), *sbd);
+-
+-   ceu_move32_to(b, ceu_reg32(b, 44), fui(batch->minimum_z));
+-   ceu_move32_to(b, ceu_reg32(b, 45), fui(batch->maximum_z));
+-
+-   if (ctx->occlusion_query && ctx->active_queries) {
+-      struct panfrost_resource *rsrc = pan_resource(ctx->occlusion_query->rsrc);
+-      ceu_move64_to(b, ceu_reg64(b, 46), rsrc->image.data.bo->ptr.gpu);
+-      panfrost_batch_write_rsrc(ctx->batch, rsrc, PIPE_SHADER_FRAGMENT);
+-   }
+-
+-   ceu_move32_to(b, ceu_reg32(b, 48), panfrost_vertex_attribute_stride(vs, fs));
+-   ceu_move64_to(b, ceu_reg64(b, 50),
+-                 batch->blend | MAX2(batch->key.nr_cbufs, 1));
+-   ceu_move64_to(b, ceu_reg64(b, 52), batch->depth_stencil);
+-
+-   if (info->index_size)
+-      ceu_move64_to(b, ceu_reg64(b, 54), indices);
+-
+-   uint32_t primitive_flags = 0;
+-   pan_pack(&primitive_flags, PRIMITIVE_FLAGS, cfg) {
+-      if (panfrost_writes_point_size(ctx))
+-         cfg.point_size_array_format = MALI_POINT_SIZE_ARRAY_FORMAT_FP16;
+-
+-      //                cfg.allow_rotating_primitives =
+-      //                pan_allow_rotating_primitives(fs, info);
+-
+-      /* Non-fixed restart indices should have been lowered */
+-      assert(!cfg.primitive_restart || panfrost_is_implicit_prim_restart(info));
+-      cfg.primitive_restart = info->primitive_restart;
+-
+-      cfg.position_fifo_format = panfrost_writes_point_size(ctx)
+-                                    ? MALI_FIFO_FORMAT_EXTENDED
+-                                    : MALI_FIFO_FORMAT_BASIC;
+-   }
+-
+-   ceu_move32_to(b, ceu_reg32(b, 56), primitive_flags);
+-
+-   struct pipe_rasterizer_state *rast = &ctx->rasterizer->base;
+-
+-   uint32_t dcd_flags0 = 0, dcd_flags1 = 0;
+-   pan_pack(&dcd_flags0, DCD_FLAGS_0, cfg) {
+-      bool polygon = (u_reduced_prim(info->mode) == MESA_PRIM_TRIANGLES);
+-
+-      /*
+-       * From the Gallium documentation,
+-       * pipe_rasterizer_state::cull_face "indicates which faces of
+-       * polygons to cull". Points and lines are not considered
+-       * polygons and should be drawn even if all faces are culled.
+-       * The hardware does not take primitive type into account when
+-       * culling, so we need to do that check ourselves.
+-       */
+-      cfg.cull_front_face = polygon && (rast->cull_face & PIPE_FACE_FRONT);
+-      cfg.cull_back_face = polygon && (rast->cull_face & PIPE_FACE_BACK);
+-      cfg.front_face_ccw = rast->front_ccw;
+-
+-      cfg.multisample_enable = rast->multisample;
+-
+-      /* Use per-sample shading if required by API Also use it when a
+-       * blend shader is used with multisampling, as this is handled
+-       * by a single ST_TILE in the blend shader with the current
+-       * sample ID, requiring per-sample shading.
+-       */
+-      cfg.evaluate_per_sample =
+-         (rast->multisample &&
+-          ((ctx->min_samples > 1) || ctx->valhall_has_blend_shader));
+-
+-      cfg.single_sampled_lines = !rast->multisample;
+-
+-      if (fs_required) {
+-         bool has_oq = ctx->occlusion_query && ctx->active_queries;
+-         struct pan_earlyzs_state earlyzs = pan_earlyzs_get(
+-            fs->earlyzs, ctx->depth_stencil->writes_zs || has_oq,
+-            ctx->blend->base.alpha_to_coverage,
+-            ctx->depth_stencil->zs_always_passes);
+-
+-         if (has_oq) {
+-            if (ctx->occlusion_query->type == PIPE_QUERY_OCCLUSION_COUNTER)
+-               cfg.occlusion_query = MALI_OCCLUSION_MODE_COUNTER;
+-            else
+-               cfg.occlusion_query = MALI_OCCLUSION_MODE_PREDICATE;
+-         }
+-
+-         cfg.pixel_kill_operation = earlyzs.kill;
+-         cfg.zs_update_operation = earlyzs.update;
+-
+-         cfg.allow_forward_pixel_to_kill =
+-            pan_allow_forward_pixel_to_kill(ctx, fs);
+-         cfg.allow_forward_pixel_to_be_killed = !fs->info.writes_global;
+-
+-         cfg.overdraw_alpha0 = panfrost_overdraw_alpha(ctx, 0);
+-         cfg.overdraw_alpha1 = panfrost_overdraw_alpha(ctx, 1);
+-
+-         /* Also use per-sample shading if required by the shader
+-          */
+-         cfg.evaluate_per_sample |= fs->info.fs.sample_shading;
+-
+-         /* Unlike Bifrost, alpha-to-coverage must be included in
+-          * this identically-named flag. Confusing, isn't it?
+-          */
+-         cfg.shader_modifies_coverage = fs->info.fs.writes_coverage ||
+-                                        fs->info.fs.can_discard ||
+-                                        ctx->blend->base.alpha_to_coverage;
+-
+-         cfg.alpha_to_coverage = ctx->blend->base.alpha_to_coverage;
+-      } else {
+-         /* These operations need to be FORCE to benefit from the
+-          * depth-only pass optimizations.
+-          */
+-         cfg.pixel_kill_operation = MALI_PIXEL_KILL_FORCE_EARLY;
+-         cfg.zs_update_operation = MALI_PIXEL_KILL_FORCE_EARLY;
+-
+-         /* No shader and no blend => no shader or blend
+-          * reasons to disable FPK. The only FPK-related state
+-          * not covered is alpha-to-coverage which we don't set
+-          * without blend.
+-          */
+-         cfg.allow_forward_pixel_to_kill = true;
+-
+-         /* No shader => no shader side effects */
+-         cfg.allow_forward_pixel_to_be_killed = true;
+-
+-         /* Alpha isn't written so these are vacuous */
+-         cfg.overdraw_alpha0 = true;
+-         cfg.overdraw_alpha1 = true;
+-      }
+-   }
+-
+-   pan_pack(&dcd_flags1, DCD_FLAGS_1, cfg) {
+-      cfg.sample_mask = rast->multisample ? ctx->sample_mask : 0xFFFF;
+-
+-      if (fs_required) {
+-         /* See JM Valhall equivalent code */
+-         cfg.render_target_mask =
+-            (fs->info.outputs_written >> FRAG_RESULT_DATA0) & ctx->fb_rt_mask;
+-      }
+-   }
+-
+-   ceu_move32_to(b, ceu_reg32(b, 57), dcd_flags0);
+-   ceu_move32_to(b, ceu_reg32(b, 58), dcd_flags1);
+-
+-   uint64_t primsize = 0;
+-   panfrost_emit_primitive_size(ctx, info->mode == MESA_PRIM_POINTS, 0,
+-                                &primsize);
+-   ceu_move64_to(b, ceu_reg64(b, 60), primsize);
+-
+-   ceu_run_idvs(b, pan_draw_mode(info->mode),
+-                panfrost_translate_index_size(info->index_size),
+-                secondary_shader);
+-}
+-
+ /*
+  * Launch grid is the compute equivalent of draw_vbo. Set up the registers for a
+  * compute kernel and emit the run_compute command.
+@@ -4123,9 +3869,9 @@ panfrost_launch_grid(struct pipe_context *pipe,
+ 
+    panfrost_flush_all_batches(ctx, "Launch grid post-barrier");
+ }
+-#else
++#endif
+ /*
+- * Entrypoint for draws on JM Mali. Depending on generation, this requires
++ * Entrypoint for draws on JM/CSF Mali. Depending on generation, this requires
+  * emitting jobs for indirect drawing, transform feedback, vertex shading, and
+  * tiling.
+  */
+@@ -4151,23 +3897,33 @@ panfrost_direct_draw(struct panfrost_batch *batch,
+    ctx->drawid = drawid_offset;
+ 
+    struct panfrost_compiled_shader *vs = ctx->prog[PIPE_SHADER_VERTEX];
++   struct panfrost_compiled_shader *fs = ctx->prog[PIPE_SHADER_FRAGMENT];
+ 
+-   bool idvs = vs->info.vs.idvs;
+    bool secondary_shader = vs->info.vs.secondary_enable;
+-
++   bool idvs = vs->info.vs.idvs;
+    UNUSED struct panfrost_ptr tiler, vertex;
++   bool fs_required;
+ 
+-   if (idvs) {
+-#if PAN_ARCH >= 9
+-      tiler = pan_pool_alloc_desc(&batch->pool.base, MALLOC_VERTEX_JOB);
++   if (PAN_USE_CSF) {
++      fs_required = panfrost_fs_required(fs, ctx->blend, &ctx->pipe_framebuffer,
++                                         ctx->depth_stencil);
++      assert(idvs && "IDVS required for CSF");
++      secondary_shader = secondary_shader && fs_required;
++   } else {
++#if !PAN_USE_CSF
++      if (idvs) {
++#if PAN_ARCH == 9
++         tiler = pan_pool_alloc_desc(&batch->pool.base, MALLOC_VERTEX_JOB);
+ #elif PAN_ARCH >= 6
+-      tiler = pan_pool_alloc_desc(&batch->pool.base, INDEXED_VERTEX_JOB);
++         tiler = pan_pool_alloc_desc(&batch->pool.base, INDEXED_VERTEX_JOB);
+ #else
+-      unreachable("IDVS is unsupported on Midgard");
++         unreachable("IDVS is unsupported on Midgard");
++#endif
++      } else {
++         vertex = pan_pool_alloc_desc(&batch->pool.base, COMPUTE_JOB);
++         tiler = pan_pool_alloc_desc(&batch->pool.base, TILER_JOB);
++      }
+ #endif
+-   } else {
+-      vertex = pan_pool_alloc_desc(&batch->pool.base, COMPUTE_JOB);
+-      tiler = pan_pool_alloc_desc(&batch->pool.base, TILER_JOB);
+    }
+ 
+    unsigned vertex_count = ctx->vertex_count;
+@@ -4179,7 +3935,8 @@ panfrost_direct_draw(struct panfrost_batch *batch,
+       indices = panfrost_get_index_buffer(batch, info, draw);
+ 
+       /* Use index count to estimate vertex count */
+-      panfrost_increase_vertex_count(batch, draw->count);
++      if (!PAN_USE_CSF)
++         panfrost_increase_vertex_count(batch, draw->count);
+    } else if (info->index_size) {
+       indices = panfrost_get_index_buffer_bounded(batch, info, draw, &min_index,
+                                                   &max_index);
+@@ -4190,10 +3947,12 @@ panfrost_direct_draw(struct panfrost_batch *batch,
+       panfrost_increase_vertex_count(batch, vertex_count);
+    } else {
+       ctx->offset_start = draw->start;
+-      panfrost_increase_vertex_count(batch, vertex_count);
++
++      if (!PAN_USE_CSF)
++         panfrost_increase_vertex_count(batch, vertex_count);
+    }
+ 
+-   if (info->instance_count > 1) {
++   if (!PAN_USE_CSF && info->instance_count > 1) {
+       unsigned count = vertex_count;
+ 
+       /* Index-Driven Vertex Shading requires different instances to
+@@ -4244,6 +4003,12 @@ panfrost_direct_draw(struct panfrost_batch *batch,
+    panfrost_update_shader_state(batch, PIPE_SHADER_FRAGMENT);
+    panfrost_clean_state_3d(ctx);
+ 
++#if PAN_USE_CSF
++   /* Same register for XFB (compute) and IDVS */
++   ceu_builder *b = batch->ceu_builder;
++   ceu_move64_to(b, ceu_reg64(b, 24), batch->tls.gpu);
++#endif
++
+    if (ctx->uncompiled[PIPE_SHADER_VERTEX]->xfb) {
+ #if PAN_ARCH >= 9
+       mali_ptr attribs = 0, attrib_bufs = 0;
+@@ -4261,6 +4026,8 @@ panfrost_direct_draw(struct panfrost_batch *batch,
+    if (panfrost_batch_skip_rasterization(batch))
+       return;
+ 
++#if !PAN_USE_CSF
++
+ #if PAN_ARCH == 9
+    assert(idvs && "Memory allocated IDVS required on Valhall");
+ 
+@@ -4290,8 +4057,202 @@ panfrost_direct_draw(struct panfrost_batch *batch,
+       panfrost_emit_vertex_tiler_jobs(batch, &vertex, &tiler);
+    }
+ #endif
++
++#else // PAN_USE_CSF
++
++   panfrost_emit_shader_regs(batch, PIPE_SHADER_VERTEX,
++                             panfrost_get_position_shader(batch, info));
++
++   if (fs_required) {
++      panfrost_emit_shader_regs(batch, PIPE_SHADER_FRAGMENT,
++                                batch->rsd[PIPE_SHADER_FRAGMENT]);
++   } else {
++      ceu_move64_to(b, ceu_reg64(b, 4), 0);
++      ceu_move64_to(b, ceu_reg64(b, 12), 0);
++      ceu_move64_to(b, ceu_reg64(b, 20), 0);
++   }
++
++   if (secondary_shader) {
++      ceu_move64_to(b, ceu_reg64(b, 18), panfrost_get_varying_shader(batch));
++   }
++
++   ceu_move64_to(b, ceu_reg64(b, 24), batch->tls.gpu);
++   ceu_move64_to(b, ceu_reg64(b, 30), batch->tls.gpu);
++   ceu_move32_to(b, ceu_reg32(b, 33), draw->count);
++   ceu_move32_to(b, ceu_reg32(b, 34), info->instance_count);
++   ceu_move32_to(b, ceu_reg32(b, 35), 0);
++
++   /* Base vertex offset on Valhall is used for both indexed and
++    * non-indexed draws, in a simple way for either. Handle both cases.
++    */
++   ceu_move32_to(b, ceu_reg32(b, 36),
++                 info->index_size ? draw->index_bias : draw->start);
++
++   if (info->index_size)
++      ceu_move32_to(b, ceu_reg32(b, 39), info->index_size * draw->count);
++   else
++      ceu_move32_to(b, ceu_reg32(b, 39), 0);
++
++   ceu_move64_to(b, ceu_reg64(b, 40),
++                 panfrost_batch_get_bifrost_tiler(batch, ~0));
++   ceu_move64_to(b, ceu_reg64(b, 86), batch->tiler_ctx.bifrost.heap);
++
++   STATIC_ASSERT(sizeof(batch->scissor) == pan_size(SCISSOR));
++   STATIC_ASSERT(sizeof(uint64_t) == pan_size(SCISSOR));
++   uint64_t *sbd = (uint64_t *)&batch->scissor[0];
++   ceu_move64_to(b, ceu_reg64(b, 42), *sbd);
++
++   ceu_move32_to(b, ceu_reg32(b, 44), fui(batch->minimum_z));
++   ceu_move32_to(b, ceu_reg32(b, 45), fui(batch->maximum_z));
++
++   if (ctx->occlusion_query && ctx->active_queries) {
++      struct panfrost_resource *rsrc = pan_resource(ctx->occlusion_query->rsrc);
++      ceu_move64_to(b, ceu_reg64(b, 46), rsrc->image.data.bo->ptr.gpu);
++      panfrost_batch_write_rsrc(ctx->batch, rsrc, PIPE_SHADER_FRAGMENT);
++   }
++
++   ceu_move32_to(b, ceu_reg32(b, 48), panfrost_vertex_attribute_stride(vs, fs));
++   ceu_move64_to(b, ceu_reg64(b, 50),
++                 batch->blend | MAX2(batch->key.nr_cbufs, 1));
++   ceu_move64_to(b, ceu_reg64(b, 52), batch->depth_stencil);
++
++   if (info->index_size)
++      ceu_move64_to(b, ceu_reg64(b, 54), indices);
++
++   uint32_t primitive_flags = 0;
++   pan_pack(&primitive_flags, PRIMITIVE_FLAGS, cfg) {
++      if (panfrost_writes_point_size(ctx))
++         cfg.point_size_array_format = MALI_POINT_SIZE_ARRAY_FORMAT_FP16;
++
++      //                cfg.allow_rotating_primitives =
++      //                pan_allow_rotating_primitives(fs, info);
++
++      /* Non-fixed restart indices should have been lowered */
++      assert(!cfg.primitive_restart || panfrost_is_implicit_prim_restart(info));
++      cfg.primitive_restart = info->primitive_restart;
++
++      cfg.position_fifo_format = panfrost_writes_point_size(ctx)
++                                    ? MALI_FIFO_FORMAT_EXTENDED
++                                    : MALI_FIFO_FORMAT_BASIC;
++   }
++
++   ceu_move32_to(b, ceu_reg32(b, 56), primitive_flags);
++
++   struct pipe_rasterizer_state *rast = &ctx->rasterizer->base;
++
++   uint32_t dcd_flags0 = 0, dcd_flags1 = 0;
++   pan_pack(&dcd_flags0, DCD_FLAGS_0, cfg) {
++      bool polygon = (u_reduced_prim(info->mode) == MESA_PRIM_TRIANGLES);
++
++      /*
++       * From the Gallium documentation,
++       * pipe_rasterizer_state::cull_face "indicates which faces of
++       * polygons to cull". Points and lines are not considered
++       * polygons and should be drawn even if all faces are culled.
++       * The hardware does not take primitive type into account when
++       * culling, so we need to do that check ourselves.
++       */
++      cfg.cull_front_face = polygon && (rast->cull_face & PIPE_FACE_FRONT);
++      cfg.cull_back_face = polygon && (rast->cull_face & PIPE_FACE_BACK);
++      cfg.front_face_ccw = rast->front_ccw;
++
++      cfg.multisample_enable = rast->multisample;
++
++      /* Use per-sample shading if required by API Also use it when a
++       * blend shader is used with multisampling, as this is handled
++       * by a single ST_TILE in the blend shader with the current
++       * sample ID, requiring per-sample shading.
++       */
++      cfg.evaluate_per_sample =
++         (rast->multisample &&
++          ((ctx->min_samples > 1) || ctx->valhall_has_blend_shader));
++
++      cfg.single_sampled_lines = !rast->multisample;
++
++      if (fs_required) {
++         bool has_oq = ctx->occlusion_query && ctx->active_queries;
++         struct pan_earlyzs_state earlyzs = pan_earlyzs_get(
++            fs->earlyzs, ctx->depth_stencil->writes_zs || has_oq,
++            ctx->blend->base.alpha_to_coverage,
++            ctx->depth_stencil->zs_always_passes);
++
++         if (has_oq) {
++            if (ctx->occlusion_query->type == PIPE_QUERY_OCCLUSION_COUNTER)
++               cfg.occlusion_query = MALI_OCCLUSION_MODE_COUNTER;
++            else
++               cfg.occlusion_query = MALI_OCCLUSION_MODE_PREDICATE;
++         }
++
++         cfg.pixel_kill_operation = earlyzs.kill;
++         cfg.zs_update_operation = earlyzs.update;
++
++         cfg.allow_forward_pixel_to_kill =
++            pan_allow_forward_pixel_to_kill(ctx, fs);
++         cfg.allow_forward_pixel_to_be_killed = !fs->info.writes_global;
++
++         cfg.overdraw_alpha0 = panfrost_overdraw_alpha(ctx, 0);
++         cfg.overdraw_alpha1 = panfrost_overdraw_alpha(ctx, 1);
++
++         /* Also use per-sample shading if required by the shader
++          */
++         cfg.evaluate_per_sample |= fs->info.fs.sample_shading;
++
++         /* Unlike Bifrost, alpha-to-coverage must be included in
++          * this identically-named flag. Confusing, isn't it?
++          */
++         cfg.shader_modifies_coverage = fs->info.fs.writes_coverage ||
++                                        fs->info.fs.can_discard ||
++                                        ctx->blend->base.alpha_to_coverage;
++
++         cfg.alpha_to_coverage = ctx->blend->base.alpha_to_coverage;
++      } else {
++         /* These operations need to be FORCE to benefit from the
++          * depth-only pass optimizations.
++          */
++         cfg.pixel_kill_operation = MALI_PIXEL_KILL_FORCE_EARLY;
++         cfg.zs_update_operation = MALI_PIXEL_KILL_FORCE_EARLY;
++
++         /* No shader and no blend => no shader or blend
++          * reasons to disable FPK. The only FPK-related state
++          * not covered is alpha-to-coverage which we don't set
++          * without blend.
++          */
++         cfg.allow_forward_pixel_to_kill = true;
++
++         /* No shader => no shader side effects */
++         cfg.allow_forward_pixel_to_be_killed = true;
++
++         /* Alpha isn't written so these are vacuous */
++         cfg.overdraw_alpha0 = true;
++         cfg.overdraw_alpha1 = true;
++      }
++   }
++
++   pan_pack(&dcd_flags1, DCD_FLAGS_1, cfg) {
++      cfg.sample_mask = rast->multisample ? ctx->sample_mask : 0xFFFF;
++
++      if (fs_required) {
++         /* See JM Valhall equivalent code */
++         cfg.render_target_mask =
++            (fs->info.outputs_written >> FRAG_RESULT_DATA0) & ctx->fb_rt_mask;
++      }
++   }
++
++   ceu_move32_to(b, ceu_reg32(b, 57), dcd_flags0);
++   ceu_move32_to(b, ceu_reg32(b, 58), dcd_flags1);
++
++   uint64_t primsize = 0;
++   panfrost_emit_primitive_size(ctx, info->mode == MESA_PRIM_POINTS, 0,
++                                &primsize);
++   ceu_move64_to(b, ceu_reg64(b, 60), primsize);
++
++   ceu_run_idvs(b, pan_draw_mode(info->mode),
++                panfrost_translate_index_size(info->index_size),
++                secondary_shader);
++#endif
+ }
+ 
++#if !PAN_USE_CSF
+ /*
+  * Launch grid is the compute equivalent of draw_vbo, so in this routine, we
+  * construct the COMPUTE job and add it to the job chain.
+-- 
+2.42.0
+

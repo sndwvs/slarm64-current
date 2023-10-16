@@ -1,0 +1,47 @@
+From 6b18148e3d1483d0cd1aefc0d1c04264f6a19e80 Mon Sep 17 00:00:00 2001
+From: Boris Brezillon <boris.brezillon@collabora.com>
+Date: Wed, 20 Sep 2023 13:38:53 +0200
+Subject: [PATCH 64/64] panfrost: Move occlusion_query init out of the if
+ (fs_required) branch
+
+Fixes some dEQP-GLES31.functional.fbo.no_attachments.* tests.
+---
+ src/gallium/drivers/panfrost/pan_cmdstream.c | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
+
+diff --git a/src/gallium/drivers/panfrost/pan_cmdstream.c b/src/gallium/drivers/panfrost/pan_cmdstream.c
+index 996b3a0f0d5..efe13568038 100644
+--- a/src/gallium/drivers/panfrost/pan_cmdstream.c
++++ b/src/gallium/drivers/panfrost/pan_cmdstream.c
+@@ -4196,20 +4196,20 @@ csf_emit_draw(struct panfrost_batch *batch, const struct pipe_draw_info *info,
+ 
+       cfg.single_sampled_lines = !rast->multisample;
+ 
++      bool has_oq = ctx->occlusion_query && ctx->active_queries;
++      if (has_oq) {
++         if (ctx->occlusion_query->type == PIPE_QUERY_OCCLUSION_COUNTER)
++            cfg.occlusion_query = MALI_OCCLUSION_MODE_COUNTER;
++         else
++            cfg.occlusion_query = MALI_OCCLUSION_MODE_PREDICATE;
++      }
++
+       if (fs_required) {
+-         bool has_oq = ctx->occlusion_query && ctx->active_queries;
+          struct pan_earlyzs_state earlyzs = pan_earlyzs_get(
+             fs->earlyzs, ctx->depth_stencil->writes_zs || has_oq,
+             ctx->blend->base.alpha_to_coverage,
+             ctx->depth_stencil->zs_always_passes);
+ 
+-         if (has_oq) {
+-            if (ctx->occlusion_query->type == PIPE_QUERY_OCCLUSION_COUNTER)
+-               cfg.occlusion_query = MALI_OCCLUSION_MODE_COUNTER;
+-            else
+-               cfg.occlusion_query = MALI_OCCLUSION_MODE_PREDICATE;
+-         }
+-
+          cfg.pixel_kill_operation = earlyzs.kill;
+          cfg.zs_update_operation = earlyzs.update;
+ 
+-- 
+2.42.0
+

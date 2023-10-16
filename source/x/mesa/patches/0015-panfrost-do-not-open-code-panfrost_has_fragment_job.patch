@@ -1,0 +1,36 @@
+From 520b7054fe75f6eb0e44fc57ac0cf6c2d965aff6 Mon Sep 17 00:00:00 2001
+From: Erik Faye-Lund <erik.faye-lund@collabora.com>
+Date: Wed, 23 Aug 2023 13:22:29 +0200
+Subject: [PATCH 15/64] panfrost: do not open-code panfrost_has_fragment_job()
+
+---
+ src/gallium/drivers/panfrost/pan_job.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/src/gallium/drivers/panfrost/pan_job.c b/src/gallium/drivers/panfrost/pan_job.c
+index 062dac138f8..9dfb5e6530d 100644
+--- a/src/gallium/drivers/panfrost/pan_job.c
++++ b/src/gallium/drivers/panfrost/pan_job.c
+@@ -1056,7 +1056,9 @@ panfrost_batch_submit(struct panfrost_context *ctx,
+    if (!batch->clear && !batch->draws && !batch->any_compute)
+       goto out;
+ 
+-   if (batch->key.zsbuf && panfrost_has_fragment_job(batch)) {
++   bool has_frag = panfrost_has_fragment_job(batch);
++
++   if (batch->key.zsbuf && has_frag) {
+       struct pipe_surface *surf = batch->key.zsbuf;
+       struct panfrost_resource *z_rsrc = pan_resource(surf->texture);
+ 
+@@ -1090,7 +1092,7 @@ panfrost_batch_submit(struct panfrost_context *ctx,
+    screen->vtbl.emit_tls(batch);
+    panfrost_emit_tile_map(batch, &fb);
+ 
+-   if (batch->draw_count > 0 || batch->clear)
++   if (has_frag)
+       screen->vtbl.emit_fbd(batch, &fb);
+ 
+    if (dev->arch >= 10)
+-- 
+2.42.0
+

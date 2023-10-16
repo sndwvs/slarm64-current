@@ -1,0 +1,45 @@
+From 75e2f642f7a16ed46c128bc4e1b766923f9674fd Mon Sep 17 00:00:00 2001
+From: Boris Brezillon <boris.brezillon@collabora.com>
+Date: Tue, 19 Sep 2023 11:25:28 +0200
+Subject: [PATCH 35/64] panfrost: Set batch->any_compute=true any time we issue
+ a compute job
+
+This fixes the can_skip_submit test in panfrost_batch_submit() on
+pre-v10. any_compute=true on XFB is useless since we also increment
+draw_count, but setting it shouldn't hurt, and it makes things
+consistent.
+---
+ src/gallium/drivers/panfrost/pan_cmdstream.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/src/gallium/drivers/panfrost/pan_cmdstream.c b/src/gallium/drivers/panfrost/pan_cmdstream.c
+index 444f7a108cb..48993a9fdbf 100644
+--- a/src/gallium/drivers/panfrost/pan_cmdstream.c
++++ b/src/gallium/drivers/panfrost/pan_cmdstream.c
+@@ -3631,6 +3631,7 @@ panfrost_launch_xfb(struct panfrost_batch *batch,
+ #endif
+    panfrost_add_job(&batch->pool.base, &batch->scoreboard, job_type, true,
+                     false, 0, 0, &t, false);
++   batch->any_compute = true;
+ 
+    ctx->uncompiled[PIPE_SHADER_VERTEX] = vs_uncompiled;
+    ctx->prog[PIPE_SHADER_VERTEX] = vs;
+@@ -3808,6 +3809,7 @@ panfrost_draw(struct panfrost_batch *batch, const struct pipe_draw_info *info,
+                                 batch->rsd[PIPE_SHADER_VERTEX]);
+       /* XXX: Choose correctly */
+       ceu_run_compute(b, 10, MALI_TASK_AXIS_Z);
++      batch->any_compute = true;
+ 
+       ctx->uncompiled[PIPE_SHADER_VERTEX] = vs_uncompiled;
+       ctx->prog[PIPE_SHADER_VERTEX] = vs;
+@@ -4543,6 +4545,7 @@ panfrost_launch_grid(struct pipe_context *pipe,
+    panfrost_add_job(&batch->pool.base, &batch->scoreboard,
+                     MALI_JOB_TYPE_COMPUTE, true, false, indirect_dep, 0, &t,
+                     false);
++   batch->any_compute = true;
+    panfrost_flush_all_batches(ctx, "Launch grid post-barrier");
+ }
+ #endif
+-- 
+2.42.0
+

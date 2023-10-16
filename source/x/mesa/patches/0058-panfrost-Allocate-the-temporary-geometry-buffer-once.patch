@@ -1,0 +1,147 @@
+From b6bb77bff5f80b350dae9bf79e439cc12fc4d10e Mon Sep 17 00:00:00 2001
+From: Boris Brezillon <boris.brezillon@collabora.com>
+Date: Mon, 18 Sep 2023 17:00:02 +0200
+Subject: [PATCH 58/64] panfrost: Allocate the temporary geometry buffer once
+ per context
+
+This buffer is used by the tiler, and tiling operations on a context
+will be serialized.
+---
+ src/gallium/drivers/panfrost/pan_cmdstream.c | 27 ++++++++++++++------
+ src/gallium/drivers/panfrost/pan_context.h   |  2 ++
+ src/panfrost/lib/pan_cs.c                    | 13 ++++------
+ src/panfrost/lib/pan_cs.h                    |  3 ++-
+ 4 files changed, 28 insertions(+), 17 deletions(-)
+
+diff --git a/src/gallium/drivers/panfrost/pan_cmdstream.c b/src/gallium/drivers/panfrost/pan_cmdstream.c
+index a3263915ce8..48d95eec2a1 100644
+--- a/src/gallium/drivers/panfrost/pan_cmdstream.c
++++ b/src/gallium/drivers/panfrost/pan_cmdstream.c
+@@ -3059,13 +3059,12 @@ jm_emit_tiler_heap(struct panfrost_batch *batch)
+ }
+ #endif
+ 
+-#define POSITION_FIFO_SIZE (64 * 1024)
+-
+ static mali_ptr
+ panfrost_batch_get_bifrost_tiler(struct panfrost_batch *batch,
+                                  unsigned vertex_count)
+ {
+-   struct panfrost_device *dev = pan_device(batch->ctx->base.screen);
++   struct panfrost_context *ctx = batch->ctx;
++   struct panfrost_device *dev = pan_device(ctx->base.screen);
+ 
+    if (!vertex_count)
+       return 0;
+@@ -3073,19 +3072,24 @@ panfrost_batch_get_bifrost_tiler(struct panfrost_batch *batch,
+    if (batch->tiler_ctx.bifrost.ctx)
+       return batch->tiler_ctx.bifrost.ctx;
+ 
+-   struct panfrost_ptr t = pan_pool_alloc_aligned(
+-      &batch->pool.base, POSITION_FIFO_SIZE, POSITION_FIFO_SIZE);
++   mali_ptr heap, tmp_geom_buf = 0;
++   u32 tmp_geom_buf_size = 0;
+ 
+-   mali_ptr heap, geom_buf = t.gpu;
++   if (ctx->tmp_geom_bo) {
++      tmp_geom_buf = ctx->tmp_geom_bo->ptr.gpu;
++      tmp_geom_buf_size = ctx->tmp_geom_bo->kmod_bo->size;
++   }
+ 
+    heap = JOBX(emit_tiler_heap)(batch);
+    batch->tiler_ctx.bifrost.heap = heap;
+ 
+-   t = pan_pool_alloc_desc(&batch->pool.base, TILER_CONTEXT);
++   struct panfrost_ptr t =
++      pan_pool_alloc_desc(&batch->pool.base, TILER_CONTEXT);
+    GENX(pan_emit_tiler_ctx)
+    (dev, batch->key.width, batch->key.height,
+     util_framebuffer_get_num_samples(&batch->key),
+-    pan_tristate_get(batch->first_provoking_vertex), heap, geom_buf, t.cpu);
++    pan_tristate_get(batch->first_provoking_vertex), heap, tmp_geom_buf,
++    tmp_geom_buf_size, t.cpu);
+ 
+    batch->tiler_ctx.bifrost.ctx = t.gpu;
+    return batch->tiler_ctx.bifrost.ctx;
+@@ -5056,6 +5060,9 @@ panfrost_sampler_view_destroy(struct pipe_context *pctx,
+ }
+ 
+ #if PAN_USE_CSF
++
++#define POSITION_FIFO_SIZE (64 * 1024)
++
+ static void
+ csf_init_context(struct panfrost_context *ctx)
+ {
+@@ -5108,6 +5115,10 @@ csf_init_context(struct panfrost_context *ctx)
+       heap.top = heap.base + heap.size;
+    }
+ 
++   ctx->tmp_geom_bo = panfrost_bo_create(
++      dev, POSITION_FIFO_SIZE, PAN_BO_INVISIBLE, "Temporary Geometry buffer");
++   assert(ctx->tmp_geom_bo);
++
+    struct panfrost_batch *batch = panfrost_get_batch_for_fbo(ctx);
+ 
+    /* Setup the tiler heap */
+diff --git a/src/gallium/drivers/panfrost/pan_context.h b/src/gallium/drivers/panfrost/pan_context.h
+index 4597343f9ef..0838f38925c 100644
+--- a/src/gallium/drivers/panfrost/pan_context.h
++++ b/src/gallium/drivers/panfrost/pan_context.h
+@@ -236,6 +236,8 @@ struct panfrost_context {
+       uint32_t handle;
+       struct panfrost_bo *desc_bo;
+    } heap;
++
++   struct panfrost_bo *tmp_geom_bo;
+ };
+ 
+ /* Corresponds to the CSO */
+diff --git a/src/panfrost/lib/pan_cs.c b/src/panfrost/lib/pan_cs.c
+index 478c68e8543..25d73a8b8f5 100644
+--- a/src/panfrost/lib/pan_cs.c
++++ b/src/panfrost/lib/pan_cs.c
+@@ -936,7 +936,8 @@ void
+ GENX(pan_emit_tiler_ctx)(const struct panfrost_device *dev, unsigned fb_width,
+                          unsigned fb_height, unsigned nr_samples,
+                          bool first_provoking_vertex, mali_ptr heap,
+-                         mali_ptr geom_buf, void *out)
++                         mali_ptr tmp_geom_buf, size_t tmp_geom_buf_size,
++                         void *out)
+ {
+    unsigned max_levels = dev->tiler_features.max_levels;
+    assert(max_levels >= 2);
+@@ -961,13 +962,9 @@ GENX(pan_emit_tiler_ctx)(const struct panfrost_device *dev, unsigned fb_width,
+       tiler.first_provoking_vertex = first_provoking_vertex;
+ #endif
+ #if PAN_ARCH >= 10
+-      /* Temporary geometry buffer is placed just before the HEAP
+-       * descriptor and is 64KB large.
+-       *
+-       * Note: DDK assigns this pointer in the CS.
+-       */
+-#define POSITION_FIFO_SIZE (64 * 1024)
+-      tiler.geometry_buffer = geom_buf;
++      /* Note: DDK assigns this pointer in the CS. */
++      tiler.geometry_buffer = tmp_geom_buf;
++      tiler.geometry_buffer_size = tmp_geom_buf_size;
+ #endif
+    }
+ }
+diff --git a/src/panfrost/lib/pan_cs.h b/src/panfrost/lib/pan_cs.h
+index dbc1707884e..7f841dec36e 100644
+--- a/src/panfrost/lib/pan_cs.h
++++ b/src/panfrost/lib/pan_cs.h
+@@ -171,7 +171,8 @@ void GENX(pan_emit_tiler_heap)(const struct panfrost_device *dev, void *out);
+ void GENX(pan_emit_tiler_ctx)(const struct panfrost_device *dev,
+                               unsigned fb_width, unsigned fb_height,
+                               unsigned nr_samples, bool first_provoking_vertex,
+-                              mali_ptr heap, mali_ptr geom_buf, void *out);
++                              mali_ptr heap, mali_ptr tmp_geom_buf,
++                              size_t tmp_geom_buf_size, void *out);
+ #endif
+ 
+ #if PAN_ARCH <= 9
+-- 
+2.42.0
+

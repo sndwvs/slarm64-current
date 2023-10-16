@@ -1,0 +1,35 @@
+From 921cc91392786ecbbe14ba7b52f89406570505ab Mon Sep 17 00:00:00 2001
+From: Boris Brezillon <boris.brezillon@collabora.com>
+Date: Tue, 19 Sep 2023 14:52:56 +0200
+Subject: [PATCH 38/64] panfrost: Add spec@egl 1.4@egl-ext_egl_image_storage to
+ the list of failures
+
+The kmod abstraction now enforces that private BOs (those having an
+explicit VM) can't be shared. EGL_MESA_image_dma_buf_export allows
+random images to be exported, but, by the time we get the export request
+we've already flagged the BO as private, and which causes such export
+requests to fail.
+
+Add the test to the failing list instead of trying to fix this case.
+
+Suggested-by: Daniel Stone <daniel.stone@collabora.com>
+Signed-off-by: Boris Brezillon <boris.brezillon@collabora.com>
+---
+ src/panfrost/ci/panfrost-g52-fails.txt | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/src/panfrost/ci/panfrost-g52-fails.txt b/src/panfrost/ci/panfrost-g52-fails.txt
+index d866c2ab01a..c0c46f980c7 100644
+--- a/src/panfrost/ci/panfrost-g52-fails.txt
++++ b/src/panfrost/ci/panfrost-g52-fails.txt
+@@ -160,6 +160,7 @@ spec@arb_texture_view@sampling-2d-array-as-cubemap,Crash
+ spec@arb_transform_feedback_instanced@draw-auto instanced,Fail
+ spec@arb_uniform_buffer_object@rendering-dsa-offset,Fail
+ spec@arb_uniform_buffer_object@rendering-offset,Fail
++spec@egl 1.4@egl-ext_egl_image_storage,Fail
+ spec@egl 1.4@eglterminate then unbind context,Fail
+ spec@egl_chromium_sync_control@conformance@eglGetSyncValuesCHROMIUM_msc_and_sbc_test,Fail
+ spec@egl_chromium_sync_control@conformance,Fail
+-- 
+2.42.0
+

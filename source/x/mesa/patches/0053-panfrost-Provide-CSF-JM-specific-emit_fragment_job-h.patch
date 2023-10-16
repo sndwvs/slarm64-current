@@ -1,0 +1,125 @@
+From 66e33a4370a830f5f39814e07da5060f45f339ae Mon Sep 17 00:00:00 2001
+From: Boris Brezillon <boris.brezillon@collabora.com>
+Date: Mon, 18 Sep 2023 11:22:39 +0200
+Subject: [PATCH 53/64] panfrost: Provide CSF/JM specific emit_fragment_job()
+ helpers
+
+Makes for a cleaner emit_fragment_job() implementation, where all
+job-backend specific stuff are moved to sub-functions.
+---
+ src/gallium/drivers/panfrost/pan_cmdstream.c | 82 +++++++++++---------
+ 1 file changed, 47 insertions(+), 35 deletions(-)
+
+diff --git a/src/gallium/drivers/panfrost/pan_cmdstream.c b/src/gallium/drivers/panfrost/pan_cmdstream.c
+index 8c8f3b24bef..5492175ebef 100644
+--- a/src/gallium/drivers/panfrost/pan_cmdstream.c
++++ b/src/gallium/drivers/panfrost/pan_cmdstream.c
+@@ -2691,43 +2691,11 @@ jm_emit_batch_end(struct panfrost_batch *batch)
+ }
+ #endif
+ 
+-/* Generate a fragment job. This should be called once per frame. (Usually,
+- * this corresponds to eglSwapBuffers or one of glFlush, glFinish)
+- */
++#if PAN_USE_CSF
+ static mali_ptr
+-emit_fragment_job(struct panfrost_batch *batch, const struct pan_fb_info *pfb)
++csf_emit_fragment_job(struct panfrost_batch *batch,
++                      const struct pan_fb_info *pfb)
+ {
+-   /* Mark the affected buffers as initialized, since we're writing to it.
+-    * Also, add the surfaces we're writing to to the batch */
+-
+-   struct pipe_framebuffer_state *fb = &batch->key;
+-
+-   for (unsigned i = 0; i < fb->nr_cbufs; ++i)
+-      panfrost_initialize_surface(batch, fb->cbufs[i]);
+-
+-   panfrost_initialize_surface(batch, fb->zsbuf);
+-
+-   /* The passed tile coords can be out of range in some cases, so we need
+-    * to clamp them to the framebuffer size to avoid a TILE_RANGE_FAULT.
+-    * Theoretically we also need to clamp the coordinates positive, but we
+-    * avoid that edge case as all four values are unsigned. Also,
+-    * theoretically we could clamp the minima, but if that has to happen
+-    * the asserts would fail anyway (since the maxima would get clamped
+-    * and then be smaller than the minima). An edge case of sorts occurs
+-    * when no scissors are added to draw, so by default min=~0 and max=0.
+-    * But that can't happen if any actual drawing occurs (beyond a
+-    * wallpaper reload), so this is again irrelevant in practice. */
+-
+-   batch->maxx = MIN2(batch->maxx, fb->width);
+-   batch->maxy = MIN2(batch->maxy, fb->height);
+-
+-   /* Rendering region must be at least 1x1; otherwise, there is nothing
+-    * to do and the whole job chain should have been discarded. */
+-
+-   assert(batch->maxx > batch->minx);
+-   assert(batch->maxy > batch->miny);
+-
+-#if PAN_USE_CSF
+    ceu_builder *b = batch->ceu_builder;
+ 
+    if (batch->draw_count > 0) {
+@@ -2762,14 +2730,58 @@ emit_fragment_job(struct panfrost_batch *batch, const struct pan_fb_info *pfb)
+    }
+ 
+    return 0;
++}
+ #else
++static mali_ptr
++jm_emit_fragment_job(struct panfrost_batch *batch,
++                     const struct pan_fb_info *pfb)
++{
+    struct panfrost_ptr transfer =
+       pan_pool_alloc_desc(&batch->pool.base, FRAGMENT_JOB);
+ 
+    GENX(pan_emit_fragment_job)(pfb, batch->framebuffer.gpu, transfer.cpu);
+ 
+    return transfer.gpu;
++}
+ #endif
++
++/* Generate a fragment job. This should be called once per frame. (Usually,
++ * this corresponds to eglSwapBuffers or one of glFlush, glFinish)
++ */
++static mali_ptr
++emit_fragment_job(struct panfrost_batch *batch, const struct pan_fb_info *pfb)
++{
++   /* Mark the affected buffers as initialized, since we're writing to it.
++    * Also, add the surfaces we're writing to to the batch */
++
++   struct pipe_framebuffer_state *fb = &batch->key;
++
++   for (unsigned i = 0; i < fb->nr_cbufs; ++i)
++      panfrost_initialize_surface(batch, fb->cbufs[i]);
++
++   panfrost_initialize_surface(batch, fb->zsbuf);
++
++   /* The passed tile coords can be out of range in some cases, so we need
++    * to clamp them to the framebuffer size to avoid a TILE_RANGE_FAULT.
++    * Theoretically we also need to clamp the coordinates positive, but we
++    * avoid that edge case as all four values are unsigned. Also,
++    * theoretically we could clamp the minima, but if that has to happen
++    * the asserts would fail anyway (since the maxima would get clamped
++    * and then be smaller than the minima). An edge case of sorts occurs
++    * when no scissors are added to draw, so by default min=~0 and max=0.
++    * But that can't happen if any actual drawing occurs (beyond a
++    * wallpaper reload), so this is again irrelevant in practice. */
++
++   batch->maxx = MIN2(batch->maxx, fb->width);
++   batch->maxy = MIN2(batch->maxy, fb->height);
++
++   /* Rendering region must be at least 1x1; otherwise, there is nothing
++    * to do and the whole job chain should have been discarded. */
++
++   assert(batch->maxx > batch->minx);
++   assert(batch->maxy > batch->miny);
++
++   return JOBX(emit_fragment_job)(batch, pfb);
+ }
+ 
+ #define DEFINE_CASE(c)                                                         \
+-- 
+2.42.0
+

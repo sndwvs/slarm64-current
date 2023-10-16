@@ -1,0 +1,40 @@
+From fd1e8e90dec7d0eceb303fe2e613fbb0dcba30c3 Mon Sep 17 00:00:00 2001
+From: Boris Brezillon <boris.brezillon@collabora.com>
+Date: Mon, 18 Sep 2023 14:32:36 +0200
+Subject: [PATCH 30/64] fixup! panfrost: debug_printf on unlikely errors
+
+clang-format fixes
+---
+ src/panfrost/lib/kmod/panthor_kmod.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/src/panfrost/lib/kmod/panthor_kmod.c b/src/panfrost/lib/kmod/panthor_kmod.c
+index a1ea39e2c0c..aa69ccb5ab2 100644
+--- a/src/panfrost/lib/kmod/panthor_kmod.c
++++ b/src/panfrost/lib/kmod/panthor_kmod.c
+@@ -9,11 +9,11 @@
+ #include <string.h>
+ #include <xf86drm.h>
+ 
+-#include "util/u_debug.h"
+ #include "util/hash_table.h"
+ #include "util/libsync.h"
+ #include "util/macros.h"
+ #include "util/os_time.h"
++#include "util/u_debug.h"
+ #include "util/vma.h"
+ 
+ #include "drm-uapi/dma-buf.h"
+@@ -405,7 +405,8 @@ panthor_kmod_bo_get_sync_point(struct pan_kmod_bo *bo, uint32_t *sync_handle,
+       close(dmabuf_fd);
+       if (ret) {
+          debug_printf("drmIoctl(..., DMA_BUF_IOCTL_EXPORT_SYNC_FILE, ...) "
+-                      "failed: %d\n", ret);
++                      "failed: %d\n",
++                      ret);
+          return -1;
+       }
+ 
+-- 
+2.42.0
+

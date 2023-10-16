@@ -1,0 +1,1621 @@
+From fefbf965f42acdbe08089b9474ae9e34c42b73d5 Mon Sep 17 00:00:00 2001
+From: Boris Brezillon <boris.brezillon@collabora.com>
+Date: Wed, 5 Jul 2023 10:30:27 +0200
+Subject: [PATCH 09/64] panfrost: Add a backend for the Panthor kernel driver
+
+The Panfrost and Panthor kernel drivers have completely different
+uAPIs requiring completely different implementation for the core stuff.
+Add a new backend to support this new kernel driver.
+
+Signed-off-by: Boris Brezillon <boris.brezillon@collabora.com>
+---
+ include/drm-uapi/panthor_drm.h       | 863 +++++++++++++++++++++++++++
+ src/panfrost/lib/kmod/meson.build    |   1 +
+ src/panfrost/lib/kmod/pan_kmod.c     |   2 +
+ src/panfrost/lib/kmod/pan_kmod.h     |   2 +
+ src/panfrost/lib/kmod/panthor_kmod.c | 646 ++++++++++++++++++++
+ src/panfrost/lib/kmod/panthor_kmod.h |  25 +
+ 6 files changed, 1539 insertions(+)
+ create mode 100644 include/drm-uapi/panthor_drm.h
+ create mode 100644 src/panfrost/lib/kmod/panthor_kmod.c
+ create mode 100644 src/panfrost/lib/kmod/panthor_kmod.h
+
+diff --git a/include/drm-uapi/panthor_drm.h b/include/drm-uapi/panthor_drm.h
+new file mode 100644
+index 00000000000..2e53831233f
+--- /dev/null
++++ b/include/drm-uapi/panthor_drm.h
+@@ -0,0 +1,863 @@
++/* SPDX-License-Identifier: MIT */
++/* Copyright (C) 2023 Collabora ltd. */
++#ifndef _PANTHOR_DRM_H_
++#define _PANTHOR_DRM_H_
++
++#include "drm.h"
++
++#if defined(__cplusplus)
++extern "C" {
++#endif
++
++/**
++ * DOC: Introduction
++ *
++ * This documentation decribes the Panthor IOCTLs.
++ *
++ * Just a few generic rules about the data passed to the Panthor IOCTLs:
++ *
++ * - Structures must be aligned on 64-bit/8-byte. If the object is not
++ *   naturally aligned, a padding field must be added.
++ * - Fields must be explicity aligned to their natural type alignment with
++ *   pad[0..N] fields.
++ * - All padding fields will be checked by the driver to make sure they are
++ *   zeroed.
++ * - Flags can be added, but not removed/replaced.
++ * - New fields can be added to the main structures (the structures
++ *   directly passed to the ioctl). Those fiels can be added at the end of
++ *   the structure, or replace existing padding fields. Any new field being
++ *   added must preserve the behavior that existed before those fields were
++ *   added when a value of zero is passed.
++ * - New fields can be added to indirect objects (objects pointed by the
++ *   main structure), iff those objects are passed a size to reflect the
++ *   size known by the userspace driver (see drm_panthor_obj_array::stride
++ *   or drm_panthor_dev_query::size).
++ * - If the kernel driver is too old to know some fields, those will
++ *   be ignored (input) and set back to zero (output).
++ * - If userspace is too old to know some fields, those will be zeroed
++ *   (input) before the structure is parsed by the kernel driver.
++ * - Each new flag/field addition must come with a driver version update so
++ *   the userspace driver doesn't have to trial and error to know which
++ *   flags are supported.
++ * - Structures should not contain unions, as this would defeat the
++ *   extensibility of such structures.
++ * - IOCTLs can't be removed or replaced. New IOCTL IDs should be placed
++ *   at the end of the drm_panthor_ioctl_id enum.
++ */
++
++/**
++ * DOC: MMIO regions exposed to userspace.
++ *
++ * .. c:macro:: DRM_PANTHOR_USER_MMIO_OFFSET
++ *
++ * File offset for all MMIO regions being exposed to userspace. Don't use
++ * this value directly, use DRM_PANTHOR_USER_<name>_OFFSET values instead.
++ *
++ * .. c:macro:: DRM_PANTHOR_USER_FLUSH_ID_MMIO_OFFSET
++ *
++ * File offset for the LATEST_FLUSH_ID register. The Userspace driver controls
++ * GPU cache flushling through CS instructions, but the flush reduction
++ * mechanism requires a flush_id. This flush_id could be queried with an
++ * ioctl, but Arm provides a well-isolated register page containing only this
++ * read-only register, so let's expose this page through a static mmap offset
++ * and allow direct mapping of this MMIO region so we can avoid the
++ * user <-> kernel round-trip.
++ */
++#define DRM_PANTHOR_USER_MMIO_OFFSET		(0x1ull << 56)
++#define DRM_PANTHOR_USER_FLUSH_ID_MMIO_OFFSET	(DRM_PANTHOR_USER_MMIO_OFFSET | 0)
++
++/**
++ * DOC: IOCTL IDs
++ *
++ * enum drm_panthor_ioctl_id - IOCTL IDs
++ *
++ * Place new ioctls at the end, don't re-oder, don't replace or remove entries.
++ *
++ * These IDs are not meant to be used directly. Use the DRM_IOCTL_PANTHOR_xxx
++ * definitions instead.
++ */
++enum drm_panthor_ioctl_id {
++	/** @DRM_PANTHOR_DEV_QUERY: Query device information. */
++	DRM_PANTHOR_DEV_QUERY = 0,
++
++	/** @DRM_PANTHOR_VM_CREATE: Create a VM. */
++	DRM_PANTHOR_VM_CREATE,
++
++	/** @DRM_PANTHOR_VM_DESTROY: Destroy a VM. */
++	DRM_PANTHOR_VM_DESTROY,
++
++	/** @DRM_PANTHOR_VM_BIND: Bind/unbind memory to a VM. */
++	DRM_PANTHOR_VM_BIND,
++
++	/** @DRM_PANTHOR_BO_CREATE: Create a buffer object. */
++	DRM_PANTHOR_BO_CREATE,
++
++	/**
++	 * @DRM_PANTHOR_BO_MMAP_OFFSET: Get the file offset to pass to
++	 * mmap to map a GEM object.
++	 */
++	DRM_PANTHOR_BO_MMAP_OFFSET,
++
++	/** @DRM_PANTHOR_GROUP_CREATE: Create a scheduling group. */
++	DRM_PANTHOR_GROUP_CREATE,
++
++	/** @DRM_PANTHOR_GROUP_DESTROY: Destroy a scheduling group. */
++	DRM_PANTHOR_GROUP_DESTROY,
++
++	/**
++	 * @DRM_PANTHOR_GROUP_SUBMIT: Submit jobs to queues belonging
++	 * to a specific scheduling group.
++	 */
++	DRM_PANTHOR_GROUP_SUBMIT,
++
++	/** @DRM_PANTHOR_GROUP_GET_STATE: Get the state of a scheduling group. */
++	DRM_PANTHOR_GROUP_GET_STATE,
++
++	/** @DRM_PANTHOR_TILER_HEAP_CREATE: Create a tiler heap. */
++	DRM_PANTHOR_TILER_HEAP_CREATE,
++
++	/** @DRM_PANTHOR_TILER_HEAP_DESTROY: Destroy a tiler heap. */
++	DRM_PANTHOR_TILER_HEAP_DESTROY,
++};
++
++
++/**
++ * DRM_IOCTL_PANTHOR() - Build a Panthor IOCTL number
++ * @__access: Access type. Must be R, W or RW.
++ * @__id: One of the DRM_PANTHOR_xxx id.
++ * @__type: Suffix of the type being passed to the IOCTL.
++ *
++ * Don't use this macro directly, use the DRM_IOCTL_PANTHOR_xxx
++ * values instead.
++ *
++ * Return: An IOCTL number to be passed to ioctl() from userspace.
++ */
++#define DRM_IOCTL_PANTHOR(__access, __id, __type) \
++	DRM_IO ## __access(DRM_COMMAND_BASE + DRM_PANTHOR_ ## __id, \
++			   struct drm_panthor_ ## __type)
++
++#define DRM_IOCTL_PANTHOR_DEV_QUERY \
++	DRM_IOCTL_PANTHOR(WR, DEV_QUERY, dev_query)
++#define DRM_IOCTL_PANTHOR_VM_CREATE \
++	DRM_IOCTL_PANTHOR(WR, VM_CREATE, vm_create)
++#define DRM_IOCTL_PANTHOR_VM_DESTROY \
++	DRM_IOCTL_PANTHOR(WR, VM_DESTROY, vm_destroy)
++#define DRM_IOCTL_PANTHOR_VM_BIND \
++	DRM_IOCTL_PANTHOR(WR, VM_BIND, vm_bind)
++#define DRM_IOCTL_PANTHOR_BO_CREATE \
++	DRM_IOCTL_PANTHOR(WR, BO_CREATE, bo_create)
++#define DRM_IOCTL_PANTHOR_BO_MMAP_OFFSET \
++	DRM_IOCTL_PANTHOR(WR, BO_MMAP_OFFSET, bo_mmap_offset)
++#define DRM_IOCTL_PANTHOR_GROUP_CREATE \
++	DRM_IOCTL_PANTHOR(WR, GROUP_CREATE, group_create)
++#define DRM_IOCTL_PANTHOR_GROUP_DESTROY \
++	DRM_IOCTL_PANTHOR(WR, GROUP_DESTROY, group_destroy)
++#define DRM_IOCTL_PANTHOR_GROUP_SUBMIT \
++	DRM_IOCTL_PANTHOR(WR, GROUP_SUBMIT, group_submit)
++#define DRM_IOCTL_PANTHOR_GROUP_GET_STATE \
++	DRM_IOCTL_PANTHOR(WR, GROUP_GET_STATE, group_get_state)
++#define DRM_IOCTL_PANTHOR_TILER_HEAP_CREATE \
++	DRM_IOCTL_PANTHOR(WR, TILER_HEAP_CREATE, tiler_heap_create)
++#define DRM_IOCTL_PANTHOR_TILER_HEAP_DESTROY \
++	DRM_IOCTL_PANTHOR(WR, TILER_HEAP_DESTROY, tiler_heap_destroy)
++
++/**
++ * DOC: IOCTL arguments
++ */
++
++/**
++ * struct drm_panthor_obj_array - Object array.
++ *
++ * This object is used to pass an array of objects whose size it subject to changes in
++ * future versions of the driver. In order to support this mutability, we pass a stride
++ * describing the size of the object as known by userspace.
++ *
++ * You shouldn't fill drm_panthor_obj_array fields directly. You should instead use
++ * the DRM_PANTHOR_OBJ_ARRAY() macro that takes care of initializing the stride to
++ * the object size.
++ */
++struct drm_panthor_obj_array {
++	/** @stride: Stride of object struct. Used for versioning. */
++	__u32 stride;
++
++	/** @count: Number of objects in the array. */
++	__u32 count;
++
++	/** @array: User pointer to an array of objects. */
++	__u64 array;
++};
++
++/**
++ * DRM_PANTHOR_OBJ_ARRAY() - Initialize a drm_panthor_obj_array field.
++ * @cnt: Number of elements in the array.
++ * @ptr: Pointer to the array to pass to the kernel.
++ *
++ * Macro initializing a drm_panthor_obj_array based on the object size as known
++ * by userspace.
++ */
++#define DRM_PANTHOR_OBJ_ARRAY(cnt, ptr) \
++	{ .stride = sizeof((ptr)[0]), .count = (cnt), .array = (__u64)(uintptr_t)(ptr) }
++
++/**
++ * enum drm_panthor_sync_op_flags - Synchronization operation flags.
++ */
++enum drm_panthor_sync_op_flags {
++	/** @DRM_PANTHOR_SYNC_OP_HANDLE_TYPE_MASK: Synchronization handle type mask. */
++	DRM_PANTHOR_SYNC_OP_HANDLE_TYPE_MASK = 0xff,
++
++	/** @DRM_PANTHOR_SYNC_OP_HANDLE_TYPE_SYNCOBJ: Synchronization object type. */
++	DRM_PANTHOR_SYNC_OP_HANDLE_TYPE_SYNCOBJ = 0,
++
++	/**
++	 * @DRM_PANTHOR_SYNC_OP_HANDLE_TYPE_TIMELINE_SYNCOBJ: Timeline synchronization
++	 * object type.
++	 */
++	DRM_PANTHOR_SYNC_OP_HANDLE_TYPE_TIMELINE_SYNCOBJ = 1,
++
++	/** @DRM_PANTHOR_SYNC_OP_WAIT: Wait operation. */
++	DRM_PANTHOR_SYNC_OP_WAIT = 0 << 31,
++
++	/** @DRM_PANTHOR_SYNC_OP_SIGNAL: Signal operation. */
++	DRM_PANTHOR_SYNC_OP_SIGNAL = 1 << 31,
++};
++
++/**
++ * struct drm_panthor_sync_op - Synchronization operation.
++ */
++struct drm_panthor_sync_op {
++	/** @flags: Synchronization operation flags. Combination of DRM_PANTHOR_SYNC_OP values. */
++	__u32 flags;
++
++	/** @handle: Sync handle. */
++	__u32 handle;
++
++	/**
++	 * @timeline_value: MBZ if
++	 * (flags & DRM_PANTHOR_SYNC_OP_HANDLE_TYPE_MASK) !=
++	 * DRM_PANTHOR_SYNC_OP_HANDLE_TYPE_TIMELINE_SYNCOBJ.
++	 */
++	__u64 timeline_value;
++};
++
++/**
++ * enum drm_panthor_dev_query_type - Query type
++ *
++ * Place new types at the end, don't re-oder, don't remove or replace.
++ */
++enum drm_panthor_dev_query_type {
++	/** @DRM_PANTHOR_DEV_QUERY_GPU_INFO: Query GPU information. */
++	DRM_PANTHOR_DEV_QUERY_GPU_INFO = 0,
++
++	/** @DRM_PANTHOR_DEV_QUERY_CSIF_INFO: Query command-stream interface information. */
++	DRM_PANTHOR_DEV_QUERY_CSIF_INFO,
++};
++
++/**
++ * struct drm_panthor_gpu_info - GPU information
++ *
++ * Structure grouping all queryable information relating to the GPU.
++ */
++struct drm_panthor_gpu_info {
++	/** @gpu_id : GPU ID. */
++	__u32 gpu_id;
++#define DRM_PANTHOR_ARCH_MAJOR(x)		((x) >> 28)
++#define DRM_PANTHOR_ARCH_MINOR(x)		(((x) >> 24) & 0xf)
++#define DRM_PANTHOR_ARCH_REV(x)			(((x) >> 20) & 0xf)
++#define DRM_PANTHOR_PRODUCT_MAJOR(x)		(((x) >> 16) & 0xf)
++#define DRM_PANTHOR_VERSION_MAJOR(x)		(((x) >> 12) & 0xf)
++#define DRM_PANTHOR_VERSION_MINOR(x)		(((x) >> 4) & 0xff)
++#define DRM_PANTHOR_VERSION_STATUS(x)		((x) & 0xf)
++
++	/** @gpu_rev: GPU revision. */
++	__u32 gpu_rev;
++
++	/** @csf_id: Command stream frontend ID. */
++	__u32 csf_id;
++#define DRM_PANTHOR_CSHW_MAJOR(x)		(((x) >> 26) & 0x3f)
++#define DRM_PANTHOR_CSHW_MINOR(x)		(((x) >> 20) & 0x3f)
++#define DRM_PANTHOR_CSHW_REV(x)			(((x) >> 16) & 0xf)
++#define DRM_PANTHOR_MCU_MAJOR(x)		(((x) >> 10) & 0x3f)
++#define DRM_PANTHOR_MCU_MINOR(x)		(((x) >> 4) & 0x3f)
++#define DRM_PANTHOR_MCU_REV(x)			((x) & 0xf)
++
++	/** @l2_features: L2-cache features. */
++	__u32 l2_features;
++
++	/** @tiler_features: Tiler features. */
++	__u32 tiler_features;
++
++	/** @mem_features: Memory features. */
++	__u32 mem_features;
++
++	/** @mmu_features: MMU features. */
++	__u32 mmu_features;
++#define DRM_PANTHOR_MMU_VA_BITS(x)		((x) & 0xff)
++
++	/** @thread_features: Thread features. */
++	__u32 thread_features;
++
++	/** @max_threads: Maximum number of threads. */
++	__u32 max_threads;
++
++	/** @thread_max_workgroup_size: Maximum workgroup size. */
++	__u32 thread_max_workgroup_size;
++
++	/**
++	 * @thread_max_barrier_size: Maximum number of threads that can wait
++	 * simultaneously on a barrier.
++	 */
++	__u32 thread_max_barrier_size;
++
++	/** @coherency_features: Coherency features. */
++	__u32 coherency_features;
++
++	/** @texture_features: Texture features. */
++	__u32 texture_features[4];
++
++	/** @as_present: Bitmask encoding the number of address-space exposed by the MMU. */
++	__u32 as_present;
++
++	/** @core_group_count: Number of core groups. */
++	__u32 core_group_count;
++
++	/** @pad: Zero on return. */
++	__u32 pad;
++
++	/** @shader_present: Bitmask encoding the shader cores exposed by the GPU. */
++	__u64 shader_present;
++
++	/** @l2_present: Bitmask encoding the L2 caches exposed by the GPU. */
++	__u64 l2_present;
++
++	/** @tiler_present: Bitmask encoding the tiler unit exposed by the GPU. */
++	__u64 tiler_present;
++};
++
++/**
++ * struct drm_panthor_csif_info - Command stream interface information
++ *
++ * Structure grouping all queryable information relating to the command stream interface.
++ */
++struct drm_panthor_csif_info {
++	/** @csg_slot_count: Number of command stream group slots exposed by the firmware. */
++	__u32 csg_slot_count;
++
++	/** @cs_slot_count: Number of command stream slot per group. */
++	__u32 cs_slot_count;
++
++	/** @cs_reg_count: Number of command stream register. */
++	__u32 cs_reg_count;
++
++	/** @scoreboard_slot_count: Number of scoreboard slot. */
++	__u32 scoreboard_slot_count;
++
++	/**
++	 * @unpreserved_cs_reg_count: Number of command stream registers reserved by
++	 * the kernel driver to call a userspace command stream.
++	 *
++	 * All registers can be used by a userspace command stream, but the
++	 * [cs_slot_count - unpreserved_cs_reg_count .. cs_slot_count] registers are
++	 * used by the kernel when DRM_PANTHOR_IOCTL_GROUP_SUBMIT is called.
++	 */
++	__u32 unpreserved_cs_reg_count;
++
++	/**
++	 * @pad: Padding field, set to zero.
++	 */
++	__u32 pad;
++};
++
++/**
++ * struct drm_panthor_dev_query - Arguments passed to DRM_PANTHOR_IOCTL_DEV_QUERY
++ */
++struct drm_panthor_dev_query {
++	/** @type: the query type (see drm_panthor_dev_query_type). */
++	__u32 type;
++
++	/**
++	 * @size: size of the type being queried.
++	 *
++	 * If pointer is NULL, size is updated by the driver to provide the
++	 * output structure size. If pointer is not NULL, the driver will
++	 * only copy min(size, actual_structure_size) bytes to the pointer,
++	 * and update the size accordingly. This allows us to extend query
++	 * types without breaking userspace.
++	 */
++	__u32 size;
++
++	/**
++	 * @pointer: user pointer to a query type struct.
++	 *
++	 * Pointer can be NULL, in which case, nothing is copied, but the
++	 * actual structure size is returned. If not NULL, it must point to
++	 * a location that's large enough to hold size bytes.
++	 */
++	__u64 pointer;
++};
++
++/**
++ * struct drm_panthor_vm_create - Arguments passed to DRM_PANTHOR_IOCTL_VM_CREATE
++ */
++struct drm_panthor_vm_create {
++	/** @flags: VM flags, MBZ. */
++	__u32 flags;
++
++	/** @id: Returned VM ID. */
++	__u32 id;
++
++	/**
++	 * @kernel_va_range: Size of the VA space reserved for kernel objects.
++	 *
++	 * If kernel_va_range is zero, we pick half of the VA space for kernel objects.
++	 *
++	 * Kernel VA space is always placed at the top of the supported VA range.
++	 */
++	__u64 kernel_va_range;
++};
++
++/**
++ * struct drm_panthor_vm_destroy - Arguments passed to DRM_PANTHOR_IOCTL_VM_DESTROY
++ */
++struct drm_panthor_vm_destroy {
++	/** @id: ID of the VM to destroy. */
++	__u32 id;
++
++	/** @pad: MBZ. */
++	__u32 pad;
++};
++
++/**
++ * enum drm_panthor_vm_bind_op_flags - VM bind operation flags
++ */
++enum drm_panthor_vm_bind_op_flags {
++	/**
++	 * @DRM_PANTHOR_VM_BIND_OP_MAP_READONLY: Map the memory read-only.
++	 *
++	 * Only valid with DRM_PANTHOR_VM_BIND_OP_TYPE_MAP.
++	 */
++	DRM_PANTHOR_VM_BIND_OP_MAP_READONLY = 1 << 0,
++
++	/**
++	 * @DRM_PANTHOR_VM_BIND_OP_MAP_NOEXEC: Map the memory not-executable.
++	 *
++	 * Only valid with DRM_PANTHOR_VM_BIND_OP_TYPE_MAP.
++	 */
++	DRM_PANTHOR_VM_BIND_OP_MAP_NOEXEC = 1 << 1,
++
++	/**
++	 * @DRM_PANTHOR_VM_BIND_OP_MAP_UNCACHED: Map the memory uncached.
++	 *
++	 * Only valid with DRM_PANTHOR_VM_BIND_OP_TYPE_MAP.
++	 */
++	DRM_PANTHOR_VM_BIND_OP_MAP_UNCACHED = 1 << 2,
++
++	/**
++	 * @DRM_PANTHOR_VM_BIND_OP_TYPE_MASK: Mask used to determine the type of operation.
++	 */
++	DRM_PANTHOR_VM_BIND_OP_TYPE_MASK = 0xf << 28,
++
++	/** @DRM_PANTHOR_VM_BIND_OP_TYPE_MAP: Map operation. */
++	DRM_PANTHOR_VM_BIND_OP_TYPE_MAP = 0 << 28,
++
++	/** @DRM_PANTHOR_VM_BIND_OP_TYPE_UNMAP: Unmap operation. */
++	DRM_PANTHOR_VM_BIND_OP_TYPE_UNMAP = 1 << 28,
++};
++
++/**
++ * struct drm_panthor_vm_bind_op - VM bind operation
++ */
++struct drm_panthor_vm_bind_op {
++	/** @flags: Combination of drm_panthor_vm_bind_op_flags flags. */
++	__u32 flags;
++
++	/**
++	 * @bo_handle: Handle of the buffer object to map.
++	 * MBZ for unmap operations.
++	 */
++	__u32 bo_handle;
++
++	/**
++	 * @bo_offset: Buffer object offset.
++	 * MBZ for unmap operations.
++	 */
++	__u64 bo_offset;
++
++	/**
++	 * @va: Virtual address to map/unmap.
++	 */
++	__u64 va;
++
++	/** @size: Size to map/unmap. */
++	__u64 size;
++
++	/**
++	 * @syncs: Array of synchronization operations.
++	 *
++	 * This array must be empty if %DRM_PANTHOR_VM_BIND_ASYNC is not set on
++	 * the drm_panthor_vm_bind object containing this VM bind operation.
++	 */
++	struct drm_panthor_obj_array syncs;
++
++};
++
++/**
++ * enum drm_panthor_vm_bind_flags - VM bind flags
++ */
++enum drm_panthor_vm_bind_flags {
++	/**
++	 * @DRM_PANTHOR_VM_BIND_ASYNC: VM bind operations are queued to the VM
++	 * queue instead of being executed synchronously.
++	 */
++	DRM_PANTHOR_VM_BIND_ASYNC = 1 << 0,
++};
++
++/**
++ * struct drm_panthor_vm_bind - Arguments passed to DRM_IOCTL_PANTHOR_VM_BIND
++ */
++struct drm_panthor_vm_bind {
++	/** @vm_id: VM targeted by the bind request. */
++	__u32 vm_id;
++
++	/** @flags: Combination of drm_panthor_vm_bind_flags flags. */
++	__u32 flags;
++
++	/** @ops: Array of bind operations. */
++	struct drm_panthor_obj_array ops;
++};
++
++/**
++ * enum drm_panthor_bo_flags - Buffer object flags, passed at creation time.
++ */
++enum drm_panthor_bo_flags {
++	/** @DRM_PANTHOR_BO_NO_MMAP: The buffer object will never be CPU-mapped in userspace. */
++	DRM_PANTHOR_BO_NO_MMAP = (1 << 0),
++};
++
++/**
++ * struct drm_panthor_bo_create - Arguments passed to DRM_IOCTL_PANTHOR_BO_CREATE.
++ */
++struct drm_panthor_bo_create {
++	/**
++	 * @size: Requested size for the object
++	 *
++	 * The (page-aligned) allocated size for the object will be returned.
++	 */
++	__u64 size;
++
++	/**
++	 * @flags: Flags. Must be a combination of drm_panthor_bo_flags flags.
++	 */
++	__u32 flags;
++
++	/**
++	 * @exclusive_vm_id: Exclusive VM this buffer object will be mapped to.
++	 *
++	 * If not zero, the field must refer to a valid VM ID, and implies that:
++	 *  - the buffer object will only ever be bound to that VM
++	 *  - cannot be exported as a PRIME fd
++	 */
++	__u32 exclusive_vm_id;
++
++	/**
++	 * @handle: Returned handle for the object.
++	 *
++	 * Object handles are nonzero.
++	 */
++	__u32 handle;
++
++	/** @pad: MBZ. */
++	__u32 pad;
++};
++
++/**
++ * struct drm_panthor_bo_mmap_offset - Arguments passed to DRM_IOCTL_PANTHOR_BO_MMAP_OFFSET.
++ */
++struct drm_panthor_bo_mmap_offset {
++	/** @handle: Handle of the object we want an mmap offset for. */
++	__u32 handle;
++
++	/** @pad: MBZ. */
++	__u32 pad;
++
++	/** @offset: The fake offset to use for subsequent mmap calls. */
++	__u64 offset;
++};
++
++/**
++ * struct drm_panthor_queue_create - Queue creation arguments.
++ */
++struct drm_panthor_queue_create {
++	/**
++	 * @priority: Defines the priority of queues inside a group. Goes from 0 to 15,
++	 * 15 being the highest priority.
++	 */
++	__u8 priority;
++
++	/** @pad: Padding fields, MBZ. */
++	__u8 pad[3];
++
++	/** @ringbuf_size: Size of the ring buffer to allocate to this queue. */
++	__u32 ringbuf_size;
++};
++
++/**
++ * enum drm_panthor_group_priority - Scheduling group priority
++ */
++enum drm_panthor_group_priority {
++	/** @PANTHOR_GROUP_PRIORITY_LOW: Low priority group. */
++	PANTHOR_GROUP_PRIORITY_LOW = 0,
++
++	/** @PANTHOR_GROUP_PRIORITY_MEDIUM: Medium priority group. */
++	PANTHOR_GROUP_PRIORITY_MEDIUM,
++
++	/** @PANTHOR_GROUP_PRIORITY_HIGH: High priority group. */
++	PANTHOR_GROUP_PRIORITY_HIGH,
++};
++
++/**
++ * struct drm_panthor_group_create - Arguments passed to DRM_IOCTL_PANTHOR_GROUP_CREATE
++ */
++struct drm_panthor_group_create {
++	/** @queues: Array of drm_panthor_create_cs_queue elements. */
++	struct drm_panthor_obj_array queues;
++
++	/**
++	 * @max_compute_cores: Maximum number of cores that can be used by compute
++	 * jobs across CS queues bound to this group.
++	 *
++	 * Must be less or equal to the number of bits set in @compute_core_mask.
++	 */
++	__u8 max_compute_cores;
++
++	/**
++	 * @max_fragment_cores: Maximum number of cores that can be used by fragment
++	 * jobs across CS queues bound to this group.
++	 *
++	 * Must be less or equal to the number of bits set in @fragment_core_mask.
++	 */
++	__u8 max_fragment_cores;
++
++	/**
++	 * @max_tiler_cores: Maximum number of tilers that can be used by tiler jobs
++	 * across CS queues bound to this group.
++	 *
++	 * Must be less or equal to the number of bits set in @tiler_core_mask.
++	 */
++	__u8 max_tiler_cores;
++
++	/** @priority: Group priority (see drm_drm_panthor_cs_group_priority). */
++	__u8 priority;
++
++	/** @pad: Padding field, MBZ. */
++	__u32 pad;
++
++	/**
++	 * @compute_core_mask: Mask encoding cores that can be used for compute jobs.
++	 *
++	 * This field must have at least @max_compute_cores bits set.
++	 *
++	 * The bits set here should also be set in drm_panthor_gpu_info::shader_present.
++	 */
++	__u64 compute_core_mask;
++
++	/**
++	 * @fragment_core_mask: Mask encoding cores that can be used for fragment jobs.
++	 *
++	 * This field must have at least @max_fragment_cores bits set.
++	 *
++	 * The bits set here should also be set in drm_panthor_gpu_info::shader_present.
++	 */
++	__u64 fragment_core_mask;
++
++	/**
++	 * @tiler_core_mask: Mask encoding cores that can be used for tiler jobs.
++	 *
++	 * This field must have at least @max_tiler_cores bits set.
++	 *
++	 * The bits set here should also be set in drm_panthor_gpu_info::tiler_present.
++	 */
++	__u64 tiler_core_mask;
++
++	/**
++	 * @vm_id: VM ID to bind this group to.
++	 *
++	 * All submission to queues bound to this group will use this VM.
++	 */
++	__u32 vm_id;
++
++	/**
++	 * @group_handle: Returned group handle. Passed back when submitting jobs or
++	 * destroying a group.
++	 */
++	__u32 group_handle;
++};
++
++/**
++ * struct drm_panthor_group_destroy - Arguments passed to DRM_IOCTL_PANTHOR_GROUP_DESTROY
++ */
++struct drm_panthor_group_destroy {
++	/** @group_handle: Group to destroy */
++	__u32 group_handle;
++
++	/** @pad: Padding field, MBZ. */
++	__u32 pad;
++};
++
++/**
++ * struct drm_panthor_queue_submit - Job submission arguments.
++ *
++ * This is describing the userspace command stream to call from the kernel
++ * command stream ring-buffer. Queue submission is always part of a group
++ * submission, taking one or more jobs to submit to the underlying queues.
++ */
++struct drm_panthor_queue_submit {
++	/** @queue_index: Index of the queue inside a group. */
++	__u32 queue_index;
++
++	/**
++	 * @stream_size: Size of the command stream to execute.
++	 *
++	 * Must be 64-bit/8-byte aligned (the size of a CS instruction)
++	 *
++	 * Can be zero if stream_addr is zero too.
++	 */
++	__u32 stream_size;
++
++	/**
++	 * @stream_addr: GPU address of the command stream to execute.
++	 *
++	 * Must be aligned on 64-byte.
++	 *
++	 * Can be zero is stream_size is zero too.
++	 */
++	__u64 stream_addr;
++
++	/**
++	 * @latest_flush: FLUSH_ID read at the time the stream was built.
++	 *
++	 * This allows cache flush elimination for the automatic
++	 * flush+invalidate(all) done at submission time, which is needed to
++	 * ensure the GPU doesn't get garbage when reading the indirect command
++	 * stream buffers. If you want the cache flush to happen
++	 * unconditionally, pass a zero here.
++	 */
++	__u32 latest_flush;
++
++	/** @pad: MBZ. */
++	__u32 pad;
++
++	/** @syncs: Array of sync operations. */
++	struct drm_panthor_obj_array syncs;
++};
++
++/**
++ * struct drm_panthor_group_submit - Arguments passed to DRM_IOCTL_PANTHOR_VM_BIND
++ */
++struct drm_panthor_group_submit {
++	/** @group_handle: Handle of the group to queue jobs to. */
++	__u32 group_handle;
++
++	/** @pad: MBZ. */
++	__u32 pad;
++
++	/** @queue_submits: Array of drm_panthor_queue_submit objects. */
++	struct drm_panthor_obj_array queue_submits;
++};
++
++/**
++ * enum drm_panthor_group_state_flags - Group state flags
++ */
++enum drm_panthor_group_state_flags {
++	/**
++	 * @DRM_PANTHOR_GROUP_STATE_TIMEDOUT: Group had unfinished jobs.
++	 *
++	 * When a group ends up with this flag set, no jobs can be submitted to its queues.
++	 */
++	DRM_PANTHOR_GROUP_STATE_TIMEDOUT = 1 << 0,
++
++	/**
++	 * @DRM_PANTHOR_GROUP_STATE_FATAL_FAULT: Group had fatal faults.
++	 *
++	 * When a group ends up with this flag set, no jobs can be submitted to its queues.
++	 */
++	DRM_PANTHOR_GROUP_STATE_FATAL_FAULT = 1 << 1,
++};
++
++/**
++ * struct drm_panthor_group_get_state - Arguments passed to DRM_IOCTL_PANTHOR_GROUP_GET_STATE
++ *
++ * Used to query the state of a group and decide whether a new group should be created to
++ * replace it.
++ */
++struct drm_panthor_group_get_state {
++	/** @group_handle: Handle of the group to query state on */
++	__u32 group_handle;
++
++	/**
++	 * @state: Combination of DRM_PANTHOR_GROUP_STATE_* flags encoding the
++	 * group state.
++	 */
++	__u32 state;
++
++	/** @fatal_queues: Bitmask of queues that faced fatal faults. */
++	__u32 fatal_queues;
++
++	/** @pad: MBZ */
++	__u32 pad;
++};
++
++/**
++ * struct drm_panthor_tiler_heap_create - Arguments passed to DRM_IOCTL_PANTHOR_TILER_HEAP_CREATE
++ */
++struct drm_panthor_tiler_heap_create {
++	/** @vm_id: VM ID the tiler heap should be mapped to */
++	__u32 vm_id;
++
++	/** @initial_chunk_count: Initial number of chunks to allocate. */
++	__u32 initial_chunk_count;
++
++	/** @chunk_size: Chunk size. Must be a power of two at least 256KB large. */
++	__u32 chunk_size;
++
++	/** @max_chunks: Maximum number of chunks that can be allocated. */
++	__u32 max_chunks;
++
++	/**
++	 * @target_in_flight: Maximum number of in-flight render passes.
++	 *
++	 * If the heap has more than tiler jobs in-flight, the FW will wait for render
++	 * passes to finish before queuing new tiler jobs.
++	 */
++	__u32 target_in_flight;
++
++	/** @handle: Returned heap handle. Passed back to DESTROY_TILER_HEAP. */
++	__u32 handle;
++
++	/** @tiler_heap_ctx_gpu_va: Returned heap GPU virtual address returned */
++	__u64 tiler_heap_ctx_gpu_va;
++
++	/**
++	 * @first_heap_chunk_gpu_va: First heap chunk.
++	 *
++	 * The tiler heap is formed of heap chunks forming a single-link list. This
++	 * is the first element in the list.
++	 */
++	__u64 first_heap_chunk_gpu_va;
++};
++
++/**
++ * struct drm_panthor_tiler_heap_destroy - Arguments passed to DRM_IOCTL_PANTHOR_TILER_HEAP_DESTROY
++ */
++struct drm_panthor_tiler_heap_destroy {
++	/** @handle: Handle of the tiler heap to destroy */
++	__u32 handle;
++
++	/** @pad: Padding field, MBZ. */
++	__u32 pad;
++};
++
++#if defined(__cplusplus)
++}
++#endif
++
++#endif /* _PANTHOR_DRM_H_ */
+diff --git a/src/panfrost/lib/kmod/meson.build b/src/panfrost/lib/kmod/meson.build
+index 1278dc6f394..bc1962e10b0 100644
+--- a/src/panfrost/lib/kmod/meson.build
++++ b/src/panfrost/lib/kmod/meson.build
+@@ -21,6 +21,7 @@
+ libpankmod_lib_files = files(
+   'pan_kmod.c',
+   'panfrost_kmod.c',
++  'panthor_kmod.c',
+ )
+ 
+ libpankmod_lib = static_library(
+diff --git a/src/panfrost/lib/kmod/pan_kmod.c b/src/panfrost/lib/kmod/pan_kmod.c
+index 99e671feba9..4d8b7011a06 100644
+--- a/src/panfrost/lib/kmod/pan_kmod.c
++++ b/src/panfrost/lib/kmod/pan_kmod.c
+@@ -11,12 +11,14 @@
+ #include "pan_kmod.h"
+ 
+ extern const struct pan_kmod_ops panfrost_kmod_ops;
++extern const struct pan_kmod_ops panthor_kmod_ops;
+ 
+ static const struct {
+    const char *name;
+    const struct pan_kmod_ops *ops;
+ } drivers[] = {
+    {"panfrost", &panfrost_kmod_ops},
++   {"panthor", &panthor_kmod_ops},
+ };
+ 
+ static void *
+diff --git a/src/panfrost/lib/kmod/pan_kmod.h b/src/panfrost/lib/kmod/pan_kmod.h
+index ef1e199ed19..1936df2d322 100644
+--- a/src/panfrost/lib/kmod/pan_kmod.h
++++ b/src/panfrost/lib/kmod/pan_kmod.h
+@@ -14,6 +14,8 @@
+ #include "util/os_mman.h"
+ #include "util/ralloc.h"
+ 
++#include "kmod/panthor_kmod.h"
++
+ struct pan_kmod_dev;
+ 
+ enum pan_kmod_vm_flags {
+diff --git a/src/panfrost/lib/kmod/panthor_kmod.c b/src/panfrost/lib/kmod/panthor_kmod.c
+new file mode 100644
+index 00000000000..d6e0ff5f47f
+--- /dev/null
++++ b/src/panfrost/lib/kmod/panthor_kmod.c
+@@ -0,0 +1,646 @@
++/*
++ * Copyright © 2023 Collabora, Ltd.
++ *
++ * SPDX-License-Identifier: MIT
++ */
++
++#include <errno.h>
++#include <fcntl.h>
++#include <string.h>
++#include <xf86drm.h>
++
++#include "util/hash_table.h"
++#include "util/libsync.h"
++#include "util/macros.h"
++#include "util/os_time.h"
++#include "util/vma.h"
++
++#include "drm-uapi/dma-buf.h"
++#include "drm-uapi/panthor_drm.h"
++
++#include "pan_kmod_backend.h"
++
++const struct pan_kmod_ops panthor_kmod_ops;
++
++struct panthor_kmod_async_unmap {
++   struct list_head node;
++   uint64_t sync_point;
++   uint64_t va;
++   size_t size;
++};
++
++struct panthor_kmod_vm {
++   struct pan_kmod_vm base;
++   struct util_vma_heap vma;
++   struct list_head async_unmaps;
++   struct {
++      uint32_t handle;
++      uint64_t point;
++   } sync;
++};
++
++struct panthor_kmod_dev {
++   struct pan_kmod_dev base;
++   uint32_t *flush_id;
++};
++
++struct panthor_kmod_bo {
++   struct pan_kmod_bo base;
++   struct {
++      uint32_t handle;
++      uint64_t read_point;
++      uint64_t write_point;
++   } sync;
++};
++
++static struct pan_kmod_dev *
++panthor_kmod_dev_create(int fd, drmVersionPtr version,
++                        const struct pan_kmod_allocator *allocator)
++{
++   struct panthor_kmod_dev *panthor_dev =
++      pan_kmod_alloc(allocator, sizeof(*panthor_dev));
++   if (!panthor_dev)
++      return NULL;
++
++   panthor_dev->flush_id = os_mmap(0, getpagesize(), PROT_READ, MAP_SHARED, fd,
++                                   DRM_PANTHOR_USER_FLUSH_ID_MMIO_OFFSET);
++   if (panthor_dev->flush_id == MAP_FAILED)
++      goto err_free_dev;
++
++   pan_kmod_dev_init(&panthor_dev->base, fd, version, &panthor_kmod_ops,
++                     allocator);
++   return &panthor_dev->base;
++
++err_free_dev:
++   pan_kmod_free(allocator, panthor_dev);
++   return NULL;
++}
++
++static void
++panthor_kmod_dev_destroy(struct pan_kmod_dev *dev)
++{
++   struct panthor_kmod_dev *panthor_dev =
++      container_of(dev, struct panthor_kmod_dev, base);
++
++   os_munmap(panthor_dev->flush_id, getpagesize());
++   pan_kmod_dev_cleanup(dev);
++   pan_kmod_free(dev->allocator, panthor_dev);
++}
++
++static void
++panthor_dev_query_props(struct pan_kmod_dev *dev,
++                        struct pan_kmod_dev_props *props)
++{
++   struct drm_panthor_gpu_info gpu_info = {};
++   struct drm_panthor_dev_query query = {
++      .type = DRM_PANTHOR_DEV_QUERY_GPU_INFO,
++      .size = sizeof(gpu_info),
++      .pointer = (uint64_t)(uintptr_t)&gpu_info,
++   };
++
++   ASSERTED int ret = drmIoctl(dev->fd, DRM_IOCTL_PANTHOR_DEV_QUERY, &query);
++   assert(!ret);
++
++   *props = (struct pan_kmod_dev_props){
++      .gpu_prod_id = gpu_info.gpu_id >> 16,
++      .gpu_revision = gpu_info.gpu_id & 0xffff,
++      .shader_present = gpu_info.shader_present,
++      .tiler_features = gpu_info.tiler_features,
++      .mem_features = gpu_info.mem_features,
++      .thread_tls_alloc = 0,
++      .afbc_features = 0,
++   };
++
++   static_assert(
++      sizeof(props->texture_features) == sizeof(gpu_info.texture_features),
++      "Mismatch in texture_features array size");
++
++   memcpy(props->texture_features, gpu_info.texture_features,
++          sizeof(props->texture_features));
++}
++
++static uint32_t
++to_panthor_bo_flags(uint32_t flags)
++{
++   uint32_t panthor_flags = 0;
++
++   if (flags & PAN_KMOD_BO_FLAG_NO_MMAP)
++      panthor_flags |= DRM_PANTHOR_BO_NO_MMAP;
++
++   return panthor_flags;
++}
++
++static struct pan_kmod_bo *
++panthor_kmod_bo_alloc(struct pan_kmod_dev *dev,
++                      struct pan_kmod_vm *exclusive_vm, size_t size,
++                      uint32_t flags)
++{
++   /* We don't support allocating on-fault. */
++   if (flags & PAN_KMOD_BO_FLAG_ALLOC_ON_FAULT)
++      return NULL;
++
++   struct panthor_kmod_vm *panthor_vm =
++      exclusive_vm ? container_of(exclusive_vm, struct panthor_kmod_vm, base)
++                   : NULL;
++   struct panthor_kmod_bo *bo = pan_kmod_dev_alloc(dev, sizeof(*bo));
++   if (!bo)
++      return NULL;
++
++   struct drm_panthor_bo_create req = {
++      .size = size,
++      .flags = to_panthor_bo_flags(flags),
++      .exclusive_vm_id = panthor_vm ? panthor_vm->base.handle : 0,
++   };
++
++   int ret = drmIoctl(dev->fd, DRM_IOCTL_PANTHOR_BO_CREATE, &req);
++   if (ret)
++      goto err_free_bo;
++
++   if (!exclusive_vm) {
++      int ret = drmSyncobjCreate(dev->fd, DRM_SYNCOBJ_CREATE_SIGNALED,
++                                 &bo->sync.handle);
++      if (ret)
++         goto err_destroy_bo;
++   } else {
++      bo->sync.handle = panthor_vm->sync.handle;
++   }
++
++   bo->sync.read_point = bo->sync.write_point = 0;
++
++   pan_kmod_bo_init(&bo->base, dev, exclusive_vm, req.size, flags, req.handle);
++   return &bo->base;
++
++err_destroy_bo:
++   drmCloseBufferHandle(dev->fd, bo->base.handle);
++err_free_bo:
++   pan_kmod_dev_free(dev, bo);
++   return NULL;
++}
++
++static void
++panthor_kmod_bo_free(struct pan_kmod_bo *bo)
++{
++   drmCloseBufferHandle(bo->dev->fd, bo->handle);
++   pan_kmod_dev_free(bo->dev, bo);
++}
++
++static struct pan_kmod_bo *
++panthor_kmod_bo_import(struct pan_kmod_dev *dev, int fd)
++{
++   struct panthor_kmod_bo *panthor_bo =
++      pan_kmod_dev_alloc(dev, sizeof(*panthor_bo));
++   if (!panthor_bo)
++      return NULL;
++
++   uint32_t handle;
++   int ret = drmPrimeFDToHandle(dev->fd, fd, &handle);
++   if (ret)
++      goto err_free_bo;
++
++   size_t size = lseek(fd, 0, SEEK_END);
++   if (size == 0 || size == (size_t)-1)
++      goto err_close_handle;
++
++   ret = drmSyncobjCreate(dev->fd, 0, &panthor_bo->sync.handle);
++   if (ret)
++      goto err_close_handle;
++
++   pan_kmod_bo_init(&panthor_bo->base, dev, NULL, size,
++                    PAN_KMOD_BO_FLAG_IMPORTED, handle);
++   return &panthor_bo->base;
++
++err_close_handle:
++   drmCloseBufferHandle(dev->fd, handle);
++
++err_free_bo:
++   pan_kmod_dev_free(dev, panthor_bo);
++   return NULL;
++}
++
++static int
++panthor_kmod_bo_export(struct pan_kmod_bo *bo)
++{
++   struct panthor_kmod_bo *panthor_bo =
++      container_of(bo, struct panthor_kmod_bo, base);
++   int dmabuf_fd;
++
++   int ret =
++      drmPrimeHandleToFD(bo->dev->fd, bo->handle, DRM_CLOEXEC, &dmabuf_fd);
++   if (ret == -1)
++      return -1;
++
++   bool shared =
++      bo->flags & (PAN_KMOD_BO_FLAG_EXPORTED | PAN_KMOD_BO_FLAG_IMPORTED);
++
++   if (!shared) {
++      if (panthor_bo->sync.read_point || panthor_bo->sync.write_point) {
++         struct dma_buf_import_sync_file isync = {
++            .flags = DMA_BUF_SYNC_RW,
++         };
++         int ret = drmSyncobjExportSyncFile(bo->dev->fd,
++                                            panthor_bo->sync.handle, &isync.fd);
++         assert(!ret);
++
++         ret = drmIoctl(dmabuf_fd, DMA_BUF_IOCTL_IMPORT_SYNC_FILE, &isync);
++         assert(!ret);
++         close(isync.fd);
++      }
++
++      /* Make sure we reset the syncobj on export. We will use it as a
++       * temporary binary syncobj to import sync_file FD from now on.
++       */
++      ret = drmSyncobjReset(bo->dev->fd, &panthor_bo->sync.handle, 1);
++      assert(!ret);
++      panthor_bo->sync.read_point = 0;
++      panthor_bo->sync.write_point = 0;
++   }
++
++   bo->flags |= PAN_KMOD_BO_FLAG_EXPORTED;
++   return dmabuf_fd;
++}
++
++static off_t
++panthor_kmod_bo_get_mmap_offset(struct pan_kmod_bo *bo)
++{
++   struct drm_panthor_bo_mmap_offset req = {.handle = bo->handle};
++   ASSERTED int ret =
++      drmIoctl(bo->dev->fd, DRM_IOCTL_PANTHOR_BO_MMAP_OFFSET, &req);
++
++   assert(!ret);
++
++   return req.offset;
++}
++
++static bool
++panthor_kmod_bo_wait(struct pan_kmod_bo *bo, int64_t timeout_ns,
++                     bool for_read_only_access)
++{
++   struct panthor_kmod_bo *panthor_bo =
++      container_of(bo, struct panthor_kmod_bo, base);
++   bool shared =
++      bo->flags & (PAN_KMOD_BO_FLAG_EXPORTED | PAN_KMOD_BO_FLAG_IMPORTED);
++
++   if (shared) {
++      int dmabuf_fd;
++      int ret =
++         drmPrimeHandleToFD(bo->dev->fd, bo->handle, DRM_CLOEXEC, &dmabuf_fd);
++
++      if (ret)
++         return false;
++
++      struct dma_buf_export_sync_file esync = {
++         .flags = for_read_only_access ? DMA_BUF_SYNC_READ : DMA_BUF_SYNC_RW,
++      };
++
++      ret = drmIoctl(dmabuf_fd, DMA_BUF_IOCTL_EXPORT_SYNC_FILE, &esync);
++      close(dmabuf_fd);
++
++      if (ret)
++         return false;
++
++      ret = sync_wait(esync.fd, timeout_ns / 1000000);
++      close(esync.fd);
++      return ret == 0;
++   } else {
++      uint64_t sync_point =
++         for_read_only_access
++            ? panthor_bo->sync.write_point
++            : MAX2(panthor_bo->sync.write_point, panthor_bo->sync.read_point);
++
++      if (!sync_point)
++         return true;
++
++      int64_t abs_timeout_ns = timeout_ns < INT64_MAX - os_time_get_nano()
++                                  ? timeout_ns + os_time_get_nano()
++                                  : INT64_MAX;
++      int ret = drmSyncobjTimelineWait(bo->dev->fd, &panthor_bo->sync.handle,
++                                       &sync_point, 1, abs_timeout_ns,
++                                       DRM_SYNCOBJ_WAIT_FLAGS_WAIT_ALL, NULL);
++      if (ret >= 0)
++         return true;
++
++      assert(ret == -ETIME);
++      return false;
++   }
++}
++
++void
++panthor_kmod_bo_attach_sync_point(struct pan_kmod_bo *bo, uint32_t sync_handle,
++                                  uint64_t sync_point, bool read_only)
++{
++   struct panthor_kmod_bo *panthor_bo =
++      container_of(bo, struct panthor_kmod_bo, base);
++   struct panthor_kmod_vm *panthor_vm =
++      bo->exclusive_vm
++         ? container_of(bo->exclusive_vm, struct panthor_kmod_vm, base)
++         : NULL;
++   bool shared =
++      bo->flags & (PAN_KMOD_BO_FLAG_EXPORTED | PAN_KMOD_BO_FLAG_IMPORTED);
++
++   if (shared) {
++      struct dma_buf_import_sync_file isync = {
++         .flags = read_only ? DMA_BUF_SYNC_READ : DMA_BUF_SYNC_RW,
++      };
++      int dmabuf_fd;
++      int ret = drmSyncobjExportSyncFile(bo->dev->fd, sync_handle, &isync.fd);
++      assert(!ret);
++
++      ret =
++         drmPrimeHandleToFD(bo->dev->fd, bo->handle, DRM_CLOEXEC, &dmabuf_fd);
++      assert(!ret);
++
++      ret = drmIoctl(dmabuf_fd, DMA_BUF_IOCTL_IMPORT_SYNC_FILE, &isync);
++      assert(!ret);
++      close(dmabuf_fd);
++      close(isync.fd);
++   } else if (panthor_vm) {
++      /* Private BOs should be passed the VM syncobj. */
++      assert(sync_handle == panthor_vm->sync.handle);
++
++      panthor_bo->sync.write_point =
++         MAX2(sync_point, panthor_bo->sync.write_point);
++      if (!read_only) {
++         panthor_bo->sync.read_point =
++            MAX2(sync_point, panthor_bo->sync.read_point);
++      }
++   } else {
++      uint32_t new_sync_point =
++         MAX2(panthor_bo->sync.write_point, panthor_bo->sync.read_point) + 1;
++
++      int ret = drmSyncobjTransfer(bo->dev->fd, panthor_bo->sync.handle,
++                                   new_sync_point, sync_handle, sync_point, 0);
++      assert(!ret);
++
++      panthor_bo->sync.write_point = new_sync_point;
++      if (!read_only)
++         panthor_bo->sync.read_point = new_sync_point;
++   }
++}
++
++void
++panthor_kmod_bo_get_sync_point(struct pan_kmod_bo *bo, uint32_t *sync_handle,
++                               uint64_t *sync_point, bool for_read_only_access)
++{
++   struct panthor_kmod_bo *panthor_bo =
++      container_of(bo, struct panthor_kmod_bo, base);
++   bool shared =
++      bo->flags & (PAN_KMOD_BO_FLAG_EXPORTED | PAN_KMOD_BO_FLAG_IMPORTED);
++
++   if (shared) {
++      int dmabuf_fd;
++      int ret =
++         drmPrimeHandleToFD(bo->dev->fd, bo->handle, DRM_CLOEXEC, &dmabuf_fd);
++
++      assert(!ret);
++      if (ret)
++         return;
++
++      struct dma_buf_export_sync_file esync = {
++         .flags = for_read_only_access ? DMA_BUF_SYNC_READ : DMA_BUF_SYNC_RW,
++      };
++
++      ret = drmIoctl(dmabuf_fd, DMA_BUF_IOCTL_EXPORT_SYNC_FILE, &esync);
++      close(dmabuf_fd);
++      assert(!ret);
++      if (ret)
++         return;
++
++      ret = drmSyncobjImportSyncFile(bo->dev->fd, panthor_bo->sync.handle,
++                                     esync.fd);
++      close(esync.fd);
++      assert(!ret);
++      if (ret)
++         return;
++
++      *sync_handle = panthor_bo->sync.handle;
++      *sync_point = 0;
++   } else {
++      *sync_handle = panthor_bo->sync.handle;
++      *sync_point = for_read_only_access ? panthor_bo->sync.write_point
++                                         : MAX2(panthor_bo->sync.read_point,
++                                                panthor_bo->sync.write_point);
++   }
++}
++
++static struct pan_kmod_vm *
++panthor_kmod_vm_create(struct pan_kmod_dev *dev, uint32_t flags,
++                       uint64_t user_va_start, uint64_t user_va_range)
++{
++   struct pan_kmod_dev_props props;
++
++   panthor_dev_query_props(dev, &props);
++
++   struct panthor_kmod_vm *panthor_vm =
++      pan_kmod_dev_alloc(dev, sizeof(*panthor_vm));
++   if (!panthor_vm)
++      return NULL;
++
++   list_inithead(&panthor_vm->async_unmaps);
++   if (flags & PAN_KMOD_VM_FLAG_AUTO_VA)
++      util_vma_heap_init(&panthor_vm->vma, user_va_start, user_va_range);
++
++   panthor_vm->sync.point = 0;
++   int ret = drmSyncobjCreate(dev->fd, DRM_SYNCOBJ_CREATE_SIGNALED,
++                              &panthor_vm->sync.handle);
++   if (ret)
++      goto err_free_vm;
++
++   uint64_t full_va_range = 1ull << DRM_PANTHOR_MMU_VA_BITS(props.mmu_features);
++   struct drm_panthor_vm_create req = {
++      .kernel_va_range = MIN2(full_va_range - user_va_start - user_va_range,
++                              full_va_range >> 1),
++   };
++
++   ret = drmIoctl(dev->fd, DRM_IOCTL_PANTHOR_VM_CREATE, &req);
++   if (ret)
++      goto err_destroy_sync;
++
++   pan_kmod_vm_init(&panthor_vm->base, dev, req.id, flags);
++   return &panthor_vm->base;
++
++err_destroy_sync:
++   drmSyncobjDestroy(dev->fd, panthor_vm->sync.handle);
++
++err_free_vm:
++   if (flags & PAN_KMOD_VM_FLAG_AUTO_VA)
++      util_vma_heap_finish(&panthor_vm->vma);
++
++   pan_kmod_dev_free(dev, panthor_vm);
++   return NULL;
++}
++
++static void
++panthor_kmod_vm_collect_async_unmaps(struct panthor_kmod_vm *vm)
++{
++   bool done = false;
++
++   list_for_each_entry_safe_rev(struct panthor_kmod_async_unmap, req,
++                                &vm->async_unmaps, node)
++   {
++      if (!done) {
++         int ret = drmSyncobjTimelineWait(
++            vm->base.dev->fd, &vm->sync.handle, &req->sync_point, 1, 0,
++            DRM_SYNCOBJ_WAIT_FLAGS_WAIT_ALL, NULL);
++         if (ret >= 0)
++            done = true;
++         else
++            continue;
++      }
++
++      list_del(&req->node);
++      util_vma_heap_free(&vm->vma, req->va, req->size);
++      pan_kmod_dev_free(vm->base.dev, req);
++   }
++}
++
++static void
++panthor_kmod_vm_destroy(struct pan_kmod_vm *vm)
++{
++   struct panthor_kmod_vm *panthor_vm =
++      container_of(vm, struct panthor_kmod_vm, base);
++   struct drm_panthor_vm_destroy req = {.id = vm->handle};
++   ASSERTED int ret = drmIoctl(vm->dev->fd, DRM_IOCTL_PANTHOR_VM_DESTROY, &req);
++   assert(!ret);
++
++   drmSyncobjDestroy(vm->dev->fd, panthor_vm->sync.handle);
++
++   if (panthor_vm->base.flags & PAN_KMOD_VM_FLAG_AUTO_VA) {
++      list_for_each_entry_safe(struct panthor_kmod_async_unmap, req,
++                               &panthor_vm->async_unmaps, node) {
++         list_del(&req->node);
++         util_vma_heap_free(&panthor_vm->vma, req->va, req->size);
++         pan_kmod_dev_free(vm->dev, req);
++      }
++      util_vma_heap_finish(&panthor_vm->vma);
++   }
++
++   pan_kmod_dev_free(vm->dev, panthor_vm);
++}
++
++static uint64_t
++panthor_kmod_vm_map(struct pan_kmod_vm *vm, struct pan_kmod_bo *bo, uint64_t va,
++                    off_t offset, size_t size)
++{
++   struct panthor_kmod_vm *panthor_vm =
++      container_of(vm, struct panthor_kmod_vm, base);
++
++   if (vm->flags & PAN_KMOD_VM_FLAG_AUTO_VA) {
++      panthor_kmod_vm_collect_async_unmaps(panthor_vm);
++      va = util_vma_heap_alloc(&panthor_vm->vma, size,
++                               size > 0x200000 ? 0x200000 : 0x1000);
++   }
++
++   struct drm_panthor_vm_bind_op bind_op = {
++      .flags = DRM_PANTHOR_VM_BIND_OP_TYPE_MAP,
++      .bo_handle = bo->handle,
++      .bo_offset = offset,
++      .va = va,
++      .size = size,
++   };
++   struct drm_panthor_vm_bind req = {
++      .vm_id = vm->handle,
++      .flags = 0,
++      .ops = DRM_PANTHOR_OBJ_ARRAY(1, &bind_op),
++   };
++
++   if (bo->flags & PAN_KMOD_BO_FLAG_EXECUTABLE)
++      bind_op.flags |= DRM_PANTHOR_VM_BIND_OP_MAP_READONLY;
++   else
++      bind_op.flags |= DRM_PANTHOR_VM_BIND_OP_MAP_NOEXEC;
++
++   if (bo->flags & PAN_KMOD_BO_FLAG_GPU_UNCACHED)
++      bind_op.flags |= DRM_PANTHOR_VM_BIND_OP_MAP_UNCACHED;
++
++   int ret = drmIoctl(vm->dev->fd, DRM_IOCTL_PANTHOR_VM_BIND, &req);
++   if (ret && (vm->flags & PAN_KMOD_VM_FLAG_AUTO_VA)) {
++      util_vma_heap_free(&panthor_vm->vma, va, size);
++      va = PAN_KMOD_VM_MAP_FAILED;
++   }
++
++   assert(offset == 0);
++   assert(size == bo->size);
++   return va;
++}
++
++static void
++panthor_kmod_vm_unmap(struct pan_kmod_vm *vm, uint64_t va, size_t size)
++{
++   struct panthor_kmod_vm *panthor_vm =
++      container_of(vm, struct panthor_kmod_vm, base);
++
++   struct drm_panthor_sync_op syncs[2] = {
++      {
++         .flags = DRM_PANTHOR_SYNC_OP_WAIT |
++                  DRM_PANTHOR_SYNC_OP_HANDLE_TYPE_TIMELINE_SYNCOBJ,
++         .handle = panthor_vm->sync.handle,
++         .timeline_value = panthor_vm->sync.point,
++      },
++      {
++         .flags = DRM_PANTHOR_SYNC_OP_SIGNAL |
++                  DRM_PANTHOR_SYNC_OP_HANDLE_TYPE_TIMELINE_SYNCOBJ,
++         .handle = panthor_vm->sync.handle,
++         .timeline_value = ++panthor_vm->sync.point,
++      },
++   };
++   struct drm_panthor_vm_bind_op bind_op = {
++      .flags = DRM_PANTHOR_VM_BIND_OP_TYPE_UNMAP,
++      .va = va,
++      .size = size,
++      .syncs = DRM_PANTHOR_OBJ_ARRAY(ARRAY_SIZE(syncs), syncs),
++   };
++   struct drm_panthor_vm_bind req = {
++      .vm_id = vm->handle,
++      .flags = DRM_PANTHOR_VM_BIND_ASYNC,
++      .ops = DRM_PANTHOR_OBJ_ARRAY(1, &bind_op),
++   };
++
++   ASSERTED int ret = drmIoctl(vm->dev->fd, DRM_IOCTL_PANTHOR_VM_BIND, &req);
++   assert(!ret);
++
++   if (vm->flags & PAN_KMOD_VM_FLAG_AUTO_VA) {
++      struct panthor_kmod_async_unmap *req =
++         pan_kmod_dev_alloc(vm->dev, sizeof(*req));
++
++      assert(req);
++      req->va = va;
++      req->size = size;
++      req->sync_point = panthor_vm->sync.point;
++      list_addtail(&req->node, &panthor_vm->async_unmaps);
++   }
++}
++
++void
++panthor_kmod_vm_new_sync_point(struct pan_kmod_vm *vm, uint32_t *sync_handle,
++                               uint64_t *sync_point)
++{
++   struct panthor_kmod_vm *panthor_vm =
++      container_of(vm, struct panthor_kmod_vm, base);
++
++   *sync_handle = panthor_vm->sync.handle;
++   *sync_point = ++panthor_vm->sync.point;
++}
++
++uint32_t
++panthor_kmod_get_flush_id(const struct pan_kmod_dev *dev)
++{
++   struct panthor_kmod_dev *panthor_dev =
++      container_of(dev, struct panthor_kmod_dev, base);
++
++   return *(panthor_dev->flush_id);
++}
++
++const struct pan_kmod_ops panthor_kmod_ops = {
++   .dev_create = panthor_kmod_dev_create,
++   .dev_destroy = panthor_kmod_dev_destroy,
++   .dev_query_props = panthor_dev_query_props,
++   .bo_alloc = panthor_kmod_bo_alloc,
++   .bo_free = panthor_kmod_bo_free,
++   .bo_import = panthor_kmod_bo_import,
++   .bo_export = panthor_kmod_bo_export,
++   .bo_get_mmap_offset = panthor_kmod_bo_get_mmap_offset,
++   .bo_wait = panthor_kmod_bo_wait,
++   .vm_create = panthor_kmod_vm_create,
++   .vm_destroy = panthor_kmod_vm_destroy,
++   .vm_map = panthor_kmod_vm_map,
++   .vm_unmap = panthor_kmod_vm_unmap,
++};
+diff --git a/src/panfrost/lib/kmod/panthor_kmod.h b/src/panfrost/lib/kmod/panthor_kmod.h
+new file mode 100644
+index 00000000000..a6145454ea0
+--- /dev/null
++++ b/src/panfrost/lib/kmod/panthor_kmod.h
+@@ -0,0 +1,25 @@
++/*
++ * Copyright © 2023 Collabora, Ltd.
++ *
++ * SPDX-License-Identifier: MIT
++ */
++
++#pragma once
++
++#include <stdint.h>
++
++struct pan_kmod_bo;
++struct pan_kmod_dev;
++struct pan_kmod_vm;
++
++void panthor_kmod_bo_attach_sync_point(struct pan_kmod_bo *bo,
++                                       uint32_t sync_handle,
++                                       uint64_t sync_point, bool read_only);
++void panthor_kmod_bo_get_sync_point(struct pan_kmod_bo *bo,
++                                    uint32_t *sync_handle, uint64_t *sync_point,
++                                    bool read_only);
++uint32_t panthor_kmod_vm_handle(struct pan_kmod_vm *vm);
++void panthor_kmod_vm_new_sync_point(struct pan_kmod_vm *vm,
++                                    uint32_t *sync_handle,
++                                    uint64_t *sync_point);
++uint32_t panthor_kmod_get_flush_id(const struct pan_kmod_dev *dev);
+-- 
+2.42.0
+

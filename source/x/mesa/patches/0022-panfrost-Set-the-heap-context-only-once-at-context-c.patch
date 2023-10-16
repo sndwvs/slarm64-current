@@ -1,0 +1,57 @@
+From bb1bf06e5ec38ad9700583183195f8aad503e7d4 Mon Sep 17 00:00:00 2001
+From: Boris Brezillon <boris.brezillon@collabora.com>
+Date: Tue, 5 Sep 2023 16:46:03 +0200
+Subject: [PATCH 22/64] panfrost: Set the heap context only once, at context
+ creation time
+
+There's no reason to re-set it for each new batch: the heap context
+is preserved across group suspend/resume cycles.
+
+Signed-off-by: Boris Brezillon <boris.brezillon@collabora.com>
+---
+ src/gallium/drivers/panfrost/pan_cmdstream.c | 14 ++++++--------
+ 1 file changed, 6 insertions(+), 8 deletions(-)
+
+diff --git a/src/gallium/drivers/panfrost/pan_cmdstream.c b/src/gallium/drivers/panfrost/pan_cmdstream.c
+index 46184c18cb8..b273fe91550 100644
+--- a/src/gallium/drivers/panfrost/pan_cmdstream.c
++++ b/src/gallium/drivers/panfrost/pan_cmdstream.c
+@@ -2702,11 +2702,6 @@ emit_fragment_job(struct panfrost_batch *batch, const struct pan_fb_info *pfb)
+       return 0;
+    }
+ 
+-   if (PAN_ARCH >= 10 && !batch->draws) {
+-      /* Clear only batch */
+-      panfrost_emit_heap_set(batch);
+-   }
+-
+    /* Mark the affected buffers as initialized, since we're writing to it.
+     * Also, add the surfaces we're writing to to the batch */
+ 
+@@ -4061,10 +4056,8 @@ panfrost_draw_vbo(struct pipe_context *pipe, const struct pipe_draw_info *info,
+       assert(succ && "must be able to set state for a fresh batch");
+    }
+ 
+-   if (batch->draws == 0) {
+-      panfrost_emit_heap_set(batch);
++   if (batch->draws == 0)
+       ceu_vt_start(batch->ceu_builder);
+-   }
+ 
+    /* panfrost_batch_skip_rasterization reads
+     * batch->scissor_culls_everything, which is set by
+@@ -5152,6 +5145,11 @@ panfrost_csf_init_context(struct panfrost_context *ctx)
+    ctx->heap.handle = thc.handle;
+    ctx->heap.tiler_heap_ctx_gpu_va = thc.tiler_heap_ctx_gpu_va;
+    ctx->heap.first_heap_chunk_gpu_va = thc.first_heap_chunk_gpu_va;
++
++   struct panfrost_batch *batch = panfrost_get_batch_for_fbo(ctx);
++   panfrost_emit_heap_set(batch);
++   batch->any_compute = 1;
++   panfrost_flush_all_batches(ctx, "Gfx queue init");
+ }
+ 
+ static void
+-- 
+2.42.0
+

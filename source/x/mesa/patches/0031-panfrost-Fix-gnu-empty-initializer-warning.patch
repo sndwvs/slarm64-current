@@ -1,0 +1,25 @@
+From 4507e409ea0dca656fe95f965a2dacfc9200ecab Mon Sep 17 00:00:00 2001
+From: Boris Brezillon <boris.brezillon@collabora.com>
+Date: Mon, 18 Sep 2023 13:33:27 +0200
+Subject: [PATCH 31/64] panfrost: Fix gnu-empty-initializer warning
+
+---
+ src/gallium/drivers/panfrost/pan_job.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/gallium/drivers/panfrost/pan_job.c b/src/gallium/drivers/panfrost/pan_job.c
+index 13a551ea25e..bef51744165 100644
+--- a/src/gallium/drivers/panfrost/pan_job.c
++++ b/src/gallium/drivers/panfrost/pan_job.c
+@@ -965,7 +965,7 @@ panfrost_batch_submit_cs_ioctl(struct panfrost_batch *batch, mali_ptr cs_start,
+       drmSyncobjWait(panfrost_device_fd(dev), &out_sync, 1, INT64_MAX, 0, NULL);
+ 
+       if ((dev->debug & PAN_DBG_TRACE) && dev->arch >= 10) {
+-         uint32_t regs[256] = {};
++         uint32_t regs[256] = {0};
+          pandecode_cs(qsubmits[0].stream_addr, qsubmits[0].stream_size,
+                       panfrost_device_gpu_id(dev), regs);
+       }
+-- 
+2.42.0
+

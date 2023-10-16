@@ -1,0 +1,26 @@
+From 4d3ee784d1d6a42bc6c98c08f276ee58a4db1d27 Mon Sep 17 00:00:00 2001
+From: Boris Brezillon <boris.brezillon@collabora.com>
+Date: Tue, 19 Sep 2023 17:24:11 +0200
+Subject: [PATCH 62/64] panfrost: Use a #1 task increment in csf_launch_xfb()
+
+To be consistent with v9 support in jm_launch_xfb().
+---
+ src/gallium/drivers/panfrost/pan_cmdstream.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/gallium/drivers/panfrost/pan_cmdstream.c b/src/gallium/drivers/panfrost/pan_cmdstream.c
+index c61ba4e647f..996b3a0f0d5 100644
+--- a/src/gallium/drivers/panfrost/pan_cmdstream.c
++++ b/src/gallium/drivers/panfrost/pan_cmdstream.c
+@@ -3656,7 +3656,7 @@ csf_launch_xfb(struct panfrost_batch *batch, const struct pipe_draw_info *info,
+    csf_emit_shader_regs(batch, PIPE_SHADER_VERTEX,
+                         batch->rsd[PIPE_SHADER_VERTEX]);
+    /* XXX: Choose correctly */
+-   ceu_run_compute(b, 10, MALI_TASK_AXIS_Z);
++   ceu_run_compute(b, 1, MALI_TASK_AXIS_Z);
+ 
+    /* Reset registers expected to be 0 for IDVS */
+    ceu_move32_to(b, ceu_reg32(b, 31), 0);
+-- 
+2.42.0
+

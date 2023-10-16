@@ -1,0 +1,28 @@
+From 089705e0face16c8cd29f7d07b1cd9442c1d3ba5 Mon Sep 17 00:00:00 2001
+From: Boris Brezillon <boris.brezillon@collabora.com>
+Date: Mon, 18 Sep 2023 16:30:08 +0200
+Subject: [PATCH 32/64] fixup! panfrost: v10 support
+
+This breaks pre-v10 tiler heap desc emission. We no longer use this
+helper to build the v10+ tiler heap desc, so it's safe to revert back
+to the original logic.
+---
+ src/panfrost/lib/pan_cs.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/panfrost/lib/pan_cs.c b/src/panfrost/lib/pan_cs.c
+index 879055d4d89..478c68e8543 100644
+--- a/src/panfrost/lib/pan_cs.c
++++ b/src/panfrost/lib/pan_cs.c
+@@ -927,7 +927,7 @@ GENX(pan_emit_tiler_heap)(const struct panfrost_device *dev, void *out)
+    pan_pack(out, TILER_HEAP, heap) {
+       heap.size = dev->tiler_heap->kmod_bo->size;
+       heap.base = dev->tiler_heap->ptr.gpu;
+-      heap.bottom = dev->tiler_heap->ptr.gpu + 64;
++      heap.bottom = dev->tiler_heap->ptr.gpu;
+       heap.top = dev->tiler_heap->ptr.gpu + panfrost_bo_size(dev->tiler_heap);
+    }
+ }
+-- 
+2.42.0
+

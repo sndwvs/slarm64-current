@@ -1,0 +1,84 @@
+From cbced1d0157b6fad1b620038837f44e0f668b1d8 Mon Sep 17 00:00:00 2001
+From: Boris Brezillon <boris.brezillon@collabora.com>
+Date: Tue, 5 Sep 2023 16:41:56 +0200
+Subject: [PATCH 19/64] panfrost: Add arch-specific context init/cleanup hooks
+
+This will allow us to defer the group/queue/heap initialization to the
+only file that's compiled per-arch.
+
+Signed-off-by: Boris Brezillon <boris.brezillon@collabora.com>
+---
+ src/gallium/drivers/panfrost/pan_cmdstream.c | 12 ++++++++++++
+ src/gallium/drivers/panfrost/pan_context.c   |  3 +++
+ src/gallium/drivers/panfrost/pan_screen.h    |  4 ++++
+ 3 files changed, 19 insertions(+)
+
+diff --git a/src/gallium/drivers/panfrost/pan_cmdstream.c b/src/gallium/drivers/panfrost/pan_cmdstream.c
+index c3990460fac..7e31967b1bf 100644
+--- a/src/gallium/drivers/panfrost/pan_cmdstream.c
++++ b/src/gallium/drivers/panfrost/pan_cmdstream.c
+@@ -5122,6 +5122,16 @@ context_populate_vtbl(struct pipe_context *pipe)
+    pipe->get_sample_position = u_default_get_sample_position;
+ }
+ 
++static void
++context_init(struct panfrost_context *ctx)
++{
++}
++
++static void
++context_cleanup(struct panfrost_context *ctx)
++{
++}
++
+ #if PAN_ARCH <= 5
+ 
+ /* Returns the polygon list's GPU address if available, or otherwise allocates
+@@ -5193,6 +5203,8 @@ GENX(panfrost_cmdstream_screen_init)(struct panfrost_screen *screen)
+    screen->vtbl.screen_destroy = screen_destroy;
+    screen->vtbl.preload = preload;
+    screen->vtbl.context_populate_vtbl = context_populate_vtbl;
++   screen->vtbl.context_init = context_init;
++   screen->vtbl.context_cleanup = context_cleanup;
+    screen->vtbl.init_batch = init_batch;
+    screen->vtbl.get_blend_shader = GENX(pan_blend_get_shader_locked);
+    screen->vtbl.init_polygon_list = init_polygon_list;
+diff --git a/src/gallium/drivers/panfrost/pan_context.c b/src/gallium/drivers/panfrost/pan_context.c
+index b5fc12cad6f..102369a28e0 100644
+--- a/src/gallium/drivers/panfrost/pan_context.c
++++ b/src/gallium/drivers/panfrost/pan_context.c
+@@ -579,6 +579,8 @@ panfrost_destroy(struct pipe_context *pipe)
+    struct panfrost_context *panfrost = pan_context(pipe);
+    struct panfrost_device *dev = pan_device(pipe->screen);
+ 
++   pan_screen(pipe->screen)->vtbl.context_cleanup(panfrost);
++
+    _mesa_hash_table_destroy(panfrost->writers, NULL);
+ 
+    if (panfrost->blitter)
+@@ -1061,6 +1063,7 @@ panfrost_create_context(struct pipe_screen *screen, void *priv, unsigned flags)
+    assert(!ret);
+ 
+    panfrost_init_cs_queue(ctx);
++   pan_screen(screen)->vtbl.context_init(ctx);
+ 
+    return gallium;
+ }
+diff --git a/src/gallium/drivers/panfrost/pan_screen.h b/src/gallium/drivers/panfrost/pan_screen.h
+index ec0966df8d0..86645275ff5 100644
+--- a/src/gallium/drivers/panfrost/pan_screen.h
++++ b/src/gallium/drivers/panfrost/pan_screen.h
+@@ -82,6 +82,10 @@ struct panfrost_vtable {
+    /* Populate context vtable */
+    void (*context_populate_vtbl)(struct pipe_context *pipe);
+ 
++   /* Initialize/cleanup a Gallium context */
++   void (*context_init)(struct panfrost_context *ctx);
++   void (*context_cleanup)(struct panfrost_context *ctx);
++
+    /* Device-dependent initialization of a panfrost_batch */
+    void (*init_batch)(struct panfrost_batch *batch);
+ 
+-- 
+2.42.0
+

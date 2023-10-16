@@ -1,0 +1,50 @@
+From fa8850251675cedb8d47239305af335e6833f670 Mon Sep 17 00:00:00 2001
+From: Boris Brezillon <boris.brezillon@collabora.com>
+Date: Mon, 18 Sep 2023 11:17:14 +0200
+Subject: [PATCH 52/64] panfrost: Rename panfrost_start_tiling and use JOBX()
+
+Let's rename the function to non-tiler specific stuff that need to be
+done a the first draw queued to a batch can take place here. We also
+use JOBX() to have per job-backend implementations.
+---
+ src/gallium/drivers/panfrost/pan_cmdstream.c | 13 +++++++++----
+ 1 file changed, 9 insertions(+), 4 deletions(-)
+
+diff --git a/src/gallium/drivers/panfrost/pan_cmdstream.c b/src/gallium/drivers/panfrost/pan_cmdstream.c
+index 5991ef8d0f1..8c8f3b24bef 100644
+--- a/src/gallium/drivers/panfrost/pan_cmdstream.c
++++ b/src/gallium/drivers/panfrost/pan_cmdstream.c
+@@ -4387,13 +4387,18 @@ panfrost_launch_grid(struct pipe_context *pipe,
+ }
+ #endif
+ 
++#if PAN_USE_CSF
+ static inline void
+-panfrost_start_tiling(struct panfrost_batch *batch)
++csf_prepare_first_draw(struct panfrost_batch *batch)
+ {
+-#if PAN_USE_CSF
+    ceu_vt_start(batch->ceu_builder);
+-#endif
+ }
++#else
++static inline void
++jm_prepare_first_draw(struct panfrost_batch *batch)
++{
++}
++#endif
+ 
+ static void
+ panfrost_draw_vbo(struct pipe_context *pipe, const struct pipe_draw_info *info,
+@@ -4437,7 +4442,7 @@ panfrost_draw_vbo(struct pipe_context *pipe, const struct pipe_draw_info *info,
+    }
+ 
+    if (batch->draw_count == 0)
+-      panfrost_start_tiling(batch);
++      JOBX(prepare_first_draw)(batch);
+ 
+    /* panfrost_batch_skip_rasterization reads
+     * batch->scissor_culls_everything, which is set by
+-- 
+2.42.0
+

@@ -1,0 +1,32 @@
+From 8ba713d4e8cca452d2373908aa4fd14c825800e1 Mon Sep 17 00:00:00 2001
+From: Boris Brezillon <boris.brezillon@collabora.com>
+Date: Fri, 15 Sep 2023 17:14:00 +0200
+Subject: [PATCH 41/64] panfrost: Add JOBX() wrappers to simplify jm_ vs csf_
+ helper selection
+
+---
+ src/gallium/drivers/panfrost/pan_cmdstream.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/src/gallium/drivers/panfrost/pan_cmdstream.c b/src/gallium/drivers/panfrost/pan_cmdstream.c
+index ae926d7dc11..70cb66b762f 100644
+--- a/src/gallium/drivers/panfrost/pan_cmdstream.c
++++ b/src/gallium/drivers/panfrost/pan_cmdstream.c
+@@ -54,6 +54,14 @@
+ #define PAN_GPU_INDIRECTS (PAN_ARCH == 7)
+ #define PAN_USE_CSF       (PAN_ARCH >= 10)
+ 
++/* JOBX() is used to select the job backend helpers to call from generic
++ * functions. */
++#if PAN_USE_CSF
++#define JOBX(__suffix) csf_##__suffix
++#else
++#define JOBX(__suffix) jm_##__suffix
++#endif
++
+ struct panfrost_rasterizer {
+    struct pipe_rasterizer_state base;
+ 
+-- 
+2.42.0
+
