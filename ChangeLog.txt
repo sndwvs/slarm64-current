@@ -1,3 +1,106 @@
+Mon Oct 30 16:20:39 UTC 2023
+d/rust-1.70.0-aarch64-3.txz:  Rebuilt.
+l/enchant-2.6.2-aarch64-1.txz:  Upgraded.
+l/gexiv2-0.14.2-aarch64-2.txz:  Rebuilt.
+l/libsigc++3-3.6.0-aarch64-1.txz:  Upgraded.
+l/vid.stab-1.1.1-aarch64-1.txz:  Upgraded.
+testing/packages/rust-1.73.0-aarch64-2.txz:  Rebuilt.
+x/ibus-m17n-1.4.23-aarch64-1.txz:  Upgraded.
+xfce/xfconf-4.18.2-aarch64-2.txz:  Rebuilt.
++--------------------------+
+Sat Oct 28 14:18:44 UTC 2023
+a/kernel-firmware-20231026_2ceaa29-noarch-1.txz:  Upgraded.
+a/kernel-generic-6.1.60-aarch64-1.txz:  Upgraded.
+a/kernel-modules-6.1.60-aarch64-1.txz:  Upgraded.
+a/shadow-4.14.1-aarch64-1.txz:  Upgraded.
+d/kernel-headers-6.1.60-arm64-1.txz:  Upgraded.
+k/kernel-source-6.1.60-noarch-1.txz:  Upgraded.
+kde/plasma-workspace-5.27.9.1-aarch64-1.txz:  Upgraded.
+l/glib2-2.78.1-aarch64-1.txz:  Upgraded.
+l/netpbm-11.04.03-aarch64-1.txz:  Upgraded.
+l/newt-0.52.24-aarch64-1.txz:  Upgraded.
+n/gpgme-1.23.0-aarch64-1.txz:  Upgraded.
+n/p11-kit-0.25.1-aarch64-1.txz:  Upgraded.
+n/php-8.2.12-aarch64-1.txz:  Upgraded.
+x/xorg-server-21.1.9-aarch64-1.txz:  Upgraded.
+x/xorg-server-xephyr-21.1.9-aarch64-1.txz:  Upgraded.
+x/xorg-server-xnest-21.1.9-aarch64-1.txz:  Upgraded.
+x/xorg-server-xvfb-21.1.9-aarch64-1.txz:  Upgraded.
+x/xorg-server-xwayland-23.2.2-aarch64-1.txz:  Upgraded.
+xap/mozilla-thunderbird-115.4.1-aarch64-1.txz:  Upgraded.
+xfce/thunar-4.18.8-aarch64-1.txz:  Upgraded.
++--------------------------+
+Thu Oct 26 16:42:47 UTC 2023
+a/openssl-solibs-3.1.4-aarch64-1.txz:  Upgraded.
+ap/vim-9.0.2063-aarch64-1.txz:  Upgraded.
+d/parallel-20231022-noarch-1.txz:  Upgraded.
+kde/bluedevil-5.27.9-aarch64-1.txz:  Upgraded.
+kde/breeze-5.27.9-aarch64-1.txz:  Upgraded.
+kde/breeze-grub-5.27.9-aarch64-1.txz:  Upgraded.
+kde/breeze-gtk-5.27.9-aarch64-1.txz:  Upgraded.
+kde/drkonqi-5.27.9-aarch64-1.txz:  Upgraded.
+kde/kactivitymanagerd-5.27.9-aarch64-1.txz:  Upgraded.
+kde/kde-cli-tools-5.27.9-aarch64-1.txz:  Upgraded.
+kde/kde-gtk-config-5.27.9-aarch64-1.txz:  Upgraded.
+kde/kdecoration-5.27.9-aarch64-1.txz:  Upgraded.
+kde/kdeplasma-addons-5.27.9-aarch64-1.txz:  Upgraded.
+kde/kgamma5-5.27.9-aarch64-1.txz:  Upgraded.
+kde/khotkeys-5.27.9-aarch64-1.txz:  Upgraded.
+kde/kinfocenter-5.27.9-aarch64-1.txz:  Upgraded.
+kde/kmenuedit-5.27.9-aarch64-1.txz:  Upgraded.
+kde/kpipewire-5.27.9-aarch64-1.txz:  Upgraded.
+kde/kscreen-5.27.9-aarch64-1.txz:  Upgraded.
+kde/kscreenlocker-5.27.9-aarch64-1.txz:  Upgraded.
+kde/ksshaskpass-5.27.9-aarch64-1.txz:  Upgraded.
+kde/ksystemstats-5.27.9-aarch64-1.txz:  Upgraded.
+kde/kwallet-pam-5.27.9-aarch64-1.txz:  Upgraded.
+kde/kwayland-integration-5.27.9-aarch64-1.txz:  Upgraded.
+kde/kwin-5.27.9-aarch64-1.txz:  Upgraded.
+kde/kwrited-5.27.9-aarch64-1.txz:  Upgraded.
+kde/layer-shell-qt-5.27.9-aarch64-1.txz:  Upgraded.
+kde/libkscreen-5.27.9-aarch64-1.txz:  Upgraded.
+kde/libksysguard-5.27.9-aarch64-1.txz:  Upgraded.
+kde/milou-5.27.9-aarch64-1.txz:  Upgraded.
+kde/oxygen-5.27.9-aarch64-1.txz:  Upgraded.
+kde/oxygen-sounds-5.27.9-aarch64-1.txz:  Upgraded.
+kde/plasma-browser-integration-5.27.9-aarch64-1.txz:  Upgraded.
+kde/plasma-desktop-5.27.9-aarch64-1.txz:  Upgraded.
+kde/plasma-disks-5.27.9-aarch64-1.txz:  Upgraded.
+kde/plasma-firewall-5.27.9-aarch64-1.txz:  Upgraded.
+kde/plasma-integration-5.27.9-aarch64-1.txz:  Upgraded.
+kde/plasma-nm-5.27.9-aarch64-1.txz:  Upgraded.
+kde/plasma-pa-5.27.9-aarch64-1.txz:  Upgraded.
+kde/plasma-sdk-5.27.9-aarch64-1.txz:  Upgraded.
+kde/plasma-systemmonitor-5.27.9-aarch64-1.txz:  Upgraded.
+kde/plasma-vault-5.27.9-aarch64-1.txz:  Upgraded.
+kde/plasma-workspace-5.27.9-aarch64-1.txz:  Upgraded.
+kde/plasma-workspace-wallpapers-5.27.9-noarch-1.txz:  Upgraded.
+kde/polkit-kde-agent-1-5.27.9-aarch64-1.txz:  Upgraded.
+kde/powerdevil-5.27.9-aarch64-1.txz:  Upgraded.
+kde/qqc2-breeze-style-5.27.9-aarch64-1.txz:  Upgraded.
+kde/sddm-kcm-5.27.9-aarch64-1.txz:  Upgraded.
+kde/systemsettings-5.27.9-aarch64-1.txz:  Upgraded.
+kde/xdg-desktop-portal-kde-5.27.9-aarch64-1.txz:  Upgraded.
+l/frei0r-plugins-2.3.1-aarch64-1.txz:  Upgraded.
+l/nodejs-20.9.0-aarch64-1.txz:  Upgraded.
+n/openssl-3.1.4-aarch64-1.txz:  Upgraded.
+x/xterm-388-aarch64-1.txz:  Upgraded.
+xap/mozilla-firefox-115.4.0esr-aarch64-1.txz:  Upgraded.
+xap/mozilla-thunderbird-115.4.0-aarch64-1.txz:  Upgraded.
+xap/vim-gvim-9.0.2063-aarch64-1.txz:  Upgraded.
++--------------------------+
+Mon Oct 23 19:31:40 UTC 2023
+a/lvm2-2.03.22-aarch64-1.txz:  Upgraded.
+kde/kstars-3.6.7-aarch64-1.txz:  Upgraded.
+kde/libindi-2.0.4-aarch64-1.txz:  Added.
+kde/libnova-0.15.0-aarch64-1.txz:  Added.
+kde/stellarsolver-2.5-aarch64-1.txz:  Added.
+kde/wcslib-8.1-aarch64-1.txz:  Added.
+l/LibRaw-0.21.1-aarch64-2.txz:  Rebuilt.
+l/imagemagick-7.1.1_21-aarch64-1.txz:  Upgraded.
+l/libev-4.33-aarch64-1.txz:  Upgraded.
+l/vte-0.74.1-aarch64-1.txz:  Upgraded.
++--------------------------+
 Sun Oct 22 22:05:23 UTC 2023
 a/btrfs-progs-6.5.3-aarch64-1.txz:  Upgraded.
 d/meson-1.2.3-aarch64-1.txz:  Upgraded.

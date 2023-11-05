@@ -1,0 +1,16 @@
+--- a/postfix.SlackBuild	2023-11-05 15:00:52.498636647 +0000
++++ b/postfix.SlackBuild	2023-11-05 15:00:19.777891955 +0000
+@@ -59,6 +59,13 @@ elif [ "$ARCH" = "i686" ]; then
+ elif [ "$ARCH" = "x86_64" ]; then
+   SLKCFLAGS="-O2 -fPIC"
+   LIBDIRSUFFIX="64"
++elif [ "$ARCH" = "aarch64" ]; then
++  SLKCFLAGS="-O2 -fPIC"
++  LIBDIRSUFFIX="64"
++elif [ "$ARCH" = "riscv64" ]; then
++  SLKCFLAGS="-O2 -fPIC"
++  LIBDIRSUFFIX="64"
++  unset LD_LIBRARY_PATH
+ else
+   SLKCFLAGS="-O2"
+   LIBDIRSUFFIX=""
